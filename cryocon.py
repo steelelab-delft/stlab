@@ -84,6 +84,8 @@ class CryoCon:
                     tstablestart = tnow
                     print 'T in tolerance.  Settling...'
             elif abs(TT-Tset)>=tol:
+                if tstablestart != None:
+                    print 'T left tolerance'
                 tstablestart = None
                 continue
             if tnow-tstablestart > tsettle:
