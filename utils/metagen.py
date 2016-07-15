@@ -6,8 +6,8 @@ def fromarrays(filename,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',
     xmin = xarray[0]
     xmax = xarray[-1]
     Ny = len(yarray)
-    ymin = yarray[0]
-    ymax = yarray[-1]
+    ymax = yarray[0]
+    ymin = yarray[-1]
     if zarray == None:
         Nz = None
         zmin = None
@@ -55,7 +55,7 @@ def fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xt
     return
 
 
-#Somewhat specific for datafiles from the solderroom, 2D files only
+#Somewhat specific for datafiles from the solderroom, 2D "gnuplot" files only
 def fromdatafile(filename,xcol=None,ycol=None,xtitle=None,ytitle=None):
     mydata = readdata.readdat(filename)
     keylist = mydata[0].keys()
@@ -86,11 +86,11 @@ def fromdatafile(filename,xcol=None,ycol=None,xtitle=None,ytitle=None):
     xmin = mydata[0][xkey][0]
     xmax = mydata[0][xkey][-1]
     Ny = len(mydata)
-    ymin = mydata[0][ykey][0]
-    ymax = mydata[-1][ykey][0]
+    ymin = mydata[-1][ykey][0]
+    ymax = mydata[0][ykey][0]
 
-    print Nx,xmin,xmax
-    print Ny,ymin,ymax
+    print xkey,Nx,xmin,xmax
+    print ykey,Ny,ymin,ymax
 
     fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,xtitle=xkey,ytitle=ykey,colnames=keylist)
     return
