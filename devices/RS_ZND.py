@@ -96,7 +96,7 @@ class RS_ZND_pna:
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale both traces
             self.write('DISP:WIND2:TRAC1:Y:AUTO ONCE')
-        #Read measurement (in unicode strings)
+        #Read measurement (in unicode strings). READS DATA WITH ACTIVE CALIBRATION APPLIED
         frec = self.query('CALC:DATA:STIM?')
         #self.write('CALC:PAR1:SEL')
         S11 = self.query('CALC:DATA:TRAC? \'TrS11\', SDAT')
@@ -111,7 +111,6 @@ class RS_ZND_pna:
         S21re = S21[::2]  #Real part
         S21im = S21[1::2] #Imaginary part
         return (frec,S11re, S11im, S21re, S21im)
-
     def Measure1port(self,autoscale = True):
         pass
         if not self.oneportmode:
@@ -119,7 +118,7 @@ class RS_ZND_pna:
         print(self.query('INIT;*OPC?')) #Trigger single sweep and wait for response
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
-        #Read measurement (in unicode strings)
+        #Read measurement (in unicode strings).  READS DATA WITH ACTIVE CALIBRATION APPLIED
         frec = self.query('CALC:DATA:STIM?')
         S11 = self.query('CALC:DATA:TRAC? \'TrS11\', SDAT')
         #Convert to numpy arrays
@@ -128,3 +127,14 @@ class RS_ZND_pna:
         S11re = S11[::2]  #Real part
         S11im = S11[1::2] #Imaginary part
         return (frec,S11re,S11im)
+    def LoadCal (self, calfile, channel = 1):
+        mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
+        self.write(mystr)
+    def CalOn (self):
+        mystr = "CORR ON"
+        self.write(mystr)
+    def CalOff (self):
+        mystr = "CORR OFF"
+        self.write(mystr)
+
+
