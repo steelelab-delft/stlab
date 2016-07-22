@@ -15,7 +15,7 @@ def readdat(filename):
     currentvarname =""
 
     line = f.readline()
-    line = line.strip("\n").strip("#")
+    line = line.strip("\n").strip("# ")
     print line
     names = line.split(', ')
     print names
@@ -37,11 +37,48 @@ def readdat(filename):
 
     return arrayofdicts
 
+# Imports a QUCS formatted data file.  The data is returned as a dict 
+# containing np.array's for each variable with the QUCS variable name
+# as dict key.  Complex values are conserved.
+
+pi = np.pi
+
+def readQUCS(filename):
+	f = open(filename,'r')
+	variables = {}
+	ivar = 0
+	mylists = {}
+	col = []
+	currentvarname =""
+
+	for line in f:
+	    varfound = line.find('<')
+	    varendfound = line.find('/')
+	    if varendfound != -1:
+		mylists[currentvarname] = np.array(col)
+		col = []
+	    elif varfound != -1:
+		line = line.strip("\n").strip(">").strip("<")
+		words = line.split()
+		vartype = words[0]
+		varname = words[1]
+		print vartype, varname
+		if vartype == 'Qucs':
+		    continue
+		elif vartype == 'indep' or vartype=='dep':
+	            currentvarname = varname
+	    elif varfound == -1:
+		if 'j' not in line:
+		    col.append(float(line))
+		else:
+		    ij = line.find('j')
+		    x = float(line[0:ij-1])
+		    y = float(line[ij-1:].replace("j",""))
+		    col.append( complex(x,y) )
+        return mylists
 
 
-
-
-    '''
+'''
         varfound = line.find('<')
         varendfound = line.find('/')
         if varendfound != -1:
@@ -66,4 +103,4 @@ def readdat(filename):
 	    y = float(line[ij-1:].replace("j",""))
 	    col.append( complex(x,y) )
     return mylists
-    '''
+'''
