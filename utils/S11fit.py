@@ -90,16 +90,35 @@ def S11theo(frec,params,ftype='A'): # Equation
 
 #Residual for full fit including background
 def S11residual(params, frec, data,ftype='A'):
-    model = -S11theo(frec,params,ftype='A')*backmodel(frec,params)
+    model = S11full(frec,params,ftype)
     residual = model - data
     return realimag(residual)
 
 #Function for total response from background model and resonator response
 def S11full(frec,params,ftype='A'):
-    model = -S11theo(frec,params,ftype='A')*backmodel(frec,params)
+    if ftype == 'A' or ftype == 'B':
+        model = -S11theo(frec,params,ftype)*backmodel(frec,params)
+    if ftype == '-A' or ftype == '-B':
+        model = S11theo(frec,params,ftype)*backmodel(frec,params)
     return model
 
-def fit(frec,S11,fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False):
+# MAIN FIT ROUTINE
+# Fits complex data S11 vs frecuency to one of 4 models adjusting for a multiplicative complex background
+# It fits the data in three steps.  Firstly it fits the background signal removing a certain window around the detected peak position.
+# Then it fits the model times the background to the full data set keeping the background parameters fixed at the fitted values.  Finally it refits all background and
+# model parameters ones more starting from the previously fitted values.
+# frec -> Array of X values (typically frequency)
+# S11 -> Complex array of Y values (typically S11 data)
+# ftype -> Fit model function (A,B,-A,-B, see S11theo for formulas)
+# fitbackground -> If "True" will attempt to fit and remove background.  If "False", will use a constant background equal to 1 and fit only model function to data.
+# trimwidth -> Number of linewidths around resonance (estimated pre-fit) to remove for background only fit.
+# doplots -> If "True", shows debugging and intermediate plots
+# margin -> Smoothing window to apply to signal for initial guess procedures (the fit uses unsmoothed data)
+# oldpars -> Parameter data from previous fit (expects lmfit Parameter object). Used when "refitback" is "False" or "reusefitpars" is "True".
+# refitback -> If set to False, does not fit the background but uses parameters provided in "oldpars".  If set to "True", fits background normally
+# reusefitpars -> If set to True, uses parameters provided in "oldpars" as initial guess for fit parameters in main model fit (ignored by background fit)
+
+def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False):
 
     #Smooth data for initial guesses
     sReS11 = np.array(smooth(S11.real,margin,3))
