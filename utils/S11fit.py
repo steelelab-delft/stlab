@@ -143,9 +143,11 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     print "Max index: ",ires," Max frequency: ",f0i
 
     if doplots:
+        plt.clf()
         plt.title('Original signal (Re,Im)')
         plt.plot(frec,S11.real)
         plt.plot(frec,S11.imag)
+        plt.axis('auto')
         plt.show()
 
         plt.plot(np.angle(sS11))
@@ -268,6 +270,11 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.plot(frec,S11corr.real)
         plt.plot(frec,S11corr.imag)
         plt.show()
+
+        plt.title('Signal with background removed (Phase)')
+        ph = np.unwrap(np.angle(S11corr))
+        plt.plot(frec,ph)
+        plt.show()
  
         plt.title('Signal with background removed (Polar)')
         plt.plot(S11corr.real,S11corr.imag)
@@ -275,10 +282,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
 
 #Make initial guesses for peak fit
-    ires = np.argmax(S11corr.real)
-    f0i=frec[ires]
-    imin = np.argmax(S11corr.imag)
-    imax = np.argmin(S11corr.imag)
+#    ires = np.argmax(S11corr.real)
+#    f0i=frec[ires]
+#    imin = np.argmax(S11corr.imag)
+#    imax = np.argmin(S11corr.imag)
 
     ktot = np.abs(frec[imax]-frec[imin])
     Tres = np.abs(S11corr[ires]+1)
@@ -351,4 +358,86 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
 
     return params
+
+
+
+def find_resonance(frec,S11,margin=31,doplots=False):
+
+    #Smooth data for initial guesses
+    sReS11 = np.array(smooth(S11.real,margin,3))
+    sImS11 = np.array(smooth(S11.imag,margin,3))
+    sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
+    #Make smoothed phase vector removing 2pi jumps
+    sArgS11 = np.angle(sS11)
+    sArgS11 = np.unwrap(sArgS11)
+    sdiffang = np.diff(sArgS11)
+
+    #Get resonance index from maximum of the derivative of the phase
+    avgph =  np.average(sdiffang)
+    errvec = [np.power(x-avgph,2.) for x in sdiffang]
+    ires = np.argmax(errvec[margin:-margin])+margin
+    f0i=frec[ires]
+    print "Max index: ",ires," Max frequency: ",f0i
+
+    if doplots:
+        plt.title('Original signal (Re,Im)')
+        plt.plot(frec,S11.real)
+        plt.plot(frec,S11.imag)
+        plt.show()
+
+        plt.plot(np.angle(sS11))
+        plt.title('Smoothed Phase')
+        plt.axis('auto')
+        plt.show()
+        plt.plot(sdiffang[margin:-margin])
+        plt.plot(sdiffang)
+        plt.title('Diff of Smoothed Phase')
+        plt.show()
+
+        plt.title('Smoothed (ph-phavg)\^2')
+        plt.plot(errvec)
+        plt.plot([ires],[errvec[ires]],'ro')
+        plt.show()
+
+    return f0i
+
+def diff_find_resonance(frec,diffS11,margin=31,doplots=False):
+
+    #Smooth data for initial guesses
+    sReS11 = np.array(smooth(diffS11.real,margin,3))
+    sImS11 = np.array(smooth(diffS11.imag,margin,3))
+    sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
+    #Make smoothed phase vector removing 2pi jumps
+    sArgS11 = np.angle(sS11)
+    sArgS11 = np.unwrap(sArgS11)
+    sdiffang = np.diff(sArgS11)
+
+    #Get resonance index from maximum of the derivative of the phase
+    avgph =  np.average(sdiffang)
+    errvec = [np.power(x-avgph,2.) for x in sdiffang]
+    ires = np.argmax(errvec[margin:-margin])+margin
+    f0i=frec[ires]
+    print "Max index: ",ires," Max frequency: ",f0i
+
+    if doplots:
+        plt.title('Original signal (Re,Im)')
+        plt.plot(frec,diffS11.real)
+        plt.plot(frec,diffS11.imag)
+        plt.plot(frec,np.abs(diffS11))
+        plt.show()
+
+        plt.plot(np.angle(sS11))
+        plt.title('Smoothed Phase')
+        plt.axis('auto')
+        plt.show()
+        plt.plot(sdiffang[margin:-margin])
+        plt.title('Diff of Smoothed Phase')
+        plt.show()
+
+        plt.title('Smoothed (ph-phavg)\^2')
+        plt.plot(errvec)
+        plt.plot([ires],[errvec[ires]],'ro')
+        plt.show()
+
+    return f0i
 
