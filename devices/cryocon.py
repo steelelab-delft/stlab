@@ -22,10 +22,10 @@ class CryoCon:
         mystr = 'INP? ' + channel
         curr = self.query(mystr)
         if curr == '.......':
-            print 'Channel ',channel,' out of range'
+            print('Channel ',channel,' out of range')
             curr = -20
         elif curr == '-------':
-            print 'Channel ',channel,' out of range'
+            print('Channel ',channel,' out of range')
             curr = -20
         else:
             curr = float(curr)
@@ -50,7 +50,7 @@ class CryoCon:
         setp = self.query(mystr)
         channel = self.query('LOOP '+ str(loop) +':SOUR?')
         unit = self.query('INP ' + str(channel) + ':UNIT?')
-        print setp
+        print(setp)
 	return float(setp.strip(unit))
     def SetPman(self,setp,loop=2):
         mystr = 'LOOP ' + str(loop) + ':PMAN ' + str(setp)
@@ -82,10 +82,10 @@ class CryoCon:
             if abs(TT-Tset)<tol:
                 if tstablestart == None:
                     tstablestart = tnow
-                    print 'T in tolerance.  Settling...'
+                    print('T in tolerance.  Settling...')
             elif abs(TT-Tset)>=tol:
                 if tstablestart != None:
-                    print 'T left tolerance'
+                    print('T left tolerance')
                 tstablestart = None
                 continue
             if tnow-tstablestart > tsettle:
@@ -93,9 +93,9 @@ class CryoCon:
                 break
             time.sleep(0.2)
         if success:
-            print "Channel " + channel + " STABLE at " + str(Tset) + ' K'
+            print("Channel " + channel + " STABLE at " + str(Tset) + ' K')
         else:
-            print "Channel " + channel + " UNSTABLE for " + str(Tset) + ' K'
+            print("Channel " + channel + " UNSTABLE for " + str(Tset) + ' K')
         return success
 
 

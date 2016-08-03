@@ -9,13 +9,13 @@ class keysightB2901A:
     def __init__(self,addr='TCPIP::192.168.1.55::INSTR',reset=True):
         self.rs = visa.ResourceManager('@py')
         self.dev = self.rs.open_resource(addr)
-        print(self.dev.query('*IDN?'))
+        print((self.dev.query('*IDN?')))
         if reset:
             self.reset()
     def write(self,mystr):
         writestr = mystr+';*OPC?'
         self.dev.query(writestr)
-        print writestr
+        print(writestr)
     def query(self,mystr):
         out = self.dev.query(mystr)
         return out
@@ -25,7 +25,7 @@ class keysightB2901A:
         self.write(':SOUR:FUNC:MODE VOLT')
     def reset(self):
         self.write('*RST')
-        print(self.query('*OPC?'))
+        print((self.query('*OPC?')))
     def SetOutputOn(self):
         self.write(':OUTP ON')
     def SetOutputOff(self):
@@ -53,7 +53,7 @@ class keysightB2901A:
         self.write(mystr)
         mystr = ':MEAS?'
         outstr = self.dev.query(mystr)
-        data = np.array(map(float, outstr.split(',')))
+        data = np.array(list(map(float, outstr.split(','))))
         return (data[0],data[1])
 
 '''

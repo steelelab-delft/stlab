@@ -46,7 +46,7 @@ def getwidth_phase(i0,vec,margin):
 
 #removes range from imin to imax from vectors x,y
 def trim(x,y,imin,imax):
-    print len(x),len(y)
+    print(len(x),len(y))
     xnew = np.concatenate((x[0:imin],x[imax:]))
     ynew = np.concatenate((y[0:imin],y[imax:]))
     return (xnew,ynew)
@@ -140,7 +140,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     #ires = np.argmax(np.abs(sdiffang[margin:-margin]))+margin
     ires = np.argmax(errvec[margin:-margin])+margin
     f0i=frec[ires]
-    print "Max index: ",ires," Max frequency: ",f0i
+    print("Max index: ",ires," Max frequency: ",f0i)
 
     if doplots:
         plt.clf()
@@ -162,8 +162,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     #Get peak width by finding width of spike in diffphase plot
     (imin,imax) = getwidth_phase(ires,errvec,margin)
     di = imax-imin
-    print "Peak limits: ",imin,imax
-    print "Lower edge: ",frec[imin]," Center: ",frec[ires]," Upper edge: ",frec[imax]," Points in width: ", di
+    print("Peak limits: ",imin,imax)
+    print("Lower edge: ",frec[imin]," Center: ",frec[ires]," Upper edge: ",frec[imax]," Points in width: ", di)
 
     if doplots:
         plt.title('Smoothed (ph-phavg)\^2')
@@ -210,7 +210,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     bp0 = np.average(xx)
     ap0 = np.angle(sS11[0]) - bp0*frec[0]
     cp0 = 0.
-    print a0,b0,ap0,bp0
+    print(a0,b0,ap0,bp0)
 
     params = Parameters()
     myvary = True
@@ -319,7 +319,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 # write error report
     report_fit(finalresult.params)
     params = finalresult.params
-    print 'QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value)
+    print('QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value))
 
 #REDO final fit varying all parameters
     if refitback:
@@ -334,7 +334,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 # write error report
         report_fit(finalresult.params)
         params = finalresult.params
-        print 'QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value)
+        print('QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value))
 
 
 #calculate final result and background
@@ -377,7 +377,7 @@ def find_resonance(frec,S11,margin=31,doplots=False):
     errvec = [np.power(x-avgph,2.) for x in sdiffang]
     ires = np.argmax(errvec[margin:-margin])+margin
     f0i=frec[ires]
-    print "Max index: ",ires," Max frequency: ",f0i
+    print("Max index: ",ires," Max frequency: ",f0i)
 
     if doplots:
         plt.title('Original signal (Re,Im)')
@@ -417,7 +417,7 @@ def diff_find_resonance(frec,diffS11,margin=31,doplots=False):
     errvec = [np.power(x-avgph,2.) for x in sdiffang]
     ires = np.argmax(errvec[margin:-margin])+margin
     f0i=frec[ires]
-    print "Max index: ",ires," Max frequency: ",f0i
+    print("Max index: ",ires," Max frequency: ",f0i)
 
     if doplots:
         plt.title('Original signal (Re,Im)')

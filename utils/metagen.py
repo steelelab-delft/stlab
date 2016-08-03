@@ -1,5 +1,5 @@
 import os
-import readdata
+from . import readdata
 
 def fromarrays(filename,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',colnames=None):
     Nx = len(xarray)
@@ -58,7 +58,7 @@ def fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xt
 #Somewhat specific for datafiles from the solderroom, 2D "gnuplot" files only
 def fromdatafile(filename,xcol=None,ycol=None,xtitle=None,ytitle=None):
     mydata = readdata.readdat(filename)
-    keylist = mydata[0].keys()
+    keylist = list(mydata[0].keys())
 
     if (type(xcol) is not int) and (type(ycol) is not int) and (type(xtitle) is str) and (type(ytitle) is str):
         xcol = keylist.index(xtitle)
@@ -89,8 +89,8 @@ def fromdatafile(filename,xcol=None,ycol=None,xtitle=None,ytitle=None):
     ymin = mydata[-1][ykey][0]
     ymax = mydata[0][ykey][0]
 
-    print xkey,Nx,xmin,xmax
-    print ykey,Ny,ymin,ymax
+    print(xkey,Nx,xmin,xmax)
+    print(ykey,Ny,ymin,ymax)
 
     fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,xtitle=xkey,ytitle=ykey,colnames=keylist)
     return

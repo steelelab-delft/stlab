@@ -16,9 +16,9 @@ def readdat(filename):
 
     line = f.readline()
     line = line.strip("\n").strip("# ")
-    print line
+    print(line)
     names = line.split(', ')
-    print names
+    print(names)
 
     block =[]
     arrayofdicts = []
@@ -62,7 +62,7 @@ def readQUCS(filename):
 		words = line.split()
 		vartype = words[0]
 		varname = words[1]
-		print vartype, varname
+		print(vartype, varname)
 		if vartype == 'Qucs':
 		    continue
 		elif vartype == 'indep' or vartype=='dep':
