@@ -42,12 +42,12 @@ class keysightB2901A:
         mystr = ':MEAS:CURR?'
         curr = self.dev.query(mystr)
         curr = float(curr)
-	return curr
+        return curr
     def GetVoltage(self):
         mystr = ':MEAS:VOLT?'
         volt = self.dev.query(mystr)
         volt = float(volt)
-	return volt
+        return volt
     def GetVoltCurr(self):
         mystr = 'FORM:ELEM:SENS VOLT,CURR'
         self.write(mystr)
