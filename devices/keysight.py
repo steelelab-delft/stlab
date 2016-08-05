@@ -1,6 +1,6 @@
 import visa
 import numpy as np
-from instrument import instrument
+from stlab.devices.instrument import instrument
 
 def numtostr(mystr):
     return '%12.8e' % mystr
@@ -9,6 +9,7 @@ def numtostr(mystr):
 class keysightB2901A(instrument):
     def __init__(self,addr='TCPIP::192.168.1.55::INSTR',reset=True):
         super(keysightB2901A, self).__init__(addr,reset)
+        self.id()
     ''' OLD READ/WRITE METHODS WITH OPC... NOT SURE IF NECESSARY. IF COMMENTED WILL USE INHERITED FROM instrument
     def write(self,mystr):
         writestr = mystr+';*OPC?'

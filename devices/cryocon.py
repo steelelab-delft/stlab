@@ -1,7 +1,7 @@
 import visa
 import numpy as np
 import time
-from instrument import instrument
+from stlab.devices.instrument import instrument
 
 def numtostr(mystr):
     return '%12.8e' % mystr
@@ -9,8 +9,10 @@ def numtostr(mystr):
 
 class CryoCon(instrument):
     def __init__(self,addr='TCPIP::192.168.1.5::5000::SOCKET',reset=True):
-        super(CryoCon, self).__init__(addr,reset=False) #*RST reboots the instrument. Avoid
+        #RST reboots the instrument. Avoid
+        super(CryoCon, self).__init__(addr,reset=False)
         self.dev.read_termination = '\r\n'
+        self.id()
         self.channellist=['A','B','C','D']
         if reset:
             for channel in self.channellist: #set all units to K
