@@ -6,20 +6,22 @@ def numtostr(mystr):
 
 
 class FieldfoxPNA:
-    def __init__(self,addr='TCPIP::192.168.1.151::INSTR',reset=True):
+    def __init__(self,addr='TCPIP::192.168.1.151::INSTR',reset=True,mode='NA'):
         self.rs = visa.ResourceManager('@py')
         self.pna = self.rs.open_resource(addr)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.pna.timeout = None 
-        print(self.pna.query('*IDN?'))
+        print((self.pna.query('*IDN?')))
         self.twoportmode = False
         if reset:
             self.pna.write('*RST')
-            self.pna.write('INIT:CONT 0') #Turn off continuous mode
-            self.pna.write('SENS:ROSC:SOUR') #Sets external reference source
-            self.pna.write('INST:SEL "CAT"') #set mode to Network Analyzer
-            self.twoportmode = False
-#            self.TwoPort()
+            if mode == 'NA':
+                self.pna.write('INST:SEL "NA"') #set mode to Network Analyzer
+                self.pna.write('INIT:CONT 0') #Turn off continuous mode
+                self.TwoPort()
+            elif mode == 'SA':
+                self.pna.write('INST:SEL "SA"') #set mode to Network Analyzer
+                self.pna.write('INIT:CONT 0') #Turn off continuous mode
     def SinglePort(self):
         self.pna.write('CALC:PAR:COUN 1') #Set 1 trace and measurement
         self.pna.write('CALC:PAR1:DEF S11')
@@ -34,9 +36,6 @@ class FieldfoxPNA:
     def query(self,mystr):
         out = self.pna.query(mystr)
         return out
-#    def SetGlobalMode(self,mode):
-#        mystr = 'INST:'+str(mode)
-#        self.pna.write(mystr)
     def SetRange(self,start,end):
         self.SetStart(start)
         self.SetEnd(end)
@@ -63,23 +62,9 @@ class FieldfoxPNA:
         mystr = numtostr(x)
         mystr = 'SENS:BWID '+mystr
         self.pna.write(mystr)
-    def SetResBW(self,x):
-        mystr = numtostr(x)
-        mystr = 'SENS:BAND:RES '+mystr
-        self.pna.write(mystr)
-    def SetVidBW(self,x):
-        mystr = numtostr(x)
-        mystr = 'SENS:BAND:VID '+mystr
-        self.pna.write(mystr)
-#    def SetMode(self,freqmode):
-#	self.pna.write('SOUR:FREQ '+str(freqmode)) #CW, FIX, SWE, SEGM
-    def SetCWFreq(self,x):
-	mystr = numtostr(x)
-	mystr = 'ISO:FREQ '+mystr
-	self.pna.write(mystr)
     def SetPower(self,x):
         mystr = numtostr(x)
-        mystr = 'ISO:POW '+mystr
+        mystr = 'SOUR:POW '+mystr
         self.pna.write(mystr)
     def GetPower(self):
         mystr = 'SOUR:POW?'
@@ -93,7 +78,7 @@ class FieldfoxPNA:
     def Measure2ports(self,autoscale = True):
         if not self.twoportmode:
             self.TwoPort()
-        print(self.pna.query('INIT;*OPC?',delay=0.01)) #Trigger single sweep and wait for response
+        print((self.pna.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         if autoscale:
             self.pna.write('DISP:WIND:TRAC1:Y:AUTO') #Autoscale both traces
             self.pna.write('DISP:WIND:TRAC2:Y:AUTO')
@@ -104,9 +89,9 @@ class FieldfoxPNA:
         self.pna.write('CALC:PAR2:SEL')
         S21 = self.pna.query('CALC:DATA:SDATA?')
         #Convert to numpy arrays
-        frec = np.array(map(float, frec.split(',')))
-        S11 = np.array(map(float, S11.split(',')))
-        S21 = np.array(map(float, S21.split(',')))
+        frec = np.array(list(map(float, frec.split(','))))
+        S11 = np.array(list(map(float, S11.split(','))))
+        S21 = np.array(list(map(float, S21.split(','))))
         S11re = S11[::2]  #Real part
         S11im = S11[1::2] #Imaginary part
         S21re = S21[::2]  #Real part
@@ -117,13 +102,13 @@ class FieldfoxPNA:
         nmeas = self.pna.query('CALC:PAR:COUN?')
         nmeas = int(nmeas)
         frec = self.pna.query('FREQ:DATA?')
-        frec = np.array(map(float, frec.split(',')))
+        frec = np.array(list(map(float, frec.split(','))))
         traces = []
         for i in range(1,nmeas+1):
             mystr = 'CALC:PAR' + ('%d' % i) + ':SEL'
             self.pna.write(mystr)
             tr = self.pna.query('CALC:DATA:SDATA?')
-            tr = np.array(map(float, tr.split(',')))
+            tr = np.array(list(map(float, tr.split(','))))
             trre = tr[::2]  #Real part
             trim = tr[1::2] #Imaginary part
             traces.append(trre)
@@ -138,7 +123,7 @@ class FieldfoxPNA:
     def Measure1port(self,autoscale = True):
         if self.twoportmode:
             self.SinglePort()
-        print(self.pna.query('INIT;*OPC?',delay=0.01)) #Trigger single sweep and wait for response
+        print((self.pna.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         if autoscale:
             self.pna.write('DISP:WIND:TRAC1:Y:AUTO') #Autoscale both traces
         #Read measurement (in unicode strings)
@@ -146,25 +131,12 @@ class FieldfoxPNA:
         self.pna.write('CALC:PAR1:SEL')
         S11 = self.pna.query('CALC:DATA:SDATA?')
         #Convert to numpy arrays
-        frec = np.array(map(float, frec.split(',')))
-        S11 = np.array(map(float, S11.split(',')))
+        frec = np.array(list(map(float, frec.split(','))))
+        S11 = np.array(list(map(float, S11.split(','))))
         S11re = S11[::2]  #Real part
         S11im = S11[1::2] #Imaginary part
         return (frec,S11re,S11im)
-    def Measure1portSA(self,autoscale = True):
-        print(self.pna.query('INIT',delay=0.01)) #Trigger single sweep and wait for response
-        if autoscale:
-            self.pna.write('DISP:WIND:TRAC:Y:AUTO') #Autoscale both traces
-        #Read measurement (in unicode strings)
-        frec = self.pna.query('FREQ:DATA?')
-        self.pna.write('CALC:PAR:SEL')
-        S = self.pna.query('CALC:TRAC:DATA?')
-        #Convert to numpy arrays
-        frec = np.array(map(float, frec.split(',')))
-        S = np.array(map(float, S.split(',')))
-        #S11re = S11[::2]  #Real part
-        #S11im = S11[1::2] #Imaginary part
-        return (frec,S)
+# DC source commands
     def EnableDCsource(self,reset=True):
         if reset:
             self.pna.write('SYST:VVS:VOLT 1.00')
@@ -193,5 +165,45 @@ class FieldfoxPNA:
         vv = self.pna.query(mystr)
         vv = float(vv)
 	return vv
-
-
+#SA Mode commands
+    def SetResBW(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:BAND:RES '+mystr
+        self.pna.write(mystr)
+    def SetVidBW(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:BAND:VID '+mystr
+        self.pna.write(mystr)
+    def SetCWFreq(self,x):
+	mystr = numtostr(x)
+	mystr = 'ISO:FREQ '+mystr
+	self.pna.write(mystr)
+    def SetCWPower(self,x):
+        mystr = numtostr(x)
+        mystr = 'ISO:POW '+mystr
+        self.pna.write(mystr)
+    def EnableIS(self):
+        self.pna.write('ISO:ENAB 1')
+    def DisableIS(self):
+        self.pna.write('ISO:ENAB 0')
+    def SetISmodeCW(self):
+        self.pna.write('ISO:MODE CW')
+    def SetInternalRef(self):
+        self.pna.write('ROSC:SOUR INT')        
+    def SetExternalRef(self):
+        self.pna.write('ROSC:SOUR EXT')
+    def MeasureSpectrum(self,autoscale = True):
+        print((self.pna.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
+        if autoscale:
+            self.pna.write('DISP:WIND:TRAC:Y:AUTO') #Autoscale both traces
+        #Read measurement (in unicode strings)
+#        frec = self.pna.query('FREQ:DATA?')
+        freqstart = float(self.pna.query('FREQ:STAR?'))
+        freqstop = float(self.pna.query('FREQ:STOP?'))
+        npoints =  float(self.pna.query('SWE:POIN?'))
+        step = (freqstop-freqstart)/(npoints-1)
+        frec = np.arange(freqstart,freqstop+step,step)
+        spec = self.pna.query('TRAC:DATA?')
+        #Convert to numpy arrays
+        spec = np.asarray(list(map(float, spec.split(','))))
+        return (frec,spec)    

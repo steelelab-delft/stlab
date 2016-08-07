@@ -12,7 +12,7 @@ class RS_ZND_pna:
         self.dev = self.rs.open_resource(addr)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None 
-        print(self.query('*IDN?'))
+        print((self.query('*IDN?')))
         self.twoportmode = False
         self.oneportmode = False
         if reset:
@@ -95,7 +95,7 @@ class RS_ZND_pna:
     def Measure2ports(self,autoscale = True):
         if not self.twoportmode:
             self.TwoPort()
-        print(self.query('INIT;*OPC?')) #Trigger single sweep and wait for response
+        print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale both traces
             self.write('DISP:WIND2:TRAC1:Y:AUTO ONCE')
@@ -106,9 +106,9 @@ class RS_ZND_pna:
         #self.write('CALC:PAR2:SEL')
         S21 = self.query('CALC:DATA:TRAC? \'TrS21\', SDAT')
         #Convert to numpy arrays
-        frec = np.array(map(float, frec.split(',')))
-        S11 = np.array(map(float, S11.split(',')))
-        S21 = np.array(map(float, S21.split(',')))
+        frec = np.array(list(map(float, frec.split(','))))
+        S11 = np.array(list(map(float, S11.split(','))))
+        S21 = np.array(list(map(float, S21.split(','))))
         S11re = S11[::2]  #Real part
         S11im = S11[1::2] #Imaginary part
         S21re = S21[::2]  #Real part
@@ -119,15 +119,15 @@ class RS_ZND_pna:
         pass
         if not self.oneportmode:
             self.SinglePort()
-        print(self.query('INIT;*OPC?')) #Trigger single sweep and wait for response
+        print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
         #Read measurement (in unicode strings)
         frec = self.query('CALC:DATA:STIM?')
         S11 = self.query('CALC:DATA:TRAC? \'TrS11\', SDAT')
         #Convert to numpy arrays
-        frec = np.array(map(float, frec.split(',')))
-        S11 = np.array(map(float, S11.split(',')))
+        frec = np.array(list(map(float, frec.split(','))))
+        S11 = np.array(list(map(float, S11.split(','))))
         S11re = S11[::2]  #Real part
         S11im = S11[1::2] #Imaginary part
         return (frec,S11re,S11im)

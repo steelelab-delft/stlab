@@ -13,7 +13,7 @@ class RS_ZND_pna:
         self.dev = self.rs.open_resource(addr)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None 
-        print(self.query('*IDN?'))
+        print((self.query('*IDN?')))
         self.twoportmode = False
         self.oneportmode = False
         if reset:
@@ -41,10 +41,10 @@ class RS_ZND_pna:
         self.twoportmode = True
         self.oneportmode = False
     def write(self,mystr):
-        print mystr
+        print(mystr)
         self.dev.write(mystr)
     def query(self,mystr,delay=None):
-        print mystr
+        print(mystr)
         out = self.dev.query(mystr,delay=delay)
         return out
     def read(self):
@@ -92,39 +92,64 @@ class RS_ZND_pna:
     def Measure2ports(self,autoscale = True):
         if not self.twoportmode:
             self.TwoPort()
-        print(self.query('INIT;*OPC?')) #Trigger single sweep and wait for response
+        print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale both traces
             self.write('DISP:WIND2:TRAC1:Y:AUTO ONCE')
-        #Read measurement (in unicode strings)
+        #Read measurement (in unicode strings). READS DATA WITH ACTIVE CALIBRATION APPLIED
         frec = self.query('CALC:DATA:STIM?')
-        #self.write('CALC:PAR1:SEL')
         S11 = self.query('CALC:DATA:TRAC? \'TrS11\', SDAT')
-        #self.write('CALC:PAR2:SEL')
         S21 = self.query('CALC:DATA:TRAC? \'TrS21\', SDAT')
-        #Convert to numpy arrays
-        frec = np.array(map(float, frec.split(',')))
-        S11 = np.array(map(float, S11.split(',')))
-        S21 = np.array(map(float, S21.split(',')))
+        frec = np.array(list(map(float, frec.split(','))))
+        S11 = np.array(list(map(float, S11.split(','))))
+        S21 = np.array(list(map(float, S21.split(','))))
         S11re = S11[::2]  #Real part
         S11im = S11[1::2] #Imaginary part
         S21re = S21[::2]  #Real part
         S21im = S21[1::2] #Imaginary part
-        return (frec,S11re, S11im, S21re, S21im)
-
+        CalOn = bool(int(self.query('CORR?')))
+        if CalOn:
+            S11uc = self.query('CALC:DATA:TRAC? \'TrS11\', NCD')
+            S21uc = self.query('CALC:DATA:TRAC? \'TrS21\', NCD')
+            S11reuc = S11uc[::2]  #Real part
+            S11imuc = S11uc[1::2] #Imaginary part
+            S21reuc = S21uc[::2]  #Real part
+            S21imuc = S21uc[1::2] #Imaginary part
+            return (frec,S11re, S11im, S21re, S21im, S11reuc, S11imuc, S21reuc, S21imuc)
+        else:
+            return (frec,S11re, S11im, S21re, S21im)
     def Measure1port(self,autoscale = True):
         pass
         if not self.oneportmode:
             self.SinglePort()
-        print(self.query('INIT;*OPC?')) #Trigger single sweep and wait for response
+        print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
-        #Read measurement (in unicode strings)
+        #Read measurement (in unicode strings).  READS DATA WITH ACTIVE CALIBRATION APPLIED
         frec = self.query('CALC:DATA:STIM?')
         S11 = self.query('CALC:DATA:TRAC? \'TrS11\', SDAT')
         #Convert to numpy arrays
-        frec = np.array(map(float, frec.split(',')))
-        S11 = np.array(map(float, S11.split(',')))
+        frec = np.array(list(map(float, frec.split(','))))
+        S11 = np.array(list(map(float, S11.split(','))))
         S11re = S11[::2]  #Real part
         S11im = S11[1::2] #Imaginary part
-        return (frec,S11re,S11im)
+        CalOn = bool(int(self.query('CORR?')))
+        if CalOn:
+            S11uc = self.query('CALC:DATA:TRAC? \'TrS11\', NCD')
+            S11uc = np.array(list(map(float, S11uc.split(','))))
+            S11reuc = S11uc[::2]  #Real part
+            S11imuc = S11uc[1::2] #Imaginary part
+            return (frec,S11re,S11im,S11reuc,S11imuc)
+        else:
+            return (frec,S11re,S11im)
+    def LoadCal (self, calfile, channel = 1):
+        mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
+        self.write(mystr)
+    def CalOn (self):
+        mystr = "CORR ON"
+        self.write(mystr)
+    def CalOff (self):
+        mystr = "CORR OFF"
+        self.write(mystr)
+
+
