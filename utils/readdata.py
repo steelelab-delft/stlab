@@ -16,9 +16,9 @@ def readdat(filename):
 
     line = f.readline()
     line = line.strip("\n").strip("# ")
-    print line
+    print(line)
     names = line.split(', ')
-    print names
+    print(names)
 
     block =[]
     arrayofdicts = []
@@ -44,38 +44,38 @@ def readdat(filename):
 pi = np.pi
 
 def readQUCS(filename):
-	f = open(filename,'r')
-	variables = {}
-	ivar = 0
-	mylists = {}
-	col = []
-	currentvarname =""
+    f = open(filename,'r')
+    variables = {}
+    ivar = 0
+    mylists = {}
+    col = []
+    currentvarname =""
 
-	for line in f:
-	    varfound = line.find('<')
-	    varendfound = line.find('/')
-	    if varendfound != -1:
-		mylists[currentvarname] = np.array(col)
-		col = []
-	    elif varfound != -1:
-		line = line.strip("\n").strip(">").strip("<")
-		words = line.split()
-		vartype = words[0]
-		varname = words[1]
-		print vartype, varname
-		if vartype == 'Qucs':
-		    continue
-		elif vartype == 'indep' or vartype=='dep':
-	            currentvarname = varname
-	    elif varfound == -1:
-		if 'j' not in line:
-		    col.append(float(line))
-		else:
-		    ij = line.find('j')
-		    x = float(line[0:ij-1])
-		    y = float(line[ij-1:].replace("j",""))
-		    col.append( complex(x,y) )
-        return mylists
+    for line in f:
+        varfound = line.find('<')
+        varendfound = line.find('/')
+        if varendfound != -1:
+            mylists[currentvarname] = np.array(col)
+            col = []
+        elif varfound != -1:
+            line = line.strip("\n").strip(">").strip("<")
+            words = line.split()
+            vartype = words[0]
+            varname = words[1]
+            print(vartype, varname)
+            if vartype == 'Qucs':
+                continue
+            elif vartype == 'indep' or vartype=='dep':
+                currentvarname = varname
+        elif varfound == -1:
+            if 'j' not in line:
+                col.append(float(line))
+            else:
+                ij = line.find('j')
+                x = float(line[0:ij-1])
+                y = float(line[ij-1:].replace("j",""))
+                col.append( complex(x,y) )
+    return mylists
 
 
 '''
@@ -90,17 +90,17 @@ def readQUCS(filename):
             vartype = words[0]
             varname = words[1]
             print vartype, varname
-    	if vartype == 'Qucs':
-	    continue
-	elif vartype == 'indep' or vartype=='dep':
+        if vartype == 'Qucs':
+        continue
+    elif vartype == 'indep' or vartype=='dep':
             currentvarname = varname
     elif varfound == -1:
-	if 'j' not in line:
-	    col.append(float(line))
-	else:
-	    ij = line.find('j')
-	    x = float(line[0:ij-1])
-	    y = float(line[ij-1:].replace("j",""))
-	    col.append( complex(x,y) )
+    if 'j' not in line:
+        col.append(float(line))
+    else:
+        ij = line.find('j')
+        x = float(line[0:ij-1])
+        y = float(line[ij-1:].replace("j",""))
+        col.append( complex(x,y) )
     return mylists
 '''

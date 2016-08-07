@@ -1,35 +1,42 @@
 import visa
 import numpy as np
 import time
+from stlab.devices.instrument import instrument
 
 def numtostr(mystr):
     return '%12.8e' % mystr
 
 
-class CryoCon:
+class CryoCon(instrument):
     def __init__(self,addr='TCPIP::192.168.1.5::5000::SOCKET',reset=True):
-        self.rs = visa.ResourceManager('@py')
-        self.dev = self.rs.open_resource(addr,read_termination='\r\n')
+        #RST reboots the instrument. Avoid
+        super(CryoCon, self).__init__(addr,reset=False)
+        self.dev.read_termination = '\r\n'
+        self.id()
         self.channellist=['A','B','C','D']
-        for channel in self.channellist: #set all units to K
-            self.write('INP ' + channel + ':UNIT K')
+        if reset:
+            for channel in self.channellist: #set all units to K
+                self.write('INP ' + channel + ':UNIT K')
+    #OLD READ/WRITE METHODS WITH OPC... NOT SURE IF NECESSARY. IF COMMENTED WILL USE INHERITED FROM instrument
+    '''
     def write(self,mystr):
         self.dev.query(mystr + ';*OPC?')
     def query(self,mystr):
         out = self.dev.query(mystr)
         return out
+    '''
     def GetTemperature(self,channel='C'):
         mystr = 'INP? ' + channel
         curr = self.query(mystr)
         if curr == '.......':
-            print 'Channel ',channel,' out of range'
+            print('Channel ',channel,' out of range')
             curr = -20
         elif curr == '-------':
-            print 'Channel ',channel,' out of range'
+            print('Channel ',channel,' out of range')
             curr = -20
         else:
             curr = float(curr)
-	return curr
+        return curr
     def GetTemperatureAll(self):
         result = []
         for chan in self.channellist:
@@ -41,7 +48,7 @@ class CryoCon:
     def GetSetPoint(self,loop=2):
         mystr = 'LOOP ' + str(loop) + ':SETP?'
         setp = self.query(mystr)
-	return float(setp)
+        return float(setp)
     def SetSetPoint(self,setp,loop=2):
         mystr = 'LOOP ' + str(loop) + ':SETP ' + str(setp)
         self.write(mystr)
@@ -50,15 +57,15 @@ class CryoCon:
         setp = self.query(mystr)
         channel = self.query('LOOP '+ str(loop) +':SOUR?')
         unit = self.query('INP ' + str(channel) + ':UNIT?')
-        print setp
-	return float(setp.strip(unit))
+        print(setp)
+        return float(setp.strip(unit))
     def SetPman(self,setp,loop=2):
         mystr = 'LOOP ' + str(loop) + ':PMAN ' + str(setp)
         self.write(mystr)
     def GetPman(self,loop=2):
         mystr = 'LOOP ' + str(loop) + ':PMAN?'
         setp = self.query(mystr)
-	return float(setp)
+        return float(setp)
     def ControlOn(self):
         self.write('CONT')
         return
@@ -82,10 +89,10 @@ class CryoCon:
             if abs(TT-Tset)<tol:
                 if tstablestart == None:
                     tstablestart = tnow
-                    print 'T in tolerance.  Settling...'
+                    print('T in tolerance.  Settling...')
             elif abs(TT-Tset)>=tol:
                 if tstablestart != None:
-                    print 'T left tolerance'
+                    print('T left tolerance')
                 tstablestart = None
                 continue
             if tnow-tstablestart > tsettle:
@@ -93,9 +100,9 @@ class CryoCon:
                 break
             time.sleep(0.2)
         if success:
-            print "Channel " + channel + " STABLE at " + str(Tset) + ' K'
+            print("Channel " + channel + " STABLE at " + str(Tset) + ' K')
         else:
-            print "Channel " + channel + " UNSTABLE for " + str(Tset) + ' K'
+            print("Channel " + channel + " UNSTABLE for " + str(Tset) + ' K')
         return success
 
 
