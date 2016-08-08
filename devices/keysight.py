@@ -7,21 +7,15 @@ def numtostr(mystr):
 
 
 class keysightB2901A(instrument):
-    def __init__(self,addr='TCPIP::192.168.1.55::INSTR',reset=True):
-        super(keysightB2901A, self).__init__(addr,reset)
+    def __init__(self,addr='TCPIP::192.168.1.55::INSTR',reset=True,verb=True):
+        super(keysightB2901A, self).__init__(addr,reset,verb)
         self.id()
-    ''' OLD READ/WRITE METHODS WITH OPC... NOT SURE IF NECESSARY. IF COMMENTED WILL USE INHERITED FROM instrument
+    #OLD READ METHOD WITH OPC... NOT SURE IF NECESSARY. IF COMMENTED WILL USE INHERITED FROM instrument
     def write(self,mystr):
         writestr = mystr+';*OPC?'
         self.dev.query(writestr)
-        print(writestr)
-    def query(self,mystr):
-        out = self.dev.query(mystr)
-        return out
-    def reset(self):
-        self.write('*RST')
-        print((self.query('*OPC?')))
-    '''
+        if self.verb:
+            print(writestr)
     def SetModeCurrent(self):
         self.write(':SOUR:FUNC:MODE CURR')
     def SetModeVoltage(self):
