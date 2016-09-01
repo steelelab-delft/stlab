@@ -1,5 +1,6 @@
 import visa
 import numpy as np
+from stlab.devices.instrument import instrument
 
 def numtostr(mystr):
     return '%20.15e' % mystr
@@ -146,25 +147,25 @@ class FieldfoxPNA(instrument):
         self.write('SYST:VVS:ENAB 0')
         return
     def SetDCvoltage(self,vv):
-	mystr = numtostr(vv)
+        mystr = numtostr(vv)
         mystr = 'SYST:VVS:VOLT '+mystr
         self.write(mystr)
-	return
+        return
     def GetDCvoltage(self):
         mystr = 'SYST:VVS:VOLT?'
         vv = self.query(mystr)
         vv = float(vv)
-	return vv
+        return vv
     def GetMDCvoltage(self):
         mystr = 'SYST:VVS:MVOL?'
         vv = self.query(mystr)
         vv = float(vv)
-	return vv
+        return vv
     def GetDCcurrent(self):
         mystr = 'SYST:VVS:CURR?'
         vv = self.query(mystr)
         vv = float(vv)
-	return vv
+        return vv
 #SA Mode commands
     def SetResBW(self,x):
         mystr = numtostr(x)
@@ -175,9 +176,9 @@ class FieldfoxPNA(instrument):
         mystr = 'SENS:BAND:VID '+mystr
         self.write(mystr)
     def SetCWFreq(self,x):
-	mystr = numtostr(x)
-	mystr = 'ISO:FREQ '+mystr
-	self.write(mystr)
+        mystr = numtostr(x)
+        mystr = 'ISO:FREQ '+mystr
+        self.write(mystr)
     def SetCWPower(self,x):
         mystr = numtostr(x)
         mystr = 'ISO:POW '+mystr
