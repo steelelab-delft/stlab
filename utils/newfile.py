@@ -4,6 +4,7 @@ import shutil
 
 # Creates new measurement folder using prefix + datetime + idstring.
 # If colnames (array of column names) is included, the title line is written
+# Also copies main script file to measurement folder
 
 def newfile(prefix,idstring,colnames=None):
 
