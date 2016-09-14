@@ -9,7 +9,10 @@ import shutil
 def newfile(prefix,idstring,colnames=None):
 
     import __main__
-    mainfile = __main__.__file__
+    if hasattr(__main__, __file__):
+        mainfile = __main__.__file__
+    else:
+        mainfile = None
 
     mytime = datetime.datetime.now()
     datecode = '%s' % mytime.year + '_' + ('%s' % mytime.month).zfill(2) + '_' +('%s' % mytime.day).zfill(2)
@@ -20,8 +23,9 @@ def newfile(prefix,idstring,colnames=None):
     if not os.path.exists(foldername):
         os.makedirs(foldername)
     print('Measurement Folder: ', foldername)
-    scriptname = os.path.basename(mainfile)
-    shutil.copyfile(mainfile,'./' + foldername + '/' + scriptname)
+    if mainfile !=None:
+        scriptname = os.path.basename(mainfile)
+        shutil.copyfile(mainfile,'./' + foldername + '/' + scriptname)
 
     fullfilename = './' + foldername + '/' + filename
     myfile = open(fullfilename, 'w')
