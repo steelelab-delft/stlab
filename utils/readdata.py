@@ -38,7 +38,7 @@ def readdat(filename):
     return arrayofdicts
 
 def reads2p(filename):
-	f = open("test.s2p",'r')
+	f = open(filename,'r')
 	names = ['Frequency (Hz)', 'S11re ()', 'S11im ()', 'S21re ()', 'S21im ()', 'S12re ()', 'S12im ()', 'S22re ()', 'S22im ()']
 
 	measurement = []
@@ -47,11 +47,11 @@ def reads2p(filename):
 			continue
 		line = [ float(x) for x in line.strip('\n').split()]
 		measurement.append(line)
-		measurement = np.asarray(measurement)
-		measurement = measurement.T
-		mydict=OrderedDict()
-		for name,data in zip(names,measurement):
-			mydict[name]=data
+	measurement = np.asarray(measurement)
+	measurement = measurement.T
+	mydict=OrderedDict()
+	for name,data in zip(names,measurement):
+		mydict[name]=data
 	f.close()
 	return mydict
 
