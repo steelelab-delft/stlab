@@ -1,23 +1,21 @@
 import visa
 import numpy as np
 import time
+from stlab.devices.instrument import instrument
 
 def numtostr(mystr):
-#    return '%20.15e' % mystr
-    return '%20.10f' % mystr
+    return '%20.15e' % mystr
+#    return '%20.10f' % mystr
 
-
-class RS_ZND_pna:
-    def __init__(self,addr='TCPIP::192.168.1.149::INSTR',reset=True):
-        self.rs = visa.ResourceManager('@py')
-        self.dev = self.rs.open_resource(addr)
+class RS_ZND_pna(instrument):
+    def __init__(self,addr='TCPIP::192.168.1.149::INSTR',reset=True,verb=True):
+        super(RS_ZND_pna, self).__init__(addr,reset,verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None 
-        print((self.query('*IDN?')))
+        self.id()
         self.twoportmode = False
         self.oneportmode = False
         if reset:
-            self.write('*RST')
             self.write('INIT:CONT 0') #Turn off continuous mode
             self.TwoPort()
     def SinglePort(self):
@@ -40,16 +38,6 @@ class RS_ZND_pna:
             self.write('DISP:WIND'+wind+':TRAC1:FEED ' + name)
         self.twoportmode = True
         self.oneportmode = False
-    def write(self,mystr):
-        print(mystr)
-        self.dev.write(mystr)
-    def query(self,mystr,delay=None):
-        print(mystr)
-        out = self.dev.query(mystr,delay=delay)
-        return out
-    def read(self):
-        out = self.dev.read()
-        return out
     def SetRange(self,start,end):
         self.SetStart(start)
         self.SetEnd(end)

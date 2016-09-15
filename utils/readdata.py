@@ -32,10 +32,28 @@ def readdat(filename):
             arrayofdicts.append(newdict)
             block = []
             continue
-        point = [float(x) for x in point.strip('\n').split(', ')]
+        point = [ float(x) for x in point.strip('\n').split(', ')]
         block.append(point)
 
     return arrayofdicts
+
+def reads2p(filename):
+	f = open(filename,'r')
+	names = ['Frequency (Hz)', 'S11re ()', 'S11im ()', 'S21re ()', 'S21im ()', 'S12re ()', 'S12im ()', 'S22re ()', 'S22im ()']
+
+	measurement = []
+	for line in f:
+		if line.startswith('!') or line.startswith('#'):
+			continue
+		line = [ float(x) for x in line.strip('\n').split()]
+		measurement.append(line)
+	measurement = np.asarray(measurement)
+	measurement = measurement.T
+	mydict=OrderedDict()
+	for name,data in zip(names,measurement):
+		mydict[name]=data
+	f.close()
+	return mydict
 
 # Imports a QUCS formatted data file.  The data is returned as a dict 
 # containing np.array's for each variable with the QUCS variable name

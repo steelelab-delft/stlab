@@ -3,39 +3,25 @@ import numpy as np
 import time
 from stlab.devices.instrument import instrument
 
-def numtostr(mystr):
-    return '%12.8e' % mystr
-
-
 class CryoCon(instrument):
-    def __init__(self,addr='TCPIP::192.168.1.5::5000::SOCKET',reset=True):
-        #RST reboots the instrument. Avoid
-        super(CryoCon, self).__init__(addr,reset=False)
-        self.dev.read_termination = '\r\n'
+    def __init__(self,addr='TCPIP::192.168.1.5::5000::SOCKET',reset=True,verb=True):
+        #RST reboots the instrument. Avoid...  Also needs special read_termination = '\r\n'
+        super(CryoCon, self).__init__(addr,reset=False,verb=verb,read_termination='\r\n')
         self.id()
         self.channellist=['A','B','C','D']
         if reset:
             for channel in self.channellist: #set all units to K
                 self.write('INP ' + channel + ':UNIT K')
-    #OLD READ/WRITE METHODS WITH OPC... NOT SURE IF NECESSARY. IF COMMENTED WILL USE INHERITED FROM instrument
-    '''
-    def write(self,mystr):
-        self.dev.query(mystr + ';*OPC?')
-    def query(self,mystr):
-        out = self.dev.query(mystr)
-        return out
-    '''
+    def write(self,mystr): #REQUIRES SPECIAL WRITE WITH OPC CHECK...
+        self.query(mystr + ';*OPC?')
     def GetTemperature(self,channel='C'):
         mystr = 'INP? ' + channel
         curr = self.query(mystr)
-        if curr == '.......':
-            print('Channel ',channel,' out of range')
-            curr = -20
-        elif curr == '-------':
-            print('Channel ',channel,' out of range')
-            curr = -20
-        else:
+        try:
             curr = float(curr)
+        except ValueError:
+            print('Channel ',channel,' out of range')
+            curr = -20.
         return curr
     def GetTemperatureAll(self):
         result = []

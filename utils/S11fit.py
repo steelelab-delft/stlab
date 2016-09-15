@@ -46,6 +46,8 @@ def getwidth_phase(i0,vec,margin):
 
 #removes range from imin to imax from vectors x,y
 def trim(x,y,imin,imax):
+    imin = int(imin)
+    imax = int(imax)
     print(len(x),len(y))
     xnew = np.concatenate((x[0:imin],x[imax:]))
     ynew = np.concatenate((y[0:imin],y[imax:]))
@@ -196,7 +198,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
     #Make initial background guesses
     b0 = (np.abs(sS11)[-1] - np.abs(sS11)[0])/(frec[-1]-frec[0])
-    a0 = np.abs(sS11)[0] - b0*frec[0]
+#    a0 = np.abs(sS11)[0] - b0*frec[0]
+    a0 = np.average(np.abs(sS11)) - b0*backfrec[0]
     c0 = 0.
 #    bp0 = ( np.angle(sS11[di])-np.angle(sS11[0]) )/(frec[di]-frec[0])
     xx = []
@@ -208,7 +211,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         xx.append(dtheta/df)
 #    bp0 = np.average([ x if np.abs(x)<pi else 0 for x in np.diff(np.angle(backsig))] )/(frec[1]-frec[0])
     bp0 = np.average(xx)
-    ap0 = np.angle(sS11[0]) - bp0*frec[0]
+#    ap0 = np.angle(sS11[0]) - bp0*frec[0]
+    ap0 = np.average(np.unwrap(np.angle(backsig))) - bp0*backfrec[0]
     cp0 = 0.
     print(a0,b0,ap0,bp0)
 
@@ -222,7 +226,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     params.add('cp', value= cp0, vary=myvary)
 
     if not fitbackground:
-        params['a'].set(value=-1, vary=False)
+        if ftype == 'A' or ftype == 'B':
+            params['a'].set(value=-1, vary=False)
+        elif ftype == '-A' or ftype == '-B':
+            params['a'].set(value=1, vary=False)
         params['b'].set(value=0, vary=False)
         params['c'].set(value=0, vary=False)
         params['ap'].set(value=0, vary=False)
@@ -237,7 +244,28 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         params['cp'].set(value=oldpars['cp'].value, vary=False)
 
 # do background fit
+
+    params['cp'].set(vary=False)
     result = minimize(background2min, params, args=(backfrec, backsig))
+    ''' 
+    params = result.params
+    params['a'].set(vary=False)
+    params['b'].set(vary=False)
+    params['c'].set(vary=False)
+    params['ap'].set(vary=False)
+    params['bp'].set(vary=False)
+    params['cp'].set(vary=True)
+    result = minimize(background2min, params, args=(backfrec, backsig))
+
+    params = result.params
+    params['a'].set(vary=True)
+    params['b'].set(vary=True)
+    params['c'].set(vary=True)
+    params['ap'].set(vary=True)
+    params['bp'].set(vary=True)
+    params['cp'].set(vary=True)
+    result = minimize(background2min, params, args=(backfrec, backsig))
+    '''
 
 # write error report
     report_fit(result.params)
@@ -247,6 +275,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     backgroundfit = backsig + complexresidual
     fullbackground = np.array([backmodel(xx,result.params) for xx in frec])
     S11corr = -S11 / fullbackground
+    if ftype == '-A' or ftype == '-B':
+        S11corr = -S11corr
 
     if doplots:
         plt.title('Signal and fitted background (Re,Im)')
