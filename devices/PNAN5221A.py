@@ -16,18 +16,18 @@ class PNAN5221A(instrument):
         if reset:
             self.write('INIT:CONT 0') #Turn off continuous mode
             self.TwoPortSetup()
-    def SinglePortSetup(self):
+    def SinglePortSetup(self,port=1):
         trcnames = self.GetTrcNames()
         if len(trcnames) == 1:
-            if trcnames[0] == 'S11':
+            if trcnames[0] == 'S%d%d' % (port,port):
                 return
         self.ClearAll()
         self.write('DISP:WIND1 ON')
-        tracenames = ['CH1_S11']
-        measnames = ['S11']
+        tracenames = ['CH1_S%d%d' % (port,port)]
+        measnames = ['S%d%d' % (port,port)]
         for i,(meas,trc) in enumerate(zip(measnames,tracenames)):
             self.write("CALC:PAR:DEF:EXT '%s', '%s'" % (trc,meas))
-            self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))
+            self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))        
     def TwoPortSetup(self):
         trcnames = self.GetTrcNames()
         measnames = ['S11', 'S21', 'S12', 'S22']
