@@ -31,8 +31,10 @@ def fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xt
     f.write(str(xtitle)+'\n')
     f.write('#Outer loop, Y\n')
     f.write(str(Ny)+'\n')
-    f.write(str(ymin)+'\n')
+#    f.write(str(ymin)+'\n')
+#    f.write(str(ymax)+'\n')
     f.write(str(ymax)+'\n')
+    f.write(str(ymin)+'\n')
     f.write(str(ytitle)+'\n')
     if Nz == None:
         f.write('#No loop, Z\n')
