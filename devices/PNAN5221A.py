@@ -142,6 +142,47 @@ class PNAN5221A(instrument):
         self.write('INIT:CONT 0')
         print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         return self.GetAllData()
+# New commands added by Dani, test to set segment sweep parameters
+    def SetSweepType(self,mystr): #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
+        self.write('SENS:SWE:TYPE %s' % mystr)
+        return
+    def SetArbitrarySegSweep(self,on = True):
+        if on:
+            self.write('SENS:SEGM:ARB ON')
+        else:
+            self.write('SENS:SEGM:ARB OFF')
+        return
+    def SetSegmStart(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:SEGM:FREQ:STAR '+mystr
+        self.write(mystr)
+        return
+    def SetSegmEnd(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:SEGM:FREQ:STOP '+mystr
+        self.write(mystr)
+        return
+     #Not currently working for segments
+    '''
+    def SetSegmIFBW(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:SEGM:BWID '+mystr
+        self.write(mystr)
+    def SetSegmPower(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:SEGM:POW '+mystr
+        self.write(mystr)
+    '''
+    def SetSegmPoints(self,x):
+        mystr = '%d' % x
+        mystr = 'SENS:SEGM:SWE:POIN '+mystr
+        self.write(mystr)
+        return
+    def SetSegmRange(self,start,end):
+        self.SetSegmStart(start)
+        self.SetSegmEnd(end)
+        return
+
 # DC source commands
     '''
     def EnableDCsource(self,reset=True):
