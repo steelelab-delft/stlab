@@ -11,7 +11,7 @@ class instrument:
         self.dev = global_rs.open_resource(addr)
         self.verb = verb
         if 'read_termination' in kwargs:
-            self.dev.read_termination = '\r\n'
+            self.dev.read_termination = kwargs['read_termination']
         if reset:
             self.reset()
     def write(self,mystr):
