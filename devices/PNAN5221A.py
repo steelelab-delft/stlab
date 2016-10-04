@@ -116,6 +116,7 @@ class PNAN5221A(instrument):
         pars = pars.strip('\n').strip('"').split(',')
         parnames = pars[1::2]
         pars = pars[::2]
+        self.write('CALC:PAR:SEL "%s"' % pars[0])
         names = ['Frequency (Hz)']
         alltrc = [self.GetFrequency()]
         for pp in parnames:
@@ -142,6 +143,17 @@ class PNAN5221A(instrument):
         self.write('INIT:CONT 0')
         print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         return self.GetAllData()
+    def AddTraces(self,trcs): #Function to add traces to measurement window.  trcs is a list of S parameters Sij.
+        self.write('DISP:WIND1 ON')
+        if type(trcs) is str:
+            measnames = [trcs]
+        else:
+            measnames = trcs
+        tracenames = ['CH1_%s' % x for x in measnames]
+        for i,(meas,trc) in enumerate(zip(measnames,tracenames)):
+            self.write("CALC:PAR:DEF:EXT '%s', '%s'" % (trc,meas))
+            self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))
+
 # New commands added by Dani, test to set segment sweep parameters
     def SetSweepType(self,mystr): #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
         self.write('SENS:SWE:TYPE %s' % mystr)
