@@ -2,6 +2,7 @@ import visa
 import numpy as np
 import time
 from stlab.devices.instrument import instrument
+from collections import OrderedDict
 
 def numtostr(mystr):
     return '%20.15e' % mystr
@@ -84,28 +85,7 @@ class RS_ZND_pna(instrument):
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale both traces
             self.write('DISP:WIND2:TRAC1:Y:AUTO ONCE')
-        #Read measurement (in unicode strings). READS DATA WITH ACTIVE CALIBRATION APPLIED
-        frec = self.query('CALC:DATA:STIM?')
-        S11 = self.query('CALC:DATA:TRAC? \'TrS11\', SDAT')
-        S21 = self.query('CALC:DATA:TRAC? \'TrS21\', SDAT')
-        frec = np.array(list(map(float, frec.split(','))))
-        S11 = np.array(list(map(float, S11.split(','))))
-        S21 = np.array(list(map(float, S21.split(','))))
-        S11re = S11[::2]  #Real part
-        S11im = S11[1::2] #Imaginary part
-        S21re = S21[::2]  #Real part
-        S21im = S21[1::2] #Imaginary part
-        CalOn = bool(int(self.query('CORR?')))
-        if CalOn:
-            S11uc = self.query('CALC:DATA:TRAC? \'TrS11\', NCD')
-            S21uc = self.query('CALC:DATA:TRAC? \'TrS21\', NCD')
-            S11reuc = S11uc[::2]  #Real part
-            S11imuc = S11uc[1::2] #Imaginary part
-            S21reuc = S21uc[::2]  #Real part
-            S21imuc = S21uc[1::2] #Imaginary part
-            return (frec,S11re, S11im, S21re, S21im, S11reuc, S11imuc, S21reuc, S21imuc)
-        else:
-            return (frec,S11re, S11im, S21re, S21im)
+        return self.GetAllData()
     def Measure1port(self,autoscale = True):
         pass
         if not self.oneportmode:
@@ -113,23 +93,45 @@ class RS_ZND_pna(instrument):
         print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
-        #Read measurement (in unicode strings).  READS DATA WITH ACTIVE CALIBRATION APPLIED
-        frec = self.query('CALC:DATA:STIM?')
-        S11 = self.query('CALC:DATA:TRAC? \'TrS11\', SDAT')
-        #Convert to numpy arrays
-        frec = np.array(list(map(float, frec.split(','))))
-        S11 = np.array(list(map(float, S11.split(','))))
-        S11re = S11[::2]  #Real part
-        S11im = S11[1::2] #Imaginary part
+        return self.GetAllData()
+    def GetFrequency(self):
+        freq = self.query('CALC:DATA:STIM?')
+        freq = np.asarray([float(xx) for xx in freq.split(',')])
+        return freq
+    def GetAllData(self):
         CalOn = bool(int(self.query('CORR?')))
+        pars = self.query('CALC:PAR:CAT?')
+        pars = pars.strip('\n').strip("'").split(',')
+        parnames = pars[1::2]
+        pars = pars[::2]
+        names = ['Frequency (Hz)']
+        alltrc = [self.GetFrequency()]
+        for pp in parnames:
+            names.append('%sre ()' % pp)
+            names.append('%sim ()' % pp)
         if CalOn:
-            S11uc = self.query('CALC:DATA:TRAC? \'TrS11\', NCD')
-            S11uc = np.array(list(map(float, S11uc.split(','))))
-            S11reuc = S11uc[::2]  #Real part
-            S11imuc = S11uc[1::2] #Imaginary part
-            return (frec,S11re,S11im,S11reuc,S11imuc)
-        else:
-            return (frec,S11re,S11im)
+            for pp in parnames:
+                names.append('%sre unc ()' % pp)
+                names.append('%sim unc ()' % pp)
+        for par in pars:
+            yy = self.query("CALC:DATA:TRAC? '%s', SDAT" % par)
+            yy = np.asarray([float(xx) for xx in yy.split(',')])
+            yyre = yy[::2]
+            yyim = yy[1::2]
+            alltrc.append(yyre)
+            alltrc.append(yyim)
+        if CalOn:
+            for par in pars:
+                yy = self.query("CALC:DATA:TRAC? '%s', NCD" % par)
+                yy = np.asarray([float(xx) for xx in yy.split(',')])
+                yyre = yy[::2]
+                yyim = yy[1::2]
+                alltrc.append(yyre)
+                alltrc.append(yyim)
+        final = OrderedDict()
+        for name,data in zip(names,alltrc):
+            final[name]=data
+        return final
     def LoadCal (self, calfile, channel = 1):
         mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
         self.write(mystr)
