@@ -1,6 +1,7 @@
 import visa
 import numpy as np
 from stlab.devices.instrument import instrument
+from collections import OrderedDict
 
 def numtostr(mystr):
     return '%20.15e' % mystr
@@ -12,24 +13,21 @@ class FieldfoxPNA(instrument):
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None 
         self.id()
-        self.twoportmode = False
         if reset:
             if mode == 'NA':
                 self.write('INST:SEL "NA"') #set mode to Network Analyzer
-                self.write('INIT:CONT 0') #Turn off continuous mode
+                self.SetContinuous(False) #Turn off continuous mode
                 self.TwoPort()
             elif mode == 'SA':
-                self.write('INST:SEL "SA"') #set mode to Network Analyzer
-                self.write('INIT:CONT 0') #Turn off continuous mode
+                self.write('INST:SEL "SA"') #set mode to Spectrum Analyzer
+                self.SetContinuous(False)
     def SinglePort(self):
         self.write('CALC:PAR:COUN 1') #Set 1 trace and measurement
         self.write('CALC:PAR1:DEF S11')
-        self.twoportmode = False
     def TwoPort(self):
         self.write('CALC:PAR:COUN 2') #Set 2 traces and measurements
         self.write('CALC:PAR1:DEF S11')
         self.write('CALC:PAR2:DEF S21')
-        self.twoportmode = True
     '''
     def write(self,mystr):
         self.write(mystr)
@@ -77,66 +75,84 @@ class FieldfoxPNA(instrument):
         mystr = 'SWE:POIN '+mystr
         self.write(mystr)
     def Measure2ports(self,autoscale = True):
-        if not self.twoportmode:
-            self.TwoPort()
-        print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
+        self.TwoPort()
+        self.Trigger()
         if autoscale:
             self.write('DISP:WIND:TRAC1:Y:AUTO') #Autoscale both traces
-            self.write('DISP:WIND:TRAC2:Y:AUTO')
-        #Read measurement (in unicode strings)
-        frec = self.query('FREQ:DATA?')
-        self.write('CALC:PAR1:SEL')
-        S11 = self.query('CALC:DATA:SDATA?')
-        self.write('CALC:PAR2:SEL')
-        S21 = self.query('CALC:DATA:SDATA?')
-        #Convert to numpy arrays
-        frec = np.array(list(map(float, frec.split(','))))
-        S11 = np.array(list(map(float, S11.split(','))))
-        S21 = np.array(list(map(float, S21.split(','))))
-        S11re = S11[::2]  #Real part
-        S11im = S11[1::2] #Imaginary part
-        S21re = S21[::2]  #Real part
-        S21im = S21[1::2] #Imaginary part
-        return (frec,S11re, S11im, S21re, S21im)
-    def MeasureScreen(self):
-        self.query('INIT:CONT 0;*OPC?')
+            self.write('DISP:WIND:TRAC2:Y:AUTO') #Autoscale both traces
+        return self.GetAllData()
+    def GetAllData(self):
+        Cal = self.GetCal()
         nmeas = self.query('CALC:PAR:COUN?')
         nmeas = int(nmeas)
-        frec = self.query('FREQ:DATA?')
-        frec = np.array(list(map(float, frec.split(','))))
-        traces = []
-        for i in range(1,nmeas+1):
-            mystr = 'CALC:PAR' + ('%d' % i) + ':SEL'
-            self.write(mystr)
-            tr = self.query('CALC:DATA:SDATA?')
-            tr = np.array(list(map(float, tr.split(','))))
-            trre = tr[::2]  #Real part
-            trim = tr[1::2] #Imaginary part
-            traces.append(trre)
-            traces.append(trim)
-        result = []
-        result.append(frec)
-        result.append(np.ones(frec.size)*self.GetPower())
-        for tt in traces:
-            result.append(tt)
-        result = np.transpose(np.asarray(result))
-        return result
+        print(nmeas)
+        pars = [self.query('CALC:PAR' + str(i+1) + ':DEF?').strip('\n') for i in range(0,nmeas)]
+        print(pars)
+        names = ['Frequency (Hz)']
+        alltrc = [self.GetFrequency()]
+        for pp in pars:
+            names.append('%sre ()' % pp)
+            names.append('%sim ()' % pp)
+        if Cal:
+            for pp in pars:
+                names.append('%sre unc ()' % pp)
+                names.append('%sim unc ()' % pp)
+        for i in range(0,nmeas):
+            self.write('CALC:PAR' + str(i+1) + ':SEL')
+            yy = self.query('CALC:DATA:SDATA?')
+            yy = np.asarray([float(xx) for xx in yy.split(',')])
+            yyre = yy[::2]
+            yyim = yy[1::2]
+            alltrc.append(yyre)
+            alltrc.append(yyim)
+        if Cal:
+            for i in range(0,nmeas):
+                self.write('CALC:PAR' + str(i+1) + ':SEL')
+                yy = self.query('CALC:DATA:SDATA?')
+                yy = np.asarray([float(xx) for xx in yy.split(',')])
+                yyre = yy[::2]
+                yyim = yy[1::2]
+                alltrc.append(yyre)
+                alltrc.append(yyim)
+        final = OrderedDict()
+        for name,data in zip(names,alltrc):
+            final[name]=data
+        return final
+    def MeasureScreen(self):
+        self.Trigger()
+        return self.GetAllData()
     def Measure1port(self,autoscale = True):
-        if self.twoportmode:
-            self.SinglePort()
-        print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
+        self.SinglePort()
+        self.Trigger()
         if autoscale:
             self.write('DISP:WIND:TRAC1:Y:AUTO') #Autoscale both traces
-        #Read measurement (in unicode strings)
+        return self.GetAllData()
+
+    def LoadState (self, statefile):
+        mystr = 'MMEM:LOAD:STAT "%s"' % statefile
+        self.write(mystr)
+    def CalOn (self):
+        mystr = "CORR:USER 1"
+        self.write(mystr)
+    def CalOff (self):
+        mystr = "CORR:USER 0"
+        self.write(mystr)
+    def GetCal(self):
+        return bool(int(self.query('CORR:USER?')))
+    def SetContinuous(self,bool=True):
+        if bool:
+            self.write('INIT:CONT 1') #Turn on continuous mode
+        elif not bool:
+            self.write('INIT:CONT 0') #Turn off continuous mode
+    def Trigger(self):
+        print((self.query('INIT;*OPC?')))
+        return
+    def GetFrequency(self):
         frec = self.query('FREQ:DATA?')
-        self.write('CALC:PAR1:SEL')
-        S11 = self.query('CALC:DATA:SDATA?')
         #Convert to numpy arrays
         frec = np.array(list(map(float, frec.split(','))))
-        S11 = np.array(list(map(float, S11.split(','))))
-        S11re = S11[::2]  #Real part
-        S11im = S11[1::2] #Imaginary part
-        return (frec,S11re,S11im)
+        return frec
+
 # DC source commands
     def EnableDCsource(self,reset=True):
         if reset:
@@ -166,6 +182,7 @@ class FieldfoxPNA(instrument):
         vv = self.query(mystr)
         vv = float(vv)
         return vv
+
 #SA Mode commands
     def SetResBW(self,x):
         mystr = numtostr(x)
@@ -207,4 +224,5 @@ class FieldfoxPNA(instrument):
         spec = self.query('TRAC:DATA?')
         #Convert to numpy arrays
         spec = np.asarray(list(map(float, spec.split(','))))
-        return (frec,spec)    
+        return (frec,spec)
+

@@ -6,8 +6,8 @@ def fromarrays(filename,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',
     xmin = xarray[0]
     xmax = xarray[-1]
     Ny = len(yarray)
-    ymax = yarray[0]
-    ymin = yarray[-1]
+    ymax = yarray[-1]
+    ymin = yarray[0]
     if zarray == None:
         Nz = None
         zmin = None

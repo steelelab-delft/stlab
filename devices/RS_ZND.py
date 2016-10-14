@@ -17,9 +17,10 @@ class RS_ZND_pna(instrument):
         self.twoportmode = False
         self.oneportmode = False
         if reset:
-            self.write('INIT:CONT 0') #Turn off continuous mode
+            self.SetContinuous(False) #Turn off continuous mode
             self.TwoPort()
     def SinglePort(self):
+        self.SetContinuous(False) #Turn off continuous mode
         self.write('CALC:PAR:DEL:ALL') #Delete default trace
         tracenames = ['\'TrS11\'']
         tracevars = ['\'S11\'']
@@ -29,6 +30,7 @@ class RS_ZND_pna(instrument):
         self.twoportmode = False
         self.oneportmode = True
     def TwoPort(self):
+        self.SetContinuous(False) #Turn off continuous mode
         self.write('CALC:PAR:DEL:ALL') #Delete default trace
         tracenames = ['\'TrS11\'','\'TrS21\'']
         tracevars = ['\'S11\'','\'S21\'']
@@ -81,7 +83,7 @@ class RS_ZND_pna(instrument):
     def Measure2ports(self,autoscale = True):
         if not self.twoportmode:
             self.TwoPort()
-        print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
+        self.Trigger() #Trigger single sweep and wait for response
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale both traces
             self.write('DISP:WIND2:TRAC1:Y:AUTO ONCE')
@@ -90,7 +92,7 @@ class RS_ZND_pna(instrument):
         pass
         if not self.oneportmode:
             self.SinglePort()
-        print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
+        self.Trigger() #Trigger single sweep and wait for response
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
         return self.GetAllData()
@@ -99,7 +101,7 @@ class RS_ZND_pna(instrument):
         freq = np.asarray([float(xx) for xx in freq.split(',')])
         return freq
     def GetAllData(self):
-        CalOn = bool(int(self.query('CORR?')))
+        Cal = self.GetCal()
         pars = self.query('CALC:PAR:CAT?')
         pars = pars.strip('\n').strip("'").split(',')
         parnames = pars[1::2]
@@ -109,7 +111,7 @@ class RS_ZND_pna(instrument):
         for pp in parnames:
             names.append('%sre ()' % pp)
             names.append('%sim ()' % pp)
-        if CalOn:
+        if Cal:
             for pp in parnames:
                 names.append('%sre unc ()' % pp)
                 names.append('%sim unc ()' % pp)
@@ -120,7 +122,7 @@ class RS_ZND_pna(instrument):
             yyim = yy[1::2]
             alltrc.append(yyre)
             alltrc.append(yyim)
-        if CalOn:
+        if Cal:
             for par in pars:
                 yy = self.query("CALC:DATA:TRAC? '%s', NCD" % par)
                 yy = np.asarray([float(xx) for xx in yy.split(',')])
@@ -141,5 +143,16 @@ class RS_ZND_pna(instrument):
     def CalOff (self):
         mystr = "CORR OFF"
         self.write(mystr)
+    def GetCal(self):
+        return bool(int(self.query('CORR?')))
+    def SetContinuous(self,bool=True):
+        if bool:
+            self.write('INIT:CONT 1') #Turn on continuous mode
+        elif not bool:
+            self.write('INIT:CONT 0') #Turn off continuous mode
+    def Trigger(self):
+        print((self.query('INIT;*OPC?')))
+        return
+
 
 
