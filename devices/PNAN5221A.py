@@ -112,6 +112,7 @@ class PNAN5221A(instrument):
         freq = np.asarray([float(xx) for xx in freq.split(',')])
         return freq
     def GetAllData(self):
+        Cal = self.GetCal()
         pars = self.query('CALC:PAR:CAT:EXT?')
         pars = pars.strip('\n').strip('"').split(',')
         parnames = pars[1::2]
@@ -122,6 +123,10 @@ class PNAN5221A(instrument):
         for pp in parnames:
             names.append('%sre ()' % pp)
             names.append('%sim ()' % pp)
+        if Cal:
+            for pp in parnames:
+                names.append('%sre unc ()' % pp)
+                names.append('%sim unc ()' % pp)
         for par in pars:
             self.write("CALC:PAR:SEL '%s'" % par)
             yy = self.query("CALC:DATA? SDATA")
@@ -130,6 +135,17 @@ class PNAN5221A(instrument):
             yyim = yy[1::2]
             alltrc.append(yyre)
             alltrc.append(yyim)
+        if Cal:
+            self.CalOff()
+            for par in pars:
+                self.write("CALC:PAR:SEL '%s'" % par)
+                yy = self.query("CALC:DATA? SDATA")
+                yy = np.asarray([float(xx) for xx in yy.split(',')])
+                yyre = yy[::2]
+                yyim = yy[1::2]
+                alltrc.append(yyre)
+                alltrc.append(yyim)
+            self.CalOn()
         final = OrderedDict()
         for name,data in zip(names,alltrc):
             final[name]=data
@@ -153,6 +169,19 @@ class PNAN5221A(instrument):
         for i,(meas,trc) in enumerate(zip(measnames,tracenames)):
             self.write("CALC:PAR:DEF:EXT '%s', '%s'" % (trc,meas))
             self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))
+    def LoadCal (self, calset):
+        mystr = 'SENS:CORR:INT ON'
+        self.write(mystr)
+        mystr = 'SENS:CORR:CSET:ACT "%s",0' % calset
+        self.write(mystr)
+    def CalOn (self):
+        mystr = "SENS:CORR ON"
+        self.write(mystr)
+    def CalOff (self):
+        mystr = "SENS:CORR OFF"
+        self.write(mystr)
+    def GetCal(self):
+        return bool(int(self.query('SENS:CORR?')))
 
 # New commands added by Dani, test to set segment sweep parameters
     def SetSweepType(self,mystr): #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
