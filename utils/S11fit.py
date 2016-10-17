@@ -235,7 +235,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         params['ap'].set(value=0, vary=False)
         params['bp'].set(value=0, vary=False)
         params['cp'].set(value=0, vary=False)
-    elif not refitback:
+    elif not refitback and oldpars != None:
         params['a'].set(value=oldpars['a'].value, vary=False)
         params['b'].set(value=oldpars['b'].value, vary=False)
         params['c'].set(value=oldpars['c'].value, vary=False)
@@ -327,16 +327,16 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
 #Make new parameter object (includes previous fitted background values)
     params = result.params
-    if not reusefitpars:
-        params.add('Qint', value=Qint0,vary=True)
-        params.add('Qext', value=Qext0,vary=True)
-        params.add('f0', value=f0i,vary=True)
-        params.add('theta', value=0,vary=True)
-    else:
+    if reusefitpars and oldpars != None:
         params.add('Qint', value=oldpars['Qint'].value,vary=True)
         params.add('Qext', value=oldpars['Qext'].value,vary=True)
         params.add('f0', value=oldpars['f0'].value,vary=True)
         params.add('theta', value=oldpars['theta'].value,vary=True)
+    else:
+        params.add('Qint', value=Qint0,vary=True)
+        params.add('Qext', value=Qext0,vary=True)
+        params.add('f0', value=f0i,vary=True)
+        params.add('theta', value=0,vary=True)
     params['a'].set(vary=False)
     params['b'].set(vary=False)
     params['c'].set(vary=False)
