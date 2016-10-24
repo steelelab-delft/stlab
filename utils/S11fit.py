@@ -119,8 +119,9 @@ def S11full(frec,params,ftype='A'):
 # oldpars -> Parameter data from previous fit (expects lmfit Parameter object). Used when "refitback" is "False" or "reusefitpars" is "True".
 # refitback -> If set to False, does not fit the background but uses parameters provided in "oldpars".  If set to "True", fits background normally
 # reusefitpars -> If set to True, uses parameters provided in "oldpars" as initial guess for fit parameters in main model fit (ignored by background fit)
+# fitwidth -> If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit
 
-def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False):
+def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False, fitwidth=None):
 
     #Smooth data for initial guesses
     sReS11 = np.array(smooth(S11.real,margin,3))
@@ -173,6 +174,16 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.plot([imin],[errvec[imin]],'ro')
         plt.plot([imax],[errvec[imax]],'ro') 
         plt.show()
+
+    if not fitwidth==None:
+        i1 = int(ires-di*fitwidth/2)
+        i2 = int(ires+di*fitwidth/2)
+        frec = frec[i1:i2]
+        S11 = S11[i1:i2]
+        ires = ires - i1
+        imin = imin - i1
+        imax = imax - i1
+
 
     #Trim peak from data (trimwidth times the width)
     (backfrec, backsig) = trim(frec,S11,ires-trimwidth*di,ires+trimwidth*di)
