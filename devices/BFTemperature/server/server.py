@@ -38,7 +38,14 @@ def GetTemperature(sock):
     foldername = now.strftime('%y-%m-%d')
     foldername = LOGFOLDER + foldername + '\\CH6 T ' + foldername + '.log'
     foldername = os.path.normpath(foldername)
-    myfile = open(foldername,'rb')
+    try:
+        myfile = open(foldername,'rb')
+    except FileNotFoundError: #if file not present, try previous day's file
+        now = now - datetime.timedelta(days=1)
+        foldername = now.strftime('%y-%m-%d')
+        foldername = LOGFOLDER + foldername + '\\CH6 T ' + foldername + '.log'
+        foldername = os.path.normpath(foldername)
+        myfile = open(foldername,'rb')
     ss = MySocket(sock)
     word = tail(myfile,2)
     word = word.split(',')[-1]
