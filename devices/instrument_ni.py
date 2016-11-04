@@ -1,13 +1,12 @@
 # Basic visa instrument class.  Includes resoruce manager startup, basic query and write methods, id and reset methods
+# This version uses the NI backend instead of the pyvisa-py backend.  For use with certain usb devices that pyvisa-py has driver issues with.
 import visa
 
-print('Global ResourceManager created')
-global_rs = visa.ResourceManager('@py')
+print('Global NI ResourceManager created')
+global_rs = visa.ResourceManager() #Create resource manager using NI backend
 
-class instrument:
+class instrument_ni:
     def __init__(self,addr,reset=True,verb=True,**kwargs):
-#        self.rs = visa.ResourceManager('@py')
-#        self.dev = self.rs.open_resource(addr)
         self.dev = global_rs.open_resource(addr)
         self.verb = verb
         if 'read_termination' in kwargs:

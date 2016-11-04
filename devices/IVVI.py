@@ -1,5 +1,7 @@
 import stlab.devices.instrument as instrument
 import pyvisa.constants as cts
+import numpy as np
+import time
 
 from enum import Enum
 #Enumeration class to store polarity values
@@ -100,6 +102,13 @@ class IVVI_DAC:
         reply,status = self.dev.visalib.read(self.dev.session,2) #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
         if self.verb:
             print("DAC reply: ", tuple([x for x in reply]))
+    def RampVoltage(self,dac,mvoltage,tt,steps=1000): #To ramp voltage over 'tt' seconds from current DAC value.
+        v0 = self.ReadDAC(dac)
+        voltages = np.linspace(v0,mvoltage,steps)
+        twait = tt/steps
+        for vv in voltages:
+            self.SetVoltage(dac,vv)
+            time.sleep(twait)
     def ReadDACs(self):
         #Prepare message to read bytes from DACS
         message = (4, 0, self.ndacs*2+2, 2)
@@ -117,3 +126,6 @@ class IVVI_DAC:
             print('DAC reply: ', reply)
         reply = self.numbers_to_mvoltages(reply) #convert the byte values to actual voltage values
         return reply
+    def ReadDAC(self,dac):
+        vs = self.ReadDACs()
+        return vs[dac-1]
