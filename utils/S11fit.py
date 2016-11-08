@@ -256,7 +256,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
 # do background fit
 
-    params['cp'].set(vary=False)
+    params['cp'].set(value=0.,vary=False)
     result = minimize(background2min, params, args=(backfrec, backsig))
     ''' 
     params = result.params
@@ -369,7 +369,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         params['c'].set(vary=True)
         params['ap'].set(vary=True)
         params['bp'].set(vary=True)
-        params['cp'].set(vary=True)
+        params['cp'].set(vary=False)
         finalresult = minimize(S11residual, params, args=(frec, S11))
 
 # write error report
