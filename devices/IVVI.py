@@ -129,3 +129,7 @@ class IVVI_DAC:
     def ReadDAC(self,dac):
         vs = self.ReadDACs()
         return vs[dac-1]
+    def SetAllZero(self):
+        for i in range(1,self.ndacs+1):
+            self.SetVoltage(i,0.)
+        return
