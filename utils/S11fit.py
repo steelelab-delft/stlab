@@ -356,7 +356,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     params['cp'].set(vary=False)
 
 #Do final fit
-    finalresult = minimize(S11residual, params, args=(frec, S11))
+    finalresult = minimize(S11residual, params, args=(frec, S11, ftype))
 # write error report
     report_fit(finalresult.params)
     params = finalresult.params
@@ -370,7 +370,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         params['ap'].set(vary=True)
         params['bp'].set(vary=True)
         params['cp'].set(vary=False)
-        finalresult = minimize(S11residual, params, args=(frec, S11))
+        finalresult = minimize(S11residual, params, args=(frec, S11, ftype))
 
 # write error report
         report_fit(finalresult.params)

@@ -34,12 +34,13 @@ def readdat(filename):
                 continue
             point = [ float(x) for x in point.strip('\n').split(', ')]
             block.append(point)
-        block = np.asarray(block)
-        block = block.T
-        newdict=OrderedDict()
-        for name,dat in zip(names,block):
-            newdict[name] = dat
-        arrayofdicts.append(newdict)
+        if len(block) != 0:
+            block = np.asarray(block)
+            block = block.T
+            newdict=OrderedDict()
+            for name,dat in zip(names,block):
+                newdict[name] = dat
+            arrayofdicts.append(newdict)
         return arrayofdicts
 
 def reads2p(filename):
