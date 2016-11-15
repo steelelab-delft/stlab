@@ -328,24 +328,34 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 #    imin = np.argmax(S11corr.imag)
 #    imax = np.argmin(S11corr.imag)
 
-    ktot = np.abs(frec[imax]-frec[imin])
-    Tres = np.abs(S11corr[ires]+1)
-    kext0 = ktot*Tres/2.
-    kint0 = ktot-kext0
 
+    ktot = np.abs(frec[imax]-frec[imin])
+    if ftype == 'A':
+        Tres = np.abs(S11corr[ires]+1)
+        kext0 = ktot*Tres/2.
+    elif ftype == '-A':
+        Tres = np.abs(1-S11corr[ires])
+        kext0 = ktot*Tres/2.
+    elif ftype == '-B':
+        Tres = np.abs(S11corr[ires])
+        kext0 = (1-Tres)*ktot
+    elif ftype == 'B':
+        Tres = np.abs(S11corr[ires])
+        kext0 = (1+Tres)*ktot
+    kint0 = ktot-kext0
     Qint0 = f0i/kint0
     Qext0 = f0i/kext0
 
 #Make new parameter object (includes previous fitted background values)
     params = result.params
     if reusefitpars and oldpars != None:
-        params.add('Qint', value=oldpars['Qint'].value,vary=True)
-        params.add('Qext', value=oldpars['Qext'].value,vary=True)
+        params.add('Qint', value=oldpars['Qint'].value,vary=True,min = 0)
+        params.add('Qext', value=oldpars['Qext'].value,vary=True,min = 0)
         params.add('f0', value=oldpars['f0'].value,vary=True)
         params.add('theta', value=oldpars['theta'].value,vary=True)
     else:
-        params.add('Qint', value=Qint0,vary=True)
-        params.add('Qext', value=Qext0,vary=True)
+        params.add('Qint', value=Qint0,vary=True,min = 0)
+        params.add('Qext', value=Qext0,vary=True,min = 0)
         params.add('f0', value=f0i,vary=True)
         params.add('theta', value=0,vary=True)
     params['a'].set(vary=False)
@@ -361,6 +371,21 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     report_fit(finalresult.params)
     params = finalresult.params
     print('QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value))
+
+
+    if doplots:
+        plt.title('Pre-Final signal and fit (Re,Im)')
+        plt.plot(frec,S11corr.real)
+        plt.plot(frec,S11corr.imag)
+        plt.plot(frec,S11theo(frec,params,ftype).real)
+        plt.plot(frec,S11theo(frec,params,ftype).imag)
+        plt.show()
+
+        plt.title('Pre-Final signal and fit (Polar)')
+        plt.plot(S11.real,S11.imag)
+        plt.plot(S11full(frec,params,ftype).real,S11full(frec,params,ftype).imag)
+        plt.axes().set_aspect('equal', 'datalim')
+        plt.show()
 
 #REDO final fit varying all parameters
     if refitback:
