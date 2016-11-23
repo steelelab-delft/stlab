@@ -13,8 +13,8 @@ def logger(commandq):
     
     resultq = Queue(maxsize=0)
     today = datetime.date.today()
-    foldername = './%02d-%02d-%02d/' % (today.day,today.month,today.year)
-    filename = foldername + 'log_%02d-%02d-%02d.dat' % (today.day,today.month,today.year)
+    foldername = './%02d-%02d-%02d/' % (today.year,today.month,today.day)
+    filename = foldername + 'log_%02d-%02d-%02d.dat' % (today.year,today.month,today.day)
     if not os.path.exists(foldername):
         os.makedirs(foldername)
     print('Measurement Folder: ', foldername)
