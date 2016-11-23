@@ -8,7 +8,7 @@ class instrument:
     def __init__(self,addr,reset=True,verb=True,**kwargs):
 #        self.rs = visa.ResourceManager('@py')
 #        self.dev = self.rs.open_resource(addr)
-        self.dev = global_rs.open_resource(addr)
+        self.dev = global_rs.open_resource(addr,**kwargs)
         self.verb = verb
         if 'read_termination' in kwargs:
             self.dev.read_termination = kwargs['read_termination']
