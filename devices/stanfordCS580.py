@@ -1,6 +1,7 @@
 import visa
 import numpy as np
 from stlab.devices.instrument import instrument
+import time
 
 def numtostr(mystr):
     return '%12.8e' % mystr
@@ -52,4 +53,28 @@ class stanfordCS580(instrument):
         return
     def SetOff(self):
         self.write('SOUT 0')
+        return
+    def GetOn(self):
+        msg = self.query('SOUT?')
+        #print(msg)
+        msg = bool(msg)
+        return msg
+    def RampCurrent(self,I1,rate,nsteps = 100): #Ramp current to final value at a certain rate (in amps/sec).  nsteps is the number of current points used.
+        if not self.GetOn():
+            self.SetCurrent(0.)
+            self.SetOn()
+        I0 = self.GetCurrent()
+        if I0 == I1:
+            print('Warning: RampCurrent: Target equal to current value.  Nothing to do')
+            return
+        if np.abs(I1-I0) < rate: #if total sweep time is less than 1 second, just set
+            self.SetCurrent(I1)
+            return
+        Istep = (I1-I0)/nsteps
+        ttotal = np.abs(I1-I0)/rate #Total time in seconds
+        tstep = ttotal/nsteps
+        Is = np.linspace(I0,I1,nsteps)
+        for I in Is:
+            self.SetCurrent(I)
+            time.sleep(tstep)
         return

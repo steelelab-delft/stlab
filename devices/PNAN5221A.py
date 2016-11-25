@@ -27,8 +27,15 @@ class PNAN5221A(instrument):
         measnames = ['S%d%d' % (port,port)]
         for i,(meas,trc) in enumerate(zip(measnames,tracenames)):
             self.write("CALC:PAR:DEF:EXT '%s', '%s'" % (trc,meas))
-            self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))        
+            self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))
+    def SetContinuous(self,var=True):
+        if var:
+            self.write('INIT:CONT 1') #Turn on continuous mode
+        elif not var:
+            self.write('INIT:CONT 0') #Turn off continuous mode
+        return
     def TwoPortSetup(self):
+        self.SetContinuous(False)
         trcnames = self.GetTrcNames()
         measnames = ['S11', 'S21', 'S12', 'S22']
         if trcnames == measnames:

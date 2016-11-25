@@ -211,6 +211,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     b0 = (np.abs(sS11)[-1] - np.abs(sS11)[0])/(frec[-1]-frec[0])
 #    a0 = np.abs(sS11)[0] - b0*frec[0]
     a0 = np.average(np.abs(sS11)) - b0*backfrec[0]
+#    a0 = np.abs(sS11)[0] - b0*backfrec[0]
     c0 = 0.
 #    bp0 = ( np.angle(sS11[di])-np.angle(sS11[0]) )/(frec[di]-frec[0])
     xx = []
@@ -222,8 +223,9 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         xx.append(dtheta/df)
 #    bp0 = np.average([ x if np.abs(x)<pi else 0 for x in np.diff(np.angle(backsig))] )/(frec[1]-frec[0])
     bp0 = np.average(xx)
-#    ap0 = np.angle(sS11[0]) - bp0*frec[0]
-    ap0 = np.average(np.unwrap(np.angle(backsig))) - bp0*backfrec[0]
+#   ap0 = np.angle(sS11[0]) - bp0*frec[0]
+#   ap0 = np.average(np.unwrap(np.angle(backsig))) - bp0*backfrec[0]
+    ap0 = np.unwrap(np.angle(backsig))[0] - bp0*backfrec[0]
     cp0 = 0.
     print(a0,b0,ap0,bp0)
 
