@@ -29,10 +29,13 @@ def getwidth(i0,vec): #Unused... Used before when using Imag to find peak width
 #Finds indices of peak width of array "vec" assuming "i0" is the peak maximum.  Ignores points within "margin" of the ends
 def getwidth_phase(i0,vec,margin):
     maxvec = vec[i0]
-    avgvec = np.average(vec[margin:-margin])
+    if margin == 0:
+        avgvec = np.average(vec[0:-1])
+    else:
+        avgvec = np.average(vec[margin:-margin])
 #    print maxvec, avgvec
     i2 = len(vec)-1
-    i1 = 0.
+    i1 = 0
     for i in range(i0,len(vec)):
 #        print (maxvec-vec[i]), (maxvec-avgvec)
         if (maxvec-vec[i]) > (maxvec-avgvec)/1.:
@@ -124,9 +127,15 @@ def S11full(frec,params,ftype='A'):
 def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False, fitwidth=None):
 
     #Smooth data for initial guesses
-    sReS11 = np.array(smooth(S11.real,margin,3))
-    sImS11 = np.array(smooth(S11.imag,margin,3))
-    sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
+    if margin == None or margin == 0: #If no smooting desired, pass None as margin
+        margin=0
+        sReS11 = S11.real
+        sImS11 = S11.imag
+        sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
+    else:
+        sReS11 = np.array(smooth(S11.real,margin,3))
+        sImS11 = np.array(smooth(S11.imag,margin,3))
+        sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
     #Make smoothed phase vector removing 2pi jumps
     sArgS11 = np.angle(sS11)
     sArgS11 = np.unwrap(sArgS11)
@@ -141,7 +150,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     avgph =  np.average(sdiffang)
     errvec = [np.power(x-avgph,2.) for x in sdiffang]
     #ires = np.argmax(np.abs(sdiffang[margin:-margin]))+margin
-    ires = np.argmax(errvec[margin:-margin])+margin
+    if margin == 0:
+        ires = np.argmax(errvec[0:-1])+0
+    else:
+        ires = np.argmax(errvec[margin:-margin])+margin
     f0i=frec[ires]
     print("Max index: ",ires," Max frequency: ",f0i)
 
@@ -157,7 +169,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.title('Smoothed Phase')
         plt.axis('auto')
         plt.show()
-        plt.plot(sdiffang[margin:-margin])
+        if margin == 0:
+            plt.plot(sdiffang[0:-1])
+        else:
+            plt.plot(sdiffang[margin:-margin])
         plt.plot(sdiffang)
         plt.title('Diff of Smoothed Phase')
         plt.show()
@@ -422,6 +437,11 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.plot(S11.real,S11.imag)
         plt.plot(finalfit.real,finalfit.imag)
         plt.axes().set_aspect('equal', 'datalim')
+        plt.show()
+
+        plt.title('Final signal and fit (Polar)')
+        plt.plot(frec,np.abs(S11))
+        plt.plot(frec,np.abs(finalfit))
         plt.show()
 
 
