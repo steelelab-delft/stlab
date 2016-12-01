@@ -29,10 +29,13 @@ def getwidth(i0,vec): #Unused... Used before when using Imag to find peak width
 #Finds indices of peak width of array "vec" assuming "i0" is the peak maximum.  Ignores points within "margin" of the ends
 def getwidth_phase(i0,vec,margin):
     maxvec = vec[i0]
-    avgvec = np.average(vec[margin:-margin])
+    if margin == 0:
+        avgvec = np.average(vec[0:-1])
+    else:
+        avgvec = np.average(vec[margin:-margin])
 #    print maxvec, avgvec
     i2 = len(vec)-1
-    i1 = 0.
+    i1 = 0
     for i in range(i0,len(vec)):
 #        print (maxvec-vec[i]), (maxvec-avgvec)
         if (maxvec-vec[i]) > (maxvec-avgvec)/1.:
@@ -46,6 +49,8 @@ def getwidth_phase(i0,vec,margin):
 
 #removes range from imin to imax from vectors x,y
 def trim(x,y,imin,imax):
+    imin = int(imin)
+    imax = int(imax)
     print(len(x),len(y))
     xnew = np.concatenate((x[0:imin],x[imax:]))
     ynew = np.concatenate((y[0:imin],y[imax:]))
@@ -117,13 +122,20 @@ def S11full(frec,params,ftype='A'):
 # oldpars -> Parameter data from previous fit (expects lmfit Parameter object). Used when "refitback" is "False" or "reusefitpars" is "True".
 # refitback -> If set to False, does not fit the background but uses parameters provided in "oldpars".  If set to "True", fits background normally
 # reusefitpars -> If set to True, uses parameters provided in "oldpars" as initial guess for fit parameters in main model fit (ignored by background fit)
+# fitwidth -> If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit
 
-def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False):
+def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False, fitwidth=None):
 
     #Smooth data for initial guesses
-    sReS11 = np.array(smooth(S11.real,margin,3))
-    sImS11 = np.array(smooth(S11.imag,margin,3))
-    sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
+    if margin == None or margin == 0: #If no smooting desired, pass None as margin
+        margin=0
+        sReS11 = S11.real
+        sImS11 = S11.imag
+        sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
+    else:
+        sReS11 = np.array(smooth(S11.real,margin,3))
+        sImS11 = np.array(smooth(S11.imag,margin,3))
+        sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
     #Make smoothed phase vector removing 2pi jumps
     sArgS11 = np.angle(sS11)
     sArgS11 = np.unwrap(sArgS11)
@@ -138,7 +150,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     avgph =  np.average(sdiffang)
     errvec = [np.power(x-avgph,2.) for x in sdiffang]
     #ires = np.argmax(np.abs(sdiffang[margin:-margin]))+margin
-    ires = np.argmax(errvec[margin:-margin])+margin
+    if margin == 0:
+        ires = np.argmax(errvec[0:-1])+0
+    else:
+        ires = np.argmax(errvec[margin:-margin])+margin
     f0i=frec[ires]
     print("Max index: ",ires," Max frequency: ",f0i)
 
@@ -154,7 +169,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.title('Smoothed Phase')
         plt.axis('auto')
         plt.show()
-        plt.plot(sdiffang[margin:-margin])
+        if margin == 0:
+            plt.plot(sdiffang[0:-1])
+        else:
+            plt.plot(sdiffang[margin:-margin])
         plt.plot(sdiffang)
         plt.title('Diff of Smoothed Phase')
         plt.show()
@@ -171,6 +189,16 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.plot([imin],[errvec[imin]],'ro')
         plt.plot([imax],[errvec[imax]],'ro') 
         plt.show()
+
+    if not fitwidth==None:
+        i1 = int(ires-di*fitwidth/2)
+        i2 = int(ires+di*fitwidth/2)
+        frec = frec[i1:i2]
+        S11 = S11[i1:i2]
+        ires = ires - i1
+        imin = imin - i1
+        imax = imax - i1
+
 
     #Trim peak from data (trimwidth times the width)
     (backfrec, backsig) = trim(frec,S11,ires-trimwidth*di,ires+trimwidth*di)
@@ -196,7 +224,9 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
     #Make initial background guesses
     b0 = (np.abs(sS11)[-1] - np.abs(sS11)[0])/(frec[-1]-frec[0])
-    a0 = np.abs(sS11)[0] - b0*frec[0]
+#    a0 = np.abs(sS11)[0] - b0*frec[0]
+    a0 = np.average(np.abs(sS11)) - b0*backfrec[0]
+#    a0 = np.abs(sS11)[0] - b0*backfrec[0]
     c0 = 0.
 #    bp0 = ( np.angle(sS11[di])-np.angle(sS11[0]) )/(frec[di]-frec[0])
     xx = []
@@ -208,7 +238,9 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         xx.append(dtheta/df)
 #    bp0 = np.average([ x if np.abs(x)<pi else 0 for x in np.diff(np.angle(backsig))] )/(frec[1]-frec[0])
     bp0 = np.average(xx)
-    ap0 = np.angle(sS11[0]) - bp0*frec[0]
+#   ap0 = np.angle(sS11[0]) - bp0*frec[0]
+#   ap0 = np.average(np.unwrap(np.angle(backsig))) - bp0*backfrec[0]
+    ap0 = np.unwrap(np.angle(backsig))[0] - bp0*backfrec[0]
     cp0 = 0.
     print(a0,b0,ap0,bp0)
 
@@ -222,13 +254,16 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     params.add('cp', value= cp0, vary=myvary)
 
     if not fitbackground:
-        params['a'].set(value=-1, vary=False)
+        if ftype == 'A' or ftype == 'B':
+            params['a'].set(value=-1, vary=False)
+        elif ftype == '-A' or ftype == '-B':
+            params['a'].set(value=1, vary=False)
         params['b'].set(value=0, vary=False)
         params['c'].set(value=0, vary=False)
         params['ap'].set(value=0, vary=False)
         params['bp'].set(value=0, vary=False)
         params['cp'].set(value=0, vary=False)
-    elif not refitback:
+    elif not refitback and oldpars != None:
         params['a'].set(value=oldpars['a'].value, vary=False)
         params['b'].set(value=oldpars['b'].value, vary=False)
         params['c'].set(value=oldpars['c'].value, vary=False)
@@ -237,7 +272,28 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         params['cp'].set(value=oldpars['cp'].value, vary=False)
 
 # do background fit
+
+    params['cp'].set(value=0.,vary=False)
     result = minimize(background2min, params, args=(backfrec, backsig))
+    ''' 
+    params = result.params
+    params['a'].set(vary=False)
+    params['b'].set(vary=False)
+    params['c'].set(vary=False)
+    params['ap'].set(vary=False)
+    params['bp'].set(vary=False)
+    params['cp'].set(vary=True)
+    result = minimize(background2min, params, args=(backfrec, backsig))
+
+    params = result.params
+    params['a'].set(vary=True)
+    params['b'].set(vary=True)
+    params['c'].set(vary=True)
+    params['ap'].set(vary=True)
+    params['bp'].set(vary=True)
+    params['cp'].set(vary=True)
+    result = minimize(background2min, params, args=(backfrec, backsig))
+    '''
 
 # write error report
     report_fit(result.params)
@@ -247,6 +303,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     backgroundfit = backsig + complexresidual
     fullbackground = np.array([backmodel(xx,result.params) for xx in frec])
     S11corr = -S11 / fullbackground
+    if ftype == '-A' or ftype == '-B':
+        S11corr = -S11corr
 
     if doplots:
         plt.title('Signal and fitted background (Re,Im)')
@@ -287,26 +345,36 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 #    imin = np.argmax(S11corr.imag)
 #    imax = np.argmin(S11corr.imag)
 
-    ktot = np.abs(frec[imax]-frec[imin])
-    Tres = np.abs(S11corr[ires]+1)
-    kext0 = ktot*Tres/2.
-    kint0 = ktot-kext0
 
+    ktot = np.abs(frec[imax]-frec[imin])
+    if ftype == 'A':
+        Tres = np.abs(S11corr[ires]+1)
+        kext0 = ktot*Tres/2.
+    elif ftype == '-A':
+        Tres = np.abs(1-S11corr[ires])
+        kext0 = ktot*Tres/2.
+    elif ftype == '-B':
+        Tres = np.abs(S11corr[ires])
+        kext0 = (1-Tres)*ktot
+    elif ftype == 'B':
+        Tres = np.abs(S11corr[ires])
+        kext0 = (1+Tres)*ktot
+    kint0 = ktot-kext0
     Qint0 = f0i/kint0
     Qext0 = f0i/kext0
 
 #Make new parameter object (includes previous fitted background values)
     params = result.params
-    if not reusefitpars:
-        params.add('Qint', value=Qint0,vary=True)
-        params.add('Qext', value=Qext0,vary=True)
-        params.add('f0', value=f0i,vary=True)
-        params.add('theta', value=0,vary=True)
-    else:
-        params.add('Qint', value=oldpars['Qint'].value,vary=True)
-        params.add('Qext', value=oldpars['Qext'].value,vary=True)
+    if reusefitpars and oldpars != None:
+        params.add('Qint', value=oldpars['Qint'].value,vary=True,min = 0)
+        params.add('Qext', value=oldpars['Qext'].value,vary=True,min = 0)
         params.add('f0', value=oldpars['f0'].value,vary=True)
         params.add('theta', value=oldpars['theta'].value,vary=True)
+    else:
+        params.add('Qint', value=Qint0,vary=True,min = 0)
+        params.add('Qext', value=Qext0,vary=True,min = 0)
+        params.add('f0', value=f0i,vary=True)
+        params.add('theta', value=0,vary=True)
     params['a'].set(vary=False)
     params['b'].set(vary=False)
     params['c'].set(vary=False)
@@ -315,11 +383,26 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     params['cp'].set(vary=False)
 
 #Do final fit
-    finalresult = minimize(S11residual, params, args=(frec, S11))
+    finalresult = minimize(S11residual, params, args=(frec, S11, ftype))
 # write error report
     report_fit(finalresult.params)
     params = finalresult.params
     print('QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value))
+
+
+    if doplots:
+        plt.title('Pre-Final signal and fit (Re,Im)')
+        plt.plot(frec,S11corr.real)
+        plt.plot(frec,S11corr.imag)
+        plt.plot(frec,S11theo(frec,params,ftype).real)
+        plt.plot(frec,S11theo(frec,params,ftype).imag)
+        plt.show()
+
+        plt.title('Pre-Final signal and fit (Polar)')
+        plt.plot(S11.real,S11.imag)
+        plt.plot(S11full(frec,params,ftype).real,S11full(frec,params,ftype).imag)
+        plt.axes().set_aspect('equal', 'datalim')
+        plt.show()
 
 #REDO final fit varying all parameters
     if refitback:
@@ -328,8 +411,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         params['c'].set(vary=True)
         params['ap'].set(vary=True)
         params['bp'].set(vary=True)
-        params['cp'].set(vary=True)
-        finalresult = minimize(S11residual, params, args=(frec, S11))
+        params['cp'].set(vary=False)
+        finalresult = minimize(S11residual, params, args=(frec, S11, ftype))
 
 # write error report
         report_fit(finalresult.params)
@@ -354,6 +437,11 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.plot(S11.real,S11.imag)
         plt.plot(finalfit.real,finalfit.imag)
         plt.axes().set_aspect('equal', 'datalim')
+        plt.show()
+
+        plt.title('Final signal and fit (Polar)')
+        plt.plot(frec,np.abs(S11))
+        plt.plot(frec,np.abs(finalfit))
         plt.show()
 
 

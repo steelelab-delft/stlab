@@ -1,1 +1,1 @@
-__all__ = ["metagen","readdata","S11fit"]
+__all__ = ["metagen","readdata","S11fit","newfile"]
