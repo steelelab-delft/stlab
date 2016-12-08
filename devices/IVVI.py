@@ -102,6 +102,21 @@ class IVVI_DAC:
         reply,status = self.dev.visalib.read(self.dev.session,2) #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
         if self.verb:
             print("DAC reply: ", tuple([x for x in reply]))
+    def SetValue(self,dac,val):
+        val = int(val)
+        #We get the byte values corresponding to the desired voltage.  We need to add the polarity dependant offset from polmatrix to get the correct byte values
+        DataH = int(val/256)
+        DataL = val - DataH*256
+        #print(DataH, DataL)
+        #Prepare byte value message to send
+        message = (7, 0, 2, 1, dac, DataH, DataL)
+        if self.verb:
+            print("DAC input: ", message)
+        message = bytearray(message) #convert to byte array
+        self.dev.write_raw(message) #Perform raw write
+        reply,status = self.dev.visalib.read(self.dev.session,2) #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
+        if self.verb:
+            print("DAC reply: ", tuple([x for x in reply]))
     def RampVoltage(self,dac,mvoltage,tt,steps=1000): #To ramp voltage over 'tt' seconds from current DAC value.
         v0 = self.ReadDAC(dac)
         voltages = np.linspace(v0,mvoltage,steps)

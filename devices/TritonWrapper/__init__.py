@@ -46,6 +46,26 @@ class TritonWrapper:
             return -1.
         ret = ret.strip('K')
         return float(ret)
+    def SetMCHeater(self,xx):
+        mystr = 'SET:DEV:H1:HTR:SIG:POWR:%f' % xx
+        reply = self.query(mystr)
+        print(reply[reply.rfind(":"):])
+        return
+    def SetStillHeater(self,xx):
+        mystr = 'SET:DEV:H2:HTR:SIG:POWR:%f' % xx
+        reply = self.query(mystr)
+        print(reply[reply.rfind(":")+1:])
+        return
+    def SetEnableTsensor(self,ii,state=True):
+        if ii>= 10:
+            print('SetEnableTsensor: Invalid sensor ',ii)
+            return -1.
+        if state:
+            mystr = 'SET:DEV:T%d:TEMP:MEAS:ENAB:ON' % ii
+        elif not state:
+            mystr = 'SET:DEV:T%d:TEMP:MEAS:ENAB:OFF' % ii
+        reply = self.query(mystr)
+        return
     def reset(self):
         pass
     def setverbose(self,verb=True):

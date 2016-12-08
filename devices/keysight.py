@@ -28,6 +28,10 @@ class keysightB2901A(instrument):
         mystr = numtostr(curr)
         mystr = ':SOUR:CURR '+mystr
         self.write(mystr)
+    def SetVoltage(self,curr):
+        mystr = numtostr(curr)
+        mystr = ':SOUR:VOLT '+mystr
+        self.write(mystr)
     def SetComplianceVoltage(self,volt):
         mystr = numtostr(volt)
         mystr = ':SENS:VOLT:PROT ' + mystr
