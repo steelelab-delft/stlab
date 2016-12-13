@@ -100,6 +100,9 @@ class RS_ZND_pna(instrument):
         freq = self.query('CALC:DATA:STIM?')
         freq = np.asarray([float(xx) for xx in freq.split(',')])
         return freq
+    def MeasureScreen(self):
+        self.Trigger()
+        return self.GetAllData()
     def GetAllData(self):
         Cal = self.GetCal()
         pars = self.query('CALC:PAR:CAT?')

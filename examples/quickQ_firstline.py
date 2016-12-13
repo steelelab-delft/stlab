@@ -12,7 +12,7 @@ print(data.keys()) #Show available data columns on screen
 
 x = data['Frequency (Hz)'] #Get frequency array from measurement
 z = np.asarray([a+1j*b for a,b in zip(data['S21re ()'],data['S21im ()'])]) #Convert S parameter data from Re,Im to complex array
-params = stlab.S11fit(x,z,doplots=True,trimwidth=5.,fitwidth = 20.) #Do fit with some standard parameters.  More options available.
+params = stlab.S11fit(x,z,ftype='A',doplots=True,trimwidth=5.,fitwidth = 20.) #Do fit with some standard parameters.  More options available.
 #Make a plot of the fit result (magnitude only)
 zfit = stlab.S11func(x,params)
 fig = plt.figure()

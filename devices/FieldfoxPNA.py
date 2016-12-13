@@ -106,6 +106,7 @@ class FieldfoxPNA(instrument):
             alltrc.append(yyre)
             alltrc.append(yyim)
         if Cal:
+            self.CalOff()
             for i in range(0,nmeas):
                 self.write('CALC:PAR' + str(i+1) + ':SEL')
                 yy = self.query('CALC:DATA:SDATA?')
@@ -114,6 +115,7 @@ class FieldfoxPNA(instrument):
                 yyim = yy[1::2]
                 alltrc.append(yyre)
                 alltrc.append(yyim)
+            self.CalOn()
         final = OrderedDict()
         for name,data in zip(names,alltrc):
             final[name]=data
