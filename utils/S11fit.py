@@ -13,6 +13,14 @@ def un_realimag(array): #Makes complex array from alternating real and imaginary
         z.append(x+1j*y)
     return np.array(z)
 
+def phaseunwrap(array): #unwraps the phase from a given complex array returning a signal with 0 average phase slope
+    data = np.asarray(array)
+    phase = np.unwrap(np.angle(data))
+    avg = np.average(np.diff(phase))
+    data = [x*np.exp(-1j*avg*i) for i,x in enumerate(data)]
+#    print(np.average(np.diff(np.angle(data))))
+    return np.asarray(data)
+
 def getwidth(i0,vec): #Unused... Used before when using Imag to find peak width
     f0 = vec[i0]
     i2 = len(vec)-1
