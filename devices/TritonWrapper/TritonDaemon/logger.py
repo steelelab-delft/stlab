@@ -44,7 +44,7 @@ def logger(commandq):
                         ff = open(filename,'w')
                         ff.write('#' + ', '.join(varline)+'\n')
             line = []
-            for i in range(1,10):
+            for i in range(1,9):
                 commandq.put( (resultq, Triton.gettemperature, (i,)) )
                 xx = resultq.get()
                 line.append(xx)
