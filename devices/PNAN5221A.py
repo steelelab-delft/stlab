@@ -130,10 +130,12 @@ class PNAN5221A(instrument):
         for pp in parnames:
             names.append('%sre ()' % pp)
             names.append('%sim ()' % pp)
+            names.append('%sdB (dB)' % pp)
         if Cal:
             for pp in parnames:
                 names.append('%sre unc ()' % pp)
                 names.append('%sim unc ()' % pp)
+                names.append('%sdB unc (dB)' % pp)
         for par in pars:
             self.write("CALC:PAR:SEL '%s'" % par)
             yy = self.query("CALC:DATA? SDATA")
@@ -142,6 +144,8 @@ class PNAN5221A(instrument):
             yyim = yy[1::2]
             alltrc.append(yyre)
             alltrc.append(yyim)
+            yydb = 20.*np.log10( np.sqrt(np.power(yyre,2.)+np.power(yyim,2.)) )
+            alltrc.append(yydb)
         if Cal:
             self.CalOff()
             for par in pars:
@@ -152,6 +156,8 @@ class PNAN5221A(instrument):
                 yyim = yy[1::2]
                 alltrc.append(yyre)
                 alltrc.append(yyim)
+                yydb = 20.*np.log10( np.sqrt(np.power(yyre,2.)+np.power(yyim,2.)) )
+                alltrc.append(yydb)
             self.CalOn()
         final = OrderedDict()
         for name,data in zip(names,alltrc):
