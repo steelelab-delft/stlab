@@ -189,7 +189,7 @@ class PNAN5221A(instrument):
         parnames = pars[1::2]
         return parnames
     def MeasureScreen(self):
-        self.write('INIT:CONT 0')
+        self.SetContinuous(False)
         print((self.query('INIT;*OPC?'))) #Trigger single sweep and wait for response
         return self.GetAllData()
     def AddTraces(self,trcs): #Function to add traces to measurement window.  trcs is a list of S parameters Sij.
