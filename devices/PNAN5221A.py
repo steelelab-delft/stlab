@@ -70,6 +70,26 @@ class PNAN5221A(instrument):
         mystr = numtostr(x)
         mystr = 'SENS:FREQ:SPAN '+mystr
         self.write(mystr)
+    def GetStart(self):
+        mystr = 'SENS:FREQ:STAR?'
+        pp = self.query(mystr)
+        pp = float(pp)
+        return pp
+    def GetEnd(self):
+        mystr = 'SENS:FREQ:STOP?'
+        pp = self.query(mystr)
+        pp = float(pp)
+        return pp
+    def GetCenter(self):
+        mystr = 'SENS:FREQ:CENT?'
+        pp = self.query(mystr)
+        pp = float(pp)
+        return pp
+    def GetSpan(self):
+        mystr = 'SENS:FREQ:SPAN?'
+        pp = self.query(mystr)
+        pp = float(pp)
+        return pp
     def SetIFBW(self,x):
         mystr = numtostr(x)
         mystr = 'SENS:BWID '+mystr
