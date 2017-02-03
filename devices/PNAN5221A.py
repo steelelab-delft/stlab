@@ -1,7 +1,8 @@
 import visa
 import numpy as np
 from stlab.devices.instrument import instrument
-from collections import OrderedDict
+#from collections import OrderedDict
+from stlab.utils.stlabdict import stlabdict as stlabdict
 
 def numtostr(mystr):
     return '%20.15e' % mystr
@@ -179,7 +180,7 @@ class PNAN5221A(instrument):
                 yydb = 20.*np.log10( np.sqrt(np.power(yyre,2.)+np.power(yyim,2.)) )
                 alltrc.append(yydb)
             self.CalOn()
-        final = OrderedDict()
+        final = stlabdict()
         for name,data in zip(names,alltrc):
             final[name]=data
         return final

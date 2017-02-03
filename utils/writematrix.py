@@ -19,4 +19,3 @@ def writedict(myfile,mydict,f='%.10e',delim=', ',blocksep='\n'):
     mat = np.asarray(mat)
     mat = mat.T
     writematrix(myfile,mat,f,delim,blocksep)
-        

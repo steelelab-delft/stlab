@@ -1,7 +1,7 @@
 import os
 from . import readdata
 
-def fromarrays(filename,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',colnames=None):
+def fromarrays(myfile,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',colnames=None):
     Nx = len(xarray)
     xmin = xarray[0]
     xmax = xarray[-1]
@@ -16,10 +16,14 @@ def fromarrays(filename,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',
         Nz = len(zarray)
         zmin = zarray[0]
         zmax = zarray[-1]
-    fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,Nz,zmin,zmax,xtitle,ytitle,ztitle,colnames)
+    fromlimits(myfile,Nx,xmin,xmax,Ny,ymin,ymax,Nz,zmin,zmax,xtitle,ytitle,ztitle,colnames)
     return
 
-def fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xtitle='',ytitle='',ztitle='',colnames=None):
+def fromlimits(myfile,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xtitle='',ytitle='',ztitle='',colnames=None):
+    if isinstance(myfile, str):
+        filename = myfile
+    else:
+        filename = os.path.realpath(myfile.name)
     base, ext = os.path.splitext(filename)
     metaname = base + '.meta.txt'
     f = open(metaname,'w')
@@ -58,7 +62,11 @@ def fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xt
 
 
 #Somewhat specific for datafiles from the solderroom, 2D "gnuplot" files only
-def fromdatafile(filename,xcol=None,ycol=None,xtitle=None,ytitle=None):
+def fromdatafile(myfile,xcol=None,ycol=None,xtitle=None,ytitle=None):
+    if isinstance(myfile, str):
+        filename = myfile
+    else:
+        filename = os.path.realpath(myfile.name)
     mydata = readdata.readdat(filename)
     keylist = list(mydata[0].keys())
 

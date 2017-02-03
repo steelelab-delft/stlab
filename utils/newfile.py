@@ -6,7 +6,7 @@ import shutil
 # If colnames (array of column names) is included, the title line is written
 # Also copies main script file to measurement folder
 
-def newfile(prefix,idstring,colnames=None):
+def newfile(prefix,idstring,colnames=None,mypath = './'):
 
     import __main__
     if hasattr(__main__, '__file__'):
@@ -25,13 +25,10 @@ def newfile(prefix,idstring,colnames=None):
     print('Measurement Folder: ', foldername)
     if mainfile !=None:
         scriptname = os.path.basename(mainfile)
-        shutil.copyfile(mainfile,'./' + foldername + '/' + scriptname)
-
-    fullfilename = './' + foldername + '/' + filename
+        shutil.copyfile(mainfile,os.path.normpath(mypath + '/' + foldername + '/' + scriptname))
+    fullfilename = os.path.normpath(mypath + '/' + foldername + '/' + filename)
     myfile = open(fullfilename, 'w')
     if colnames!=None:
         varline = '#' + ', '.join(colnames) + '\n'
         myfile.write(varline)
-        return myfile, fullfilename, colnames
-    else:
-        return myfile, fullfilename
+    return myfile
