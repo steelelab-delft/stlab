@@ -41,9 +41,9 @@ for i,P in enumerate(sgpow): #Loop over desired SMB powers
     data['S11dB (dB)'] = 20.*np.log10( [ np.sqrt(np.power(a,2.)+np.power(b,2.)) for a,b in zip(data['S11re ()'],data['S11im ()'])] )
     data['S21dB (dB)'] = 20.*np.log10( [ np.sqrt(np.power(a,2.)+np.power(b,2.)) for a,b in zip(data['S21re ()'],data['S21im ()'])] )
     if i==0: #if on first measurement, create new measurement file and folder using titles extracted from measurement
-        myfile,fullfilename,_ = stlab.newfile(prefix,idstring,data.keys())
+        myfile = stlab.newfile(prefix,idstring,data.keys())
     stlab.savedict(myfile, data) #Save measured data to file.  Written as a block for spyview.
     #Create metafile for spyview at each measurement step
-    stlab.metagen.fromarrays(fullfilename,data['Frequency (Hz)'],sgpow[0:i+1],xtitle='Frequency (Hz)',ytitle='SMBPower (dB)',colnames=data.keys())    
+    stlab.metagen.fromarrays(myfile,data['Frequency (Hz)'],sgpow[0:i+1],xtitle='Frequency (Hz)',ytitle='SMBPower (dB)',colnames=data.keys())    
 myfile.close()
 

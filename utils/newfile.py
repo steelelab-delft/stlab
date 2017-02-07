@@ -20,13 +20,16 @@ def newfile(prefix,idstring,colnames=None,mypath = './'):
 
     foldername = prefix + '_' + datecode+'_'+timecode+'_'+idstring
     filename = foldername+'.dat'
-    if not os.path.exists(foldername):
-        os.makedirs(foldername)
+    fullfoldername = os.path.normpath(mypath + '/' + foldername)
+    fullfilename = os.path.normpath(mypath + '/' + foldername + '/' + filename)
+    print(fullfoldername)
+    print(fullfilename)
+    if not os.path.exists(fullfoldername):
+        os.makedirs(fullfoldername)
     print('Measurement Folder: ', foldername)
     if mainfile !=None:
         scriptname = os.path.basename(mainfile)
-        shutil.copyfile(mainfile,os.path.normpath(mypath + '/' + foldername + '/' + scriptname))
-    fullfilename = os.path.normpath(mypath + '/' + foldername + '/' + filename)
+        shutil.copyfile(mainfile,os.path.normpath(fullfoldername + '/' + scriptname))
     myfile = open(fullfilename, 'w')
     if colnames!=None:
         varline = '#' + ', '.join(colnames) + '\n'

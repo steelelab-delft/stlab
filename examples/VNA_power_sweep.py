@@ -27,9 +27,9 @@ for i,rfpower in enumerate(powers):
     data['S11dB (dB)'] = S11dB
     data['S21dB (dB)'] = S21dB
     if i==0: #if on first measurement, create new measurement file and folder using titles extracted from measurement
-        myfile,fullfilename,_ = stlab.newfile(prefix,idstring,data.keys())
+        myfile = stlab.newfile(prefix,idstring,data.keys())
     stlab.savedict(myfile, data) #Save measured data to file.  Written as a block for spyview.
     #Create metafile for spyview at each measurement step
-    stlab.metagen.fromarrays(fullfilename,data['Frequency (Hz)'],powers[0:i+1],xtitle='Frequency (Hz)',ytitle='Power (dB)',colnames=data.keys())
+    stlab.metagen.fromarrays(myfile,data['Frequency (Hz)'],powers[0:i+1],xtitle='Frequency (Hz)',ytitle='Power (dB)',colnames=data.keys())
 myfile.close() #Close file
 
