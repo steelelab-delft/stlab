@@ -19,3 +19,13 @@ def writedict(myfile,mydict,f='%.10e',delim=', ',blocksep='\n'):
     mat = np.asarray(mat)
     mat = mat.T
     writematrix(myfile,mat,f,delim,blocksep)
+
+def writeparnames(myfile,params,delim=', '):
+    myfile.write('#' + ', '.join(params.keys()) + '\n')
+    return
+
+def writeparams(myfile,params,f='%.10e',delim=', '):
+    line = [f % x for x in [params[label].value for label in params.keys()] ]
+    myfile.write(', '.join(line) + '\n')
+    return
+    
