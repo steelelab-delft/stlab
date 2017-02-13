@@ -28,4 +28,8 @@ def writeparams(myfile,params,f='%.10e',delim=', '):
     line = [f % x for x in [params[label].value for label in params.keys()] ]
     myfile.write(', '.join(line) + '\n')
     return
+
+def params_to_str(params,f='%.10e',delim=', '):
+    line = [f % x for x in [params[label].value for label in params.keys()] ]
+    return delim.join(line)
     
