@@ -123,41 +123,7 @@ class basepna(instrument):
         yy = self.query("CALC:DATA? SDATA")
         return yy
 
-    @abc.abstractmethod
-    def ClearAll(self): #Clears all traces and windows
-        windows = self.query('DISP:CAT?')
-        windows = windows.strip('\n')
-        if windows != '"EMPTY"':
-            windows = [int(x) for x in windows.strip('"').split(',')]
-            for i in windows:
-                self.write('DISP:WIND%d OFF' % i)
-    @abc.abstractmethod
-    def AutoScaleAll(self):
-        self.write('DISP:WIND:TRAC:Y:COUP:METH WIND')
-        windows = self.query('DISP:CAT?')
-        windows = windows.strip('\n')
-        if windows != '"EMPTY"':
-            windows = [int(x) for x in windows.strip('"').split(',')]
-            for i in windows:
-                self.write('DISP:WIND%d:TRAC:Y:AUTO' % i)
 
-    @abc.abstractmethod
-    def AddTraces(self,trcs): #Function to add traces to measurement window.  trcs is a list of S parameters Sij.
-        self.write('DISP:WIND1 ON')
-        if type(trcs) is str:
-            measnames = [trcs]
-        else:
-            measnames = trcs
-        tracenames = ['CH1_%s' % x for x in measnames]
-        for i,(meas,trc) in enumerate(zip(measnames,tracenames)):
-            self.write("CALC:PAR:DEF:EXT '%s', '%s'" % (trc,meas))
-            self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))
-    @abc.abstractmethod
-    def LoadCal (self, calset):
-        mystr = 'SENS:CORR:INT ON'
-        self.write(mystr)
-        mystr = 'SENS:CORR:CSET:ACT "%s",0' % calset
-        self.write(mystr)
     @abc.abstractmethod
     def CalOn (self):
         mystr = "SENS:CORR ON"
