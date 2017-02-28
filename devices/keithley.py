@@ -29,4 +29,34 @@ class Keithley2100(instrument_ni):
         self.write(mystr)
     def SetRange(self,range):
         self.SetRangeAuto(False)
-        self.write('SENS:VOLT:DC:RANGE %s' % str(range))
+        func = self.GetFunction()
+        if isinstance(range, str):
+            mystr = 'SENS:' + func + ':RANGE %s' % range
+        else:
+            mystr = 'SENS:' + func + ':RANGE %f' % range
+        self.write(mystr)
+        return
+    def SetDisplay(self,state=True):
+        if state:
+            self.write('DISP ON')
+        else:
+            self.write('DISP OFF')
+        return
+    def SetFunction(self,mystr):
+        self.write('FUNC ' + mystr)
+        return
+    def GetFunction(self):
+        mystr = self.query('FUNC?')
+        return mystr
+    def Trigger(self):
+        self.write('INIT')
+    def ReadValue(self):
+        return self.query('READ?')
+    def GetVoltageFast(self):
+        x = self.GetMeasurement()
+        return x
+    def GetMeasurement(self):
+        self.Trigger()
+        x = float(self.ReadValue())
+        return x
+        

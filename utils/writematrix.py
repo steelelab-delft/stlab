@@ -19,3 +19,8 @@ def writedict(myfile,mydict,f='%.10e',delim=', ',blocksep='\n'):
     mat = np.asarray(mat)
     mat = mat.T
     writematrix(myfile,mat,f,delim,blocksep)
+    
+def writedictarray(myfile,mydictarray,f='%.10e',delim=', ',blocksep='\n'):
+    for block in mydictarray:
+        writedict(myfile,block,f,delim,blocksep)
+    return
