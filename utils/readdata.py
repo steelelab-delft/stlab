@@ -6,7 +6,7 @@
 import numpy as np
 from collections import OrderedDict
 
-def readdat(filename):
+def readdat(filename,delim=', ',nlines=None):
     with open(filename,'r') as f:
         variables = {}
         ivar = 0
@@ -16,12 +16,14 @@ def readdat(filename):
 
         line = f.readline()
         line = line.strip("\n").strip("# ")
-        print(line)
-        names = line.split(', ')
+#        print(line)
+        names = line.split(delim)
         print(names)
 
         block =[]
         arrayofdicts = []
+        nblocks = 0
+            
         for point in f:
             if point == '\n':
                 block = np.asarray(block)
@@ -31,8 +33,14 @@ def readdat(filename):
                     newdict[name] = dat
                 arrayofdicts.append(newdict)
                 block = []
-                continue
-            point = [ float(x) for x in point.strip('\n').split(', ')]
+                nblocks += 1
+                if nlines == None:
+                    continue
+                elif nblocks < nlines:
+                    continue
+                else:
+                    break
+            point = [ float(x) for x in point.strip('\n').split(delim)]
             block.append(point)
         if len(block) != 0:
             block = np.asarray(block)

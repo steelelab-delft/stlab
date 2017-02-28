@@ -6,7 +6,7 @@ import shutil
 # If colnames (array of column names) is included, the title line is written
 # Also copies main script file to measurement folder
 
-def newfile(prefix,idstring,colnames=None,mypath = './'):
+def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True):
 
     import __main__
     if hasattr(__main__, '__file__'):
@@ -18,7 +18,10 @@ def newfile(prefix,idstring,colnames=None,mypath = './'):
     datecode = '%s' % mytime.year + '_' + ('%s' % mytime.month).zfill(2) + '_' +('%s' % mytime.day).zfill(2)
     timecode = ('%s' % mytime.hour).zfill(2) +'.' + ('%s' % mytime.minute).zfill(2) +'.' + ('%s' % mytime.second).zfill(2)
 
-    foldername = prefix + '_' + datecode+'_'+timecode+'_'+idstring
+    if usedate:
+        foldername = prefix + '_' + datecode+'_'+timecode+'_'+idstring
+    else:
+        foldername = prefix + '_' +idstring
     filename = foldername+'.dat'
     fullfoldername = os.path.normpath(mypath + '/' + foldername)
     fullfilename = os.path.normpath(mypath + '/' + foldername + '/' + filename)

@@ -4,8 +4,10 @@ import stlab.utils.metagen as metagen #Callable as stlab.metagen.fromlimits(...)
 import stlab.utils.readdata as readdata #Callable as stlab.readdata.readQUCS(...)
 from stlab.utils.writematrix import writematrix as savetxt #Callable as stlab.savetxt(...)
 from stlab.utils.writematrix import writedict as savedict
-from stlab.utils.writematrix import writematrix as savetxt #Callable as stlab.savetxt(...)
 from stlab.utils.writematrix import writedictarray as savedictarray
+from stlab.utils.writematrix import writeparams as writeparams #Callable as stlab.savetxt(...)
+from stlab.utils.writematrix import writeparnames as writeparnames
+from stlab.utils.writematrix import params_to_str as params_to_str
 import importlib.util
 lmfit_spec = importlib.util.find_spec("lmfit")
 found = lmfit_spec is not None

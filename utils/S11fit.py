@@ -199,8 +199,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.show()
 
     if not fitwidth==None:
-        i1 = int(ires-di*fitwidth/2)
-        i2 = int(ires+di*fitwidth/2)
+        i1 = max(int(ires-di*fitwidth/2),0)
+        i2 = min(int(ires+di*fitwidth/2),len(frec))
         frec = frec[i1:i2]
         S11 = S11[i1:i2]
         ires = ires - i1
@@ -395,7 +395,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 # write error report
     report_fit(finalresult.params)
     params = finalresult.params
-    print('QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value))
+    try:
+        print('QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value))
+    except ZeroDivisionError:
+        print('QLoaded = ', 0.)
 
 
     if doplots:
@@ -425,7 +428,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 # write error report
         report_fit(finalresult.params)
         params = finalresult.params
-        print('QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value))
+        try:
+            print('QLoaded = ', 1/(1./params['Qint'].value+1./params['Qext'].value))
+        except ZeroDivisionError:
+            print('QLoaded = ', 0.)
 
 
 #calculate final result and background
@@ -447,7 +453,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.axes().set_aspect('equal', 'datalim')
         plt.show()
 
-        plt.title('Final signal and fit (Polar)')
+        plt.title('Final signal and fit (Abs)')
         plt.plot(frec,np.abs(S11))
         plt.plot(frec,np.abs(finalfit))
         plt.show()
