@@ -25,7 +25,7 @@ class Keithley2100(instrument_ni):
         return float(num)
 # If using GetVoltage(), the following settings are ignored
     def SetRangeAuto(self,set=True):
-        mystr = "SENS:VOLT:DC:RANGE:AUTO %d" % int(set)
+        mystr = "SENS:" + self.GetFunction() + ":RANGE:AUTO %d" % int(set)
         self.write(mystr)
     def SetRange(self,range):
         self.SetRangeAuto(False)
@@ -47,10 +47,20 @@ class Keithley2100(instrument_ni):
         return
     def GetFunction(self):
         mystr = self.query('FUNC?')
+        mystr = mystr.strip("'").strip('"').strip("'")
+        if mystr == 'VOLT':
+            mystr = 'VOLT:DC'
         return mystr
     def Trigger(self):
         self.write('INIT')
+    def SetContinuous(self,state=True):
+        if state:
+            self.write('TRIG:COUN INF')
+        else:
+            self.write('TRIG:COUN 1')
+        return
     def ReadValue(self):
+        #self.SetContinuous(False)
         return self.query('READ?')
     def GetVoltageFast(self):
         x = self.GetMeasurement()

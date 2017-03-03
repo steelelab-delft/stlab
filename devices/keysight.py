@@ -1,6 +1,7 @@
 import visa
 import numpy as np
 from stlab.devices.instrument import instrument
+import time
 
 def numtostr(mystr):
     return '%12.8e' % mystr
@@ -36,6 +37,10 @@ class keysightB2901A(instrument):
         mystr = numtostr(volt)
         mystr = ':SENS:VOLT:PROT ' + mystr
         self.write(mystr)
+    def SetComplianceCurrent(self,volt):
+        mystr = numtostr(volt)
+        mystr = ':SENS:CURR:PROT ' + mystr
+        self.write(mystr)
     def GetCurrent(self):
         mystr = ':MEAS:CURR?'
         curr = self.query(mystr)
@@ -53,3 +58,13 @@ class keysightB2901A(instrument):
         outstr = self.query(mystr)
         data = np.array(list(map(float, outstr.split(','))))
         return (data[0],data[1])
+    def RampVoltage(self,mvoltage,tt=5.,steps=100): #To ramp voltage over 'tt' seconds from current DAC value.
+        v0 = self.GetVoltage()
+        if np.abs(mvoltage-v0) < 1e-3:
+            self.SetVoltage(mvoltage)
+            return
+        voltages = np.linspace(v0,mvoltage,steps)
+        twait = tt/steps
+        for vv in voltages:
+            self.SetVoltage(vv)
+            time.sleep(twait)
