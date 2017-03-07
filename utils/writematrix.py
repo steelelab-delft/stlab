@@ -42,4 +42,5 @@ def writeline(myfile,line,f='.10e',delim=', '):
     for x in line[:-1]:
         myfile.write("{:{form}}".format(x,form = f) + delim)
     myfile.write("{:{form}}\n".format(line[-1],form = f))
+    myfile.flush()
     return
