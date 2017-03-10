@@ -9,6 +9,7 @@ from stlab.utils.writematrix import writeparams as writeparams #Callable as stla
 from stlab.utils.writematrix import writeparnames as writeparnames
 from stlab.utils.writematrix import params_to_str as params_to_str
 from stlab.utils.writematrix import writeline as writeline
+from stlab.utils.stlabdict import stlabdict
 import importlib.util
 lmfit_spec = importlib.util.find_spec("lmfit")
 found = lmfit_spec is not None
