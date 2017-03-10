@@ -154,6 +154,7 @@ class IVVI_DAC:
         for x in v0s:
             if x>1.:
                 skip=False
+                break
         if skip:
             self.SetAllZero()
             return
@@ -162,6 +163,6 @@ class IVVI_DAC:
         twait = tt/steps
         for line in vls:
             for nn,vv in enumerate(line):
-                self.SetVoltage(nn,vv)
+                self.SetVoltage(nn+1,vv)
             time.sleep(twait)
             

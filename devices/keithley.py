@@ -8,8 +8,8 @@ def numtostr(mystr):
 # Driver for Keithley2100 multimeter.  Uses instrument_ni (NI backend) instead of normal instrument class
     
 class Keithley2100(instrument_ni):
-    def __init__(self,addr='USB0::0x05E6::0x2100::1310646::INSTR',reset=True,verb=True):
-        super(Keithley2100, self).__init__(addr,reset,verb)
+    def __init__(self,addr='USB0::0x05E6::0x2100::1310646::INSTR',reset=True,verb=True,**kwargs):
+        super(Keithley2100, self).__init__(addr,reset,verb,**kwargs)
         self.id()
     def GetVoltage(self,range='DEF',res='DEF'): # (manual entry) Preset and make a DC voltage measurement with the specified range and resolution. The reading is sent to the output buffer.
         # range and res can be numbers or MAX, MIN, DEF
