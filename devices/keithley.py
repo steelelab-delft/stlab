@@ -1,13 +1,13 @@
 import visa
 import numpy as np
-from stlab.devices.instrument_ni import instrument_ni
+from stlab.devices.instrument import instrument
 
 def numtostr(mystr):
     return '%12.8e' % mystr
 
 # Driver for Keithley2100 multimeter.  Uses instrument_ni (NI backend) instead of normal instrument class
     
-class Keithley2100(instrument_ni):
+class Keithley2100(instrument):
     def __init__(self,addr='USB0::0x05E6::0x2100::1310646::INSTR',reset=True,verb=True,**kwargs):
         super(Keithley2100, self).__init__(addr,reset,verb,**kwargs)
         self.id()
