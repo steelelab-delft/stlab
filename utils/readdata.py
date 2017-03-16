@@ -86,7 +86,7 @@ def readQUCS(filename):
             varfound = line.find('<')
             varendfound = line.find('/')
             if varendfound != -1:
-                mylists[currentvarname] = np.array(col)
+                mylists[vartype + '_' + currentvarname] = np.array(col)
                 col = []
             elif varfound != -1:
                 line = line.strip("\n").strip(">").strip("<")
