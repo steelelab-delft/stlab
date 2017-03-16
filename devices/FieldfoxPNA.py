@@ -14,82 +14,8 @@ class FieldfoxPNA(basepna):
                 self.TwoPort()
             elif mode == 'SA':
                 self.write('INST:SEL "SA"') #set mode to Spectrum Analyzer
-    def SinglePort(self):
-        self.write('CALC:PAR:COUN 1') #Set 1 trace and measurement
-        self.write('CALC:PAR1:DEF S11')
-    def TwoPort(self):
-        self.write('CALC:PAR:COUN 2') #Set 2 traces and measurements
-        self.write('CALC:PAR1:DEF S11')
-        self.write('CALC:PAR2:DEF S21')
 
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
-
-    def SetContinuous(self,bool=True):
-        if bool:
-            self.write('INIT:CONT 1') #Turn on continuous mode
-        elif not bool:
-            self.write('INIT:CONT 0') #Turn off continuous mode
-
-    def SetStart(self,x):
-        mystr = numtostr(x)
-        mystr = 'FREQ:STAR '+mystr
-        self.write(mystr)
-    def SetEnd(self,x):
-        mystr = numtostr(x)
-        mystr = 'FREQ:STOP '+mystr
-        self.write(mystr)
-    def SetCenter(self,x):
-        mystr = numtostr(x)
-        mystr = 'FREQ:CENT '+mystr
-        self.write(mystr)
-    def SetSpan(self,x):
-        mystr = numtostr(x)
-        mystr = 'FREQ:SPAN '+mystr
-        self.write(mystr)
-
-    def GetStart(self):
-        mystr = 'FREQ:STAR?'
-        pp = self.query(mystr)
-        pp = float(pp)
-        return pp
-    def GetEnd(self):
-        mystr = 'FREQ:STOP?'
-        pp = self.query(mystr)
-        pp = float(pp)
-        return pp
-    def GetCenter(self):
-        mystr = 'FREQ:CENT?'
-        pp = self.query(mystr)
-        pp = float(pp)
-        return pp
-    def GetSpan(self):
-        mystr = 'FREQ:SPAN?'
-        pp = self.query(mystr)
-        pp = float(pp)
-        return pp
-
-
-    def SetIFBW(self,x):
-        mystr = numtostr(x)
-        mystr = 'SENS:BWID '+mystr
-        self.write(mystr)
-    def SetPower(self,x):
-        mystr = numtostr(x)
-        mystr = 'SOUR:POW '+mystr
-        self.write(mystr)
-    def GetPower(self):
-        mystr = 'SOUR:POW?'
-        pp = self.query(mystr)
-        pp = float(pp)
-        return pp
-    def SetPoints(self,x):
-        mystr = '%d' % x
-        mystr = 'SWE:POIN '+mystr
-        self.write(mystr)
-
-    def Trigger(self):
-        print((self.query('INIT;*OPC?')))
-        return
 
     def GetFrequency(self):
         frec = self.query('FREQ:DATA?')
@@ -110,7 +36,10 @@ class FieldfoxPNA(basepna):
         self.write('CALC:PAR' + str(i+1) + ':SEL')
     def GetTraceData(self):
         yy = self.query('CALC:DATA:SDATA?')
-        return yy
+        yy = np.asarray([float(xx) for xx in yy.split(',')])
+        yyre = yy[::2]
+        yyim = yy[1::2]
+        return yyre,yyim
 
     def CalOn (self):
         mystr = "CORR:USER 1"
@@ -120,6 +49,9 @@ class FieldfoxPNA(basepna):
         self.write(mystr)
     def GetCal(self):
         return bool(int(self.query('CORR:USER?')))
+
+
+### OPTIONAL METHODS
 
     def Measure2ports(self,autoscale = True):
         self.TwoPort()
@@ -139,7 +71,13 @@ class FieldfoxPNA(basepna):
         mystr = 'MMEM:LOAD:STAT "%s"' % statefile
         self.write(mystr)
 
-
+    def SinglePort(self):
+        self.write('CALC:PAR:COUN 1') #Set 1 trace and measurement
+        self.write('CALC:PAR1:DEF S11')
+    def TwoPort(self):
+        self.write('CALC:PAR:COUN 2') #Set 2 traces and measurements
+        self.write('CALC:PAR1:DEF S11')
+        self.write('CALC:PAR2:DEF S21')
 
 
 # DC source commands

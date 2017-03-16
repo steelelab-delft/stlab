@@ -18,10 +18,8 @@ class basepna(instrument):
         self.id()
         if reset:
             self.SetContinuous(False) #Turn off continuous mode
+##### METHODS THAT CAN GENERALLY BE USED ON ALL PNAs.  REIMPLEMENT IF NECESSARY #######
 
-
-##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
-    @abc.abstractmethod
     def SetContinuous(self,var=True):
         if var:
             self.write('INIT:CONT 1') #Turn on continuous mode
@@ -29,78 +27,68 @@ class basepna(instrument):
             self.write('INIT:CONT 0') #Turn off continuous mode
         return
 
-    @abc.abstractmethod
     def SetStart(self,x):
         mystr = numtostr(x)
         mystr = 'SENS:FREQ:STAR '+mystr
         self.write(mystr)
-    @abc.abstractmethod
     def SetEnd(self,x):
         mystr = numtostr(x)
         mystr = 'SENS:FREQ:STOP '+mystr
         self.write(mystr)
-    @abc.abstractmethod
     def SetCenter(self,x):
         mystr = numtostr(x)
         mystr = 'SENS:FREQ:CENT '+mystr
         self.write(mystr)
-    @abc.abstractmethod
     def SetSpan(self,x):
         mystr = numtostr(x)
         mystr = 'SENS:FREQ:SPAN '+mystr
         self.write(mystr)
 
-    @abc.abstractmethod
     def GetStart(self):
         mystr = 'SENS:FREQ:STAR?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
-    @abc.abstractmethod
     def GetEnd(self):
         mystr = 'SENS:FREQ:STOP?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
-    @abc.abstractmethod
     def GetCenter(self):
         mystr = 'SENS:FREQ:CENT?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
-    @abc.abstractmethod
     def GetSpan(self):
         mystr = 'SENS:FREQ:SPAN?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
 
-    @abc.abstractmethod
     def SetIFBW(self,x):
         mystr = numtostr(x)
         mystr = 'SENS:BWID '+mystr
         self.write(mystr)
-    @abc.abstractmethod
     def SetPower(self,x):
         mystr = numtostr(x)
         mystr = 'SOUR:POW '+mystr
         self.write(mystr)
-    @abc.abstractmethod
     def GetPower(self):
         mystr = 'SOUR:POW?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
-    @abc.abstractmethod
     def SetPoints(self,x):
         mystr = '%d' % x
         mystr = 'SENS:SWE:POIN '+mystr
         self.write(mystr)
 
-    @abc.abstractmethod
     def Trigger(self):
         print((self.query('INIT;*OPC?')))
         return
+
+
+##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
     @abc.abstractmethod
     def GetFrequency(self):
@@ -120,9 +108,11 @@ class basepna(instrument):
         self.write('CALC:PAR:SEL "%s"' % mystr)
     @abc.abstractmethod
     def GetTraceData(self):
-        yy = self.query("CALC:DATA? SDATA")
-        return yy
-
+        yy = self.query("CALC:DATA? SDATA") 
+        yy = np.asarray([float(xx) for xx in yy.split(',')])
+        yyre = yy[::2]
+        yyim = yy[1::2]
+        return yyre,yyim
 
     @abc.abstractmethod
     def CalOn (self):
@@ -155,29 +145,22 @@ class basepna(instrument):
             names.append('%sre ()' % pp)
             names.append('%sim ()' % pp)
             names.append('%sdB (dB)' % pp)
-        if Cal:
-            for pp in parnames:
-                names.append('%sre unc ()' % pp)
-                names.append('%sim unc ()' % pp)
-                names.append('%sdB unc (dB)' % pp)
         for par in pars:
             self.SetActiveTrace(par)
-            yy = self.GetTraceData()
-            yy = np.asarray([float(xx) for xx in yy.split(',')])
-            yyre = yy[::2]
-            yyim = yy[1::2]
+            yyre,yyim = self.GetTraceData()
             alltrc.append(yyre)
             alltrc.append(yyim)
             yydb = 20.*np.log10( np.sqrt(np.power(yyre,2.)+np.power(yyim,2.)) )
             alltrc.append(yydb)
         if Cal:
+            for pp in parnames:
+                names.append('%sre unc ()' % pp)
+                names.append('%sim unc ()' % pp)
+                names.append('%sdB unc (dB)' % pp)
             self.CalOff()
             for par in pars:
                 self.SetActiveTrace(par)
-                yy = self.GetTraceData()
-                yy = np.asarray([float(xx) for xx in yy.split(',')])
-                yyre = yy[::2]
-                yyim = yy[1::2]
+                yyre,yyim = self.GetTraceData()
                 alltrc.append(yyre)
                 alltrc.append(yyim)
                 yydb = 20.*np.log10( np.sqrt(np.power(yyre,2.)+np.power(yyim,2.)) )
