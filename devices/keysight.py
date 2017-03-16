@@ -107,7 +107,7 @@ class keysightB2901A(instrument):
         y=[float(xx) for xx in y]
         return y,x #Return V,I regardless of sweep parameter
     def SetNPLC(self,nn):
-        mode = self.GetMode
+        mode = self.GetMode()
         self.write('SENS:{}:NPLC {}'.format(mode,nn))
         return
         
