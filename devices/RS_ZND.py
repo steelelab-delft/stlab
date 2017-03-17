@@ -55,7 +55,7 @@ class RS_ZND_pna(basepna):
 
 ## Optional methods
 
-''' OLD METHOD BEFORE ABCLASS
+    ''' OLD METHOD BEFORE ABCLASS
     def GetAllData(self):
         Cal = self.GetCal()
         pars = self.query('CALC:PAR:CAT?')
@@ -90,7 +90,7 @@ class RS_ZND_pna(basepna):
         for name,data in zip(names,alltrc):
             final[name]=data
         return final
-'''
+    '''
 
     def LoadCal (self, calfile, channel = 1):
         mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
