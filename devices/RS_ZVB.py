@@ -1,92 +1,25 @@
+import visa
 import numpy as np
-from stlab.devices.basepna import basepna
-from stlab.utils.stlabdict import stlabdict
+import time
+from stlab.devices.instrument import instrument
+from collections import OrderedDict
 
 def numtostr(mystr):
     return '%20.15e' % mystr
 #    return '%20.10f' % mystr
 
-class RS_ZVB_pna(basepna):
+class RS_ZVB_pna(instrument):
     def __init__(self,addr='TCPIP::192.168.1.23::INSTR',reset=True,verb=True):
         super(type(self), self).__init__(addr,reset,verb)
+        #Remove timeout so long measurements do not produce -420 "Unterminated Query"
+        self.dev.timeout = None 
+        self.id()
         self.twoportmode = False
         self.oneportmode = False
         self.DisplayOn()
         if reset:
+            self.SetContinuous(False) #Turn off continuous mode
             self.TwoPort()
-
-#####  Reimplementation of some functions from basepna to accomodate differences
-
-    def SetIFBW(self,x):
-        mystr = numtostr(x)
-        mystr = 'BAND '+mystr
-        self.write(mystr)
-
-    def GetAllData(self):
-        data = super(RS_ZVB_pna,self).GetAllData()
-        #Check if a time sweep.  If so, replace column title "Frequency" with "Time"
-        if 'XTIM' in self.query('FUNC?'):
-            datasub = stlabdict([('Time (s)', v) if k == 'Frequency (Hz)' else (k, v) for k, v in d.items()]
-            return datasub
-        else:
-            return data
-
-
-##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
-
-    def GetFrequency(self):
-        freq = self.query('CALC:DATA:STIM?')
-        freq = np.asarray([float(xx) for xx in freq.split(',')])
-        return freq
-
-    def GetTraceNames(self):
-        pars = self.query('CALC:PAR:CAT?')
-        pars = pars.strip('\n').strip("'").split(',')
-        parnames = pars[1::2] #parameter names
-        pars = pars[::2] #parameter identifiers
-        return pars,parnames
-    def SetActiveTrace(self,mystr):
-        self.write('CALC:PAR:SEL "%s"' % mystr)
-    def GetTraceData(self):
-        yy = self.query("CALC:DATA? SDATA") 
-        yy = np.asarray([float(xx) for xx in yy.split(',')])
-        yyre = yy[::2]
-        yyim = yy[1::2]
-        return yyre,yyim
-
-
-    def CalOn (self):
-        mystr = "CORR ON"
-        self.write(mystr)
-    def CalOff (self):
-        mystr = "CORR OFF"
-        self.write(mystr)
-    def GetCal(self): #Does not work on this PNA.  Always returns 1? I manually return false
-#        return bool(int(self.query('CORR?')))
-        return False
-
-
-
-
-###  Optional methods
-
-
-    def LoadCal (self, calfile, channel = 1):
-        mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
-        self.write(mystr)
-
-    def SetCWFreq(self,x):
-        mystr = numtostr(x)
-        mystr = 'SOUR:FREQ:CW '+mystr
-    def GetCWFreq(self):
-        freq = self.query('SOUR:FREQ:CW?')
-        freq = float(freq)
-        return freq
-        self.write(mystr)
-    def SetTime(self,x):
-        mystr = '%d' % x
-        self.write('SWE:TIME ' + mystr)
-        return
     def SinglePort(self):
         self.SetContinuous(False) #Turn off continuous mode
         self.ClearAll()
@@ -118,6 +51,53 @@ class RS_ZVB_pna(basepna):
         self.Cleanup()
         self.twoportmode = True
         self.oneportmode = False
+    def SetRange(self,start,end):
+        self.SetStart(start)
+        self.SetEnd(end)
+    def SetCenterSpan(self,center,span):
+        self.SetCenter(center)
+        self.SetSpan(span)
+    def SetStart(self,x):
+        mystr = numtostr(x)
+        mystr = 'FREQ:STAR '+mystr
+        self.write(mystr)
+    def SetEnd(self,x):
+        mystr = numtostr(x)
+        mystr = 'FREQ:STOP '+mystr
+        self.write(mystr)
+    def SetCenter(self,x):
+        mystr = numtostr(x)
+        mystr = 'FREQ:CENT '+mystr
+        self.write(mystr)
+    def SetCWFreq(self,x):
+        mystr = numtostr(x)
+        mystr = 'SOUR:FREQ:CW '+mystr
+        self.write(mystr)
+    def SetSpan(self,x):
+        mystr = numtostr(x)
+        mystr = 'FREQ:SPAN '+mystr
+        self.write(mystr)
+    def SetIFBW(self,x):
+        mystr = numtostr(x)
+        mystr = 'BAND '+mystr
+        self.write(mystr)
+    def SetPower(self,x):
+        mystr = numtostr(x)
+        mystr = 'SOUR:POW '+mystr
+        self.write(mystr)
+    def GetPower(self):
+        mystr = 'SOUR:POW?'
+        pp = self.query(mystr)
+        pp = float(pp)
+        return pp
+    def SetPoints(self,x):
+        mystr = '%d' % x
+        mystr = 'SWE:POIN '+mystr
+        self.write(mystr)
+    def SetTime(self,x):
+        mystr = '%d' % x
+        self.write('SWE:TIME ' + mystr)
+        return
     def AutoscaleAll(self):
         pars = self.query('CALC:PAR:CAT?')
         pars = pars.strip('\n').strip("'").split(',')
@@ -142,8 +122,14 @@ class RS_ZVB_pna(basepna):
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
         return self.GetAllData()
-
-    ''' Old routine before abclass
+    def GetFrequency(self):
+        freq = self.query('CALC:DATA:STIM?')
+        freq = np.asarray([float(xx) for xx in freq.split(',')])
+        return freq
+    def GetCWFreq(self):
+        freq = self.query('SOUR:FREQ:CW?')
+        freq = float(freq)
+        return freq
     def GetAllData(self):
         Cal = self.GetCal()
         Cal = False #Suppress uncalibrated return.  GetCal doesn't work anyway
@@ -184,5 +170,28 @@ class RS_ZVB_pna(basepna):
         for name,data in zip(names,alltrc):
             final[name]=data
         return final
-    '''
+    def LoadCal (self, calfile, channel = 1):
+        mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
+        self.write(mystr)
+    def CalOn (self):
+        mystr = "CORR ON"
+        self.write(mystr)
+    def CalOff (self):
+        mystr = "CORR OFF"
+        self.write(mystr)
+    def GetCal(self): #Does not work on this PNA.  Always returns 1?
+        return bool(int(self.query('CORR?')))
+    def SetContinuous(self,bool=True):
+        if bool:
+            self.write('INIT:CONT 1') #Turn on continuous mode
+        elif not bool:
+            self.write('INIT:CONT 0') #Turn off continuous mode
+    def Trigger(self,opc = True):
+        if opc:
+            print((self.query('INIT;*OPC?')))
+        else:
+            self.write('INIT')
+        return
+
+
 
