@@ -4,9 +4,11 @@ import stlab.utils.metagen as metagen #Callable as stlab.metagen.fromlimits(...)
 import stlab.utils.readdata as readdata #Callable as stlab.readdata.readQUCS(...)
 from stlab.utils.writematrix import writematrix as savetxt #Callable as stlab.savetxt(...)
 from stlab.utils.writematrix import writedict as savedict
+from stlab.utils.writematrix import writedictarray as savedictarray
 from stlab.utils.writematrix import writeparams as writeparams #Callable as stlab.savetxt(...)
 from stlab.utils.writematrix import writeparnames as writeparnames
 from stlab.utils.writematrix import params_to_str as params_to_str
+from stlab.utils.writematrix import writeline as writeline
 from stlab.utils.stlabdict import stlabdict
 import importlib.util
 lmfit_spec = importlib.util.find_spec("lmfit")
@@ -23,3 +25,5 @@ if found and foundsig:
     from stlab.utils.S11fit import S11full as S11func #Callable as stlab.S11fit(...)
     from stlab.utils.S11fit import backmodel as S11back #Callable as stlab.S11fit(...)
     from stlab.utils.S11fit import S11theo as S11theo #Callable as stlab.S11fit(...)
+
+   

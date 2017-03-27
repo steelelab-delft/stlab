@@ -32,4 +32,15 @@ def writeparams(myfile,params,f='%.10e',delim=', '):
 def params_to_str(params,f='%.10e',delim=', '):
     line = [f % x for x in [params[label].value for label in params.keys()] ]
     return delim.join(line)
+
+def writedictarray(myfile,mydictarray,f='%.10e',delim=', ',blocksep='\n'):
+    for block in mydictarray:
+        writedict(myfile,block,f,delim,blocksep)
+    return
     
+def writeline(myfile,line,f='.10e',delim=', '):
+    for x in line[:-1]:
+        myfile.write("{:{form}}".format(x,form = f) + delim)
+    myfile.write("{:{form}}\n".format(line[-1],form = f))
+    myfile.flush()
+    return

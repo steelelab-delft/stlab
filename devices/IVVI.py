@@ -117,7 +117,7 @@ class IVVI_DAC:
         reply,status = self.dev.visalib.read(self.dev.session,2) #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
         if self.verb:
             print("DAC reply: ", tuple([x for x in reply]))
-    def RampVoltage(self,dac,mvoltage,tt,steps=1000): #To ramp voltage over 'tt' seconds from current DAC value.
+    def RampVoltage(self,dac,mvoltage,tt=5.,steps=100): #To ramp voltage over 'tt' seconds from current DAC value.
         v0 = self.ReadDAC(dac)
         voltages = np.linspace(v0,mvoltage,steps)
         twait = tt/steps
@@ -148,3 +148,21 @@ class IVVI_DAC:
         for i in range(1,self.ndacs+1):
             self.SetVoltage(i,0.)
         return
+    def RampAllZero(self,tt=5.,steps=100):
+        v0s = self.ReadDACs()
+        skip = True
+        for x in v0s:
+            if x>1.:
+                skip=False
+                break
+        if skip:
+            self.SetAllZero()
+            return
+        vls = [np.linspace(vv,0.,steps) for vv in v0s]
+        vls = np.transpose(np.asarray(vls))
+        twait = tt/steps
+        for line in vls:
+            for nn,vv in enumerate(line):
+                self.SetVoltage(nn+1,vv)
+            time.sleep(twait)
+            

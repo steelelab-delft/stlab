@@ -199,8 +199,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.show()
 
     if not fitwidth==None:
-        i1 = max(int(ires-di*fitwidth/2),0)
-        i2 = min(int(ires+di*fitwidth/2),len(frec))
+        i1 = max(int(ires-di*fitwidth),0)
+        i2 = min(int(ires+di*fitwidth),len(frec))
         frec = frec[i1:i2]
         S11 = S11[i1:i2]
         ires = ires - i1
@@ -458,8 +458,10 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.plot(frec,np.abs(finalfit))
         plt.show()
 
-
-    return params
+    if fitwidth == None:
+        return params
+    else:
+        return params,frec,S11
 
 
 

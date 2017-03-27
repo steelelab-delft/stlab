@@ -28,8 +28,17 @@ class RigolDM3058(instrument):
         volt = float(volt[-1])
         return volt
     def SetRange(self,i):  #0: 200 mV, 1: 2 V, 2: 20 V, 3: 200 V, 4: 1000 V
+        self.SetRangeAuto(False)
         mystr = "MEAS:VOLT:DC %d" % i
         self.write(mystr)
+    def SetRangeAuto(self,state=True):
+        if state:
+            self.write('MEAS AUTO')
+        else:
+            self.write('MEAS MANU')
+    def SetSpeed(self,value = 'S'): #S,M or F (slow, medium, fast)
+        self.write('RATE:VOLTage:DC %s' % value)
+        return
 '''
         def GetVoltCurr(self):
         mystr = 'FORM:ELEM:SENS VOLT,CURR'
