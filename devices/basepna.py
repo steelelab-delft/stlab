@@ -18,6 +18,7 @@ class basepna(instrument):
         self.id()
         if reset:
             self.SetContinuous(False) #Turn off continuous mode
+
 ##### METHODS THAT CAN GENERALLY BE USED ON ALL PNAs.  REIMPLEMENT IF NECESSARY #######
 
     def SetContinuous(self,var=True):
@@ -135,8 +136,7 @@ class basepna(instrument):
         self.SetCenter(center)
         self.SetSpan(span)
 
-    def GetAllData(self):
-        Cal = self.GetCal()
+    def GetAllData(self,keep_uncal=True):
         pars,parnames = self.GetTraceNames()
         self.SetActiveTrace(pars[0])
         names = ['Frequency (Hz)']
@@ -145,36 +145,43 @@ class basepna(instrument):
             names.append('%sre ()' % pp)
             names.append('%sim ()' % pp)
             names.append('%sdB (dB)' % pp)
+            names.append('%sPh (rad)' % pp)
         for par in pars:
             self.SetActiveTrace(par)
             yyre,yyim = self.GetTraceData()
             alltrc.append(yyre)
             alltrc.append(yyim)
-            yydb = 20.*np.log10( np.sqrt(np.power(yyre,2.)+np.power(yyim,2.)) )
+            yydb = 20.*np.log10( np.abs(yyre+1j*yyim) )
+            yyph = np.unwrap(np.angle(yyre+1j*yyim))
             alltrc.append(yydb)
-        if Cal:
+            alltrc.append(yyph)
+        Cal = self.GetCal()
+        if Cal and keep_uncal:
             for pp in parnames:
                 names.append('%sre unc ()' % pp)
                 names.append('%sim unc ()' % pp)
                 names.append('%sdB unc (dB)' % pp)
+                names.append('%sPh unc (rad)' % pp)
             self.CalOff()
             for par in pars:
                 self.SetActiveTrace(par)
                 yyre,yyim = self.GetTraceData()
                 alltrc.append(yyre)
                 alltrc.append(yyim)
-                yydb = 20.*np.log10( np.sqrt(np.power(yyre,2.)+np.power(yyim,2.)) )
+                yydb = 20.*np.log10( np.abs(yyre+1j*yyim) )
+                yyph = np.unwrap(np.angle(yyre+1j*yyim))
                 alltrc.append(yydb)
+                alltrc.append(yyph)
             self.CalOn()
         final = stlabdict()
         for name,data in zip(names,alltrc):
             final[name]=data
         return final
 
-    def MeasureScreen(self):
+    def MeasureScreen(self,keep_uncal=True):
         self.SetContinuous(False)
         print(self.Trigger()) #Trigger single sweep and wait for response
-        return self.GetAllData()
+        return self.GetAllData(keep_uncal)
 
 
 
