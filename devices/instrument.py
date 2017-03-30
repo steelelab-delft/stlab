@@ -1,8 +1,15 @@
 # Basic visa instrument class.  Includes resoruce manager startup, basic query and write methods, id and reset methods
 import visa
 
-print('Global ResourceManager created')
-global_rs = visa.ResourceManager('@py')
+#Try to use pyvisa-py
+#If this fails, revert to using NI-VISA
+try:
+    global_rs = visa.ResourceManager('@py')
+    print('Global pyvisa-py ResourceManager created')
+except:
+    global_rs = visa.ResourceManager() #Create resource manager using NI backend
+    print('Global NI ResourceManager created')
+
 
 class instrument:
     def __init__(self,addr,reset=True,verb=True,**kwargs):
