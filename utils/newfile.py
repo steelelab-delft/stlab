@@ -6,7 +6,7 @@ import shutil
 # If colnames (array of column names) is included, the title line is written
 # Also copies main script file to measurement folder
 
-def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True):
+def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=True):
 
     import __main__
     if hasattr(__main__, '__file__'):
@@ -23,14 +23,18 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True):
     else:
         foldername = prefix + '_' +idstring
     filename = foldername+'.dat'
-    fullfoldername = os.path.normpath(mypath + '/' + foldername)
-    fullfilename = os.path.normpath(mypath + '/' + foldername + '/' + filename)
+    if usefolder:
+        fullfoldername = os.path.normpath(mypath + '/' + foldername)
+        fullfilename = os.path.normpath(mypath + '/' + foldername + '/' + filename)
+    else:
+        fullfoldername = os.path.normpath(mypath + '/')
+        fullfilename = os.path.normpath(mypath + '/' + filename)
     print(fullfoldername)
     print(fullfilename)
     if not os.path.exists(fullfoldername):
         os.makedirs(fullfoldername)
-    print('Measurement Folder: ', foldername)
-    if mainfile !=None:
+    print('Measurement Name: ', foldername)
+    if mainfile !=None and usefolder:
         scriptname = os.path.basename(mainfile)
         shutil.copyfile(mainfile,os.path.normpath(fullfoldername + '/' + scriptname))
     myfile = open(fullfilename, 'w')
