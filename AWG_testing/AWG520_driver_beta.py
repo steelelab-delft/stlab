@@ -18,13 +18,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from stlab.devices.instrument import instrument
+from stlab.instrument import instrument
 import types
 import time
 from datetime import datetime
 import logging
 import numpy as np
 import struct
+import os
 
 class Tektronix_AWG520(instrument):
 	'''
@@ -41,7 +42,7 @@ class Tektronix_AWG520(instrument):
 	3) Add docstrings
 	'''
 
-	def __init__(self, name, addr, reset=False, numpoints=1000,**kw):
+	def __init__(self, name, addr='TCPIP::192.168.1.27::1234::SOCKET', reset=False, numpoints=1000,**kw):
 		'''
 		Initializes the AWG520.
 		Input:
@@ -53,7 +54,7 @@ class Tektronix_AWG520(instrument):
 			None
 		'''
 		logging.debug(__name__ + ' : Initializing instrument')
-		super(Tektronix_AWG520, self).__init__(addr = addr,reset= False,verb = False)
+		super(Tektronix_AWG520, self).__init__(addr = addr,reset= False,verb = False, read_termination = '\n')
 
 
 		self._address = addr
@@ -65,7 +66,7 @@ class Tektronix_AWG520(instrument):
 		self._numpoints = numpoints
 		self._fname = ''
 
-	  
+		self.init_dir()
 
 		if reset:
 			self.reset()

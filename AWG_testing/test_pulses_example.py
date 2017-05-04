@@ -7,7 +7,7 @@ import sequence
 import pprint
 import imp
 import viewer
-# import AWG520_driver_beta
+from AWG520_driver_beta import Tektronix_AWG520
 from matplotlib import pyplot as plt
 
 imp.reload(pulse)
@@ -22,6 +22,7 @@ plt.close('all')
 # This then again uses the low level AWG driver to communicate with the AWG instrument
 # So one never uses the low level AWG driver directly but instead through an interface 
 AWG = AWG_station.AWG_Station()
+AWG.AWG = Tektronix_AWG520(name='AWG')
 
 
 AWG.define_channels(id='ch1', name='RF1', type='analog',

@@ -19,3 +19,4 @@ TimeDomain measurement:
    In python 2 the default encoding is ASCII
 
    ☐ Need a code where we configure the AWG channels etc
+   make wfm extension

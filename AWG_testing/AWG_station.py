@@ -30,7 +30,7 @@ class AWG_Station():
 	"""
 	This object communicates with the AWG520 series
 	"""
-	AWG = None
+	# AWG = None
 	AWG_type = 'regular'
 	clock = 1e9
 	channels_ids =  ['ch1', 'ch1_marker1', 'ch1_marker2',
@@ -41,7 +41,7 @@ class AWG_Station():
 	def __init__(self):
 
 		self.channels = {}
-
+		self.AWG = None
 
 
 	# define channels to for connection to environment
@@ -118,7 +118,7 @@ class AWG_Station():
 		self.last_elements = elements
 
 		# making directory to store waveforms and sequences
-		self.init_dir()
+		
 
 		# old_timeout = self.AWG.timeout() # whats this function
 		# self.AWG.timeout(max(180, old_timeout))
@@ -298,7 +298,7 @@ class AWG_Station():
 		
 
 		# # Loading the sequence onto the AWG memory
-		self.AWG.gen_sequence_files(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
+		self.AWG.gen_sequence_file(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
 
 		time.sleep(.1)
 		# # # Waits for AWG to be ready
