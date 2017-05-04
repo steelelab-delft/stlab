@@ -1,0 +1,32 @@
+We have different components connected to each other.
+
+First we have the AWG driver. This is the lowest lever of code communicating with the actual hardware
+of the AWG. It is better not to modify the code and make this read-only.
+
+Then we have an interface called AWG station that communicates with the AWG driver. 
+We have toplevel functions in which we define a channel with: id, name and type.
+1. id: the channel number ex ch 1, ch2, ch1_marker1, ch1_marker2, ch2_marker1, ch2_marker2 for AWG520
+2. name: the name for the channel; call it what you want: RF, marker_RF etc.
+3. type: analog or marker
+
+To upload a sequence in the AWG:
+1. You first start with instantiate the AWG_interface object and define your channels, with the parameters 
+   above.
+
+2. Next we make the pulses we need, by instantiating the predefined pulses:
+For now we have 4 types of pulses: square pulse, cosine and sine pulses, linear pulse, clock train and marker train
+When instantiatinf these object, specify the channel name it needs to go to
+ (this name should be the same as the name in the AWG channel) and also give the pulse a arbitrary name.
+
+3. Then you instantiate the element object to store pulses and set the timing of the pulses
+
+When dealing with this object, a few default properties need to be understood here:
+All pulses start at t = 0s.The start and stop offset of all pulses are also set to 0.
+The arguments refpoint and refpoint_new specify where respectively the new pulse need to be added.
+
+
+When creating an instance of the element object, set ignore_offset_correction to True.
+This then shows the waveforms starting from zero.
+If set to False, pulse never start from zero amplitude.
+Prevent pulses from adding when putting two or more pulses on the same channels.
+Check timing correctly
