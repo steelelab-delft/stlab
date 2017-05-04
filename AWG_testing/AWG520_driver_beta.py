@@ -41,8 +41,7 @@ class Tektronix_AWG520(instrument):
 	3) Add docstrings
 	'''
 
-	def __init__(self, name, address, connection = 'GPIB', reset=False, numpoints=1000,
-				 timeout = 180,**kw):
+	def __init__(self, name, addr, reset=False, numpoints=1000,**kw):
 		'''
 		Initializes the AWG520.
 		Input:
@@ -54,11 +53,11 @@ class Tektronix_AWG520(instrument):
 			None
 		'''
 		logging.debug(__name__ + ' : Initializing instrument')
-		super(Tektronix_AWG520, self).__init__(addr = address,reset= False,verb = False, connection=connection)
+		super(Tektronix_AWG520, self).__init__(addr = addr,reset= False,verb = False)
 
 
-		self._address = address
-		self._connection = connection
+		self._address = addr
+		
 		self._values = {}
 		self._values['files'] = {}
 		
@@ -618,7 +617,7 @@ class Tektronix_AWG520(instrument):
 		return self.dev.query('MMEM:CAT? "MAIN"')
 
 
- 	def init_dir(self):
+	def init_dir(self):
 
 		print ( 'Initializing directory for AWG file transfering......' )
 		self.dir = os.path.join(os.getcwd(), 
