@@ -8,7 +8,7 @@ import time
 import logging
 import numpy as np
 import struct
-
+import os
 
 # some pulses use rounding when determining the correct sample at which to
 # insert a particular value. this might require correct rounding -- the pulses
@@ -41,7 +41,9 @@ class AWG_Station():
 	def __init__(self):
 
 		self.channels = {}
-	
+
+
+
 	# define channels to for connection to environment
 	
 	def define_channels(self, id, name, type, delay, offset, high, low, active):
@@ -115,6 +117,9 @@ class AWG_Station():
 		self.last_sequence = sequence
 		self.last_elements = elements
 
+		# making directory to store waveforms and sequences
+		self.init_dir()
+
 		# old_timeout = self.AWG.timeout() # whats this function
 		# self.AWG.timeout(max(180, old_timeout))
 
@@ -168,7 +173,7 @@ class AWG_Station():
 
 
 				# create wform files and send them to AWG
-				packed_waveforms[wfname] = self.send_waveform(chan_wfs[id],
+				packed_waveforms[wfname] = self.AWG.gen_waveform_files(chan_wfs[id],
 											chan_wfs[id+'_marker1'],
 											chan_wfs[id+'_marker2'], wfname, 
 											int(element.clock))
@@ -292,14 +297,11 @@ class AWG_Station():
 		filename = sequence.name+'_FILE.seq'
 		
 
-		# Loading the sequence onto the AWG memory
-		self.AWG.send_sequence2(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
-		self.AWG.set_sequence(filename)
-
-		self.AWG.timeout(old_timeout)
+		# # Loading the sequence onto the AWG memory
+		self.AWG.gen_sequence_files(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
 
 		time.sleep(.1)
-		# # Waits for AWG to be ready
+		# # # Waits for AWG to be ready
 		self.AWG.is_awg_ready()
 
 		_t = time.time() - _t0
@@ -336,7 +338,7 @@ class AWG_Station():
 	# 	Output:
 	# 		None
 	# 	"""
-	# 	logging.debug(__name__ + ' : Sending waveform %s to instrument' % filename)
+	# 	logging.debug(__name__ + ' : Generating wfm files %s for instrument' % filename)
 
 	# 	# Check for errors
 	# 	dim = len(w)
@@ -346,20 +348,56 @@ class AWG_Station():
 		
 
 	# 	m = m1 + np.multiply(m2,2)
-	# 	ws = ''.encode('ASCII')
+	# 	ws = b''
 	# 	for i in range(0,len(w)):
 	# 		ws = ws + struct.pack('<fB', w[i], int(m[i]))
 
 
-	# 	s1 = 'MMEM:DATA "%s",' % filename
-	# 	s3 = 'MAGIC 1000\n'
-	# 	s5 = ws
-	# 	s6 = 'CLOCK %.10e\n' % clock
+	# 	s1 = 'MAGIC 1000\r\n'
+	# 	s3 = ws
+	# 	s4 = 'CLOCK %.10e\r\n' % clock
 
-	# 	s4 = '#' + str(len(str(len(s5)))) + str(len(s5))
-	# 	lenlen=str(len(str(len(s6) + len(s5) + len(s4) + len(s3))))
-	# 	s2 = '#' + lenlen + str(len(s6) + len(s5) + len(s4) + len(s3))
+	# 	s2 = '#' + str(len(str(len(s3)))) + str(len(s3))
+		
+	
 
-	# 	mes = s1.encode('ASCII') + s2.encode('ASCII') + s3.encode('ASCII')  + \
-	# 		  s4.encode('ASCII') + s5 + s6.encode('ASCII')
-	# 	return mes
+	# 	mes =  s1.encode('ASCII')  + s2.encode('ASCII') + s3 + s4.encode('ASCII')
+
+	# 	with open(os.path.join(self.dir, filename), 'wb') as d:
+	# 		d.write(mes)
+	# 		d.close()
+		
+
+	# def test_send_sequence2(self,wfs1,wfs2,rep,wait,goto,logic_jump,filename):
+	# 	'''
+	# 	Sends a sequence file
+	# 	Inputs (mandatory):
+	# 		wfs1:  list of filenames for ch1 (all must end with .pat)
+	# 		wfs2: list of filenames for ch2 (all must end with .pat)
+	# 		rep: list
+	# 		wait: list
+	# 		goto: list
+	# 		logic_jump: list
+	# 		filename: name of output file (must end with .seq)
+	# 	Output:
+	# 		None
+	# 	'''
+	# 	logging.debug(__name__ + ' : Generating sequence %s for instrument' % filename)
+
+
+	# 	N = str(len(rep))
+	
+	# 	s1 = 'MAGIC 3002\r\n'
+	# 	s3 = 'LINES %s\n'%N
+	# 	s4 = ''
+
+
+	# 	for k in range(len(rep)):
+	# 		s4 = s4+ '"%s","%s",%s,%s,%s,%s\r\n'%(wfs1[k],wfs2[k],rep[k],wait[k],goto[k],logic_jump[k])
+
+
+
+	# 	mes = s1.encode("ASCII")  + s3.encode("ASCII")+ s4.encode("ASCII")
+	# 	with open(os.path.join(self.dir, filename), 'wb') as d:
+	# 		d.write(mes)
+	# 		d.close()

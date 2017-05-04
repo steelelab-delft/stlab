@@ -21,6 +21,7 @@
 from stlab.devices.instrument import instrument
 import types
 import time
+from datetime import datetime
 import logging
 import numpy as np
 import struct
@@ -616,29 +617,20 @@ class Tektronix_AWG520(instrument):
 		logging.debug(__name__ + ' : Read filenames from instrument')
 		return self.dev.query('MMEM:CAT? "MAIN"')
 
-  
-	def set_setup_filename(self, fname, force_load=False):
-		if self._fname == fname and not force_load:
-			print ('File %s already loaded in AWG520' %fname)
-			return
-		else:
-			self._fname = fname
-			filename = "\%s/%s.seq" % (fname, fname)
-			self.set_sequence(filename=filename)
-			print ('Waiting for AWG to load file "%s"' % fname)
-			sleeptime = 0.5
-			# while state idle is not possible due to timeout error while loading
-			t0 = time.time()
-			while(time.time()-t0 < 360):
-				try:
-					if self.get_state() == 'Idle':
-						break
-				except:
-					time.sleep(sleeptime)
-					print ('.')
-			self.get_state()
-			print ('Loading file took %.2fs' % (time.time()-t0))
-			return
+
+ 	def init_dir(self):
+
+		print ( 'Initializing directory for AWG file transfering......' )
+		self.dir = os.path.join(os.getcwd(), 
+			'AwgFiles'+datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+
+		try:
+			os.makedirs(self.dir)
+		except OSError as e:
+			if e.errno != errno.EEXIST:
+				raise  # This was not a "directory exist" error..
+
+
 
 	def set_sequence(self,filename):
 		'''
@@ -650,95 +642,12 @@ class Tektronix_AWG520(instrument):
 		self.dev.write('SOUR%s:FUNC:USER "%s","MAIN"' % (1, filename))
 
 
-	def do_set_filename(self, name, channel):
-		'''
-		Specifies which file has to be set on which channel
-		Make sure the file exists, and the numpoints and clock of the file
-		matches the instrument settings.
-		If file doesn't exist an error is raised, if the numpoints doesn't match
-		the command is neglected
-		Input:
-			name (string) : filename of uploaded file
-			channel (int) : 1 or 2, the number of the designated channel
-		Output:
-			None
-		'''
-		logging.debug(__name__  + ' : Try to set %s on channel %s' %(name, channel))
-		exists = False
-		if name in self._values['files']:
-			exists= True
-			logging.debug(__name__  + ' : File exists in local memory')
-			self._values['recent_channel_%s' %channel] = self._values['files'][name]
-			self._values['recent_channel_%s' %channel]['filename'] = name
-		else:
-			logging.debug(__name__  + ' : File does not exist in memory, \
-			reading from instrument')
-			lijst = self.dev.query('MMEM:CAT? "MAIN"')
-			bool = False
-			bestand=""
-			for i in range(len(lijst)):
-				if (lijst[i]=='"'):
-					bool=True
-				elif (lijst[i]==','):
-					bool=False
-					if (bestand==name): exists=True
-					bestand=""
-				elif bool:
-					bestand = bestand + lijst[i]
-		if exists:
-			data = self.dev.query('MMEM:DATA? "%s"' %name)
-			logging.debug(__name__  + ' : File exists on instrument, loading \
-			into local memory')
-			# string alsvolgt opgebouwd: '#' <lenlen1> <len> 'MAGIC 1000\r\n' '#' <len waveform> 'CLOCK ' <clockvalue>
-			len1=int(data[1])
-			len2=int(data[2:2+len1])
-			i=len1
-			tekst = ""
-			while (tekst!='#'):
-				tekst=data[i]
-				i=i+1
-			len3=int(data[i])
-			len4=int(data[i+1:i+1+len3])
-
-			w=[]
-			m1=[]
-			m2=[]
-
-			for q in range(i+1+len3, i+1+len3+len4,5):
-				j=int(q)
-				c,d = struct.unpack('<fB', data[j:5+j])
-				w.append(c)
-				m2.append(int(d/2))
-				m1.append(d-2*int(d/2))
-
-			clock = float(data[i+1+len3+len4+5:len(data)])
-
-			self._values['files'][name]={}
-			self._values['files'][name]['w']=w
-			self._values['files'][name]['m1']=m1
-			self._values['files'][name]['m2']=m2
-			self._values['files'][name]['clock']=clock
-			self._values['files'][name]['numpoints']=len(w)
-
-			self._values['recent_channel_%s' %channel] = self._values['files'][name]
-			self._values['recent_channel_%s' %channel]['filename'] = name
-		else:
-			logging.error(__name__  + ' : Invalid filename specified %s' %name)
-
-		if (self._numpoints==self._values['files'][name]['numpoints']):
-			logging.debug(__name__  + ' : Set file %s on channel %s' % (name, channel))
-			self.dev.write('SOUR%s:FUNC:USER "%s","MAIN"' % (channel, name))
-		else:
-			self.dev.write('SOUR%s:FUNC:USER "%s","MAIN"' % (channel, name))
-			logging.warning(__name__  + ' : Verkeerde lengte %s ipv %s'
-				%(self._values['files'][name]['numpoints'], self._numpoints))
-
 
 
 
 	# Send waveform to the device
-	def send_waveform(self,w,m1,m2,filename,clock):
-		'''
+	def gen_waveform_files(self,w,m1,m2,filename,clock):
+		"""
 		Sends a complete waveform. All parameters need to be specified.
 		choose a file extension 'wfm' (must end with .pat)
 		See also: resend_waveform()
@@ -750,163 +659,39 @@ class Tektronix_AWG520(instrument):
 			clock (int)          : frequency (Hz)
 		Output:
 			None
-		'''
-		logging.debug(__name__ + ' : Sending waveform %s to instrument' % filename)
+		"""
+		logging.debug(__name__ + ' : Generating wfm files %s for instrument' % filename)
 
 		# Check for errors
 		dim = len(w)
 
 		if (not((len(w)==len(m1)) and ((len(m1)==len(m2))))):
 			return 'error'
-		self._values['files'][filename]={}
-		self._values['files'][filename]['w']=w
-		self._values['files'][filename]['m1']=m1
-		self._values['files'][filename]['m2']=m2
-		self._values['files'][filename]['clock']=clock
-		self._values['files'][filename]['numpoints']=len(w)
-
-		m = m1 + np.multiply(m2,2)
-		ws = ''.encode('ASCII')
-		for i in range(0,len(w)):
-			ws = ws + struct.pack('<fB', w[i], int(m[i]))
-
-
-		s1 = 'MMEM:DATA "%s",' % filename
-		s3 = 'MAGIC 1000\n'
-		s5 = ws
-		s6 = 'CLOCK %.10e\n' % clock
-
-		s4 = '#' + str(len(str(len(s5)))) + str(len(s5))
-		lenlen=str(len(str(len(s6) + len(s5) + len(s4) + len(s3))))
-		s2 = '#' + lenlen + str(len(s6) + len(s5) + len(s4) + len(s3))
-
-		mes = s1.encode('ASCII') + s2.encode('ASCII') + s3.encode('ASCII') + \
-			  s4.encode('ASCII') + s5 + s6.encode('ASCII')
-		self.dev.write(mes)
-
-	def send_pattern(self,w,m1,m2,filename,clock):
-		'''
-		Sends a pattern file.
-		similar to waveform except diff file extension
-		number of points different. diff byte conversion
-		See also: resend_waveform()
-		Input:
-			w (float[numpoints]) : waveform
-			m1 (int[numpoints])  : marker1
-			m2 (int[numpoints])  : marker2
-			filename (string)    : filename
-			clock (int)          : frequency (Hz)
-		Output:
-			None
-		'''
-		logging.debug(__name__ + ' : Sending pattern %s to instrument' % filename)
-
-		# Check for errors
-		dim = len(w)
-
-		if (not((len(w)==len(m1)) and ((len(m1)==len(m2))))):
-			return 'error'
-		self._values['files'][filename]={}
-		self._values['files'][filename]['w']=w
-		self._values['files'][filename]['m1']=m1
-		self._values['files'][filename]['m2']=m2
-		self._values['files'][filename]['clock']=clock
-		self._values['files'][filename]['numpoints']=len(w)
-
-		m = m1 + np.multiply(m2,2)
-		ws = ''
-		for i in range(0,len(w)):
-			ws = ws + struct.pack('<fB', w[i], int(m[i]))
-
-		s1 = 'MMEM:DATA "%s",' % filename
-		s3 = 'MAGIC 2000\n'
-		s5 = ws
-		s6 = 'CLOCK %.10e\n' % clock
-
-		s4 = '#' + str(len(str(len(s5)))) + str(len(s5))
-		lenlen=str(len(str(len(s6) + len(s5) + len(s4) + len(s3))))
-		s2 = '#' + lenlen + str(len(s6) + len(s5) + len(s4) + len(s3))
-
-		mes = s1 + s2 + s3 + s4 + s5 + s6
-		self.dev.write(mes)
-
-
-	def resend_waveform(self, channel, w=[], m1=[], m2=[], clock=[]):
-		'''
-		Resends the last sent waveform for the designated channel
-		Overwrites only the parameters specifiedta
-		Input: (mandatory)
-			channel (int) : 1 or 2, the number of the designated channel
-		Input: (optional)
-			w (float[numpoints]) : waveform
-			m1 (int[numpoints])  : marker1
-			m2 (int[numpoints])  : marker2
-			clock (int) : frequency
-		Output:
-			None
-		'''
-		filename = self._values['recent_channel_%s' %channel]['filename']
-		logging.debug(__name__ + ' : Resending %s to channel %s' % (filename, channel))
-
-
-		if (w==[]):
-			w = self._values['recent_channel_%s' %channel]['w']
-		if (m1==[]):
-			m1 = self._values['recent_channel_%s' %channel]['m1']
-		if (m2==[]):
-			m2 = self._values['recent_channel_%s' %channel]['m2']
-		if (clock==[]):
-			clock = self._values['recent_channel_%s' %channel]['clock']
-
-		if not ( (len(w) == self._numpoints) and (len(m1) == self._numpoints) and (len(m2) == self._numpoints)):
-			logging.error(__name__ + ' : one (or more) lengths of waveforms do not match with numpoints')
-
-		self.send_waveform(w,m1,m2,filename,clock)
-		self.do_set_filename(filename, channel)
-
-	def set_all_channels_on(self):
-		for i in range(1, 3):
-			self.set_status('on',i)
-	
 		
 
-	def send_sequence(self,wfs,rep,wait,goto,logic_jump,filename):
-		'''
-		Sends a sequence file (for the moment only for ch1)
-		Inputs (mandatory):
-		   wfs:  list of filenames
-		Output:
-			None
-		'''
-		logging.debug(__name__ + ' : Sending sequence %s to instrument' % filename)
-		N = str(len(rep))
-		try:
-			wfs.remove(N*[None])
-		except ValueError:
-			pass
-		s1 = 'MMEM:DATA "%s",' % filename
-
-		if len(shape(wfs)) ==1:
-			s3 = 'MAGIC 3001\n'
-			s5 = ''
-			for k in range(len(rep)):
-				s5 = s5+ '"%s",%s,%s,%s,%s\n'%(wfs[k],rep[k],wait[k],goto[k],logic_jump[k])
-
-		else:
-			s3 = 'MAGIC 3002\n'
-			s5 = ''
-			for k in range(len(rep)):
-				s5 = s5+ '"%s","%s",%s,%s,%s,%s\n'%(wfs[0][k],wfs[1][k],rep[k],wait[k],goto[k],logic_jump[k])
-
-		s4 = 'LINES %s\n'%N
-		lenlen=str(len(str(len(s5) + len(s4) + len(s3))))
-		s2 = '#' + lenlen + str(len(s5) + len(s4) + len(s3))
+		m = m1 + np.multiply(m2,2)
+		ws = b''
+		for i in range(0,len(w)):
+			ws = ws + struct.pack('<fB', w[i], int(m[i]))
 
 
-		mes = s1 + s2 + s3 + s4 + s5
-		self.dev.write(mes)
+		s1 = 'MAGIC 1000\r\n'
+		s3 = ws
+		s4 = 'CLOCK %.10e\r\n' % clock
 
-	def send_sequence2(self,wfs1,wfs2,rep,wait,goto,logic_jump,filename):
+		s2 = '#' + str(len(str(len(s3)))) + str(len(s3))
+		
+	
+
+		mes =  s1.encode('ASCII')  + s2.encode('ASCII') + s3 + s4.encode('ASCII')
+
+		with open(os.path.join(self.dir, filename), 'wb') as d:
+			d.write(mes)
+			d.close()
+
+
+
+	def gen_sequence_file(self,wfs1,wfs2,rep,wait,goto,logic_jump,filename):
 		'''
 		Sends a sequence file
 		Inputs (mandatory):
@@ -920,34 +705,27 @@ class Tektronix_AWG520(instrument):
 		Output:
 			None
 		'''
-		logging.debug(__name__ + ' : Sending sequence %s to instrument' % filename)
+		logging.debug(__name__ + ' : Generating sequence %s for instrument' % filename)
 
 
 		N = str(len(rep))
-		s1 = 'MMEM:DATA "%s",' % filename
-		s3 = 'MAGIC 3002\n'
-		s4 = 'LINES %s\n'%N
-		s5 = ''
+	
+		s1 = 'MAGIC 3002\r\n'
+		s3 = 'LINES %s\n'%N
+		s4 = ''
 
 
 		for k in range(len(rep)):
-			s5 = s5+ '"%s","%s",%s,%s,%s,%s\n'%(wfs1[k],wfs2[k],rep[k],wait[k],goto[k],logic_jump[k])
-
-		lenlen=str(len(str(len(s5) + len(s4) + len(s3))))
-		s2 = '#' + lenlen + str(len(s5) + len(s4) + len(s3))
+			s4 = s4+ '"%s","%s",%s,%s,%s,%s\r\n'%(wfs1[k],wfs2[k],rep[k],wait[k],goto[k],logic_jump[k])
 
 
-		mes = s1 + s2 + s3 + s4 + s5
-		self.dev.write(mes)
 
-   
+		mes = s1.encode("ASCII")  + s3.encode("ASCII")+ s4.encode("ASCII")
+		with open(os.path.join(self.dir, filename), 'wb') as d:
+			d.write(mes)
+			d.close()
 
-	def load_and_set_sequence(self,wfs,rep,wait,goto,logic_jump,filename):
-		'''
-		Loads and sets the awg sequecne
-		'''
-		self.send_sequence(wfs,rep,wait,goto,logic_jump,filename)
-		self.set_sequence(filename)
+ 
 
 	def do_get_AWG_model(self):
 		return 'AWG520'
