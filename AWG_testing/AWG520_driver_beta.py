@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from stlab.instrument import instrument
+from stlab.AWG_testing.instrument import instrument
 import types
 import time
 from datetime import datetime
@@ -639,7 +639,7 @@ class Tektronix_AWG520(instrument):
 		must be defined inside the sequence file itself
 		make sure to send all waveforms before setting a seq
 		'''
-		self.dev.write('SOUR%s:FUNC:USER "%s","MAIN"' % (1, filename))
+		self.dev.write('FUNC:USER "%s","MAIN"' % (filename))
 
 
 

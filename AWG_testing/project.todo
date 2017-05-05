@@ -20,3 +20,11 @@ TimeDomain measurement:
 
    ☐ Need a code where we configure the AWG channels etc
    make wfm extension
+
+   - Tested pulses (wfm files) by uploading it onto the AWG. Uploading was done with ftp.
+   Read pulses out with Rigol Osciloscope (see picture) and measured time between pulses and all the measured time were more or less (+-5 ns) what we expected 
+
+    - Still need to test sequence files 
+    - When sequencing is tested, then we can automate file sending and uploading 
+    - Check whats'up with waveform viewing (viewer.py)
+    - add the end of element files .wfm extension

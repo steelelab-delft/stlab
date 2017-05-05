@@ -38,7 +38,7 @@ AWG.define_channels(id='ch1_marker1', name='MW_pulsemod', type='marker',
                               delay=0, active=True)
 
 AWG.define_channels(id='ch2_marker1', name='trigger', type='marker',
-                              high=0.541, low=-0.541,
+                              high=1, low=0,
                               offset=0., delay=0, active=True)
 #-------------------------------------------------------
 
@@ -51,6 +51,7 @@ AWG.define_channels(id='ch2_marker1', name='trigger', type='marker',
 sin_pulse = pulse.CosPulse(channel='RF1', name='A sine pulse on RF')
 
 train = pulse.clock_train(channel='trigger', name='A sine pulse on RF')
+
 
 
 sq_pulse = pulse.SquarePulse(channel='MW_pulsemod',
@@ -69,7 +70,7 @@ test_element1.add(pulse.cp(sin_pulse, frequency=100e6, amplitude=0.3, length=0.3
 test_element1.add(pulse.cp(sq_pulse, amplitude=1, length=0.5e-6), start = 0.2e-6,
                  name='second pulse', refpulse='first pulse', refpoint='end',operation_type = 'RO')
 
-test_element2.add(pulse.cp(sin_pulse, frequency=2e6, amplitude=0.2, length=1e-6,channel='RF2'), start = 200e-9,
+test_element2.add(pulse.cp(pulse.CosPulse(channel='RF2'), frequency=2e6, amplitude=0.2, length=1e-6,channel='RF2'), start = 200e-9,
                  name='third pulse')
 
 test_element2.add(pulse.cp(train, amplitude=0.3, cycles = 10,nr_down_points = 50), start = 100e-9,
@@ -78,13 +79,13 @@ test_element2.add(pulse.cp(train, amplitude=0.3, cycles = 10,nr_down_points = 50
 
 print('Channel definitions: ')
 
-# test_element.print_overview()
+test_element1.print_overview()
 
 #-------------------------continue-------------------------------
 
 # -------------------------------------------------------
 # viewing of the sequence for second check of timing etc
-# viewer.show_element_stlab(test_element, delay = False, channels = 'all', ax = None)
+# viewer.show_element_stlab(test_element2, delay = False, channels = 'all', ax = None)
 
 #--------------------------------------------------------
 
