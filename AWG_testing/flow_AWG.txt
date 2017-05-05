@@ -1,0 +1,16 @@
+from stlab.devices.SMB100A import SMB100A_SG 
+from stlab.devices.RS_FSV import RS_FSV
+
+RF_LO = SMB100A_SG(addr = '192.168.1.25')
+RF_qubit = SMB100A_SG(addr = '192.168.1.50')
+FSV = RS_FSV(addr = '192.168.1.50')
+
+def Pulse Readout():
+    trig AWG
+    AWG goes into run mode
+    AWG trig make pulse and feed into SMB100A RF1
+    AWG trig RF2 and FSV right after pulse is fed
+    turn off RF2.
+    FSV measures and puts data into memory of PC
+    
+
