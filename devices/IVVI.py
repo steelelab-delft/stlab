@@ -152,7 +152,7 @@ class IVVI_DAC:
         v0s = self.ReadDACs()
         skip = True
         for x in v0s:
-            if x>1.:
+            if np.abs(x)>1.:
                 skip=False
                 break
         if skip:
