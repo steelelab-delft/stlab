@@ -74,21 +74,15 @@ class Tektronix_AWG520(instrument):
 			self.get_all()
 
  
-	def is_awg_ready(self):
+	def sync_awg(self):
 		"""
 		Assert if the AWG is ready.
 		Returns:
 		bool: True, irrespective of anything.
 		"""
-		try:
-			self.dev.query('*OPC?')
-		# makes the awg read again if there is a timeout
-		except Exception as e:
-			logging.warning(e)
-			logging.warning('AWG is not ready')
-	   
-		return True
+		self.dev.write('*WAI')
 
+		
 	#get state AWG
 	def get_state(self):
 		state=int(self.dev.query('AWGC:RSTATE?'))

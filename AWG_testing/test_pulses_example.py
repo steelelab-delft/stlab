@@ -22,7 +22,7 @@ plt.close('all')
 # This then again uses the low level AWG driver to communicate with the AWG instrument
 # So one never uses the low level AWG driver directly but instead through an interface 
 AWG = AWG_station.AWG_Station()
-# AWG.AWG = Tektronix_AWG520(name='AWG')
+AWG.AWG = Tektronix_AWG520(name='AWG')
 
 
 AWG.define_channels(id='ch1', name='RF1', type='analog',
@@ -65,12 +65,15 @@ test_element2 = element.Element('a_test_element2', pulsar = AWG)#, ignore_offset
 # we copied the channel definition from out global pulsar
 
 # create a few of those
-test_element1.add(pulse.cp(sin_pulse, frequency=100e6, amplitude=0.3, length=0.3e-6),
+test_element1.add(pulse.cp(sin_pulse, frequency=25e6, amplitude=0.3, length=1e-6),
                  name='first pulse')
 test_element1.add(pulse.cp(sq_pulse, amplitude=1, length=0.5e-6), start = 0.2e-6,
                  name='second pulse', refpulse='first pulse', refpoint='end',operation_type = 'RO')
 
-test_element2.add(pulse.cp(sin_pulse, channel='RF2', frequency=2e6, amplitude=0.2, length=1e-6), start = 200e-9,
+# test_element2.add(pulse.cp(sin_pulse, channel='RF2', frequency=1e6, amplitude=0.4, length=1e-6), start = 200e-9,
+#                  name='third pulse')
+
+test_element2.add(pulse.LinearPulse(channel='RF2', length=1e-6,end_value = 0.9), start = 200e-9,
                  name='third pulse')
 
 test_element2.add(pulse.clock_train( channel='trigger', cycles = 10,nr_down_points = 50), start = 100e-9,
@@ -97,14 +100,16 @@ viewer.show_element_stlab(test_element2, delay = False, channels = 'all', ax = N
 # now to send everything to the AWG, we have perform the last step by putting everything 
 # into a sequence
 
-seq = sequence.Sequence('A Sequence')
+seq = sequence.Sequence('A Sarwan')
 seq.append(name='first_element', wfname='a_test_element1', trigger_wait=True)#,
-           # goto_target='first_element')#, jump_target='first special element')
+#            # goto_target='first_element')#, jump_target='first special element')
 
 seq.append('second element', 'a_test_element2', trigger_wait=True, repetitions=5)#,
-           # goto_target='third element', jump_target='second special element')
+#            # goto_target='third element', jump_target='second special element')
 
 
 AWG.program_awg(seq,test_element1, test_element2, verbose = True)#, test_element2)
+
+AWG.AWGrun()
 
 

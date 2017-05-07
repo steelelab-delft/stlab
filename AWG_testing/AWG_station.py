@@ -310,18 +310,20 @@ class AWG_Station():
 		
 
 		# # Loading the sequence onto the AWG memory
-		# self.AWG.gen_sequence_file(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
+		self.AWG.gen_sequence_file(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
 
-		self.test_send_sequence2(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
+		# self.test_send_sequence2(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
 
 		time.sleep(.1)
 		# # # Waits for AWG to be ready
-		self.AWG.is_awg_ready()
-		self.upload= False
+		self.AWG.sync_awg()
+		self.finished= False
 		self.upload()
-		self.upload = True
+		self.finished = True
 
 		_t = time.time() - _t0
+
+		self.AWG.set_sequence(filename)
 		print(" finished in %.2f seconds." % _t)
 
 		return 0
@@ -329,11 +331,12 @@ class AWG_Station():
 
 	def AWGrun(self):
 		# default mode is triggered
-		AWG.is_awg_ready()
-		AWG.set_run_mode('TRIG')
-		AWG.set_status('on',1)
-		AWG.set_status('on',2)
-		AWG.start()
+		
+		self.AWG.write('*WAI')
+		self.AWG.set_run_mode('TRIG')
+		self.AWG.set_status('on',1)
+		self.AWG.set_status('on',2)
+		self.AWG.start()
 
 
 	def upload(self,folder_path = None, timestamp = None):
@@ -368,7 +371,7 @@ class AWG_Station():
 
 		
 		os.chdir(dirpath)
-
+		
 		f = open('ftp.txt','w')
 		f.write('open 192.168.1.51\n')
 		f.write('\n')
@@ -385,13 +388,14 @@ class AWG_Station():
 		t.start()
 
 		if subprocess.call('ftp -v -i -s:ftp.txt') == 0:
+
 			os.remove('ftp.txt')
 			os.path.normpath(os.getcwd() + os.sep + os.pardir)
 
 	def animate(self):
 		sys.stdout.write('uploading waveforms ' + '...')
 		for c in itertools.cycle(['|', '/', '-', '\\']):
-			if self.upload:
+			if self.finished:
 				break
 			sys.stdout.write('' + c)
 			sys.stdout.flush()
