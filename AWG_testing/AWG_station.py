@@ -1,3 +1,5 @@
+# author: Wolfgang Pfaff
+# modified by: Sarwan Peiter
 """
 So I have already written the driver for the AWG. 
 Now the next step is to write an interface to communicates with driver.
@@ -8,8 +10,11 @@ import time
 import logging
 import numpy as np
 import struct
-import os
-
+import os,sys
+from datetime import datetime
+import subprocess, threading
+import itertools
+import re, fnmatch
 # some pulses use rounding when determining the correct sample at which to
 # insert a particular value. this might require correct rounding -- the pulses
 # are typically specified on short time scales, but the time unit we use is
@@ -113,7 +118,10 @@ class AWG_Station():
 		Advantage is that it's much faster, since sequence information is sent
 		to the AWG in a single file.
 		"""
-
+		self.AWG.stop()
+		self.AWG.set_status('off',1)
+		self.AWG.set_status('off',2)
+		# self.init_dir()
 		self.last_sequence = sequence
 		self.last_elements = elements
 
@@ -153,7 +161,7 @@ class AWG_Station():
 			tvals, wfs = element.normalized_waveforms()
 
 			for id in chan_ids:
-				wfname = element.name + '_%s' % id
+				wfname = element.name + '_%s.wfm' % id
 
 
 
@@ -173,12 +181,16 @@ class AWG_Station():
 
 
 				# create wform files and send them to AWG
-				packed_waveforms[wfname] = self.AWG.gen_waveform_files(chan_wfs[id],
+				self.AWG.gen_waveform_files(chan_wfs[id],
 											chan_wfs[id+'_marker1'],
 											chan_wfs[id+'_marker2'], wfname, 
 											int(element.clock))
 
-				# self.AWG.send_waveform
+				# packed_waveforms[wfname] = self.test_send(chan_wfs[id],
+				# 							chan_wfs[id+'_marker1'],
+				# 							chan_wfs[id+'_marker2'], wfname, 
+				# 							int(element.clock))
+				
 		_t = time.time() - _t0
 
 		if verbose:
@@ -235,7 +247,7 @@ class AWG_Station():
 			# add all wf names of channel
 
 			for elt in sequence.elements:
-				el_wfnames.append(elt['wfname'] + '_%s' % id)
+				el_wfnames.append(elt['wfname'] + '_%s.wfm' % id)
 				# should the name include id nr?
 
 			wfname_l.append(el_wfnames)
@@ -269,7 +281,7 @@ class AWG_Station():
 	  
 		# setting jump modes and loading the djump table
 		if sequence.djump_table != None and self.AWG_type not in ['opt09']:
-			raise Exception('pulsar: The AWG configured does not support dynamic jumping')
+			raise Exception('AWG Station: The AWG configured does not support dynamic jumping')
 
 		if self.AWG_type in ['opt09']:
 			# TODO as self.AWG_sequence_cfg no longer exists but is generated
@@ -298,11 +310,16 @@ class AWG_Station():
 		
 
 		# # Loading the sequence onto the AWG memory
-		self.AWG.gen_sequence_file(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
+		# self.AWG.gen_sequence_file(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
+
+		self.test_send_sequence2(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,filename)
 
 		time.sleep(.1)
 		# # # Waits for AWG to be ready
 		self.AWG.is_awg_ready()
+		self.upload= False
+		self.upload()
+		self.upload = True
 
 		_t = time.time() - _t0
 		print(" finished in %.2f seconds." % _t)
@@ -310,6 +327,76 @@ class AWG_Station():
 		return 0
 
 
+	def AWGrun(self):
+		# default mode is triggered
+		AWG.is_awg_ready()
+		AWG.set_run_mode('TRIG')
+		AWG.set_status('on',1)
+		AWG.set_status('on',2)
+		AWG.start()
+
+
+	def upload(self,folder_path = None, timestamp = None):
+
+
+		if folder_path is None:
+			folder_path = os.getcwd()
+
+		use_latest = True
+		if timestamp is not None:
+			use_latest = False
+
+
+
+		dirname = fnmatch.filter(os.listdir(folder_path),"AwgFiles*")
+
+		dirpath = None
+
+		if use_latest:
+			dirpath = os.path.join(os.getcwd(),dirname[-1])
+
+		else:
+
+			pattern = re.findall(r'\d+',timestamp)
+
+			for dir in dirname:
+				if pattern == re.findall(r'\d+',dir):
+					dirpath = os.path.join(os.getcwd(),dir)
+
+			if dirpath == None:
+				raise IOError("Cannot find directory with timestamp {}".format(timestamp))
+
+		
+		os.chdir(dirpath)
+
+		f = open('ftp.txt','w')
+		f.write('open 192.168.1.51\n')
+		f.write('\n')
+		f.write('\n')
+		f.write('binary\n')
+		f.write('mput "*.wfm"\n')
+		f.write('mput "*.seq"\n')
+		f.write('disconnect\n')
+		f.write('bye')
+
+		f.close()
+
+		t = threading.Thread(target=self.animate)
+		t.start()
+
+		if subprocess.call('ftp -v -i -s:ftp.txt') == 0:
+			os.remove('ftp.txt')
+			os.path.normpath(os.getcwd() + os.sep + os.pardir)
+
+	def animate(self):
+		sys.stdout.write('uploading waveforms ' + '...')
+		for c in itertools.cycle(['|', '/', '-', '\\']):
+			if self.upload:
+				break
+			sys.stdout.write('' + c)
+			sys.stdout.flush()
+			time.sleep(0.1)
+		sys.stdout.write('\rDone!     ')
 
 
 
@@ -401,3 +488,19 @@ class AWG_Station():
 	# 	with open(os.path.join(self.dir, filename), 'wb') as d:
 	# 		d.write(mes)
 	# 		d.close()
+
+
+	# def init_dir(self):
+
+	# 	print ( 'Initializing directory for AWG file transfering......' )
+	# 	self.dir = os.path.join(os.getcwd(), 
+	# 		'AwgFiles'+datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+
+	# 	try:
+	# 		os.makedirs(self.dir)
+	# 	except OSError as e:
+	# 		if e.errno != errno.EEXIST:
+	# 			raise  # This was not a "directory exist" error..
+
+
+

@@ -2,6 +2,7 @@
 # generic pulse types.
 #
 # author: Wolfgang Pfaff
+# Modified by: Sarwan Peiter
 
 import numpy as np
 from copy import deepcopy
@@ -141,6 +142,11 @@ class CosPulse(Pulse):
         self.amplitude = kw.pop('amplitude', self.amplitude)
         self.length = kw.pop('length', self.length)
         self.phase = kw.pop('phase', self.phase)
+        channel = kw.pop('channel', None)
+        if channel is not None:
+            self.channel = channel
+            self.channels = [self.channel]
+        self.channels = kw.pop('channels', self.channels)
 
         return self
 
@@ -193,7 +199,6 @@ class clock_train(Pulse):
 
     def __init__(self, channel, name='clock train', **kw):
         Pulse.__init__(self, name)
-
         self.channel = channel
         self.channels.append(channel)
 
@@ -201,6 +206,7 @@ class clock_train(Pulse):
         self.cycles = kw.pop('cycles', 100)
         self.nr_up_points = kw.pop('nr_up_points', 2)
         self.nr_down_points = kw.pop('nr_down_points', 2)
+        self.length = self.cycles * (self.nr_up_points + self.nr_down_points) * 1e-9
 
     def __call__(self, **kw):
         self.amplitude = kw.pop('amplitude', self.amplitude)
@@ -208,6 +214,12 @@ class clock_train(Pulse):
         self.nr_up_points = kw.pop('nr_up_points', self.nr_up_points)
         self.nr_down_points = kw.pop('nr_down_points', self.nr_down_points)
         self.length = self.cycles * (self.nr_up_points + self.nr_down_points) * 1e-9
+
+        if channel is not None:
+            self.channel = channel
+            self.channels = [self.channel]
+        self.channels = kw.pop('channels', self.channels)
+
         return self
 
     def chan_wf(self, chan, tvals):

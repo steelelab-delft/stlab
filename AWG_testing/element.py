@@ -2,13 +2,13 @@
 
 # Author : W. Pfaff
 
-# modified by Sarwan Peiter
+# modified by: Sarwan Peiter
 
 import numpy as np
 from copy import deepcopy
 import pprint
 import logging
-from collections import OrderedDict
+
 
 class Element:
 	"""
@@ -76,6 +76,7 @@ class Element:
 	# Auxillary functions for discretization
 
 	def _time2sample(self,t):
+
 		return int(t * self.clock + 0.5)
 
 	def _sample2time(self,s):
