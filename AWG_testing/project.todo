@@ -1,4 +1,4 @@
-TimeDomain measurement:
+TimeDomain measurement AWG:
   ☐ Check if you need goto_target argument, .\sequence.py:43
   ☐ Check if we can multilply a sine and a Gaussian function by having
   2 waves on in the element on the same channel
@@ -32,7 +32,7 @@ TimeDomain measurement:
    ✔ Read pulses out with Rigol Osciloscope (see picture) and measured time between pulses and all the measured time were more or less (+-5 ns) what we expected @done (17-05-07 12:52)
 
     ✔ Still need to test sequence files @done (17-05-07 12:52)
-    ☐ When sequencing is tested, then we can automate file sending and uploading 
+    ✔ When sequencing is tested, then we can automate file sending and uploading @done (17-05-09 14:16)
     ✔ Check whats'up with waveform viewing (viewer.py) @done (17-05-07 12:52)
     I checked it again on the computer in my office and seems to be working fine.
    
@@ -45,8 +45,20 @@ TimeDomain measurement:
 
       temporarly changed AWG station for testing, undo changes after testing
 
-      ☐ In test function import AWG TEktronix
-      ☐ in AWG station remove init_dir, test_send, and test_send_sequence, datetime importing
-      ☐ In AWG station add is_awg_ready
+      ✔ In test function import AWG TEktronix @done (17-05-09 14:17)
+      ✔ in AWG station remove init_dir, test_send, and test_send_sequence, datetime importing @done (17-05-09 14:17)
+      ✔ In AWG station add is_awg_ready @done (17-05-09 14:17)
 
-      ☐ Later make a seperate directory where AWG files are stored
+      ✔ Later make a seperate directory where AWG files are stored @done (17-05-09 14:17)
+
+
+
+
+
+
+Timedomain Measurement FSV:
+
+  ☐ Write basic functions that sets and gets properties to and from instrument
+  ☐ Make a modulation pulse and trigger pulse on AWG and test how FSV works
+  ☐ Make detector function which communicates with all instruments to actually 
+    carry out experiment
