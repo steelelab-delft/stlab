@@ -1,5 +1,4 @@
-import stlab.devices.instrument as instrument
-import pyvisa.constants as cts
+import serial
 import numpy as np
 import time
 
@@ -17,22 +16,18 @@ class IVVI_DAC:
     # The Serial parameters for this device are:
     # Baud = 115200, data bits = 8, parity = ODD, stop bit = 1
     # Constructor requires ndacs (integers, either 8 or 16) and polarity settings (listlike of strings, 'POS', 'NEG' or 'BIP')
-    def __init__(self,addr='ASRLCOM1',ndacs=8,polarity=('BIP','BIP'),verb=True,reset=True):
-        # Open serial resource or other type
-        if "ASRL" in addr:         
-            self.dev = instrument.global_rs.open_resource(addr,baud_rate=115200,data_bits=8,parity=cts.Parity.odd,stop_bits=cts.StopBits.one)
-        else:
-            self.dev = instrument.global_rs.open_resource(addr)
-        #Set read and write terminations.  Probably unnecessary since I am using raw reads and writes
-        self.dev.read_termination=None
-        self.dev.write_termination=None
+    def __init__(self,addr='COM1',ndacs=8,polarity=('BIP','BIP'),verb=True,timeout = 2,reset=False):
+        #Directly using pyserial interface and skipping pyvisa
+        self.serialport = serial.Serial(addr,baudrate=115200,bytesize=serial.EIGHTBITS, parity=serial.PARITY_ODD, stopbits=serial.STOPBITS_ONE,timeout=timeout)
         if ndacs!=8 and ndacs!=16:
             print('DAC WARNING, non-standard number of dacs.  Should be 8 or 16 but %d was given' % ndacs)
         self.ndacs = ndacs
         self.verb = verb
         self.SetPolarity(polarity)
+        if reset:
+            self.RampAllZero(tt=20.)
         return
-
+        self.lastmessage = ()
     #Function to set polarity.  This just informs the driver what polarities are in use so it can correctly set the voltages.
     #The driver cannot physically set the polarity.  The real polarity of the DACs can only be set form the hardware switches.
     def SetPolarity(self,polarity):
@@ -89,19 +84,37 @@ class IVVI_DAC:
         dataH = int(bytevalue/256)
         dataL = bytevalue - dataH*256
         return (dataH, dataL)
+    def getreply(self):
+        reply = self.serialport.read(2)
+        nbytes = reply[0]
+        reply = tuple(reply + self.serialport.read(nbytes-2))
+        if len(reply) != reply[0]:
+            self.flush()
+            raise ValueError('MALFORMED DAC READ: FLUSHED SERIALPORT')
+        if self.verb:
+             print("DAC reply: ", reply)
+        return reply
+    def writemessage(self,message):
+        self.lastmessage = message
+        if self.verb:
+            print("DAC input: ", message)
+        message = bytes(message) #convert to bytes
+        self.serialport.write(message) #Perform serial write
+    def flush(self):
+        rep = b'a'
+        while rep != b'':
+            rep = self.serialport.read()
     def SetVoltage(self,dac,mvoltage):
         #We get the byte values corresponding to the desired voltage.  We need to add the polarity dependant offset from polmatrix to get the correct byte values
         (DataH, DataL) = self.mvoltage_to_bytes(mvoltage+self.polmatrix[dac-1])
         #print(DataH, DataL)
         #Prepare byte value message to send
         message = (7, 0, 2, 1, dac, DataH, DataL)
-        if self.verb:
-            print("DAC input: ", message)
-        message = bytearray(message) #convert to byte array
-        self.dev.write_raw(message) #Perform raw write
-        reply,status = self.dev.visalib.read(self.dev.session,2) #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
-        if self.verb:
-            print("DAC reply: ", tuple([x for x in reply]))
+        self.writemessage(message)
+        try:
+            reply = self.getreply() #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
+        except ValueError as error:
+            print('Error when setting:' + repr(error))
     def SetValue(self,dac,val):
         val = int(val)
         #We get the byte values corresponding to the desired voltage.  We need to add the polarity dependant offset from polmatrix to get the correct byte values
@@ -110,15 +123,16 @@ class IVVI_DAC:
         #print(DataH, DataL)
         #Prepare byte value message to send
         message = (7, 0, 2, 1, dac, DataH, DataL)
-        if self.verb:
-            print("DAC input: ", message)
-        message = bytearray(message) #convert to byte array
-        self.dev.write_raw(message) #Perform raw write
-        reply,status = self.dev.visalib.read(self.dev.session,2) #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
-        if self.verb:
-            print("DAC reply: ", tuple([x for x in reply]))
+        self.writemessage(message) #Perform raw write
+        try:
+            reply = self.getreply() #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
+        except ValueError as error:
+            print('Error when setting:' + repr(error))
     def RampVoltage(self,dac,mvoltage,tt=5.,steps=100): #To ramp voltage over 'tt' seconds from current DAC value.
         v0 = self.ReadDAC(dac)
+        if np.abs(v0-mvoltage)<1.:
+            self.SetVoltage(dac,mvoltage)
+            return
         voltages = np.linspace(v0,mvoltage,steps)
         twait = tt/steps
         for vv in voltages:
@@ -127,20 +141,17 @@ class IVVI_DAC:
     def ReadDACs(self):
         #Prepare message to read bytes from DACS
         message = (4, 0, self.ndacs*2+2, 2)
-        if self.verb:
-            print("DAC input: ", message)
-        message = bytearray(message)
-        self.dev.write_raw(message) #Write request for data
-        reply,status = self.dev.visalib.read(self.dev.session,2) #Read reply length and error byte
-        if self.verb:
-            print('DAC reply: ', tuple([x for x in reply]))
-        nbytes = reply[0]
-        reply,status = self.dev.visalib.read(self.dev.session,nbytes-2) #Read remaining reply bytes
-        reply = tuple([x for x in reply])
-        if self.verb:
-            print('DAC reply: ', reply)
-        reply = self.numbers_to_mvoltages(reply) #convert the byte values to actual voltage values
-        return reply
+        self.writemessage(message) #Write request for data
+        try:
+            reply = self.getreply() #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
+        except ValueError as error:
+            print('Error when reading:' + repr(error))
+            print('Assuming 0V DAC values. 5 sec to abort...')
+            time.sleep(5)
+            raise
+            return tuple([0 for i in range(self.ndacs)])
+        voltvals = self.numbers_to_mvoltages(reply[2:]) #convert the byte values to actual voltage values
+        return voltvals
     def ReadDAC(self,dac):
         vs = self.ReadDACs()
         return vs[dac-1]
@@ -165,4 +176,3 @@ class IVVI_DAC:
             for nn,vv in enumerate(line):
                 self.SetVoltage(nn+1,vv)
             time.sleep(twait)
-            
