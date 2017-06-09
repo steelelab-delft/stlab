@@ -1,3 +1,6 @@
+#Triton communication driver.  If TritonDaemon is used (for remote logging) you should use TritonWrapper.
+#Only the "query" method and _init_ is really used from this driver under those circumstances
+
 import visa
 import numpy as np
 import time
@@ -34,3 +37,23 @@ class Triton(instrument):
             return -1.
         ret = ret.strip('K')
         return float(ret)
+    def GetTurbo(self): #Returns turbo values in order Power, Speed, PST, MT, BT, PBT, ET (temperatures)
+        result = []
+        
+        mystr = self.query('READ:DEV:TURB1:PUMP:SIG:POWR')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('W')
+        result.append(float(mystr))
+        
+        mystr = self.query('READ:DEV:TURB1:PUMP:SIG:SPD')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('Hz')
+        result.append(float(mystr))
+        
+        temps = ['PST','MT','BT','PBT','ET']
+        for ss in temps:
+            mystr = self.query('READ:DEV:TURB1:PUMP:SIG:{}'.format(ss))
+            mystr = mystr.split(':')[-1]
+            mystr = mystr.strip('C')
+            result.append(float(mystr))
+        return result
