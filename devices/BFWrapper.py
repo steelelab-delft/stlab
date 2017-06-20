@@ -2,6 +2,7 @@
 
 from stlab.utils.MySocket import MySocket
 
+#All writes are queries.  If command does not contain a '?', an empty string is returned.
 class BFWrapper:
     def __init__(self,addr="localhost",port=8472,reset=True,verb=True,**kwargs):
         self.verb = verb
@@ -9,6 +10,7 @@ class BFWrapper:
     #        self.reset()
         self.addr = addr
         self.port = port
+        self.htr_ranges = (0, 0.0316, 0.1, 0.316, 1., 3.16, 10., 31.6, 100.) #For heater current ranges. 0 = Off, 1 = 31.6 μA, 2 = 100 μA, 3 = 316 μA, 4 = 1.00 mA, 5 = 3.16 mA, 6 = 10.0 mA, 7 = 31.6 mA, 8 = 100 mA
     def query(self,mystr):
         s = MySocket()
         s.sock.connect((self.addr, self.port))
@@ -33,6 +35,49 @@ class BFWrapper:
         mystr = 'RDGK? {}'.format(i)
         ret = self.query(mystr)
         return float(ret)
+    def SetAutorange(self,val=True):
+        i = 1 #Turning autorange on changes the setting for all channels.  I just use channel 1
+        oldsetting = self.query('RDGRNG? {}'.format(i))
+        newsetting = oldsetting.split(',')
+        newsetting.insert(0,str(i))
+        #I simply read the range settings from channel 1 and change the autorange element
+        if val:
+            newsetting[-2] = '1'
+        else:
+            newsetting[-2] = '0'
+        newsetting = ','.join(newsetting)
+        self.write('RDGRNG {}'.format(newsetting))
+        return
+    def SetControl(self,mode = 4):  #1 = PID, 2 = Zone Tuning, 3 = PID, 4 = off
+        self.write('CMODE {}'.format(mode))
+        return
+    def SetRamp(self,mode=True,rate=0.1): #Set ramp mode and rate (in K/min).  If true, temperature set point will ramp to desired value.  If false, no ramping will be done.
+        rate = abs(rate)
+        if mode:
+            self.write('RAMP 1,{}'.format(rate))
+        else:
+            self.write('RAMP 0,{}'.format(rate))
+    def SetHeaterValue(self,value):
+        pass
+    def SetHeaterRange(self,range): #Specifies heater current range in mA. Will choose the minimum range to include the value given as "range"
+        range = abs(range)
+        rngi = -1
+        for i,rr in enumerate(self.htr_ranges):
+            if range <= rr:
+                rngi = i
+                break
+        if rngi < 0:
+            print('SetHeaterRange: Error, range too high.  No range change done.')
+            return
+        self.write('HTRRNG {}'.format(rngi))
+        return
+    def GetHeaterRange(self):
+        rr = int(self.query('HTRRNG?'))
+        return(self.htr_ranges[rr])
+        
+        
+    
+        
     
     
     '''
