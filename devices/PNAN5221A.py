@@ -112,9 +112,7 @@ class PNAN5221A(basepna):
         self.write('SENS:FREQ {}'.format(xx))
         return
     
-
-[SENSe<Ch>:]FREQuency[:CW] <FixedFreq>
-[SENSe<Ch>:]FREQuency:FIXed <FixedFreq>
+    
     def SetArbitrarySegSweep(self,on = True):
         if on:
             self.write('SENS:SEGM:ARB ON')
