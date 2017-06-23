@@ -108,6 +108,13 @@ class PNAN5221A(basepna):
     def SetSweepType(self,mystr): #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
         self.write('SENS:SWE:TYPE %s' % mystr)
         return
+    def SetCWfrequency(self,xx):
+        self.write('SENS:FREQ {}'.format(xx))
+        return
+    
+
+[SENSe<Ch>:]FREQuency[:CW] <FixedFreq>
+[SENSe<Ch>:]FREQuency:FIXed <FixedFreq>
     def SetArbitrarySegSweep(self,on = True):
         if on:
             self.write('SENS:SEGM:ARB ON')

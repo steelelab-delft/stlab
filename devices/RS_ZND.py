@@ -136,4 +136,14 @@ class RS_ZND_pna(basepna):
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
         return self.GetAllData()
 
+    #To set different sweep types
+    def SetSweepType(self,mystr): #Possible values: LINear | LOGarithmic | POWer | CW | POINt | SEGMent  (Default value is LINear)
+        self.write('SENS:SWE:TYPE %s' % mystr)
+        return
+    def SetCWfrequency(self,xx):
+        self.write('SENS:FREQ {}'.format(xx))
+        return
+    
+
+
 
