@@ -416,7 +416,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.show()
 
 #REDO final fit varying all parameters
-    if refitback:
+    if refitback and fitbackground:
         params['a'].set(vary=True)
         params['b'].set(vary=True)
         params['c'].set(vary=True)
