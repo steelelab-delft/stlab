@@ -33,12 +33,13 @@ class PNAN5221A(basepna):
 
     #probably need checking?
     def CalOn (self):
-        return
         mystr = "SENS:CORR ON"
         self.write(mystr)
+        return
     def CalOff (self):
         mystr = "SENS:CORR OFF"
         self.write(mystr)
+        return
     def GetCal(self):
         return bool(int(self.query('SENS:CORR?')))
 
