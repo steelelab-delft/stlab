@@ -81,7 +81,11 @@ class BFWrapper:
     def SetPIDTemperature(self,value=0.): #Set ramp mode and rate (in K/min).  If true, temperature set point will ramp to desired value.  If false, no ramping will be done.
         self.write('SETP {}'.format(value))
         return
-    def WaitForTStable(self,channel=6,tol=0.003,timeout=300.,tsettle=40.):
+    def GetSetPoint(self):
+        result = self.query('SETP?')
+        result = float(result)
+        return result
+    def WaitForTStable(self,channel=6,tol=0.001,timeout=600.,tsettle=40.):
         Tset = self.GetSetPoint()
         t0 = time.time()
         tnow = time.time()
