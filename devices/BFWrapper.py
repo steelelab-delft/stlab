@@ -1,6 +1,7 @@
 # Basic interface to retrieve temperature measurement form BF computer
 
 from stlab.utils.MySocket import MySocket
+import time
 
 #All writes are queries.  If command does not contain a '?', an empty string is returned.
 class BFWrapper:
@@ -74,9 +75,36 @@ class BFWrapper:
     def GetHeaterRange(self):
         rr = int(self.query('HTRRNG?'))
         return(self.htr_ranges[rr])
-        
-        
-    
+    def SetPIDTemperature(self,value=0.): #Set ramp mode and rate (in K/min).  If true, temperature set point will ramp to desired value.  If false, no ramping will be done.
+        self.write('SETP {}'.format(value))
+        return
+    def WaitForTStable(self,channel=6,tol=0.003,timeout=300.,tsettle=40.):
+        Tset = self.GetSetPoint()
+        t0 = time.time()
+        tnow = time.time()
+        tstablestart = None
+        success = False
+        while tnow-t0 < timeout:
+            tnow = time.time()
+            TT = self.GetTemperature(channel) #Get current temperature
+            if abs(TT-Tset)<tol:
+                if tstablestart == None:
+                    tstablestart = tnow
+                    print('T in tolerance.  Settling...')
+            elif abs(TT-Tset)>=tol:
+                if tstablestart != None:
+                    print('T left tolerance')
+                tstablestart = None
+                continue
+            if tnow-tstablestart > tsettle:
+                success = True
+                break
+            time.sleep(0.2)
+        if success:
+            print("Channel " + channel + " STABLE at " + str(Tset) + ' K')
+        else:
+            print("Channel " + channel + " UNSTABLE for " + str(Tset) + ' K')
+        return success
         
     
     
