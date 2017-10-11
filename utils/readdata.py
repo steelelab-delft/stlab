@@ -4,7 +4,7 @@
 # Single title line and ', ' field delimeter
 
 import numpy as np
-from collections import OrderedDict
+from stlab.utils.stlabdict import stlabdict
 
 def readdat(filename,delim=', ',nlines=None):
     with open(filename,'r') as f:
@@ -28,7 +28,7 @@ def readdat(filename,delim=', ',nlines=None):
             if point == '\n':
                 block = np.asarray(block)
                 block = block.T
-                newdict=OrderedDict()
+                newdict=stlabdict()
                 for name,dat in zip(names,block):
                     newdict[name] = dat
                 arrayofdicts.append(newdict)
@@ -45,7 +45,7 @@ def readdat(filename,delim=', ',nlines=None):
         if len(block) != 0:
             block = np.asarray(block)
             block = block.T
-            newdict=OrderedDict()
+            newdict=stlabdict()
             for name,dat in zip(names,block):
                 newdict[name] = dat
             arrayofdicts.append(newdict)
@@ -63,7 +63,7 @@ def reads2p(filename):
             measurement.append(line)
         measurement = np.asarray(measurement)
         measurement = measurement.T
-        mydict=OrderedDict()
+        mydict=stlabdict()
         for name,data in zip(names,measurement):
             mydict[name]=data
         return mydict
@@ -76,9 +76,9 @@ pi = np.pi
 
 def readQUCS(filename):
     with open(filename,'r') as f:
-        variables = OrderedDict()
+        variables = stlabdict()
         ivar = 0
-        mylists = OrderedDict()
+        mylists = stlabdict()
         col = []
         currentvarname =""
 
