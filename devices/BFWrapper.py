@@ -108,9 +108,9 @@ class BFWrapper:
                 break
             time.sleep(0.2)
         if success:
-            print("Channel " + channel + " STABLE at " + str(Tset) + ' K')
+            print("Channel " + str(channel) + " STABLE at " + str(Tset) + ' K')
         else:
-            print("Channel " + channel + " UNSTABLE for " + str(Tset) + ' K')
+            print("Channel " + str(channel) + " UNSTABLE for " + str(Tset) + ' K')
         return success
         
     
