@@ -49,7 +49,7 @@ class BFWrapper:
         newsetting = ','.join(newsetting)
         self.write('RDGRNG {}'.format(newsetting))
         return
-    def SetControl(self,mode = 4):  #1 = PID, 2 = Zone Tuning, 3 = PID, 4 = off
+    def SetControl(self,mode = 4):  #1 = Closed PID loop, 2 = Zone Tuning, 3 = Open Loop, 4 = off
         self.write('CMODE {}'.format(mode))
         return
     def SetRamp(self,mode=True,rate=0.1): #Set ramp mode and rate (in K/min).  If true, temperature set point will ramp to desired value.  If false, no ramping will be done.
