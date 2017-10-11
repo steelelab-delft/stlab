@@ -59,7 +59,10 @@ class BFWrapper:
         else:
             self.write('RAMP 0,{}'.format(rate))
     def SetHeaterValue(self,value):
-        pass
+        self.write('MOUT {}'.format(value))
+        return
+    def GetHeaterValue(self):
+        return float(self.query('MOUT?'))
     def SetHeaterRange(self,range): #Specifies heater current range in mA. Will choose the minimum range to include the value given as "range"
         range = abs(range)
         rngi = -1
