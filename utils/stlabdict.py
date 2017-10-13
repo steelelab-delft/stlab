@@ -25,7 +25,7 @@ class stlabdict(OrderedDict):
     def ncol(self):
         return len(self.keys())
     def nline(self):
-        a = len(self[0])
+        a = len(self[list(self.keys())[0]])
         for key in self.keys():
             if len(self[key]) is not a:
                 print('Columns with different length!!?')
