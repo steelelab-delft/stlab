@@ -40,4 +40,23 @@ class stlabdict(OrderedDict):
         mat = np.transpose(mat)
         return mat
             
-            
+
+import copy
+class stlabmtx():
+    def __init__(self, mtx, rangex=None, rangey=None):
+        self.mtx = np.matrix(copy.deepcopy(mtx))
+        print(self.mtx.shape)
+        self.processlist = []
+        self.pmtx = self.mtx
+        if rangex is None:
+            self.rangex = range(self.mtx.shape[0])
+        else:
+            self.rangex = rangex
+        if rangey is None:
+            self.rangey = range(self.mtx.shape[1])
+        else:
+            self.rangey = rangey
+    def offset(self,x=0):
+        self.pmtx = self.mtx + x
+        self.processlist.append('offset {}'.format(x))
+
