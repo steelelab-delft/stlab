@@ -49,14 +49,52 @@ class stlabmtx():
         self.processlist = []
         self.pmtx = self.mtx
         if rangex is None:
-            self.rangex = range(self.mtx.shape[0])
+            self.rangex = np.arange(self.mtx.shape[1])
         else:
             self.rangex = rangex
         if rangey is None:
-            self.rangey = range(self.mtx.shape[1])
+            self.rangey = np.arange(self.mtx.shape[0])
         else:
             self.rangey = rangey
     def offset(self,x=0):
-        self.pmtx = self.mtx + x
+        self.pmtx = self.pmtx + x
         self.processlist.append('offset {}'.format(x))
+    def saveprocesslist(self,filename = './process.pl'):
+        myfile = open(filename,'w')
+        for line in self.processlist:
+            myfile.write(line + '\n')
+        myfile.close()
+    def applystep(self,line):
+            func,pars = line.split(' ')
+            pars = pars.split(',')
+            func = func.strip()
+            if func is '':
+                return
+            elif func == 'offset':
+                pars = [float(pars[0])]
+            method = getattr(self, func)
+            method(*pars)
+    def applyprocesslist(self,pl):
+        for line in pl:
+            self.applystep(line)
+    def applyprocessfile(self,filename):
+        with open(filename,'r') as myfile:
+            for line in myfile:
+                if '#' == line[0]:
+                    continue
+                self.applystep(line)
+    def reset(self):
+        self.processlist = []
+        self.pmtx = self.mtx
+    def delstep(self,ii):
+        newpl = copy.deepcopy(self.processlist)
+        del newpl[ii]
+        self.reset()
+        self.applyprocesslist(newpl)
+    def insertstep(self,ii,line):
+        newpl = copy.deepcopy(self.processlist)
+        newpl.insert(ii,line)
+        self.reset()
+        self.applyprocesslist(newpl)
+
 
