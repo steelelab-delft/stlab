@@ -91,10 +91,22 @@ class stlabmtx():
         mtx = self.pmtx.copy()
         self.pmtx = sub_cbc(mtx,lowp,highp,low_limit,high_limit)
         self.processlist.append('sub_cbc {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
-    def sub_lbl(
+    def sub_lbl(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
         mtx = self.pmtx.copy().T
         self.pmtx = sub_cbc(mtx,lowp,highp,low_limit,high_limit).T
         self.processlist.append('sub_lbl {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
+    def sub_linecut(self, pos, horizontal=1):
+        pos = int(pos)
+        horizontal = bool(horizontal)
+        if horizontal:
+            v = self.pmtx[pos,:]
+            self.pmtx-=v
+        else:
+            v = self.pmtx[:,pos].T
+            mtx = self.pmtx.T - v
+            self.pmtx = mtx.T
+        self.processlist.append('sub_linecut {},{}'.format(pos,horizontal))
+    # Processlist
     def saveprocesslist(self,filename = './process.pl'):
         myfile = open(filename,'w')
         for line in self.processlist:
@@ -109,6 +121,7 @@ class stlabmtx():
             else:
                 pars = [float(x) for x in pars]
             method = getattr(self, func)
+            print(func,pars)
             method(*pars)
             self.processlist.append(line)
     def applyprocesslist(self,pl):
