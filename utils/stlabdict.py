@@ -102,6 +102,7 @@ class stlabmtx():
             self.rangey = np.arange(self.mtx.shape[0])
         else:
             self.rangey = rangey
+    
     # Functions from spyview
     def absolute(self):
         self.pmtx = abs(self.pmtx)
@@ -157,6 +158,7 @@ class stlabmtx():
             mtx = self.pmtx.T - v
             self.pmtx = mtx.T
         self.processlist.append('sub_linecut {},{}'.format(pos,horizontal))
+    
     # Processlist
     def saveprocesslist(self,filename = './process.pl'):
         myfile = open(filename,'w')
