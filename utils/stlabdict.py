@@ -60,7 +60,7 @@ def dict_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None):
         xx = np.asarray(xx)
         rangex = np.linspace(xx[0][0],xx[-1][-1],zz.shape[0])
     if ykey:
-        yy = np.asarray(xx)
+        yy = np.asarray(yy)
         rangey = np.linspace(yy[0][0],yy[-1][-1],zz.shape[1])
     return stlabmtx(zz, rangex=rangex, rangey=rangey)
 
@@ -106,13 +106,14 @@ class stlabmtx():
     def absolute(self):
         self.pmtx = abs(self.pmtx)
         self.processlist.append('abs')
-    def flip(self,x=False,y=False):
+    def flip(self,x=0,y=0):
+        x=bool(x)
+        y=bool(y)
         if x:
             self.pmtx = np.flipud(self.pmtx)
-            self.processlist.append('flip {}'.format(x))
         if y:
             self.pmtx = np.fliplr(self.pmtx)
-            self.processlist.append('flip {}'.format(y))
+        self.processlist.append('flip x={},y={}'.format(x,y))
     def log10(self):
         self.pmtx = np.log10(self.pmtx)
         self.processlist.append('log10')
@@ -122,7 +123,8 @@ class stlabmtx():
     def offset(self,x=0):
         self.pmtx = self.pmtx + x
         self.processlist.append('offset {}'.format(x))
-    def pixel_avg(self,nx=0,ny=0,center=True):
+    def pixel_avg(self,nx=0,ny=0,center=0):
+        center=bool(center)
         if center:
             self.pmtx = ndimage.generic_filter(self.pmtx, np.nanmean, size=(nx,ny), mode='constant',cval=np.NaN)
         else:
@@ -162,9 +164,13 @@ class stlabmtx():
             myfile.write(line + '\n')
         myfile.close()
     def applystep(self,line):
-            func,pars = line.split(' ')
-            pars = pars.split(',')
-            func = func.strip()
+            sline = line.split(' ')
+            if len(sline) == 1:
+                func = sline[0]
+                pars = []
+            else:
+                pars = sline[1].split(',')
+                func = sline[0].strip()
             if func is '':
                 return
             else:
@@ -172,7 +178,6 @@ class stlabmtx():
             method = getattr(self, func)
             print(func,pars)
             method(*pars)
-            self.processlist.append(line)
     def applyprocesslist(self,pl):
         for line in pl:
             self.applystep(line)
