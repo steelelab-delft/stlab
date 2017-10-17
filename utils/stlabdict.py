@@ -1,5 +1,6 @@
 from collections import OrderedDict
 import numpy as np
+from scipy import ndimage
 
 class stlabdict(OrderedDict):
     def __init__(self, *args, **kwargs):
@@ -121,6 +122,14 @@ class stlabmtx():
     def offset(self,x=0):
         self.pmtx = self.pmtx + x
         self.processlist.append('offset {}'.format(x))
+    def pixel_avg(self,nx=0,ny=0,center=True):
+        if center:
+            self.pmtx = ndimage.generic_filter(self.pmtx, np.nanmean, size=(nx,ny), mode='constant',cval=np.NaN)
+        else:
+            mask = np.ones((nx, ny))
+            mask[int(nx/2), int(ny/2)] = 0
+            self.pmtx = ndimage.generic_filter(self.pmtx, np.nanmean, footprint=mask, mode='constant', cval=np.NaN)
+        self.processlist.append('pixel_avg {},{},{}'.format(nx,ny,center))
     def rotate_ccw(self):
         self.pmtx = np.rot90(self.pmtx)
         self.processlist.append('rotate_ccw')
