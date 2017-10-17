@@ -44,6 +44,25 @@ class stlabdict(OrderedDict):
 import copy
 
 #Auxiliary processing functions for stlabmtx
+def dict_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None):
+    xx = []; yy = []; zz = [];
+    for line in data:
+        zz.append(line[key])
+        if xkey:
+            xx.append(line[xkey])
+        if ykey:
+            yy.append(line[ykey])
+    zz = np.asmatrix(zz)
+    if (rangex and xkey) or (rangey and ykey):
+        raise KeyError
+    if xkey:
+        xx = np.asarray(xx)
+        rangex = np.linspace(xx[0][0],xx[-1][-1],zz.shape[0])
+    if ykey:
+        yy = np.asarray(xx)
+        rangey = np.linspace(yy[0][0],yy[-1][-1],zz.shape[1])
+    return stlabmtx(zz, rangex=rangex, rangey=rangey)
+
 def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
     mtx = data
     for i in range(mtx.shape[1]):
@@ -82,11 +101,32 @@ class stlabmtx():
             self.rangey = np.arange(self.mtx.shape[0])
         else:
             self.rangey = rangey
-    # Functions
+    # Functions from spyview
+    def absolute(self):
+        self.pmtx = abs(self.pmtx)
+        self.processlist.append('abs')
+    def flip(self,x=False,y=False):
+        if x:
+            self.pmtx = np.flipud(self.pmtx)
+            self.processlist.append('flip {}'.format(x))
+        if y:
+            self.pmtx = np.fliplr(self.pmtx)
+            self.processlist.append('flip {}'.format(y))
+    def log10(self):
+        self.pmtx = np.log10(self.pmtx)
+        self.processlist.append('log10')
+    def neg(self):
+        self.pmtx = -self.pmtx
+        self.processlist.append('neg')
     def offset(self,x=0):
         self.pmtx = self.pmtx + x
         self.processlist.append('offset {}'.format(x))
-        
+    def rotate_ccw(self):
+        self.pmtx = np.rot90(self.pmtx)
+        self.processlist.append('rotate_ccw')
+    def rotate_cw(self):
+        self.pmtx = np.rot90(self.pmtx,3)
+        self.processlist.append('rotate_cw')
     def sub_cbc(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
         mtx = self.pmtx.copy()
         self.pmtx = sub_cbc(mtx,lowp,highp,low_limit,high_limit)
