@@ -42,6 +42,32 @@ class stlabdict(OrderedDict):
             
 
 import copy
+
+#Auxiliary processing functions for stlabmtx
+def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
+    mtx = data
+    for i in range(mtx.shape[1]):
+        y = mtx[:,i]
+        # Find boundaries
+        min0 = max(y.min(),low_limit)
+        max0 = min(y.max(),high_limit)
+        # crop list accordingly
+        idx_crop = [i for i,val in enumerate(y) if min0<=val<=max0]
+        # Find upper and lower percentiles and assign truthvalue to elements
+        if idx_crop:
+            # Might be more efficient if manually sorting once. Don't really know what np.percentile does
+            low_thres = np.percentile(y[idx_crop],lowp)
+            high_thres = np.percentile(y[idx_crop],100-highp)
+            idx = [i for i,val in enumerate(y) if low_thres<=val<=high_thres]
+            # Calculate mean of remaining values
+            if idx:
+                mean = y[idx].mean()
+                # Subtract mean from all values
+                y-=mean
+            mtx[:,i]=y
+    return mtx   
+    
+#Main stlabmtx class
 class stlabmtx():
     def __init__(self, mtx, rangex=None, rangey=None):
         self.mtx = np.matrix(copy.deepcopy(mtx))
@@ -56,9 +82,19 @@ class stlabmtx():
             self.rangey = np.arange(self.mtx.shape[0])
         else:
             self.rangey = rangey
+    # Functions
     def offset(self,x=0):
         self.pmtx = self.pmtx + x
         self.processlist.append('offset {}'.format(x))
+        
+    def sub_cbc(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
+        mtx = self.pmtx.copy()
+        self.pmtx = sub_cbc(mtx,lowp,highp,low_limit,high_limit)
+        self.processlist.append('sub_cbc {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
+    def sub_lbl(
+        mtx = self.pmtx.copy().T
+        self.pmtx = sub_cbc(mtx,lowp,highp,low_limit,high_limit).T
+        self.processlist.append('sub_lbl {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
     def saveprocesslist(self,filename = './process.pl'):
         myfile = open(filename,'w')
         for line in self.processlist:
@@ -70,10 +106,11 @@ class stlabmtx():
             func = func.strip()
             if func is '':
                 return
-            elif func == 'offset':
-                pars = [float(pars[0])]
+            else:
+                pars = [float(x) for x in pars]
             method = getattr(self, func)
             method(*pars)
+            self.processlist.append(line)
     def applyprocesslist(self,pl):
         for line in pl:
             self.applystep(line)
