@@ -125,7 +125,7 @@ class stlabmtx():
         self.pmtx = self.pmtx + x
         self.processlist.append('offset {}'.format(x))
     def pixel_avg(self,nx=0,ny=0,center=0):
-        center=bool(center)
+        center=bool(center); nx=int(nx); ny=int(ny)
         if center:
             self.pmtx = ndimage.generic_filter(self.pmtx, np.nanmean, size=(nx,ny), mode='constant',cval=np.NaN)
         else:
