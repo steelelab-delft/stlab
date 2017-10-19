@@ -87,6 +87,21 @@ def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
             mtx[:,i]=y
     return mtx   
     
+def xderiv(data,rangex,direction=1):
+    mtx = data
+    new_mtx = []
+    if direction==-1:
+        x = rangex[::-1]
+    else:
+        x = rangex
+    for line in data:
+        z = np.squeeze(np.array(line))
+        dz = np.zeros(x.shape,np.float)
+        dz[0:-1] = np.diff(z)/np.diff(x)
+        dz[-1] = (z[-1] - z[-2])/(x[-1] - x[-2])
+        new_mtx.append(dz)
+    return np.matrix(new_mtx)
+    
 #Main stlabmtx class
 class stlabmtx():
     def __init__(self, mtx, rangex=None, rangey=None):
@@ -108,13 +123,11 @@ class stlabmtx():
         self.pmtx = abs(self.pmtx)
         self.processlist.append('abs')
     def flip(self,x=0,y=0):
-        x=bool(x)
-        y=bool(y)
-        if x:
-            self.pmtx = np.flipud(self.pmtx)
-        if y:
+        if bool(x):
             self.pmtx = np.fliplr(self.pmtx)
-        self.processlist.append('flip x={},y={}'.format(x,y))
+        if bool(y):
+            self.pmtx = np.flipud(self.pmtx)
+        self.processlist.append('flip {},{}'.format(x,y))
     def log10(self):
         self.pmtx = np.log10(self.pmtx)
         self.processlist.append('log10')
@@ -124,9 +137,13 @@ class stlabmtx():
     def offset(self,x=0):
         self.pmtx = self.pmtx + x
         self.processlist.append('offset {}'.format(x))
+    def offset_axes(self,x=0,y=0):
+        self.rangex+=x
+        self.rangey+=y
+        self.processlist.append('offset_axes {},{}'.format(x,y))
     def pixel_avg(self,nx=0,ny=0,center=0):
-        center=bool(center); nx=int(nx); ny=int(ny)
-        if center:
+        nx=int(nx); ny=int(ny)
+        if bool(center):
             self.pmtx = ndimage.generic_filter(self.pmtx, np.nanmean, size=(nx,ny), mode='constant',cval=np.NaN)
         else:
             mask = np.ones((nx, ny))
@@ -134,11 +151,16 @@ class stlabmtx():
             self.pmtx = ndimage.generic_filter(self.pmtx, np.nanmean, footprint=mask, mode='constant', cval=np.NaN)
         self.processlist.append('pixel_avg {},{},{}'.format(nx,ny,center))
     def rotate_ccw(self):
+        # still lacking the switching of the axes
         self.pmtx = np.rot90(self.pmtx)
         self.processlist.append('rotate_ccw')
     def rotate_cw(self):
+        # still lacking the switching of the axes
         self.pmtx = np.rot90(self.pmtx,3)
         self.processlist.append('rotate_cw')
+    def scale_data(self,factor=1.):
+        self.pmtx = factor*self.pmtx
+        self.processlist.append('scale {}'.format(factor))
     def sub_cbc(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
         mtx = self.pmtx.copy()
         self.pmtx = sub_cbc(mtx,lowp,highp,low_limit,high_limit)
@@ -149,8 +171,7 @@ class stlabmtx():
         self.processlist.append('sub_lbl {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
     def sub_linecut(self, pos, horizontal=1):
         pos = int(pos)
-        horizontal = bool(horizontal)
-        if horizontal:
+        if bool(horizontal):
             v = self.pmtx[pos,:]
             self.pmtx-=v
         else:
@@ -158,6 +179,14 @@ class stlabmtx():
             mtx = self.pmtx.T - v
             self.pmtx = mtx.T
         self.processlist.append('sub_linecut {},{}'.format(pos,horizontal))
+    def xderiv(self,direction=1):
+        mtx = self.pmtx.copy()
+        self.pmtx = xderiv(mtx,self.rangex,direction)
+        self.processlist.append('xderiv {}'.format(direction))
+    def yderiv(self,direction=1):
+        mtx = self.pmtx.copy().T
+        self.pmtx = xderiv(mtx,self.rangey,direction).T
+        self.processlist.append('yderiv {}'.format(direction))
     
     # Processlist
     def saveprocesslist(self,filename = './process.pl'):
