@@ -90,3 +90,15 @@ class TritonWrapper:
         pass
     def setverbose(self,verb=True):
         self.verb = verb
+    def SetPID(self,val = True):
+        if val:
+            self.write('SET:DEV:T8:TEMP:LOOP:MODE:ON')
+        else:
+            self.write('SET:DEV:T8:TEMP:LOOP:MODE:OFF')
+        return
+    def SetHeaterRange(self,val):  #Value is in mA
+        self.write('SET:DEV:T8:TEMP:LOOP:RANGE:{}'.format(val))
+        return
+    def SetPIDTemperature(self,val=0.):
+        self.write('SET:DEV:T8:TEMP:LOOP:TSET:{}'.format(val))
+        return
