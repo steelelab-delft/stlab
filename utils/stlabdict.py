@@ -141,6 +141,13 @@ class stlabmtx():
         self.rangex+=x
         self.rangey+=y
         self.processlist.append('offset_axes {},{}'.format(x,y))
+    def outlier(self,line,vertical=1):
+        self.pmtx = np.delete(self.pmtx,line,axis=int(vertical))
+        if bool(vertical):
+            self.rangex = np.delete(self.rangex, line)
+        else:
+            self.rangey = np.delete(self.rangey, line)
+        self.processlist.append('outlier {},{}'.format(line,vertical))
     def pixel_avg(self,nx=0,ny=0,center=0):
         nx=int(nx); ny=int(ny)
         if bool(center):
