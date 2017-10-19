@@ -45,24 +45,100 @@ class stlabdict(OrderedDict):
 import copy
 
 #Auxiliary processing functions for stlabmtx
-def dict_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None):
-    xx = []; yy = []; zz = [];
+
+def checkEqual1(iterator): #Returns True if all elements in iterator are equal or is empty
+    iterator = iter(iterator)
+    try:
+        first = next(iterator)
+    except StopIteration:
+        return True
+    return all(first == rest for rest in iterator)
+
+def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xtitle=None, ytitle=None):
+#data is an array of dict-like (dict, OrderedDict, stlabdict), key is the z data (matrix values) column.
+#if xkey/ykey is provided, this column is used as the x/y range values.  These values are also used as x/y titles.  x is made to run across matrix columns and y across lines.
+#This means that if x is the "slow" variable in the measurement file, the output matrix will be transposed relative to the default behavior.
+#if rangex/rangey are provided, these override the xkey/ykey assignment.  Should be array-like with the correct lengths.
+#if xtitle/ytitle are provided, these override the xkey/ykey title assignment.
+#If neither ranges, titles or keys are provided, defaults are given.  The z column for each set in the data array will be placed as a line in the output matrix (default behavior)
+#Script assumes that ranges are not changing from set to set in data.  Ranges can however be non linear.
+
+    #Build initial matrix.  Appends each data column as line in zz    
+    zz = [];
     for line in data:
         zz.append(line[key])
-        if xkey:
-            xx.append(line[xkey])
-        if ykey:
-            yy.append(line[ykey])
+    #convert to np matrix
     zz = np.asmatrix(zz)
-    if (rangex and xkey) or (rangey and ykey):
-        raise KeyError
-    if xkey:
+
+    #No keys or ranges given:
+    if rangex==None and rangey==None and xkey==None and ykey==None:
+        if xtitle == None:
+            xtitle = 'xtitle' #Default title
+        if ytitle == None:
+            ytitle = 'ytitle' #Default title
+        return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle)
+
+    #If ranges but no keys are given
+    elif (xkey == None and ykey==None) and (rangex !=None and rangey != None):
+        if xtitle == None:
+            xtitle = 'xtitle' #Default title
+        if ytitle == None:
+            ytitle = 'ytitle' #Default title
+        return stlabmtx(zz, rangex, rangey, xtitle, ytitle)
+
+    #If keys but no ranges given
+    elif (xkey != None and ykey != None) and (rangex == None and rangey == None):
+        #Take first dataset and extract the two relevant columns
+        line = data[0]
+        xx = line[xkey]
+        yy = line[ykey]
+        #Check which is slow (one with all equal values is slow)
+        xslow,yslow = (checkEqual1(xx),checkEqual1(yy))
+        #Both can not be fast or slow
+        if xslow == yslow:
+            print('dictarr_to_mtx: Warning, invalid xkey and ykey.  Using defaults')
+            if xtitle == None:
+                xtitle = 'xtitle' #Default title
+            if ytitle == None:
+                ytitle = 'ytitle' #Default title
+            return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle)
+        #if x is slow, matrix needs to be transposed
+        if xslow:
+            zz = zz.T
+            xx = []
+            for line in data:
+                xx.append(line[xkey][0])
+        #Case of y slow
+        #if x is slow, matrix is already correct
+        if yslow:
+            yy = []
+            for line in data:
+                yy.append(line[ykey][0])
         xx = np.asarray(xx)
-        rangex = np.linspace(xx[0][0],xx[-1][-1],zz.shape[0])
-    if ykey:
         yy = np.asarray(yy)
-        rangey = np.linspace(yy[0][0],yy[-1][-1],zz.shape[1])
-    return stlabmtx(zz, rangex=rangex, rangey=rangey)
+        #Sort out titles
+        titles = tuple(data[0].keys())
+        if xtitle == None:
+            if isinstance(xtitle, str):
+                xtitle = xkey #Default title
+            elif isinstance(xtitle, int):
+                xtitle = titles[xkey]
+        if ytitle == None:
+            if isinstance(ytitle, str):
+                ytitle = ykey #Default title
+            elif isinstance(ytitle, int):
+                ytitle = titles[ykey]
+        return stlabmtx(zz, xx, yy, xtitle, ytitle)
+
+    #Mixed cases (one key and one range) are not implemented
+    else:
+        print('dictarr_to_mtx: Warning, invalid keys and ranges.  Using defaults')
+        if xtitle == None:
+            xtitle = 'xtitle' #Default title
+        if ytitle == None:
+            ytitle = 'ytitle' #Default title
+        return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle)
+    return 
 
 def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
     mtx = data
@@ -104,7 +180,7 @@ def xderiv(data,rangex,direction=1):
     
 #Main stlabmtx class
 class stlabmtx():
-    def __init__(self, mtx, rangex=None, rangey=None):
+    def __init__(self, mtx, rangex=None, rangey=None, xtitle='xtitle', ytitle='ytitle'):
         self.mtx = np.matrix(copy.deepcopy(mtx))
         print(self.mtx.shape)
         self.processlist = []
@@ -112,22 +188,33 @@ class stlabmtx():
         if rangex is None:
             self.rangex = np.arange(self.mtx.shape[1])
         else:
-            self.rangex = rangex
+            self.rangex = np.asarray(rangex)
         if rangey is None:
             self.rangey = np.arange(self.mtx.shape[0])
         else:
-            self.rangey = rangey
-    
+            self.rangey = np.asarray(rangey)
+        self.xtitle=str(xtitle)
+        self.ytitle=str(xtitle)
+        self.xtitle0=self.xtitle
+        self.ytitle0=self.ytitle
+        self.rangex0 = self.rangex
+        self.rangey0 = self.rangey
+    def getextents(self):
+        return (self.rangex[0],self.rangex[-1],self.rangey[-1],self.rangey[0])
     # Functions from spyview
     def absolute(self):
         self.pmtx = abs(self.pmtx)
         self.processlist.append('abs')
-    def flip(self,x=0,y=0):
-        if bool(x):
+    def flip(self,x=False,y=False):
+        x=bool(x)
+        y=bool(y)
+        if x:
             self.pmtx = np.fliplr(self.pmtx)
-        if bool(y):
+            self.rangex = self.rangex[::-1]
+        if y:
             self.pmtx = np.flipud(self.pmtx)
-        self.processlist.append('flip {},{}'.format(x,y))
+            self.rangey = self.rangey[::-1]
+        self.processlist.append('flip {:d},{:d}'.format(x,y))
     def log10(self):
         self.pmtx = np.log10(self.pmtx)
         self.processlist.append('log10')
@@ -161,10 +248,14 @@ class stlabmtx():
         # still lacking the switching of the axes
         self.pmtx = np.rot90(self.pmtx)
         self.processlist.append('rotate_ccw')
+        self.xtitle, self.ytitle = self.ytitle, self.xtitle
+        self.rangex , self.rangey = self.rangey, self.rangex[::-1]
     def rotate_cw(self):
         # still lacking the switching of the axes
         self.pmtx = np.rot90(self.pmtx,3)
         self.processlist.append('rotate_cw')
+        self.xtitle, self.ytitle = self.ytitle, self.xtitle
+        self.rangex , self.rangey = self.rangey[::-1], self.rangex
     def scale_data(self,factor=1.):
         self.pmtx = factor*self.pmtx
         self.processlist.append('scale {}'.format(factor))
@@ -228,6 +319,10 @@ class stlabmtx():
     def reset(self):
         self.processlist = []
         self.pmtx = self.mtx
+        self.xtitle = self.xtitle0
+        self.ytitle = self.ytitle0
+        self.rangex = self.rangex0
+        self.rangey = self.rangey0
     def delstep(self,ii):
         newpl = copy.deepcopy(self.processlist)
         del newpl[ii]
