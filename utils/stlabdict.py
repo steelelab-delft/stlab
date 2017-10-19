@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import numpy as np
 from scipy import ndimage
+import pickle
 
 class stlabdict(OrderedDict):
     def __init__(self, *args, **kwargs):
@@ -333,5 +334,16 @@ class stlabmtx():
         newpl.insert(ii,line)
         self.reset()
         self.applyprocesslist(newpl)
+
+    #Uses pickle to save to file
+    def save(self,name = 'output'):
+        filename = name + '.mtx.pkl'
+        with open(filename, 'wb') as outfile:
+            pickle.dump(self,outfile, pickle.HIGHEST_PROTOCOL)
+
+    #To load:
+    #import pickle
+    #with open(filename, 'rb') as input:
+    #   mtx1 = pickle.load(input)
 
 
