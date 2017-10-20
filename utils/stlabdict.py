@@ -2,6 +2,8 @@ from collections import OrderedDict
 import numpy as np
 from scipy import ndimage
 import pickle
+import struct
+
 
 class stlabdict(OrderedDict):
     def __init__(self, *args, **kwargs):
@@ -55,7 +57,7 @@ def checkEqual1(iterator): #Returns True if all elements in iterator are equal o
         return True
     return all(first == rest for rest in iterator)
 
-def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xtitle=None, ytitle=None):
+def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xtitle=None, ytitle=None, ztitle = None):
 #data is an array of dict-like (dict, OrderedDict, stlabdict), key is the z data (matrix values) column.
 #if xkey/ykey is provided, this column is used as the x/y range values.  These values are also used as x/y titles.  x is made to run across matrix columns and y across lines.
 #This means that if x is the "slow" variable in the measurement file, the output matrix will be transposed relative to the default behavior.
@@ -70,6 +72,8 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
         zz.append(line[key])
     #convert to np matrix
     zz = np.asmatrix(zz)
+    if not ztitle:
+        ztitle = key
 
     #No keys or ranges given:
     if rangex==None and rangey==None and xkey==None and ykey==None:
@@ -77,7 +81,7 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
             xtitle = 'xtitle' #Default title
         if ytitle == None:
             ytitle = 'ytitle' #Default title
-        return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle)
+        return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
 
     #If ranges but no keys are given
     elif (xkey == None and ykey==None) and (rangex !=None and rangey != None):
@@ -85,7 +89,7 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
             xtitle = 'xtitle' #Default title
         if ytitle == None:
             ytitle = 'ytitle' #Default title
-        return stlabmtx(zz, rangex, rangey, xtitle, ytitle)
+        return stlabmtx(zz, rangex, rangey, xtitle, ytitle, ztitle)
 
     #If keys but no ranges given
     elif (xkey != None and ykey != None) and (rangex == None and rangey == None):
@@ -102,7 +106,7 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
                 xtitle = 'xtitle' #Default title
             if ytitle == None:
                 ytitle = 'ytitle' #Default title
-            return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle)
+            return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
         #if x is slow, matrix needs to be transposed
         if xslow:
             zz = zz.T
@@ -120,16 +124,16 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
         #Sort out titles
         titles = tuple(data[0].keys())
         if xtitle == None:
-            if isinstance(xtitle, str):
+            if isinstance(xkey, str):
                 xtitle = xkey #Default title
-            elif isinstance(xtitle, int):
+            elif isinstance(xkey, int):
                 xtitle = titles[xkey]
         if ytitle == None:
-            if isinstance(ytitle, str):
+            if isinstance(ykey, str):
                 ytitle = ykey #Default title
-            elif isinstance(ytitle, int):
+            elif isinstance(ykey, int):
                 ytitle = titles[ykey]
-        return stlabmtx(zz, xx, yy, xtitle, ytitle)
+        return stlabmtx(zz, xx, yy, xtitle, ytitle, ztitle)
 
     #Mixed cases (one key and one range) are not implemented
     else:
@@ -138,7 +142,7 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
             xtitle = 'xtitle' #Default title
         if ytitle == None:
             ytitle = 'ytitle' #Default title
-        return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle)
+        return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
     return 
 
 def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
@@ -181,7 +185,7 @@ def xderiv(data,rangex,direction=1):
     
 #Main stlabmtx class
 class stlabmtx():
-    def __init__(self, mtx, rangex=None, rangey=None, xtitle='xtitle', ytitle='ytitle'):
+    def __init__(self, mtx, rangex=None, rangey=None, xtitle='xtitle', ytitle='ytitle', ztitle = 'ztitle'):
         self.mtx = np.matrix(copy.deepcopy(mtx))
         print(self.mtx.shape)
         self.processlist = []
@@ -195,9 +199,11 @@ class stlabmtx():
         else:
             self.rangey = np.asarray(rangey)
         self.xtitle=str(xtitle)
-        self.ytitle=str(xtitle)
+        self.ytitle=str(ytitle)
+        self.ztitle = str(ztitle)
         self.xtitle0=self.xtitle
         self.ytitle0=self.ytitle
+        self.ztitle0=self.ztitle
         self.rangex0 = self.rangex
         self.rangey0 = self.rangey
     def getextents(self):
@@ -340,10 +346,50 @@ class stlabmtx():
         filename = name + '.mtx.pkl'
         with open(filename, 'wb') as outfile:
             pickle.dump(self,outfile, pickle.HIGHEST_PROTOCOL)
-
     #To load:
     #import pickle
     #with open(filename, 'rb') as input:
     #   mtx1 = pickle.load(input)
+
+    def savemtx(self,filename = './output'):
+        filename = filename + '.mtx'
+        with open(filename, 'wb') as outfile:
+            ztitle = self.ztitle
+            if '(' in ztitle:
+                ss = ztitle.split(' ')
+                ss[0] = ss[0].strip()
+                ss[1] = ss[1].strip('(').strip(')')
+                ztitle = ss[0]
+                unit = ss[1]
+            else:
+                unit = 'Units'
+            print(unit)
+            print(ztitle)
+            xx = self.rangex
+            yy = self.rangey
+            line = [unit,ztitle, self.xtitle,'{:e}'.format(xx[0]),'{:e}'.format(xx[-1]), self.ytitle,'{:e}'.format(yy[0]),'{:e}'.format(yy[-1]), 'Nothing',str(0),str(1)]
+            mystr = ', '.join(line)
+            mystr = bytes(mystr + '\n', 'ASCII')
+#            outfile.write(mystr)
+            mystr = str(self.pmtx.shape[1]) + ' ' + str(self.pmtx.shape[0]) + ' ' + '1 8\n'
+            mystr = bytes(mystr, 'ASCII')
+            outfile.write(mystr)
+            data = self.pmtx
+            data = np.squeeze(np.asarray(np.ndarray.flatten(data,order='F')))
+            print(len(data))
+            s = struct.pack('d'*len(data), *data)
+            outfile.write(s)
+#           Units, Data Value ,Y, 0.000000e+00, 2.001000e+03,Z, 0.000000e+00, 6.010000e+02,Nothing, 0, 1
+#           2001 601 1 8
+
+            #Units, Dataset name, xname, xmin, xmax, yname, ymin, ymax, zname, zmin, zmax
+            #nx ny nz length
+
+            #dB, S21dB, Frequency (Hz), 6.000000e+09, 8.300000e+09, Vgate (V), 3.000000e+01, -3.000000e+01, Nothing, 0, 1
+            #2001 601 1 8
+
+
+
+
 
 
