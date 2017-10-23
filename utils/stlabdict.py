@@ -185,7 +185,7 @@ def xderiv(data,rangex,direction=1):
     
 #Main stlabmtx class
 class stlabmtx():
-    def __init__(self, mtx, rangex=None, rangey=None, xtitle='xtitle', ytitle='ytitle', ztitle = 'ztitle'):
+    def __init__(self, mtx=np.zeros([0,0]), rangex=None, rangey=None, xtitle='xtitle', ytitle='ytitle', ztitle = 'ztitle'):
         self.mtx = np.matrix(copy.deepcopy(mtx))
         print(self.mtx.shape)
         self.processlist = []
@@ -355,22 +355,12 @@ class stlabmtx():
         filename = filename + '.mtx'
         with open(filename, 'wb') as outfile:
             ztitle = self.ztitle
-            if '(' in ztitle:
-                ss = ztitle.split(' ')
-                ss[0] = ss[0].strip()
-                ss[1] = ss[1].strip('(').strip(')')
-                ztitle = ss[0]
-                unit = ss[1]
-            else:
-                unit = 'Units'
-            print(unit)
-            print(ztitle)
             xx = self.rangex
             yy = self.rangey
-            line = [unit,ztitle, self.xtitle,'{:e}'.format(xx[0]),'{:e}'.format(xx[-1]), self.ytitle,'{:e}'.format(yy[0]),'{:e}'.format(yy[-1]), 'Nothing',str(0),str(1)]
+            line = ['Units',ztitle, self.xtitle,'{:e}'.format(xx[0]),'{:e}'.format(xx[-1]), self.ytitle,'{:e}'.format(yy[0]),'{:e}'.format(yy[-1]), 'Nothing',str(0),str(1)]
             mystr = ', '.join(line)
             mystr = bytes(mystr + '\n', 'ASCII')
-#            outfile.write(mystr)
+            outfile.write(mystr)
             mystr = str(self.pmtx.shape[1]) + ' ' + str(self.pmtx.shape[0]) + ' ' + '1 8\n'
             mystr = bytes(mystr, 'ASCII')
             outfile.write(mystr)
@@ -379,6 +369,7 @@ class stlabmtx():
             print(len(data))
             s = struct.pack('d'*len(data), *data)
             outfile.write(s)
+
 #           Units, Data Value ,Y, 0.000000e+00, 2.001000e+03,Z, 0.000000e+00, 6.010000e+02,Nothing, 0, 1
 #           2001 601 1 8
 
@@ -388,8 +379,43 @@ class stlabmtx():
             #dB, S21dB, Frequency (Hz), 6.000000e+09, 8.300000e+09, Vgate (V), 3.000000e+01, -3.000000e+01, Nothing, 0, 1
             #2001 601 1 8
 
-
-
-
-
-
+    def loadmtx(self,filename):
+        with open(filename,'rb') as infile:
+            content = infile.readline()
+            content = content.decode('ASCII')
+            if content[:5] == 'Units':
+                content = content.split(',')
+                content = [x.strip() for x in content]
+                self.ztitle0 = content[1]
+                self.xtitle0 = content[2]
+                self.ytitle0 = content[5]
+                xlow = np.float64(content[3])
+                xhigh = np.float64(content[4])
+                ylow = np.float64(content[6])
+                yhigh = np.float64(content[7])
+                content = infile.readline()
+                content = content.decode('ASCII')
+                content = content.split(' ')
+                nx = int(content[0])
+                ny = int(content[1])
+                lb = int(content[3])
+                self.rangex0 = np.linspace(xlow,xhigh,nx)
+                self.rangey0 = np.linspace(ylow,yhigh,ny)
+            else:
+                content = content.decode('ASCII')
+                content = content.split(' ')
+                nx = int(content[0])
+                ny = int(content[1])
+                lb = int(content[3])
+                self.rangex0 = np.linspace(1,nx,nx)
+                self.rangey0 = np.linspace(1,ny,ny)
+            n = nx*ny
+            content = infile.read()
+            if lb == 8:
+                s = struct.unpack('d'*n, content)
+            elif lb == 4:
+                s = struct.unpack('f'*n, content)
+            s = np.asarray(s)
+            s = np.matrix(np.reshape(s,(ny,nx),order='F'))
+            self.mtx = s
+            self.reset()
