@@ -145,29 +145,25 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
         return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
     return 
 
+# New function 2
+
 def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
-    mtx = data
-    for i in range(mtx.shape[1]):
-        y = mtx[:,i]
+    new_mtx = []
+    mtx=data.copy() # for some reason this makes it faster
+    for y in mtx:
         # Find boundaries
         min0 = max(y.min(),low_limit)
         max0 = min(y.max(),high_limit)
-        # crop list accordingly
-        idx_crop = [i for i,val in enumerate(y) if min0<=val<=max0]
+        crop = np.logical_and(min0<=y,y<=max0) # crop list accordingly
         # Find upper and lower percentiles and assign truthvalue to elements
-        if idx_crop:
-            # Might be more efficient if manually sorting once. Don't really know what np.percentile does
-            low_thres = np.percentile(y[idx_crop],lowp)
-            high_thres = np.percentile(y[idx_crop],100-highp)
-            idx = [i for i,val in enumerate(y) if low_thres<=val<=high_thres]
-            # Calculate mean of remaining values
-            if idx:
-                mean = y[idx].mean()
-                # Subtract mean from all values
-                y-=mean
-            mtx[:,i]=y
-    return mtx   
-    
+        # This is a major time contributor
+        low_thres = np.percentile(y[crop],lowp)
+        high_thres = np.percentile(y[crop],100-highp)
+        crop2 = np.logical_and(low_thres<=y,y<=high_thres) # crop again
+        mean = y[crop2].mean() # Calculate mean of remaining values
+        new_mtx.append(y-mean)
+    return np.matrix(np.squeeze(new_mtx))
+  
 def xderiv(data,rangex,direction=1):
     mtx = data
     new_mtx = []
@@ -267,12 +263,10 @@ class stlabmtx():
         self.pmtx = factor*self.pmtx
         self.processlist.append('scale {}'.format(factor))
     def sub_cbc(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
-        mtx = self.pmtx.copy()
-        self.pmtx = sub_cbc(mtx,lowp,highp,low_limit,high_limit)
+        self.pmtx = sub_cbc(self.pmtx,lowp,highp,low_limit,high_limit)
         self.processlist.append('sub_cbc {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
     def sub_lbl(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
-        mtx = self.pmtx.copy().T
-        self.pmtx = sub_cbc(mtx,lowp,highp,low_limit,high_limit).T
+        self.pmtx = sub_cbc(self.pmtx.T,lowp,highp,low_limit,high_limit).T
         self.processlist.append('sub_lbl {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
     def sub_linecut(self, pos, horizontal=1):
         pos = int(pos)
