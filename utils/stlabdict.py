@@ -145,8 +145,6 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
         return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
     return 
 
-# New function 2
-
 def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
     new_mtx = []
     mtx=data.copy() # for some reason this makes it faster
@@ -163,8 +161,17 @@ def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
         mean = y[crop2].mean() # Calculate mean of remaining values
         new_mtx.append(y-mean)
     return np.matrix(np.squeeze(new_mtx))
-  
-def xderiv(data,rangex,direction=1):
+
+def xderiv(data,rangex,direction=1,axis=1):
+    dx = np.abs(rangex[0]-rangex[1])
+    if direction==-1:
+        dx = -dx
+    z = np.squeeze(np.array(data))
+    dz = np.gradient(z, dx, axis=axis)    
+    return np.matrix(np.squeeze(dz))
+    
+# Use slow if spacing is non-uniform
+def xderiv_slow(data,rangex,direction=1):
     mtx = data
     new_mtx = []
     if direction==-1:
@@ -283,9 +290,18 @@ class stlabmtx():
         self.pmtx = xderiv(mtx,self.rangex,direction)
         self.processlist.append('xderiv {}'.format(direction))
     def yderiv(self,direction=1):
+        mtx = self.pmtx.copy()
+        self.pmtx = xderiv(mtx,self.rangey,direction,axis=0)
+        self.processlist.append('yderiv {}'.format(direction))
+    #Use slow versions for unequally spaced ranges
+    def xderiv_slow(self,direction=1):
+        mtx = self.pmtx.copy()
+        self.pmtx = xderiv(mtx,self.rangex,direction)
+        self.processlist.append('xderiv_slow {}'.format(direction))
+    def yderiv_slow(self,direction=1):
         mtx = self.pmtx.copy().T
         self.pmtx = xderiv(mtx,self.rangey,direction).T
-        self.processlist.append('yderiv {}'.format(direction))
+        self.processlist.append('yderiv_slow {}'.format(direction))
     
     # Processlist
     def saveprocesslist(self,filename = './process.pl'):
