@@ -93,11 +93,15 @@ def readQUCS(filename):
                 words = line.split()
                 vartype = words[0]
                 varname = words[1]
+#                print("Words = ",words)
                 print(vartype, varname)
                 if vartype == 'Qucs':
                     continue
                 elif vartype == 'indep' or vartype=='dep':
                     currentvarname = varname
+                    if vartype == 'dep':
+                        swept = ['indep_' + x for x in words[2:]]
+                        print(swept)
             elif varfound == -1:
                 if 'j' not in line:
                     col.append(float(line))
@@ -106,4 +110,4 @@ def readQUCS(filename):
                     x = float(line[0:ij-1])
                     y = float(line[ij-1:].replace("j",""))
                     col.append( complex(x,y) )
-        return mylists
+        return mylists,swept

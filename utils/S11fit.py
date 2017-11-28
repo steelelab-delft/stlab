@@ -368,6 +368,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         Tres = np.abs(S11corr[ires])
         kext0 = (1+Tres)*ktot
     kint0 = ktot-kext0
+    if kint0<= 0.:
+        kint0 = kext0
     Qint0 = f0i/kint0
     Qext0 = f0i/kext0
 

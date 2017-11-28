@@ -7,10 +7,16 @@ from queue import Queue
 from stlab.devices.triton import Triton
 import os
 
+
+logging_interval = 30 #s
+
 varline = ['Time (s)'] 
 varline = varline + ['PT2 Head (K)','PT2 Plate (K)', 'Still Plate (K)','Cold Plate (K)','MC Cernox (K)','PT1 Head (K)','PT1 Plate (K)','MC Plate (K)'] 
 varline = varline + ['P%d (mbar)' % i for i in range(1,7)]
 varline = varline + ['Turbo power (W)', 'Turbo speed (Hz)', 'PST (C)','MT (C)','BT (C)','PBT (C)','ET (C)']
+varline = varline + ['PTC Water In (C)', 'PTC Water Out (C)', 'PTC Oil Temperature (C)', 'PTC Helium Temperature (C)','PTC Helium Pressure Low (Bar)','PTC Helium Pressure High (Bar)','PTC Motor Current (A)','PTC Hours (h)']
+
+
 
 def logger(commandq):
     
@@ -61,6 +67,10 @@ def logger(commandq):
             xx = resultq.get()
             line = line + xx
             resultq.task_done()
+            commandq.put( ( resultq, Triton.GetPTC, () ) )
+            xx = resultq.get()
+            line = line + xx
+            resultq.task_done()
             
             t = datetime.datetime.now()
             print(t)
@@ -74,7 +84,7 @@ def logger(commandq):
                 else:
                     ff.write('%.10e' % x + ', ')
             ff.flush()
-            time.sleep(30)
+            time.sleep(logging_interval)
     except KeyboardInterrupt:
         ff.close()
-    print('Goodbye!')
+        print('Goodbye!')

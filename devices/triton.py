@@ -57,3 +57,34 @@ class Triton(instrument):
             mystr = mystr.strip('C')
             result.append(float(mystr))
         return result
+
+    def GetPTC(self): #Returns PTC values in order WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS
+        result = []
+ 
+        temps = ['WIT','WOT','OILT','HT']
+        for ss in temps:
+            mystr = self.query('READ:DEV:C1:PTC:SIG:{}'.format(ss))
+            mystr = mystr.split(':')[-1]
+            mystr = mystr.strip('C')
+            result.append(float(mystr))
+
+        mystr = self.query('READ:DEV:C1:PTC:SIG:HLP')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('B')
+        result.append(float(mystr))
+        
+        mystr = self.query('READ:DEV:C1:PTC:SIG:HHP')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('B')
+        result.append(float(mystr))
+
+        mystr = self.query('READ:DEV:C1:PTC:SIG:MCUR')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('A')
+        result.append(float(mystr))
+
+        mystr = self.query('READ:DEV:C1:PTC:SIG:HRS')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('h')
+        result.append(float(mystr))
+        return result

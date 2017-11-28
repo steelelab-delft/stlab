@@ -10,7 +10,7 @@ import datetime
 
 
 def command_handler(qin):
-    mytriton =  Triton()
+    mytriton =  Triton(addr='TCPIP::127.0.0.1::33576::SOCKET')
     while True:
         nextcomm = qin.get()
         if nextcomm == 0:
