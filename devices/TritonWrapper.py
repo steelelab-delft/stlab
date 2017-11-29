@@ -3,7 +3,7 @@
 from stlab.utils.MySocket import MySocket
 
 class TritonWrapper:
-    def __init__(self,addr="localhost",port=8472,reset=True,verb=True,**kwargs):
+    def __init__(self,addr="192.168.178",port=8472,reset=True,verb=True,**kwargs):
         self.verb = verb
         if reset:
             self.reset()
