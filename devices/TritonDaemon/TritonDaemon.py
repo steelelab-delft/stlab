@@ -10,7 +10,7 @@ import datetime
 
 
 def command_handler(qin):
-    mytriton =  Triton()
+    mytriton =  Triton(addr='TCPIP::127.0.0.1::33576::SOCKET')
     while True:
         nextcomm = qin.get()
         if nextcomm == 0:
@@ -53,12 +53,14 @@ loggerthread.start()
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # bind the socket to a public host, and a well-known port
 #serversocket.bind((socket.gethostname(), 8001))
-addr = socket.gethostbyname(socket.gethostname())
+#addr = socket.gethostbyname(socket.gethostname())
+addr = '0.0.0.0' #listen on all network interfaces
 port = 8472
-serversocket.bind(('', port))
+serversocket.bind((addr, port))
 # become a server socket
 serversocket.listen(5)
-print("Ready.  Listening on port %d and address %s" % (port,addr))
+myip = socket.gethostbyname(socket.gethostname())
+print("Ready.  Listening on port %d and address %s" % (port,myip))
 
 def RunCommand(sock,resultq):
     ss = MySocket(sock)

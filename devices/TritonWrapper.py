@@ -3,7 +3,7 @@
 from stlab.utils.MySocket import MySocket
 
 class TritonWrapper:
-    def __init__(self,addr="localhost",port=8472,reset=True,verb=True,**kwargs):
+    def __init__(self,addr="192.168.1.178",port=8472,reset=True,verb=True,**kwargs):
         self.verb = verb
         if reset:
             self.reset()
@@ -102,3 +102,34 @@ class TritonWrapper:
     def SetPIDTemperature(self,val=0.):
         self.write('SET:DEV:T8:TEMP:LOOP:TSET:{}'.format(val))
         return
+
+    def GetPTC(self): #Returns PTC values in order WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS
+        result = []
+ 
+        temps = ['WIT','WOT','OILT','HT']
+        for ss in temps:
+            mystr = self.query('READ:DEV:C1:PTC:SIG:{}'.format(ss))
+            mystr = mystr.split(':')[-1]
+            mystr = mystr.strip('C')
+            result.append(float(mystr))
+
+        mystr = self.query('READ:DEV:C1:PTC:SIG:HLP')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('B')
+        result.append(float(mystr))
+        
+        mystr = self.query('READ:DEV:C1:PTC:SIG:HHP')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('B')
+        result.append(float(mystr))
+
+        mystr = self.query('READ:DEV:C1:PTC:SIG:MCUR')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('A')
+        result.append(float(mystr))
+
+        mystr = self.query('READ:DEV:C1:PTC:SIG:HRS')
+        mystr = mystr.split(':')[-1]
+        mystr = mystr.strip('h')
+        result.append(float(mystr))
+        return result
