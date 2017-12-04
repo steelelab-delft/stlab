@@ -20,7 +20,7 @@ def un_realimag(array):
         z.append(x+1j*y)
     return np.array(z)
 
-def phaseunwrap(array)
+def phaseunwrap(array):
     """
     unwraps the phase from a given complex array returning a signal with 0 average phase slope
     """
