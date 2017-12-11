@@ -145,7 +145,7 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
         return stlabmtx(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
     return 
 
-def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
+def sub_lbl(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
     new_mtx = []
     mtx=data.copy() # for some reason this makes it faster
     for y in mtx:
@@ -155,10 +155,18 @@ def sub_cbc(data, lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
         crop = np.logical_and(min0<=y,y<=max0) # crop list accordingly
         # Find upper and lower percentiles and assign truthvalue to elements
         # This is a major time contributor
-        low_thres = np.percentile(y[crop],lowp)
-        high_thres = np.percentile(y[crop],100-highp)
-        crop2 = np.logical_and(low_thres<=y,y<=high_thres) # crop again
-        mean = y[crop2].mean() # Calculate mean of remaining values
+        if len(y[crop]) == 0:
+            print('sub_lbl: Warning, no values to average')
+            mean = 0
+        else:
+            low_thres = np.percentile(y[crop],lowp)
+            high_thres = np.percentile(y[crop],100-highp)
+            crop2 = np.logical_and(low_thres<=y,y<=high_thres) # crop again
+            if len(y[crop2]) == 0:
+                print('sub_lbl: Warning, no values to average')
+                mean = 0
+            else:
+                mean = y[crop2].mean() # Calculate mean of remaining values
         new_mtx.append(y-mean)
     return np.matrix(np.squeeze(new_mtx))
 
@@ -269,12 +277,12 @@ class stlabmtx():
     def scale_data(self,factor=1.):
         self.pmtx = factor*self.pmtx
         self.processlist.append('scale {}'.format(factor))
-    def sub_cbc(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
-        self.pmtx = sub_cbc(self.pmtx,lowp,highp,low_limit,high_limit)
-        self.processlist.append('sub_cbc {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
     def sub_lbl(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
-        self.pmtx = sub_cbc(self.pmtx.T,lowp,highp,low_limit,high_limit).T
+        self.pmtx = sub_lbl(self.pmtx,lowp,highp,low_limit,high_limit)
         self.processlist.append('sub_lbl {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
+    def sub_cbc(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
+        self.pmtx = sub_lbl(self.pmtx.T,lowp,highp,low_limit,high_limit).T
+        self.processlist.append('sub_cbc {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
     def sub_linecut(self, pos, horizontal=1):
         pos = int(pos)
         if bool(horizontal):
