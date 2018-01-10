@@ -176,3 +176,6 @@ class IVVI_DAC:
             for nn,vv in enumerate(line):
                 self.SetVoltage(nn+1,vv)
             time.sleep(twait)
+    def close(self):
+        self.serialport.close()
+        return

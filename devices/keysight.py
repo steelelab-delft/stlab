@@ -75,6 +75,16 @@ class keysightB2901A(instrument):
         for vv in voltages:
             self.SetVoltage(vv)
             time.sleep(twait)
+    def RampCurrent(self,curr,tt=5.,steps=100, tol=1e-3): #To ramp voltage over 'tt' seconds from current DAC value.
+        I0 = self.GetCurrent()
+        if np.abs(curr-I0) < tol:
+            self.SetCurrent(curr)
+            return
+        currents = np.linspace(I0,curr,steps)
+        twait = tt/steps
+        for ii in currents:
+            self.SetCurrent(ii)
+            time.sleep(twait)
     def SetSweep(self,type='SING'):
         mode = self.GetMode()
         self.write('{}:MODE SWE'.format(mode))
