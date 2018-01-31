@@ -120,6 +120,12 @@ class keysightB2901A(instrument):
         mode = self.GetMode()
         self.write('SENS:{}:NPLC {}'.format(mode,nn))
         return
+    def Set4Wire(self,ss=True):
+        if ss:
+            self.write('SENS:REM ON')
+        else
+            self.write('SENS:REM OFF')
+        return
         
 '''    
 dev.write('SWE:RANG BEST')
