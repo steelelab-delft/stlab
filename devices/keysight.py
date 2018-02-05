@@ -123,7 +123,7 @@ class keysightB2901A(instrument):
     def Set4Wire(self,ss=True):
         if ss:
             self.write('SENS:REM ON')
-        else
+        else:
             self.write('SENS:REM OFF')
         return
         
