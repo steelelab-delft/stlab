@@ -17,7 +17,7 @@ def makeRM():
 
 class instrument:
     global_rs, rstype = makeRM()  #Static resource manager for all instruments.  rstype is '@ni' for NI backend and '@py' for pyvisa-py
-    def __init__(self,addr,reset=True,verb=True,**kwargs):
+    def __init__(self,addr,reset=False,verb=True,**kwargs):
 #        self.rs = visa.ResourceManager('@py')
 #        self.dev = self.rs.open_resource(addr)
 

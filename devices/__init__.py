@@ -1,15 +1,25 @@
 from stlab.devices.instrument import instrument
 from pydoc import locate
+import os.path
 
 class DeviceNotFound(Exception):
     pass
 
-devdict = {'5221A':'PNAN5221A',
-    '5222A':'PNAN5222A',
-    'ZND':'ZND'
-    }
-
-
+    
+def get_instr_definitions():
+    filename = 'dev_ids.txt'
+    filename = os.path.join(os.path.dirname(__file__), filename)
+    devdict = {}
+    with open(filename,'r') as ff:
+        for line in ff:
+            if line[0] == '#':
+                continue
+            line = line.strip()
+            line = line.split(', ')
+            devdict[line[0]] = line[1]
+    return devdict
+    
+devdict = get_instr_definitions()
 
 def autodetect_instrument(addr,reset = False, verb = True, **kwargs):
 
@@ -20,7 +30,7 @@ def autodetect_instrument(addr,reset = False, verb = True, **kwargs):
 
     found = False
     for idtag in devdict:
-        if idtag in idstr:
+        if ',' + idtag + ',' in idstr:
             found = True
             devstr = devdict[idtag]
             devclass = 'stlab.devices.' + devstr + '.' + devstr
@@ -30,6 +40,7 @@ def autodetect_instrument(addr,reset = False, verb = True, **kwargs):
         raise DeviceNotFound('Id string retrieved ("{}"), but not among known devices'.format(idstr))
 
     devclass = locate(devclass)
+    
     dev = devclass(addr,reset,verb,**kwargs)
     return dev
 

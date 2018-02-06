@@ -9,7 +9,7 @@ def numtostr(mystr):
 
 class PNAN5222A(PNAN5221A):
     def __init__(self,addr='TCPIP::192.168.1.42::INSTR',reset=True,verb=True):
-        super(PNAN5222A, self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
     def TwoPortSetup(self,port1=1,port2=2):
         ports = [port1,port2]
         trcnames = self.GetTrcNames()
