@@ -30,7 +30,7 @@ def autodetect_instrument(addr,reset = False, verb = True, **kwargs):
 
     found = False
     for idtag in devdict:
-        if ',' + idtag + ',' in idstr:
+        if (',' + idtag + ',' in idstr) or (', ' + idtag + ',' in idstr):
             found = True
             devstr = devdict[idtag]
             devclass = 'stlab.devices.' + devstr + '.' + devstr

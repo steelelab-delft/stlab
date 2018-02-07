@@ -11,3 +11,5 @@ MODEL 2100, Keithley_2100
 AWG520, Tektronix_AWG520
 11713B, instrument
 MODEL370, Lakeshore_370
+E5080A, Keysight_E5080A
+N5183B, Keysight_N5183B

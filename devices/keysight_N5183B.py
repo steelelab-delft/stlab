@@ -8,9 +8,9 @@ def numtostr(mystr):
     return '%12.8e' % mystr
 
 
-class keysight_N5183B(instrument):
+class Keysight_N5183B(instrument):
     def __init__(self,addr='TCPIP::192.168.1.237::INSTR',reset=True,verb=True):
-        super(keysight_N5183B, self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
         self.id()
     def setCWfrequency(self,frec):
         mystr =  numtostr(frec)
