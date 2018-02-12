@@ -32,7 +32,7 @@ class instrument:
                     idx = addr.find('ASRL')+4
                     addr = addr[:idx] + addr[idx+3:]        
 
-        #I have found that all our socket TCPIP devices need a \r\n line termination to work...  Add it if not overridden
+        #I have found that all our socket TCPIP devices need a \r\n line termination to work...  Add to kwargs it if not overridden
         read_termination = None
         if 'SOCKET' in addr:
             read_termination = '\r\n'
