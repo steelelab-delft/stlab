@@ -11,3 +11,4 @@ MODEL 2100, Keithley_2100
 AWG520, Tektronix_AWG520
 11713B, instrument
 MODEL370, Lakeshore_370
+Model 44C, Cryocon_44C
