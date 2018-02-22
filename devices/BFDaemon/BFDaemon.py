@@ -1,4 +1,4 @@
-from stlab.devices.lakeshore import Lakeshore370
+from stlab.devices.Lakeshore_370 import Lakeshore_370
 from queue import Queue
 from threading import Thread
 import time
@@ -12,7 +12,7 @@ import datetime
 # Function that takes commands from queue "qin".  qin has three elements, (qout, comm, args) where qout is the output queue, comm is the function and args are the arguments for the function
 # It first initializes communication to the instrument and then waits for commands to be added to the queue.  It can only run commands implemented in the BASE driver (not the wrapper)
 def command_handler(qin):
-    myBF =  Lakeshore370()
+    myBF =  Lakeshore_370()
     while True:
         nextcomm = qin.get()
         if nextcomm == 0:
