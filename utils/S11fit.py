@@ -144,7 +144,7 @@ def S11full(frec,params,ftype='A'):
     return model
 
 
-def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False, fitwidth=None):
+def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False, fitwidth=None, returnchi2 = False):
     
     """MAIN FIT ROUTINE
     Fits complex data S11 vs frecuency to one of 4 models adjusting for a multiplicative complex background
@@ -259,28 +259,35 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.show()
 
 
-
-    #Make initial background guesses
-    b0 = (np.abs(sS11)[-1] - np.abs(sS11)[0])/(frec[-1]-frec[0])
-#    a0 = np.abs(sS11)[0] - b0*frec[0]
-    a0 = np.average(np.abs(sS11)) - b0*backfrec[0]
-#    a0 = np.abs(sS11)[0] - b0*backfrec[0]
-    c0 = 0.
-#    bp0 = ( np.angle(sS11[di])-np.angle(sS11[0]) )/(frec[di]-frec[0])
-    xx = []
-    for i in range(0,len(backfrec)-1):
-        df = backfrec[i+1]-backfrec[i]
-        dtheta = np.angle(backsig[i+1])-np.angle(backsig[i])
-        if (np.abs(dtheta)>pi):
-            continue
-        xx.append(dtheta/df)
-#    bp0 = np.average([ x if np.abs(x)<pi else 0 for x in np.diff(np.angle(backsig))] )/(frec[1]-frec[0])
-    bp0 = np.average(xx)
-#   ap0 = np.angle(sS11[0]) - bp0*frec[0]
-#   ap0 = np.average(np.unwrap(np.angle(backsig))) - bp0*backfrec[0]
-    ap0 = np.unwrap(np.angle(backsig))[0] - bp0*backfrec[0]
-    cp0 = 0.
-    print(a0,b0,ap0,bp0)
+    if fitbackground:
+        #Make initial background guesses
+        b0 = (np.abs(sS11)[-1] - np.abs(sS11)[0])/(frec[-1]-frec[0])
+    #    a0 = np.abs(sS11)[0] - b0*frec[0]
+        a0 = np.average(np.abs(sS11)) - b0*backfrec[0]
+    #    a0 = np.abs(sS11)[0] - b0*backfrec[0]
+        c0 = 0.
+    #    bp0 = ( np.angle(sS11[di])-np.angle(sS11[0]) )/(frec[di]-frec[0])
+        xx = []
+        for i in range(0,len(backfrec)-1):
+            df = backfrec[i+1]-backfrec[i]
+            dtheta = np.angle(backsig[i+1])-np.angle(backsig[i])
+            if (np.abs(dtheta)>pi):
+                continue
+            xx.append(dtheta/df)
+    #    bp0 = np.average([ x if np.abs(x)<pi else 0 for x in np.diff(np.angle(backsig))] )/(frec[1]-frec[0])
+        bp0 = np.average(xx)
+    #   ap0 = np.angle(sS11[0]) - bp0*frec[0]
+    #   ap0 = np.average(np.unwrap(np.angle(backsig))) - bp0*backfrec[0]
+        ap0 = np.unwrap(np.angle(backsig))[0] - bp0*backfrec[0]
+        cp0 = 0.
+        print(a0,b0,ap0,bp0)
+    else:
+        a0=0
+        b0=0
+        c0=0
+        ap0=0
+        bp0=0
+        cp0=0
 
     params = Parameters()
     myvary = True
@@ -490,10 +497,18 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.plot(frec,np.abs(finalfit))
         plt.show()
 
+    chi2 = finalresult.chisqr
+
     if fitwidth == None:
-        return params
+        if returnchi2 is True:
+            return params,chi2
+        else:
+            return params
     else:
-        return params,frec,S11
+        if returnchi2 is True:
+            return params,frec,S11,chi2
+        else:
+            return params,frec,S11
 
 
 
