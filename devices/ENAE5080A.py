@@ -7,4 +7,4 @@ def numtostr(mystr):
 
 class ENAE5080A(PNAN5221A):
     def __init__(self,addr='TCPIP::192.168.1.105::INSTR',reset=True,verb=True):
-        super(ENAE5080A, self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
