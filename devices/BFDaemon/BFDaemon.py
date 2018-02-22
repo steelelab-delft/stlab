@@ -77,9 +77,9 @@ def RunCommand(sock,resultq):
     word = word.decode('utf_8')
     #print('RunCommand:', word)
     if '?' in word:
-        commandq.put( (resultq, Lakeshore370.query, (word,)) )
+        commandq.put( (resultq, Lakeshore_370.query, (word,)) )
     else:
-        commandq.put( (resultq, Lakeshore370.write, (word,)) )
+        commandq.put( (resultq, Lakeshore_370.write, (word,)) )
     xx = resultq.get()
     if xx == None:
         xx = ''
