@@ -3,10 +3,12 @@ import numpy as np
 import time
 from stlab.devices.instrument import instrument
 
-class CryoCon(instrument):
-    def __init__(self,addr='TCPIP::192.168.1.5::5000::SOCKET',reset=True,verb=True):
+class Cryocon_44C(instrument):
+    def __init__(self,addr='TCPIP::192.168.1.5::5000::SOCKET',reset=True,verb=True,**kwargs):
         #RST reboots the instrument. Avoid...  Also needs special read_termination = '\r\n'
-        super(CryoCon, self).__init__(addr,reset=False,verb=verb,read_termination='\r\n')
+        if 'read_termination' not in kwargs:
+            kwargs['read_termination'] = '\r\n'
+        super().__init__(addr,reset=False,verb=verb,**kwargs)
         self.id()
         self.channellist=['A','B','C','D']
         if reset:

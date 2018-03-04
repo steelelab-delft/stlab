@@ -11,5 +11,9 @@ MODEL 2100, Keithley_2100
 AWG520, Tektronix_AWG520
 11713B, instrument
 MODEL370, Lakeshore_370
+<<<<<<< HEAD
 E5080A, Keysight_E5080A
 N5183B, Keysight_N5183B
+=======
+Model 44C, Cryocon_44C
+>>>>>>> b91c4203566076e04bade1fe57df8e88538ebbd9
