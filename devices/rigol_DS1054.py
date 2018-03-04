@@ -1,146 +1,119 @@
 import numpy as np
 from stlab.devices.instrument import instrument
+import math
+import time
 
 def numtostr(mystr):
     return '%20.15e' % mystr
 #    return '%20.10f' % mystr
 
-class rigol_DS1054(instrument):
-    def __init__(self,addr='TCPIP::192.168.1.236::INSTR',reset=True,verb=True):
-        super().__init__(addr,reset,verb)
+class Rigol_DS1054(instrument):
+    def __init__(self,addr='TCPIP::192.168.1.236::INSTR',reset=False,verb=True):
+        kwargs = {}
+        kwargs['timeout'] = 10000
+        super().__init__(addr,reset,verb,**kwargs)
+        #self.write('STOP')
 
 
-### REIMPLEMENTATION OF GENERIC FUNCTIONS
+    def AutoScale(self):
+        # autoscale
+        self.write(':AUT')
+        self.query('*OPC?')
+        return
 
-    def SetIFBW(self,x):
-        mystr = numtostr(x)
-        mystr = 'BAND '+mystr
-        self.write(mystr)
+    def SetVoltScale(self,scal,n=1):
+        # n=1,2,3,4
+        self.write('CHAN'+str(n)+':SCAL '+str(scal))
+        return
 
+    def SetVoltRange(self,rang,n=1):
+        # n=1,2,3,4
+        self.write('CHAN'+str(n)+':RANG '+str(rang))
+        return
 
-## OBLIGATORY ABSTRACT METHODS TO BE IMPLEMENTED
+    def SetTimeScale(self,scal):
+        self.write(':TIM:SCAL '+str(scal))
+        return
 
-    def GetFrequency(self):
-        freq = self.query('CALC:DATA:STIM?')
-        freq = np.asarray([float(xx) for xx in freq.split(',')])
-        return freq
+    def SetNumPoints(self,npoints):
+        self.write(':ACQ:MDEPT '+str(npoints))
 
-    def GetTraceNames(self):
-        pars = self.query('CALC:PAR:CAT?')
-        pars = pars.strip('\n').strip("'").split(',')
-        parnames = pars[1::2]
-        pars = pars[::2]
-        return pars,parnames
-    def SetActiveTrace(self,mystr):
-        self.write('CALC:PAR:SEL "%s"' % mystr)
-    def GetTraceData(self):
-        yy = self.query("CALC:DATA? SDATA")
-        yy = np.asarray([float(xx) for xx in yy.split(',')])
-        yyre = yy[::2]
-        yyim = yy[1::2]
-        return yyre,yyim
+    def GetSampleRate(self):
+        return float(self.query(':ACQ:SRAT?'))
 
-    def CalOn (self):
-        mystr = "CORR ON"
-        self.write(mystr)
-    def CalOff (self):
-        mystr = "CORR OFF"
-        self.write(mystr)
-    def GetCal(self):
-        return bool(int(self.query('CORR?')))
+    def GetTimeScale(self):
+        return float(self.query(':TIM:SCAL?'))
 
+    def SetMemoryDepth(self,mdep):
+        self.write(':ACQ:MDEP '+str(mdep))
+        return
 
-## Optional methods
+    def GetMemoryDepth(self):
+        return self.query(':ACQ:MDEP?')
 
-    ''' OLD METHOD BEFORE ABCLASS
-    def GetAllData(self):
-        Cal = self.GetCal()
-        pars = self.query('CALC:PAR:CAT?')
-        pars = pars.strip('\n').strip("'").split(',')
-        parnames = pars[1::2]
-        pars = pars[::2]
-        names = ['Frequency (Hz)']
-        alltrc = [self.GetFrequency()]
-        for pp in parnames:
-            names.append('%sre ()' % pp)
-            names.append('%sim ()' % pp)
-        if Cal:
-            for pp in parnames:
-                names.append('%sre unc ()' % pp)
-                names.append('%sim unc ()' % pp)
-        for par in pars:
-            yy = self.query("CALC:DATA:TRAC? '%s', SDAT" % par)
-            yy = np.asarray([float(xx) for xx in yy.split(',')])
-            yyre = yy[::2]
-            yyim = yy[1::2]
-            alltrc.append(yyre)
-            alltrc.append(yyim)
-        if Cal:
-            for par in pars:
-                yy = self.query("CALC:DATA:TRAC? '%s', NCD" % par)
-                yy = np.asarray([float(xx) for xx in yy.split(',')])
-                yyre = yy[::2]
-                yyim = yy[1::2]
-                alltrc.append(yyre)
-                alltrc.append(yyim)
-        final = OrderedDict()
-        for name,data in zip(names,alltrc):
-            final[name]=data
-        return final
+    def GetTrace(self,ch=1):
+        time.sleep(1)
+        tscale = self.GetTimeScale()
+        time.sleep(tscale*12)
+        self.write(':WAV:SOUR CHAN'+str(ch))
+        self.write('WAV:MODE NORM')
+        self.write('WAV:FORM BYTE')
+
+        xinc = float(self.query('WAV:XINC?'))
+        yinc = float(self.query('WAV:YINC?'))
+        yori = float(self.query('WAV:YOR?'))
+        yref = float(self.query('WAV:YREF?'))
+        
+        dat = self.write(':WAV:DATA?')
+        output = self.dev.read_raw()
+        npoints = int(output[2:11].decode('ascii'))
+        print(npoints)
+        output = [(x - yori - yref) * yinc for x in output[11:] ]
+        output = np.array(output[:npoints])
+        xs = np.linspace(0,tscale*12,len(output))
+        return xs,output
+
     '''
+    def ReadWaveData(self,n=1,mdep=3e6):
+        self.write('STOP')
+        self.write(':WAV:SOUR CHAN'+str(n))
+        self.write('STOP')
+        try:
+            nsamp = int(self.query('ACQ:MDEP?'))
+        except:
+            #nsamp = input("Enter memory depth: ")
+            #nsamp = int(nsamp)
+            self.SetMemoryDepth(mdep)
+            nsamp = int(mdep)
+        self.write('WAV:MODE RAW')
+        self.write('WAV:FORM BYTE')
+        nmax = 250000  #Max read points 250000 when bytes
+        nreads = math.ceil(nsamp/nmax)
 
-    def LoadCal (self, calfile, channel = 1):
-        mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
-        self.write(mystr)
+        # to scale the data properly
+        xinc = float(self.query('WAV:XINC?'))
+        yinc = float(self.query('WAV:YINC?'))
+        yori = float(self.query('WAV:YOR?'))
+        yref = float(self.query('WAV:YREF?'))
+        srate = float(self.query('ACQuire:SRATe?'))
 
-    def SinglePort(self):
-        self.SetContinuous(False) #Turn off continuous mode
-        self.write('CALC:PAR:DEL:ALL') #Delete default trace
-        tracenames = ['\'TrS11\'']
-        tracevars = ['\'S11\'']
-        for name,var in zip(tracenames,tracevars):
-            self.write('CALC:PAR:SDEF ' + name + ', ' + var) #Set 2 traces and measurements
-            self.write('DISP:WIND1:TRAC:EFE ' + name)
-        self.twoportmode = False
-        self.oneportmode = True
-    def TwoPort(self):
-        self.SetContinuous(False) #Turn off continuous mode
-        self.write('CALC:PAR:DEL:ALL') #Delete default trace
-        tracenames = ['\'TrS11\'','\'TrS21\'']
-        tracevars = ['\'S11\'','\'S21\'']
-        windows = ['1','2']
-        for name,var,wind in zip(tracenames,tracevars,windows):
-            self.write('DISP:WIND'+wind+':STAT ON')
-            self.write('CALC:PAR:SDEF ' + name + ', ' + var) #Set 2 traces and measurements
-            self.write('DISP:WIND'+wind+':TRAC1:FEED ' + name)
-        self.twoportmode = True
-        self.oneportmode = False
-
-    def Measure2ports(self,autoscale = True):
-        if not self.twoportmode:
-            self.TwoPort()
-        self.Trigger() #Trigger single sweep and wait for response
-        if autoscale:
-            self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale both traces
-            self.write('DISP:WIND2:TRAC1:Y:AUTO ONCE')
-        return self.GetAllData()
-    def Measure1port(self,autoscale = True):
-        pass
-        if not self.oneportmode:
-            self.SinglePort()
-        self.Trigger() #Trigger single sweep and wait for response
-        if autoscale:
-            self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
-        return self.GetAllData()
-
-    #To set different sweep types
-    def SetSweepType(self,mystr): #Possible values: LINear | LOGarithmic | POWer | CW | POINt | SEGMent  (Default value is LINear)
-        self.write('SENS:SWE:TYPE %s' % mystr)
-        return
-    def SetCWfrequency(self,xx):
-        self.write('SENS:FREQ {}'.format(xx))
-        return
-    
+        data = []
+        for i in range(nreads):
+            self.write('WAV:STAR {}'.format(i*nmax+1) )
+            if i == nreads-1:
+                self.write('WAV:STOP {}'.format(nsamp))
+            else:
+                self.write('WAV:STOP {}'.format((i+1)*nmax))
+            self.write('WAV:DATA?')
+            output = self.dev.read_raw()
+            npoints = int(output[2:11].decode('ascii'))
+            print(i,npoints)
+            output = [(x - yori - yref) * yinc for x in output[11:] ]
+            output = output[:npoints]
+            data.append(output)
+        data = np.asarray(data).flatten()
+        return data
+    '''
 
 
 
