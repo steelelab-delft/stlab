@@ -44,8 +44,8 @@ class Keysight_B2901A(instrument):
         mystr = numtostr(volt)
         mystr = ':SENS:VOLT:PROT ' + mystr
         self.write(mystr)
-    def SetComplianceCurrent(self,volt):
-        mystr = numtostr(volt)
+    def SetComplianceCurrent(self,curr):
+        mystr = numtostr(curr)
         mystr = ':SENS:CURR:PROT ' + mystr
         self.write(mystr)
     def GetCurrent(self):
