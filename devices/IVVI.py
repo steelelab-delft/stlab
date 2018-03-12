@@ -115,6 +115,8 @@ class IVVI_DAC:
             reply = self.getreply() #For some reason read_raw does not work.  This command works as a workaround to read X bytes from the device
         except ValueError as error:
             print('Error when setting:' + repr(error))
+        setmvoltage = (DataH*256 + DataL)/65535.*4000. - self.polmatrix[dac-1]
+        print('DAC {} set to {} mV'.format(dac,setmvoltage))
     def SetValue(self,dac,val):
         val = int(val)
         #We get the byte values corresponding to the desired voltage.  We need to add the polarity dependant offset from polmatrix to get the correct byte values
