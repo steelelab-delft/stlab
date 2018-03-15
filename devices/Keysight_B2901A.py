@@ -7,9 +7,9 @@ def numtostr(mystr):
     return '%12.8e' % mystr
 
 
-class keysightB2901A(instrument):
+class Keysight_B2901A(instrument):
     def __init__(self,addr='TCPIP::192.168.1.55::INSTR',reset=True,verb=True):
-        super(keysightB2901A, self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
         self.dev.timeout = None 
         self.id()
     #OLD READ METHOD WITH OPC... NOT SURE IF NECESSARY. IF COMMENTED WILL USE INHERITED FROM instrument
@@ -44,8 +44,8 @@ class keysightB2901A(instrument):
         mystr = numtostr(volt)
         mystr = ':SENS:VOLT:PROT ' + mystr
         self.write(mystr)
-    def SetComplianceCurrent(self,volt):
-        mystr = numtostr(volt)
+    def SetComplianceCurrent(self,curr):
+        mystr = numtostr(curr)
         mystr = ':SENS:CURR:PROT ' + mystr
         self.write(mystr)
     def GetCurrent(self):
@@ -74,6 +74,16 @@ class keysightB2901A(instrument):
         twait = tt/steps
         for vv in voltages:
             self.SetVoltage(vv)
+            time.sleep(twait)
+    def RampCurrent(self,curr,tt=5.,steps=100, tol=1e-3): #To ramp voltage over 'tt' seconds from current DAC value.
+        I0 = self.GetCurrent()
+        if np.abs(curr-I0) < tol:
+            self.SetCurrent(curr)
+            return
+        currents = np.linspace(I0,curr,steps)
+        twait = tt/steps
+        for ii in currents:
+            self.SetCurrent(ii)
             time.sleep(twait)
     def SetSweep(self,type='SING'):
         mode = self.GetMode()
@@ -109,6 +119,12 @@ class keysightB2901A(instrument):
     def SetNPLC(self,nn):
         mode = self.GetMode()
         self.write('SENS:{}:NPLC {}'.format(mode,nn))
+        return
+    def Set4Wire(self,ss=True):
+        if ss:
+            self.write('SENS:REM ON')
+        else:
+            self.write('SENS:REM OFF')
         return
         
 '''    

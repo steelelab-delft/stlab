@@ -12,7 +12,7 @@ class basepna(instrument):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self,addr,reset=True,verb=True):
-        super(basepna, self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None 
         self.id()

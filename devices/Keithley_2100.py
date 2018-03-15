@@ -1,15 +1,15 @@
 import visa
 import numpy as np
-from stlab.devices.instrument_ni import instrument_ni
+from stlab.devices.instrument import instrument
 
 def numtostr(mystr):
     return '%12.8e' % mystr
 
 # Driver for Keithley2100 multimeter.  Uses instrument_ni (NI backend) instead of normal instrument class
     
-class Keithley2100(instrument_ni):
+class Keithley_2100(instrument):
     def __init__(self,addr='USB0::0x05E6::0x2100::1310646::INSTR',reset=True,verb=True,**kwargs):
-        super(Keithley2100, self).__init__(addr,reset,verb,**kwargs)
+        super().__init__(addr,reset,verb,**kwargs)
         self.id()
     def GetVoltage(self,range='DEF',res='DEF'): # (manual entry) Preset and make a DC voltage measurement with the specified range and resolution. The reading is sent to the output buffer.
         # range and res can be numbers or MAX, MIN, DEF
@@ -69,4 +69,12 @@ class Keithley2100(instrument_ni):
         self.Trigger()
         x = float(self.ReadValue())
         return x
+    def FastMeasurementSetup(self):
+        self.SetRangeAuto(False)
+        self.SetRange(10)
+        self.write('VOLT:NPLC 1')
+        self.write('TRIG:SOUR IMM')
+        self.write('SENS:ZERO:AUTO ONCE')
+        self.write('SENS:GAIN:AUTO ONCE')
+        return
         

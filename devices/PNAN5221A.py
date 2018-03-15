@@ -7,7 +7,7 @@ def numtostr(mystr):
 
 class PNAN5221A(basepna):
     def __init__(self,addr='TCPIP::192.168.1.105::INSTR',reset=True,verb=True):
-        super(PNAN5221A, self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
         if reset:
             self.TwoPortSetup()
 

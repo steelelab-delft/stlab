@@ -1,0 +1,16 @@
+#Device id tag (as seen in ID string), Driver name in stlab
+SMB100A, RS_SMB100A
+N5221A, PNAN5221A
+N5222A, PNAN5222A
+CS580, Stanford_CS580
+E5080A, Keysight_E5080A
+N5183B, Keysight_N5183B
+N9010B, Keysight_N9010B
+B2961A, Keysight_B2901A
+B2901A, Keysight_B2901A
+DP831A, instrument
+MODEL 2100, Keithley_2100
+AWG520, Tektronix_AWG520
+11713B, instrument
+MODEL370, Lakeshore_370
+Model 44C, Cryocon_44C

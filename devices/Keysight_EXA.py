@@ -5,7 +5,6 @@ import numpy as np
 class keysight_EXA(instrument): 
     def __init__(self,addr = 'TCPIP::192.168.1.228::INSTR',reset=True,verb=True):
         super(keysight_EXA, self).__init__(addr,reset,verb)
-
     
     def SetStart(self,x):
         mystr = 'FREQ:STAR {}'.format(x)
@@ -26,7 +25,26 @@ class keysight_EXA(instrument):
         mystr = 'BAND:RES?'
         x = self.query(mystr)
         return float(x)
-    
+    def SetPoints(self,x):
+        self.write('SWE:POIN {}'.format(x))    
+    def SetAverages(self,navg):
+        self.write('AVER:TYPE RMS')   # Power averaging
+        self.write('AVER:COUNT {}'.format(navg))
+        if navg > 1:
+            self.write(':TRAC:TYPE AVER')        
+        else:
+            self.write(':TRAC:TYPE WRITE')
+    def GetAverages(self):
+        tracetype = self.query(':TRAC:TYPE?')
+        if tracetype == 'AVER\n':
+            navg = self.query('AVER:COUNT?')
+            return float(navg)
+        else:
+            return 1
+    def GetSweepTime(self):
+        sweeptime = self.query('SWE:TIME?')
+        return float(sweeptime)
+
     def MeasureScreen(self):
         result = self.query('READ:SAN?')
         result = result.split(',')
@@ -39,25 +57,3 @@ class keysight_EXA(instrument):
         output['PSD (dBm)'] = yy
         output.addparcolumn('Res BW (Hz)', self.GetResolutionBW())
         return output
-        
-        
-    
-    '''
-    def frequency_sweep(self,fstart,fstop):
-        self.initialize_CW('192.168.1.25')
-        self.write('SOUR:EXT1 ON')
-        self._fstart = self.num2str(fstart)
-        self._fstop = self.num2str(fstop)
-        self.write('FREQ:STAR ' + self._fstart+'Hz')
-        self.write('SWE:POIN ' + self.num2str(1000))
-        self.write('FREQ:STOP ' + self._fstop+'Hz')
-        
-        self.write('SWE:COUN 10')
-        self.write('AVER:STAT ON')
-        self.write('INIT;*WAI')
-        
-        self.write('SOUR:EXT1 OFF')
-        #extract data
-    '''
-
-    

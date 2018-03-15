@@ -8,9 +8,9 @@ def numtostr(mystr):
     return '%12.8e' % mystr
 
 
-class SMB100A_SG(instrument):
-    def __init__(self,addr='TCPIP::192.168.1.43::INSTR',reset=True,verb=True):
-        super(SMB100A_SG, self).__init__(addr,reset,verb)
+class Keysight_N5183B(instrument):
+    def __init__(self,addr='TCPIP::192.168.1.237::INSTR',reset=True,verb=True):
+        super().__init__(addr,reset,verb)
         self.id()
     def setCWfrequency(self,frec):
         mystr =  numtostr(frec)
@@ -23,10 +23,10 @@ class SMB100A_SG(instrument):
         return pp
     def setCWpower(self,x):
         mystr =  numtostr(x)
-        mystr = 'SOUR:POW:POW ' + mystr
+        mystr = 'SOUR:POW ' + mystr
         self.write(mystr)
     def getCWpower(self):
-        mystr = 'SOUR:POW:POW?'
+        mystr = 'SOUR:POW?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp

@@ -8,10 +8,12 @@ def numtostr(mystr):
 
     
 
-class stanfordCS580(instrument):
-    def __init__(self,addr='TCPIP::192.168.1.14::1470::SOCKET',reset=True,verb=True):
-        #Needs \r\n line termination
-        super(stanfordCS580, self).__init__(addr,reset,verb,read_termination='\n')
+class Stanford_CS580(instrument):
+    def __init__(self,addr='TCPIP::192.168.1.41::1470::SOCKET',reset=True,verb=True,**kwargs):
+        #When using LAN adapter, needs \r\n line termination
+        if 'read_termination' not in kwargs:
+            kwargs['read_termination'] = '\r\n'
+        super().__init__(addr,reset,verb,**kwargs)
         self.id()
     def SetGain(self,ii):
     #Sets the gain of the source.  The full range is always +-2V times the gain value

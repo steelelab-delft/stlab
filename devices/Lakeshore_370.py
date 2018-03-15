@@ -5,10 +5,10 @@ import numpy as np
 import time
 from stlab.devices.instrument import instrument
 
-class Lakeshore370(instrument):
+class Lakeshore_370(instrument):
     def __init__(self,addr = 'ASRLCOM1::INSTR', reset=True, verb=True):
         #Custom reset function... There is a short dead time after reset
-        super(Lakeshore370, self).__init__(addr,reset=False,verb=verb, read_termination = '\r\n', parity = visa.constants.Parity.odd, baud_rate = 9600, data_bits = 7 )
+        super().__init__(addr,reset=False,verb=verb, read_termination = '\r\n', parity = visa.constants.Parity.odd, baud_rate = 9600, data_bits = 7 )
         if reset:
             self.reset()
         self.id()
