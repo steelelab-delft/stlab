@@ -14,3 +14,4 @@ AWG520, Tektronix_AWG520
 11713B, instrument
 MODEL370, Lakeshore_370
 Model 44C, Cryocon_44C
+N5183B, Keysight_N5183B

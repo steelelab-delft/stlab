@@ -58,7 +58,7 @@ class Stanford_CS580(instrument):
         return
     def GetOn(self):
         msg = self.query('SOUT?')
-        #print(msg)
+        print(msg)
         msg = bool(msg)
         return msg
     def RampCurrent(self,I1,rate,nsteps = 100): #Ramp current to final value at a certain rate (in amps/sec).  nsteps is the number of current points used.
@@ -80,3 +80,11 @@ class Stanford_CS580(instrument):
             self.SetCurrent(I)
             time.sleep(tstep)
         return
+
+    def SetCompliance(self,xx):
+        mystr = numtostr(xx)
+        self.write('VOLT ' + mystr)
+        return
+    def GetCompliance(self):
+        mystr = self.query('VOLT?')
+        return float(mystr)
