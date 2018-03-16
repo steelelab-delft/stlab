@@ -3,6 +3,8 @@ import numpy as np
 from scipy import ndimage
 import pickle
 import struct
+import scipy
+from scipy.ndimage.filters import gaussian_filter
 
 
 class stlabdict(OrderedDict):
@@ -223,6 +225,21 @@ class stlabmtx():
     def absolute(self):
         self.pmtx = abs(self.pmtx)
         self.processlist.append('abs')
+    def crop(data,left=None,right=None,up=None,low=None):
+        #TODO check
+        valdict={'left':left,'right':right,'up':up,'low':low}
+        for key,val in valdict.items():
+            if val==0:
+                valdict[key] = None
+            else:
+                valdict[key] = int(val)
+        data.pmtx = data.pmtx[valdict['left']:valdict['right'],valdict['up']:valdict['low']]
+        data.rangex = data.rangex[valdict['up']:valdict['low']]
+        data.rangey = data.rangey[valdict['left']:valdict['right']]
+        for key,val in valdict.items():
+            if val==None:
+                valdict[key] = 0
+        data.processlist.append('crop {},{},{},{}'.format(valdict['left'],valdict['right'],valdict['up'],valdict['low']))
     def flip(self,x=False,y=False):
         x=bool(x)
         y=bool(y)
@@ -236,6 +253,10 @@ class stlabmtx():
     def log10(self):
         self.pmtx = np.log10(self.pmtx)
         self.processlist.append('log10')
+    def lowpass(self,x=0,y=0):
+        # TODO check
+        self.pmtx = np.matrix(gaussian_filter(np.squeeze(np.asarray(self.pmtx)),sigma=[int(y),int(x)]))
+        self.processlist.append('lowpass {},{}'.format(x,y))
     def neg(self):
         self.pmtx = -self.pmtx
         self.processlist.append('neg')
