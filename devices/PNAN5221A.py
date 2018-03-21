@@ -13,8 +13,8 @@ class PNAN5221A(basepna):
 
 ### OBLIGATORY METHODS TO BE IMPLEMENTED FROM ABCLASS
 
-    def GetFrequency(self):
-        freq = self.query('CALC:X?')
+    def GetFrequency(self,ch=1):
+        freq = self.query('CALC{}:X?'.format(ch))
         freq = np.asarray([float(xx) for xx in freq.split(',')])
         return freq
     def GetTrcNames(self):
@@ -22,10 +22,10 @@ class PNAN5221A(basepna):
         pars = pars.strip('\n').strip('"').split(',')
         parnames = pars[1::2]
         return parnames
-    def SetActiveTrace(self,mystr):
-        self.write('CALC:PAR:SEL "%s"' % mystr)
-    def GetTraceData(self):
-        yy = self.query("CALC:DATA? SDATA") 
+    def SetActiveTrace(self,mystr,ch=1):
+        self.write('CALC{}:PAR:SEL "{}"'.format(ch,mystr))
+    def GetTraceData(self,ch=1):
+        yy = self.query("CALC{}:DATA? SDATA".format(ch)) 
         yy = np.asarray([float(xx) for xx in yy.split(',')])
         yyre = yy[::2]
         yyim = yy[1::2]
