@@ -112,6 +112,10 @@ class PNAN5221A(basepna):
     def SetCWfrequency(self,xx):
         self.write('SENS:FREQ {}'.format(xx))
         return
+    def GetCWfrequency(self):
+        result = float(self.query('SENS:FREQ?'))
+        return result
+    
     
     
     def SetArbitrarySegSweep(self,on = True):
