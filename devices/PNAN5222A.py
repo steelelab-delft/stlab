@@ -28,6 +28,24 @@ class PNAN5222A(PNAN5221A):
         self.write('DISP:WIND:TRAC2:MOVE 2')
         self.write('DISP:WIND:TRAC3:MOVE 2')
 
+    def setSource2On(self,freq,power):
+        self.write("SENS1:FOM:STATE 1")      #switch on Frequency Offset Module
+        self.write("SENS1:FOM:RANG4:COUP 0")           #decouple source
+        self.write("SENS1:FOM:RANG4:SWE:TYPE CW")    #set Source in CW mode
+        self.setSource2Freq(freq)#set cw freq to source
+        self.write("SOUR:POW:COUP 0")                   #decouple powers
+        self.setSource2Pow(power)
+        self.write("SOUR:POW3:MODE ON")                 #switch on port3
+
+
+
+    def setSource2Off(self):
+        self.write("SOUR:POW3:MODE OFF")                 #switch on port3
+    def setSource2Freq(self,freq):
+        self.write("SENS1:FOM:RANG4:FREQ:CW %s" %(freq)) #set cw freq to source
+    def setSource2Pow(self,power):
+        self.write("SOUR:POW3 %s" %(power))
+
     def TwoToneSetup(self,
         f_probe_start,
         f_probe_stop,
@@ -118,18 +136,20 @@ class PNAN5222A(PNAN5221A):
         #set continuous off
         self.write("SENS1:SWE:MODE HOLD")
         self.write("INIT:CONT OFF")
-        self.write("INIT1:IMM" )    
 
-        
-        while True:
-            time.sleep(0.01)
-            try:
-                a=eval(self.query('*OPC?;'))
-                break
-            except(KeyboardInterrupt, SystemExit):
-                raise
+        # Trigger top screen measurement
+        self.write("INIT1:IMM" )    
+        self.query('*OPC?')
+
+        # Autoscale and copy scale to lower screen
+        self.write('DISP:WIND1:Y:AUTO')
+
+        self.write('DISP:WIND2:TRAC:Y:PDIV  %s' %eval(self.query('DISP:WIND1:TRAC:Y:PDIV?')))
+        self.write('DISP:WIND2:TRAC:Y:RLEV  %s' %eval(self.query('DISP:WIND1:TRAC:Y:RLEV?')))
+        self.write('DISP:WIND2:TRAC:Y:RPOS  %s' %eval(self.query('DISP:WIND1:TRAC:Y:RPOS?')))
 
         self.write("CALC1:MARK2:FUNC MIN")
+
         return eval(self.query("CALC1:MARK2:X?"))
 
 
@@ -141,6 +161,7 @@ class PNAN5222A(PNAN5221A):
         # Trigger
         self.write("INIT2:IMM")
         self.query('*OPC?')
+        self.write('DISP:WIND2:Y:AUTO')
 
         # pars,parnames = self.GetTraceNames()
         # self.SetActiveTrace(pars[0])
@@ -169,3 +190,15 @@ class PNAN5222A(PNAN5221A):
 
         return result
 
+    def TwoToneSourcesOff(self):
+        self.write('SOUR1:POW1:MODE OFF')
+        self.write('SOUR1:POW3:MODE OFF')
+        self.write('SOUR2:POW1:MODE OFF')
+        self.write('SOUR2:POW3:MODE OFF')
+
+    def GetMin(self):
+        self.write("CALC:MARK1 ON")             # Turn on marker
+        self.write("CALC:MARK1:FUNC MIN")       # Set to minimum
+        self.write("CALC:MARK1:FUNC:TRAC ON")   # Don't know what this is but dosnt work without
+        self.query('*OPC?')                     # Wait
+        return eval(self.query("CALC:MARK1:X?"))# return minimum

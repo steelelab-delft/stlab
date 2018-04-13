@@ -81,6 +81,22 @@ class Stanford_CS580(instrument):
             time.sleep(tstep)
         return
 
+    def RampCurrent_TimeSteps(self,I1,rate,tstep = 1e-3): #Ramp current to final value at a certain rate (in amps/sec).  nsteps is the number of current points used.
+        if not self.GetOn():
+            self.SetCurrent(0.)
+            self.SetOn()
+        I0 = self.GetCurrent()
+        if I0 == I1:
+            print('Warning: RampCurrent: Target equal to current value.  Nothing to do')
+            return
+
+        nsteps = int(abs(I1-I0)/rate/tstep)
+        Is = np.linspace(I0,I1,nsteps)
+        for I in Is:
+            self.SetCurrent(I)
+            time.sleep(tstep)
+        return
+
     def SetCompliance(self,xx):
         mystr = numtostr(xx)
         self.write('VOLT ' + mystr)
