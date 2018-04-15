@@ -24,6 +24,8 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
     # If none are found, starts with the first.
     
     if autoindex:
+        if (prefix == '' or prefix == None):
+            raise ValueError('No prefix given for autoindexing')
         namelist = [name for name in os.listdir(".")]
         idxs = []
         pattern = '^' + prefix + '\\d+$'
@@ -43,7 +45,18 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
         foldername = prefix + '_' + datecode+'_'+timecode+'_'+idstring
     else:
         foldername = prefix + '_' +idstring
+
+    #Check if prefix or idstring are blank and remove unnecessary underscores
+    if (idstring == '' or idstring == None):
+        foldername = foldername[:-1]
+    if (prefix == '' or prefix == None):
+        foldername = foldername[1:]
+    if len(foldername)==0:
+        raise ValueError('No name given... Add at least a prefix or idstring or date')
+
     filename = foldername+'.dat'
+
+
     if usefolder:
         fullfoldername = os.path.normpath(mypath + '/' + foldername)
         fullfilename = os.path.normpath(mypath + '/' + foldername + '/' + filename)
