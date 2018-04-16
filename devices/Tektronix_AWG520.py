@@ -52,7 +52,7 @@ class Tektronix_AWG520(instrument):
             None
         '''
         logging.debug(__name__ + ' : Initializing instrument')
-        super(Tektronix_AWG520, self).__init__(addr, reset, verb, read_termination = '\n')
+        super().__init__(addr, reset, verb, read_termination = '\n')
 
         self._values = {}
         self._values['files'] = {}
