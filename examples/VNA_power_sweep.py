@@ -1,11 +1,11 @@
 import stlab
-from stlab.devices.FieldfoxPNA import FieldfoxPNA as pnaclass #Import device driver for your desired PNA
+from stlab.devices import autodetect_instrument #Load instrument autodetect
 import numpy as np
 
 prefix = 'M2' #prefix for measurement folder name.  Can be anything or empty
 idstring = 'Dev1_powersweep' #Additional info included in measurement folder name.  Can be anything or empty
 
-pna = pnaclass(addr='TCPIP::192.168.1.151::INSTR',reset=False,verb=True) #Initialize device communication and reset
+pna = autodetect_instrument(addr='TCPIP::192.168.1.42::INSTR',reset=False,verb=True) #Initialize device communication and reset
 
 pna.SetRange(4e9,8e9) #Set frequency range in Hz
 pna.SetIFBW(300.) #Set IF bandwidth in Hz
