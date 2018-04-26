@@ -331,6 +331,11 @@ class stlabmtx():
         mtx = self.pmtx.copy().T
         self.pmtx = xderiv(mtx,self.rangey,direction).T
         self.processlist.append('yderiv_slow {}'.format(direction))
+    def transpose(self):
+        self.pmtx = self.pmtx.T
+        self.xtitle, self.ytitle = self.ytitle, self.xtitle
+        self.rangex, self.rangey = self.rangey, self.rangex
+        self.processlist.append('transpose')
     
     # Processlist
     def saveprocesslist(self,filename = './process.pl'):
