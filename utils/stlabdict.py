@@ -254,7 +254,7 @@ class stlabmtx():
         self.pmtx = np.log10(self.pmtx)
         self.processlist.append('log10')
     def lowpass(self,x=0,y=0):
-        # TODO check
+        # TODO implement different filter types
         self.pmtx = np.matrix(gaussian_filter(np.squeeze(np.asarray(self.pmtx)),sigma=[int(y),int(x)]))
         self.processlist.append('lowpass {},{}'.format(x,y))
     def neg(self):
