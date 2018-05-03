@@ -4,6 +4,7 @@
 # Single title line and ', ' field delimeter
 
 import numpy as np
+import pandas as pd
 from stlab.utils.stlabdict import stlabdict
 
 def readdat(filename,delim=', ',nlines=None):
@@ -22,6 +23,7 @@ def readdat(filename,delim=', ',nlines=None):
 
         block =[]
         arrayofdicts = []
+#        arrayofframes = []
         nblocks = 0
             
         for point in f:
@@ -32,6 +34,7 @@ def readdat(filename,delim=', ',nlines=None):
                 for name,dat in zip(names,block):
                     newdict[name] = dat
                 arrayofdicts.append(newdict)
+#                arrayofframes.append(pd.DataFrame(newdict))
                 block = []
                 nblocks += 1
                 if nlines == None:
@@ -49,6 +52,8 @@ def readdat(filename,delim=', ',nlines=None):
             for name,dat in zip(names,block):
                 newdict[name] = dat
             arrayofdicts.append(newdict)
+#            arrayofframes.append(pd.DataFrame(newdict))
+#        return arrayofframes
         return arrayofdicts
 
 def reads2p(filename):

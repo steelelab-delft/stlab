@@ -44,6 +44,13 @@ class PNAN5221A(basepna):
         return bool(int(self.query('SENS:CORR?')))
 
 ### OPTIONAL METHODS
+    
+    def SetElectricalDelay(self, t):
+        '''
+        Electrical delay set in seconds
+        '''        
+        self.write("CALC:CORR:EDEL:TIME %fNS" % (t*1e9))
+
 
     def TwoPortSetup(self):
         self.SetContinuous(False)
@@ -108,32 +115,30 @@ class PNAN5221A(basepna):
 # New commands added by Dani, test to set segment sweep parameters
     def SetSweepType(self,mystr): #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
         self.write('SENS:SWE:TYPE %s' % mystr)
-        return
+
     def SetCWfrequency(self,xx):
         self.write('SENS:FREQ {}'.format(xx))
         return
     def GetCWfrequency(self):
         result = float(self.query('SENS:FREQ?'))
         return result
-    
-    
-    
+
     def SetArbitrarySegSweep(self,on = True):
         if on:
             self.write('SENS:SEGM:ARB ON')
         else:
             self.write('SENS:SEGM:ARB OFF')
-        return
+
     def SetSegmStart(self,x):
         mystr = numtostr(x)
         mystr = 'SENS:SEGM:FREQ:STAR '+mystr
         self.write(mystr)
-        return
+
     def SetSegmEnd(self,x):
         mystr = numtostr(x)
         mystr = 'SENS:SEGM:FREQ:STOP '+mystr
         self.write(mystr)
-        return
+
      #Not currently working for segments
     '''
     def SetSegmIFBW(self,x):
@@ -149,10 +154,16 @@ class PNAN5221A(basepna):
         mystr = '%d' % x
         mystr = 'SENS:SEGM:SWE:POIN '+mystr
         self.write(mystr)
-        return
+
     def SetSegmRange(self,start,end):
         self.SetSegmStart(start)
         self.SetSegmEnd(end)
-        return
 
+    def SetMeasurementFormat(self, measurement_format):
+        '''
+        Sets the measurement format of the main measurement
+        Options are: MLIN, MLOG, PHAS, UPH, IMAG, REAL, POL, SMIT, SADM, SWR, GDEL, KELV, FAHR, CELS
+        '''
 
+        #sets the format
+        self.write("CALC1:FORM " + measurement_format)

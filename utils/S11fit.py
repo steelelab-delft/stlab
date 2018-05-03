@@ -124,6 +124,9 @@ def S11theo(frec,params,ftype='A'): # Equation
         return -1.+(kext*np.exp(1j*theta)) / (kext+kint+2j*dw)
     elif ftype== '-B':
         return 1.-(kext*np.exp(1j*theta)) / (kext+kint+2j*dw)
+    elif ftype== 'X':
+        return 1.-(kext*np.exp(1j*theta)) / (kext+kint-2j*dw)
+
 
 def S11residual(params, frec, data,ftype='A'):
     """
@@ -139,7 +142,7 @@ def S11full(frec,params,ftype='A'):
     """
     if ftype == 'A' or ftype == 'B':
         model = -S11theo(frec,params,ftype)*backmodel(frec,params)
-    if ftype == '-A' or ftype == '-B':
+    elif ftype == '-A' or ftype == '-B' or ftype == 'X':
         model = S11theo(frec,params,ftype)*backmodel(frec,params)
     return model
 
@@ -301,7 +304,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     if not fitbackground:
         if ftype == 'A' or ftype == 'B':
             params['a'].set(value=-1, vary=False)
-        elif ftype == '-A' or ftype == '-B':
+        elif ftype == '-A' or ftype == '-B' or ftype == 'X':
             params['a'].set(value=1, vary=False)
         params['b'].set(value=0, vary=False)
         params['c'].set(value=0, vary=False)
@@ -404,6 +407,9 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     elif ftype == 'B':
         Tres = np.abs(S11corr[ires])
         kext0 = (1+Tres)*ktot
+    elif ftype == 'X':
+        Tres = np.abs(S11corr[ires])
+        kext0 = (1-Tres)*ktot
     kint0 = ktot-kext0
     if kint0<= 0.:
         kint0 = kext0
