@@ -2,38 +2,50 @@ from stlab.devices.instrument import instrument
 from stlab.utils.stlabdict import stlabdict
 import numpy as np
 
-class Keysight_N9010B(instrument): 
-    def __init__(self,addr = 'TCPIP::192.168.1.228::INSTR',reset=True,verb=True):
-        super(keysight_EXA, self).__init__(addr,reset,verb)
-    
-    def SetStart(self,x):
+
+class Keysight_N9010B(instrument):
+    def __init__(self,
+                 addr='TCPIP::192.168.1.228::INSTR',
+                 reset=True,
+                 verb=True):
+        super(Keysight_N9010B, self).__init__(addr, reset, verb)
+
+    def SetStart(self, x):
         mystr = 'FREQ:STAR {}'.format(x)
         self.write(mystr)
-    def SetStop(self,x):
+
+    def SetStop(self, x):
         mystr = 'FREQ:STOP {}'.format(x)
         self.write(mystr)
-    def SetCenter(self,x):
+
+    def SetCenter(self, x):
         mystr = 'FREQ:CENT {}'.format(x)
         self.write(mystr)
-    def SetSpan(self,x):
+
+    def SetSpan(self, x):
         mystr = 'FREQ:SPAN {}'.format(x)
         self.write(mystr)
-    def SetResolutionBW(self,x):
+
+    def SetResolutionBW(self, x):
         mystr = 'BAND:RES {}'.format(x)
         self.write(mystr)
+
     def GetResolutionBW(self):
         mystr = 'BAND:RES?'
         x = self.query(mystr)
         return float(x)
-    def SetPoints(self,x):
-        self.write('SWE:POIN {}'.format(x))    
-    def SetAverages(self,navg):
-        self.write('AVER:TYPE RMS')   # Power averaging
+
+    def SetPoints(self, x):
+        self.write('SWE:POIN {}'.format(x))
+
+    def SetAverages(self, navg):
+        self.write('AVER:TYPE RMS')  # Power averaging
         self.write('AVER:COUNT {}'.format(navg))
         if navg > 1:
-            self.write(':TRAC:TYPE AVER')        
+            self.write(':TRAC:TYPE AVER')
         else:
             self.write(':TRAC:TYPE WRITE')
+
     def GetAverages(self):
         tracetype = self.query(':TRAC:TYPE?')
         if tracetype == 'AVER\n':
@@ -41,6 +53,7 @@ class Keysight_N9010B(instrument):
             return float(navg)
         else:
             return 1
+
     def GetSweepTime(self):
         sweeptime = self.query('SWE:TIME?')
         return float(sweeptime)

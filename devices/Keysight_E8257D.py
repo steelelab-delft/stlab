@@ -9,9 +9,9 @@ def numtostr(mystr):
     return '%12.8e' % mystr
 
 
-class RS_SGS100A(instrument):
+class Keysight_E8257D(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.43::INSTR',
+                 addr='TCPIP::192.168.1.66::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
@@ -28,23 +28,13 @@ class RS_SGS100A(instrument):
         pp = float(pp)
         return pp
 
-    def setCWphase(self, phase):
-        mystr = 'SOUR:PHAS %.2f' % phase
-        self.write(mystr)
-
-    def getCWphase(self):
-        mystr = 'SOUR:PHAS?'
-        pp = self.query(mystr)
-        pp = float(pp)
-        return pp
-
     def setCWpower(self, x):
         mystr = numtostr(x)
-        mystr = 'SOUR:POW:POW ' + mystr
+        mystr = 'SOUR:POW ' + mystr
         self.write(mystr)
 
     def getCWpower(self):
-        mystr = 'SOUR:POW:POW?'
+        mystr = 'SOUR:POW?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
@@ -55,8 +45,15 @@ class RS_SGS100A(instrument):
     def RFoff(self):
         self.write('OUTP OFF')
 
-    def IQon(self):
-        self.write('IQ:STATe ON')
+    def set_reference(self, val):
+        '''
+        sets the 10 MHz reference source to INTernal or EXTernal.
+        '''
+        self.write(':SOURce:ROSCillator:SOURce ' + val)
 
-    def IQoff(self):
-        self.write('IQ:STATe OFF')
+    def get_reference(self, val):
+        '''
+        gets the 10 MHz reference source
+        '''
+        bla = self.query(':SOURce:ROSCillator:SOURce?')
+        print(bla)

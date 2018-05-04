@@ -372,6 +372,8 @@ class AWG_Station():
 
 		folder_path = os.getcwd()
 
+		dirpath = self.AWG.awg_file_dir
+		
 		os.chdir(dirpath)
 		
 		f = open('ftp.txt','w')
