@@ -18,9 +18,13 @@ def cp(pulse, *arg, **kw):
     return pulse_copy(*arg, **kw)
 
 
-
-def apply_modulation(I_env, Q_env, tvals, mod_frequency,
-                     phase=0, phi_skew=0, alpha=1):
+def apply_modulation(I_env,
+                     Q_env,
+                     tvals,
+                     mod_frequency,
+                     phase=0,
+                     phi_skew=0,
+                     alpha=1):
     '''
     Applies single sideband modulation, requires timevals to make sure the
     phases are correct.
@@ -47,19 +51,20 @@ def apply_modulation(I_env, Q_env, tvals, mod_frequency,
     tan_phi_skew = np.tan(2 * np.pi * phi_skew / 360)
     sec_phi_alpha = 1 / (np.cos(2 * np.pi * phi_skew / 360) * alpha)
 
-    I_mod = (I_env * (np.cos(2 * np.pi * (mod_frequency * tvals +
-                                          phase / 360)) - tan_phi_skew *
-                      np.sin(2 * np.pi * (mod_frequency * tvals +
-                                          phase / 360))) +
-             Q_env * (np.sin(2 * np.pi * (mod_frequency * tvals +
-                                          phase / 360)) + tan_phi_skew *
-                      np.cos(2 * np.pi * (mod_frequency * tvals + phase / 360))))
+    I_mod = (I_env *
+             (np.cos(2 * np.pi * (mod_frequency * tvals + phase / 360)) -
+              tan_phi_skew * np.sin(2 * np.pi *
+                                    (mod_frequency * tvals + phase / 360))) +
+             Q_env *
+             (np.sin(2 * np.pi * (mod_frequency * tvals + phase / 360)) +
+              tan_phi_skew * np.cos(2 * np.pi *
+                                    (mod_frequency * tvals + phase / 360))))
 
-    Q_mod = (-1 * I_env * sec_phi_alpha * np.sin(2 * np.pi * (mod_frequency *
-                                                              tvals + phase / 360.)) +
-             + Q_env * sec_phi_alpha * np.cos(2 * np.pi * (
-                 mod_frequency * tvals + phase / 360.)))
+    Q_mod = (-1 * I_env * sec_phi_alpha * np.sin(2 * np.pi * (
+        mod_frequency * tvals + phase / 360.)) + +Q_env * sec_phi_alpha *
+             np.cos(2 * np.pi * (mod_frequency * tvals + phase / 360.)))
     return [I_mod, Q_mod]
+
 
 class Pulse:
     """
@@ -76,7 +81,6 @@ class Pulse:
     This is all done in the sequence element.
     See the examples for more information.
     """
-
 
     def __init__(self, name):
         self.length = None
@@ -110,7 +114,8 @@ class Pulse:
                 elif hasattr(self, 'wf'):
                     wfs = self.wf(tvals)
                 else:
-                    raise Exception('Could not find a waveform-generator function!')
+                    raise Exception(
+                        'Could not find a waveform-generator function!')
 
         return wfs
 
@@ -140,7 +145,6 @@ class Pulse:
 
 # Some simple pulse definitions.
 class SquarePulse(Pulse):
-
     def __init__(self, channel=None, channels=None, name='square pulse', **kw):
         Pulse.__init__(self, name)
         if channel is None and channels is None:
@@ -167,7 +171,6 @@ class SquarePulse(Pulse):
 
 
 class CosPulse(Pulse):
-
     def __init__(self, channel, name='cos pulse', **kw):
         Pulse.__init__(self, name)
 
@@ -193,13 +196,11 @@ class CosPulse(Pulse):
         return self
 
     def chan_wf(self, chan, tvals):
-        return self.amplitude * np.cos(2 * np.pi *
-                                       (self.frequency * tvals +
-                                        self.phase / 360.))
+        return self.amplitude * np.cos(2 * np.pi * (
+            self.frequency * tvals + self.phase / 360.))
 
 
 class LinearPulse(Pulse):
-
     def __init__(self, channel=None, channels=None, name='linear pulse', **kw):
         """ Pulse that performs linear interpolation between two setpoints """
         Pulse.__init__(self, name)
@@ -231,9 +232,7 @@ class LinearPulse(Pulse):
         return np.linspace(self.start_value, self.end_value, len(tvals))
 
 
-
 class clock_train(Pulse):
-
     def __init__(self, channel, name='clock train', **kw):
         Pulse.__init__(self, name)
         self.channel = channel
@@ -243,14 +242,16 @@ class clock_train(Pulse):
         self.cycles = kw.pop('cycles', 100)
         self.nr_up_points = kw.pop('nr_up_points', 2)
         self.nr_down_points = kw.pop('nr_down_points', 2)
-        self.length = self.cycles * (self.nr_up_points + self.nr_down_points) * 1e-9
+        self.length = self.cycles * (
+            self.nr_up_points + self.nr_down_points) * 1e-9
 
     def __call__(self, **kw):
         self.amplitude = kw.pop('amplitude', self.amplitude)
         self.cycles = kw.pop('cycles', self.cycles)
         self.nr_up_points = kw.pop('nr_up_points', self.nr_up_points)
         self.nr_down_points = kw.pop('nr_down_points', self.nr_down_points)
-        self.length = self.cycles * (self.nr_up_points + self.nr_down_points) * 1e-9
+        self.length = self.cycles * (
+            self.nr_up_points + self.nr_down_points) * 1e-9
 
         if channel is not None:
             self.channel = channel
@@ -271,7 +272,6 @@ class clock_train(Pulse):
 
 
 class marker_train(Pulse):
-
     def __init__(self, channel, name='marker train', **kw):
         Pulse.__init__(self, name)
         self.channel = channel
@@ -299,20 +299,21 @@ class marker_train(Pulse):
         # Using lists because that is default, I expect arrays also work
         # but have not tested that. MAR 15-2-2016
         unit_cell = list(np.ones(round(self.marker_length * 1e9)))
-        unit_cell.extend(list(np.zeros(
-            round((self.marker_separation - self.marker_length) * 1e9))))
+        unit_cell.extend(
+            list(
+                np.zeros(
+                    round(
+                        (self.marker_separation - self.marker_length) * 1e9))))
         wf = unit_cell * self.nr_markers
         # Added this check because I had issues with this before it can occur
         # when e.g. giving separations that are not in sub ns resolution
-        if(len(wf) != round(self.length * 1e9)):
+        if (len(wf) != round(self.length * 1e9)):
             raise ValueError('Waveform length is not equal to expected length')
 
         return wf
 
 
-
 class MW_IQmod_pulse(Pulse):
-
     '''
     Block pulse on the I channel modulated with IQ modulation.
     kwargs:
@@ -358,18 +359,21 @@ class MW_IQmod_pulse(Pulse):
         if not self.phaselock:
             tvals = tvals.copy() - tvals[idx0]
         I_mod, Q_mod = apply_modulation(
-            self.amplitude*np.ones(len(tvals)),
-            np.zeros(len(tvals)), tvals[idx0:idx1],
-            mod_frequency=self.mod_frequency, phase=self.phase,
-            phi_skew=self.phi_skew, alpha=self.alpha)
+            self.amplitude * np.ones(len(tvals)),
+            np.zeros(len(tvals)),
+            tvals[idx0:idx1],
+            mod_frequency=self.mod_frequency,
+            phase=self.phase,
+            phi_skew=self.phi_skew,
+            alpha=self.alpha)
         if chan == self.I_channel:
             wf[idx0:idx1] += I_mod
         elif chan == self.Q_channel:
             wf[idx0:idx1] += Q_mod
         return wf
 
-class SSB_DRAG_pulse(Pulse):
 
+class SSB_DRAG_pulse(Pulse):
     '''
     Gauss pulse on the I channel, derivative of Gauss on the Q channel.
     modulated with Single Sideband (SSB)  modulation.
@@ -418,7 +422,7 @@ class SSB_DRAG_pulse(Pulse):
         self.phase = kw.pop('phase', 0.)
         self.phaselock = kw.pop('phaselock', True)
 
-        self.alpha = kw.pop('alpha', 1)        # QI amp ratio
+        self.alpha = kw.pop('alpha', 1)  # QI amp ratio
         self.phi_skew = kw.pop('phi_skew', 0)  # IQ phase skewness
 
         self.length = self.sigma * self.nr_sigma
@@ -440,34 +444,39 @@ class SSB_DRAG_pulse(Pulse):
         idx1 = np.where(tvals <= tvals[0] + self.length)[0][-1] + 1
         wf = np.zeros(len(tvals))
         t = tvals - tvals[0]  # Gauss envelope should not be displaced
-        mu = self.length/2.0
+        mu = self.length / 2.0
         if not self.phaselock:
             tvals = tvals.copy() - tvals[idx0]
 
-        gauss_env = self.amplitude*np.exp(-(0.5 * ((t-mu)**2) / self.sigma**2))
-        deriv_gauss_env = self.motzoi * -1 * (t-mu)/(self.sigma**1) * gauss_env
+        gauss_env = self.amplitude * np.exp(-(0.5 * (
+            (t - mu)**2) / self.sigma**2))
+        deriv_gauss_env = self.motzoi * -1 * (t - mu) / (
+            self.sigma**1) * gauss_env
         # substract offsets
-        gauss_env -= (gauss_env[0]+gauss_env[-1])/2.
-        deriv_gauss_env -= (deriv_gauss_env[0]+deriv_gauss_env[-1])/2.
+        gauss_env -= (gauss_env[0] + gauss_env[-1]) / 2.
+        deriv_gauss_env -= (deriv_gauss_env[0] + deriv_gauss_env[-1]) / 2.
 
         # Note prefactor is multiplied by self.sigma to normalize
         if chan == self.I_channel:
-            I_mod, Q_mod = apply_modulation(gauss_env, deriv_gauss_env,
-                                            tvals[idx0:idx1],
-                                            mod_frequency=self.mod_frequency,
-                                            phase=self.phase,
-                                            phi_skew=self.phi_skew,
-                                            alpha=self.alpha)
+            I_mod, Q_mod = apply_modulation(
+                gauss_env,
+                deriv_gauss_env,
+                tvals[idx0:idx1],
+                mod_frequency=self.mod_frequency,
+                phase=self.phase,
+                phi_skew=self.phi_skew,
+                alpha=self.alpha)
             wf[idx0:idx1] += I_mod
 
         if chan == self.Q_channel:
-            I_mod, Q_mod = apply_modulation(gauss_env, deriv_gauss_env,
-                                            tvals[idx0:idx1],
-                                            mod_frequency=self.mod_frequency,
-                                            phase=self.phase,
-                                            phi_skew=self.phi_skew,
-                                            alpha=self.alpha)
+            I_mod, Q_mod = apply_modulation(
+                gauss_env,
+                deriv_gauss_env,
+                tvals[idx0:idx1],
+                mod_frequency=self.mod_frequency,
+                phase=self.phase,
+                phi_skew=self.phi_skew,
+                alpha=self.alpha)
             wf[idx0:idx1] += Q_mod
 
         return wf
-

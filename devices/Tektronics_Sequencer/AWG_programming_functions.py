@@ -23,7 +23,8 @@ def setup_AWG_pulsed_spec_sequence(
     measurement_pulse_amp=0.25,
     cooling_pulse_length=200e-6,
     cooling_measurement_delay=5e-6,
-    doplot=True
+    doplot=True,
+    devAWG = Tektronix_AWG520(name='AWG')
     ):
 
     '''
@@ -44,7 +45,6 @@ def setup_AWG_pulsed_spec_sequence(
 
 
     AWG = AWG_station.AWG_Station()
-    devAWG = Tektronix_AWG520(name='AWG')
     AWG.AWG = devAWG
 
     devAWG.set_run_mode('ENH')

@@ -56,7 +56,17 @@ class RS_SGS100A(instrument):
         self.write('OUTP OFF')
 
     def IQon(self):
+        '''
+        turns on vector modulation.
+        Caution: without IQ input the source doesn't output anything!
+        '''
         self.write('IQ:STATe ON')
 
     def IQoff(self):
         self.write('IQ:STATe OFF')
+
+    def EXTref(self):
+        self.write('SOUR:ROSC:SOUR EXT')
+
+    def INTref(self):
+        self.write('SOUR:ROSC:SOUR INT')

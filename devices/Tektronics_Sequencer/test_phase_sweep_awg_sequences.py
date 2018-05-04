@@ -49,7 +49,7 @@ sq_pulse = pulse.SquarePulse(channel='trigger',
 phases = np.linspace(0, 360, 37)
 
 for i, phase in enumerate(phases):
-    
+
     devAWG.init_dir()
 
     seq = sequence.Sequence('phase_%d' %phase)

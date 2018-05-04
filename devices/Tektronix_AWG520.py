@@ -304,6 +304,28 @@ class Tektronix_AWG520(instrument):
         logging.debug(__name__ + ' : Trigger level set to %.3f' % level)
         self.dev.write('TRIG:LEV %.3f' % level)
 
+    def get_trigger_interval(self):
+        '''
+        the internal trigger interval in seconds.
+        '''
+        logging.debug(__name__ + ' : Get trigger interval from instrument')
+        return float(self.dev.query('TRIG:TIM?'))
+
+    def set_trigger_interval(self, interval):
+        '''
+        sets the internal trigger interval - effectively the repetition
+        rate of the experiment.
+
+        Input:
+            interval (float)
+        '''
+        if 1.e-6>interval or interval>10.:
+            print("out of range!")
+            return
+
+        logging.debug(__name__ + ' : Trigger interval set to %.3f' % interval)
+        self.dev.write('TRIG:TIM %.6fs' % interval)
+
     def force_trigger(self):
         '''
         forces a trigger event (used for wait_trigger option in sequences)

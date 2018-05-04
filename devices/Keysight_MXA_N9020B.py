@@ -10,6 +10,7 @@ class Keysight_MXA_N9020B(instrument):
                  reset=True,
                  verb=True):
         super(Keysight_MXA_N9020B, self).__init__(addr, reset, verb)
+        self.dev.timeout = None
 
     def IQ_mode(self):
         '''
@@ -131,9 +132,30 @@ class Keysight_MXA_N9020B(instrument):
         averaging.
         Data is returned in dB.
         '''
-        datastring = self.dev.query(':READ:WAV2?')
-        power = np.fromstring(datastring, dtype=float, sep=',')
-        return power
+        data_string = self.dev.query(':READ:WAV2?')
+
+        settings_string = self.dev.query(':FETCH:WAV1?')
+
+        powers = np.fromstring(data_string, dtype=float, sep=',')
+        settings = np.fromstring(settings_string, dtype=float, sep=',')
+
+        timestep = settings[0]
+        n_samples = settings[3]
+
+        # print('timestep %.3f' %timestep)
+        # print('n_samples %.3f' %n_samples)
+
+        times = np.arange(0, n_samples)*timestep
+
+
+        data_columns = [times, powers]
+        names = ['time (s)', 'power (dB)']
+        final = stlabdict()
+
+        for name, data in zip(names, data_columns):
+            final[name] = data
+
+        return final
 
     def set_IF_gain_LOW(self):
         return self.dev.write(':SENSe:WAV:IF:GAIN LOW')
@@ -143,5 +165,3 @@ class Keysight_MXA_N9020B(instrument):
 
     def init_waveform(self):
         return self.dev.write(':INITiate:WAVeform')
-
-    # def set_IF_gain(self,
