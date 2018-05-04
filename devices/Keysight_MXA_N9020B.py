@@ -145,8 +145,7 @@ class Keysight_MXA_N9020B(instrument):
         # print('timestep %.3f' %timestep)
         # print('n_samples %.3f' %n_samples)
 
-        times = np.arange(0, n_samples)*timestep
-
+        times = np.arange(0, n_samples) * timestep
 
         data_columns = [times, powers]
         names = ['time (s)', 'power (dB)']
@@ -156,6 +155,46 @@ class Keysight_MXA_N9020B(instrument):
             final[name] = data
 
         return final
+
+    def measure_RFenvelope(self):
+        '''
+        Measures the RF envelope (I^2+Q^2) which seems to support
+        averaging.
+        Data is returned in dB.
+        '''
+        data_string = self.dev.query(':READ:WAV2?')
+
+        settings_string = self.dev.query(':FETCH:WAV1?')
+
+        powers = np.fromstring(data_string, dtype=float, sep=',')
+        settings = np.fromstring(settings_string, dtype=float, sep=',')
+
+        timestep = settings[0]
+        n_samples = settings[3]
+
+        # print('timestep %.3f' %timestep)
+        # print('n_samples %.3f' %n_samples)
+
+        times = np.arange(0, n_samples) * timestep
+
+        data_columns = [times, powers]
+        names = ['time (s)', 'power (dB)']
+        final = stlabdict()
+
+        for name, data in zip(names, data_columns):
+            final[name] = data
+
+        return final
+
+    def measure_mean_power(self):
+        '''
+        returns the mean averaged power over the time window specified.
+        '''
+        data_string = self.dev.query(':READ:WAV1?')
+
+        results = np.fromstring(data_string, dtype=float, sep=',')
+
+        return results[2]
 
     def set_IF_gain_LOW(self):
         return self.dev.write(':SENSe:WAV:IF:GAIN LOW')

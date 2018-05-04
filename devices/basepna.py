@@ -8,41 +8,45 @@ import abc
 def numtostr(mystr):
     return '%20.15e' % mystr
 
+
 class basepna(instrument):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self,addr,reset=True,verb=True):
-        super().__init__(addr,reset,verb)
+    def __init__(self, addr, reset=True, verb=True):
+        super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
-        self.dev.timeout = None 
+        self.dev.timeout = None
         self.id()
         if reset:
-            self.SetContinuous(False) #Turn off continuous mode
+            self.SetContinuous(False)  #Turn off continuous mode
 
 ##### METHODS THAT CAN GENERALLY BE USED ON ALL PNAs.  REIMPLEMENT IF NECESSARY #######
 
-    def SetContinuous(self,var=True):
+    def SetContinuous(self, var=True):
         if var:
-            self.write('INIT:CONT 1') #Turn on continuous mode
+            self.write('INIT:CONT 1')  #Turn on continuous mode
         elif not var:
-            self.write('INIT:CONT 0') #Turn off continuous mode
+            self.write('INIT:CONT 0')  #Turn off continuous mode
         return
 
-    def SetStart(self,x):
+    def SetStart(self, x):
         mystr = numtostr(x)
-        mystr = 'SENS:FREQ:STAR '+mystr
+        mystr = 'SENS:FREQ:STAR ' + mystr
         self.write(mystr)
-    def SetEnd(self,x):
+
+    def SetEnd(self, x):
         mystr = numtostr(x)
-        mystr = 'SENS:FREQ:STOP '+mystr
+        mystr = 'SENS:FREQ:STOP ' + mystr
         self.write(mystr)
-    def SetCenter(self,x):
+
+    def SetCenter(self, x):
         mystr = numtostr(x)
-        mystr = 'SENS:FREQ:CENT '+mystr
+        mystr = 'SENS:FREQ:CENT ' + mystr
         self.write(mystr)
-    def SetSpan(self,x):
+
+    def SetSpan(self, x):
         mystr = numtostr(x)
-        mystr = 'SENS:FREQ:SPAN '+mystr
+        mystr = 'SENS:FREQ:SPAN ' + mystr
         self.write(mystr)
 
     def GetStart(self):
@@ -50,44 +54,49 @@ class basepna(instrument):
         pp = self.query(mystr)
         pp = float(pp)
         return pp
+
     def GetEnd(self):
         mystr = 'SENS:FREQ:STOP?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
+
     def GetCenter(self):
         mystr = 'SENS:FREQ:CENT?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
+
     def GetSpan(self):
         mystr = 'SENS:FREQ:SPAN?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
 
-    def SetIFBW(self,x):
+    def SetIFBW(self, x):
         mystr = numtostr(x)
-        mystr = 'SENS:BWID '+mystr
+        mystr = 'SENS:BWID ' + mystr
         self.write(mystr)
-    def SetPower(self,x):
+
+    def SetPower(self, x):
         mystr = numtostr(x)
-        mystr = 'SOUR:POW '+mystr
+        mystr = 'SOUR:POW ' + mystr
         self.write(mystr)
+
     def GetPower(self):
         mystr = 'SOUR:POW?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
-    def SetPoints(self,x):
+
+    def SetPoints(self, x):
         mystr = '%d' % x
-        mystr = 'SENS:SWE:POIN '+mystr
+        mystr = 'SENS:SWE:POIN ' + mystr
         self.write(mystr)
 
     def Trigger(self):
         print((self.query('INIT;*OPC?')))
         return
-
 
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
@@ -101,43 +110,49 @@ class basepna(instrument):
     def GetTraceNames(self):
         pars = self.query('CALC:PAR:CAT:EXT?')
         pars = pars.strip('\n').strip('"').split(',')
-        parnames = pars[1::2] #parameter names
-        pars = pars[::2] #parameter identifiers
-        return pars,parnames
+        parnames = pars[1::2]  #parameter names
+        pars = pars[::2]  #parameter identifiers
+        return pars, parnames
+
     @abc.abstractmethod
-    def SetActiveTrace(self,mystr):
+    def SetActiveTrace(self, mystr):
         self.write('CALC:PAR:SEL "%s"' % mystr)
+
     @abc.abstractmethod
     def GetTraceData(self):
-        yy = self.query("CALC:DATA? SDATA") 
+        yy = self.query("CALC:DATA? SDATA")
         yy = np.asarray([float(xx) for xx in yy.split(',')])
         yyre = yy[::2]
         yyim = yy[1::2]
-        return yyre,yyim
+        return yyre, yyim
 
     @abc.abstractmethod
-    def CalOn (self):
+    def CalOn(self):
         mystr = "SENS:CORR ON"
         self.write(mystr)
+
     @abc.abstractmethod
-    def CalOff (self):
+    def CalOff(self):
         mystr = "SENS:CORR OFF"
         self.write(mystr)
+
     @abc.abstractmethod
     def GetCal(self):
         return bool(int(self.query('SENS:CORR?')))
 
+
 ##### FULLY IMPLEMENTED METHODS THAN DO NOT NEED TO BE REIMPLEMENTED (BUT CAN BE IF NECESSARY) #####################
 
-    def SetRange(self,start,end):
+    def SetRange(self, start, end):
         self.SetStart(start)
         self.SetEnd(end)
-    def SetCenterSpan(self,center,span):
+
+    def SetCenterSpan(self, center, span):
         self.SetCenter(center)
         self.SetSpan(span)
 
-    def GetAllData(self,keep_uncal=True):
-        pars,parnames = self.GetTraceNames()
+    def GetAllData(self, keep_uncal=True):
+        pars, parnames = self.GetTraceNames()
         self.SetActiveTrace(pars[0])
         names = ['Frequency (Hz)']
         alltrc = [self.GetFrequency()]
@@ -148,11 +163,11 @@ class basepna(instrument):
             names.append('%sPh (rad)' % pp)
         for par in pars:
             self.SetActiveTrace(par)
-            yyre,yyim = self.GetTraceData()
+            yyre, yyim = self.GetTraceData()
             alltrc.append(yyre)
             alltrc.append(yyim)
-            yydb = 20.*np.log10( np.abs(yyre+1j*yyim) )
-            yyph = np.unwrap(np.angle(yyre+1j*yyim))
+            yydb = 20. * np.log10(np.abs(yyre + 1j * yyim))
+            yyph = np.unwrap(np.angle(yyre + 1j * yyim))
             alltrc.append(yydb)
             alltrc.append(yyph)
         Cal = self.GetCal()
@@ -165,28 +180,21 @@ class basepna(instrument):
             self.CalOff()
             for par in pars:
                 self.SetActiveTrace(par)
-                yyre,yyim = self.GetTraceData()
+                yyre, yyim = self.GetTraceData()
                 alltrc.append(yyre)
                 alltrc.append(yyim)
-                yydb = 20.*np.log10( np.abs(yyre+1j*yyim) )
-                yyph = np.unwrap(np.angle(yyre+1j*yyim))
+                yydb = 20. * np.log10(np.abs(yyre + 1j * yyim))
+                yyph = np.unwrap(np.angle(yyre + 1j * yyim))
                 alltrc.append(yydb)
                 alltrc.append(yyph)
             self.CalOn()
         final = stlabdict()
-        for name,data in zip(names,alltrc):
-            final[name]=data
-        final.addparcolumn('Power (dBm)',self.GetPower())
+        for name, data in zip(names, alltrc):
+            final[name] = data
+        final.addparcolumn('Power (dBm)', self.GetPower())
         return final
 
-    def MeasureScreen(self,keep_uncal=True):
+    def MeasureScreen(self, keep_uncal=True):
         self.SetContinuous(False)
-        print(self.Trigger()) #Trigger single sweep and wait for response
+        print(self.Trigger())  #Trigger single sweep and wait for response
         return self.GetAllData(keep_uncal)
-
-
-
-
-
-
-
