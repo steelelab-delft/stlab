@@ -37,6 +37,14 @@ class Keysight_MXA_N9020B(instrument):
         else:
             return 'error: Maximum IF is 160 MHz'
 
+    def set_sample_rate(self, srate=100e6):
+        '''
+        time resolution of points
+        '''
+        return self.dev.write(
+                '[:SENSe]:WAVeform:SRATe %d' % srate)
+
+
     def set_continuous_OFF(self):
         '''
         set to take one single measurement once the trigger line goes high
@@ -57,6 +65,9 @@ class Keysight_MXA_N9020B(instrument):
         Set the trigger on positive edge
         '''
         return self.dev.write(':TRIGger:LINE:SLOPe POSitive')
+
+    def no_trigger_holdoff(self):
+        return self.dev.write(':TRIGger:SEQuence:HOLDoff:STATe OFF')
 
     def set_average_OFF(self):
         return self.dev.write(':SENSe:WAVeform:AVERage OFF')
