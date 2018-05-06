@@ -42,7 +42,7 @@ class Keysight_MXA_N9020B(instrument):
         time resolution of points
         '''
         return self.dev.write(
-                '[:SENSe]:WAVeform:SRATe %d' % srate)
+                ':SENSe:WAVeform:SRATe %d' % srate)
 
 
     def set_continuous_OFF(self):
@@ -80,6 +80,16 @@ class Keysight_MXA_N9020B(instrument):
 
     def set_Navg(self, Navg=1):
         return self.dev.write(':SENSe:WAVeform:AVERage:Count %d' % Navg)
+
+    def set_average_mode(self, mode='REP'):
+        return self.dev.write(':SENSe:WAVeform:AVERage:TCON %s' % mode)
+
+    def set_Navg_HW(self, navg=1):
+        '''
+        sets hardware averages
+        '''
+        return self.dev.write(':SENSe:WAVeform:AVERage:TACount %d' % navg)
+
 
     def set_IQ_voltage_range_auto(self):
         '''
