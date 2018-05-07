@@ -15,11 +15,11 @@ class RS_SGS100A(instrument):
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
-        self.id()
+        # self.id()
 
     def setCWfrequency(self, frec):
-        mystr = numtostr(frec)
-        mystr = 'FREQ:CW ' + mystr
+        # mystr = numtostr(frec)
+        mystr = 'FREQ:CW %d' % frec
         self.write(mystr)
 
     def getCWfrequency(self):

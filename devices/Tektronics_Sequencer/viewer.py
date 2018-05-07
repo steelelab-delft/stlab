@@ -16,7 +16,7 @@ def show_element_stlab(element, delay = True, channels = 'all', ax = None):
 	else:
 		# prevents extra super long legends if plots are combined
 		add_extra_labs = False
-	ax1.set_axis_bgcolor('gray')
+	# ax1.set_axis_bgcolor('gray')
 	ax2 = ax1.twinx()
 
 	colors_dict = {'ch1': 'red',
@@ -27,7 +27,7 @@ def show_element_stlab(element, delay = True, channels = 'all', ax = None):
 				  'ch2_marker2': 'yellow'}
 
 	t_vals, outputs_dict = element.waveforms()
-	
+
 	t_vals = t_vals * 1e9
 
 	for key in outputs_dict:
@@ -35,7 +35,7 @@ def show_element_stlab(element, delay = True, channels = 'all', ax = None):
 			ax2.plot(t_vals, outputs_dict[key], label = key,
 				color = colors_dict[element._channels[key]['id']])
 		else:
-			ax1.plot (t_vals, outputs_dict[key], label = key, 
+			ax1.plot (t_vals, outputs_dict[key], label = key,
 				color = colors_dict[element._channels[key]['id']])
 
 
@@ -48,6 +48,6 @@ def show_element_stlab(element, delay = True, channels = 'all', ax = None):
 	ax1.set_xlim(t_vals.min(), t_vals.max())
 	if add_extra_labs:
 		ax1.legend(loc='best')
-	
+
 	plt.show()
 	return ax1
