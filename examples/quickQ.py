@@ -58,6 +58,7 @@ for q in params:
     if params[q].name in ['Qint','Qext','f0','theta']:
         newstr+="{} = {} +- {}\n".format(params[q].name,params[q].value,params[q].stderr)
 newstr+='RFpow = '+str(measpow)+' dBm'
+ax1 = plt.gca()
 plt.text(0.6,0.1,newstr,fontsize=8,transform=ax1.transAxes)
 plt.show()
 
@@ -70,8 +71,8 @@ except IndexError:
 #Save fitted trace using tag
 prefix = 'quickQ'
 idstring = tag
-myfile = stlab.newfile(prefix,idstring,data.keys(),usedate=false,usefolder=false,autoindex=true)
-outfilename = os.path.splitext(os.path.basename(myfile))[0]
+myfile = stlab.newfile(prefix,idstring,data.keys(),usedate=False,usefolder=False,autoindex=True)
+outfilename = os.path.splitext(os.path.basename(myfile.name))[0]
 stlab.savedict(myfile,data)
 myfile.close()
 
