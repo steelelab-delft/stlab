@@ -4,14 +4,14 @@ import visa
 #Try to use NI-VISA
 #If this fails, revert to using pyvisa-py
 def makeRM():
-    try:
-        global_rs = visa.ResourceManager('@ni')
-        print('Global NI ResourceManager created')
-        return global_rs,'@ni'
-    except:
-        global_rs = visa.ResourceManager('@py') #Create resource manager using NI backend
-        print('Global pyvisa-py ResourceManager created')
-        return global_rs,'@py'
+    global_rs = visa.ResourceManager('@ni')
+    print('Global NI ResourceManager created')
+    return global_rs,'@ni'
+
+def makeRMpy():
+    global_rs = visa.ResourceManager('@py') #Create resource manager using NI backend
+    print('Global pyvisa-py ResourceManager created')
+    return global_rs,'@py'
     
 
 
@@ -38,7 +38,14 @@ class instrument:
             read_termination = '\r\n'
         if 'read_termination' not in kwargs:
             kwargs['read_termination'] = read_termination
-        self.dev = self.global_rs.open_resource(addr,**kwargs)
+        #Attempt to initialize instrument using current resource manager
+        try:
+            self.dev = self.global_rs.open_resource(addr,**kwargs)
+        #If NI visa fails, attempt to use pyvisa-py
+        except AttributeError:
+            print('NI backend not working... Trying pyvisa-py')
+            instrument.global_rs, instrument.rstype = makeRMpy()
+            self.dev = self.global_rs.open_resource(addr,**kwargs)
         self.verb = verb  #Whether to print commands on screen
         if reset:
             self.reset()
