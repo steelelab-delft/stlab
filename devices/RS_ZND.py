@@ -5,9 +5,9 @@ def numtostr(mystr):
     return '%20.15e' % mystr
 #    return '%20.10f' % mystr
 
-class RS_ZND_pna(basepna):
+class RS_ZND(basepna):
     def __init__(self,addr='TCPIP::192.168.1.149::INSTR',reset=True,verb=True):
-        super(RS_ZND_pna, self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
         self.twoportmode = False
         self.oneportmode = False
         if reset:

@@ -15,3 +15,4 @@ AWG520, Tektronix_AWG520
 MODEL370, Lakeshore_370
 Model 44C, Cryocon_44C
 N5183B, Keysight_N5183B
+ZND-2Port, RS_ZND
