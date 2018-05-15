@@ -45,6 +45,10 @@ class instrument:
         except AttributeError:
             print('NI backend not working... Trying pyvisa-py')
             instrument.global_rs, instrument.rstype = makeRMpy()
+            #To correct serial resource naming depending on backend...  @py uses ASRLCOM1 and @ni uses ASRL1
+            if ('ASRL' in addr) and ('ASRLCOM' not in addr):
+                idx = addr.find('ASRL')+4
+                addr = addr[:idx] + 'COM' + addr[idx:]
             self.dev = self.global_rs.open_resource(addr,**kwargs)
         self.verb = verb  #Whether to print commands on screen
         if reset:
