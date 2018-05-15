@@ -30,9 +30,10 @@ class BFWrapper:
     #    out = self.query('*RST')
     #    time.sleep(0.1)
     def GetTemperature(self,i):
-        if i> 6:
-            print('GetTemperature: Invalid sensor')
-            return -1.
+        if isinstance(i, int):
+            if i> 6:
+                print('GetTemperature: Invalid sensor')
+                return -1.
         mystr = 'RDGK? {}'.format(i)
         ret = self.query(mystr)
         return float(ret)
