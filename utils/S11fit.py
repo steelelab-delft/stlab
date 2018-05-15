@@ -277,6 +277,11 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
             if (np.abs(dtheta)>pi):
                 continue
             xx.append(dtheta/df)
+        #Remove infinite values in xx (from repeated frequency points for example)
+        xx = np.array(xx)
+        idx = np.isfinite(xx)
+        xx = xx[idx]
+
     #    bp0 = np.average([ x if np.abs(x)<pi else 0 for x in np.diff(np.angle(backsig))] )/(frec[1]-frec[0])
         bp0 = np.average(xx)
     #   ap0 = np.angle(sS11[0]) - bp0*frec[0]
