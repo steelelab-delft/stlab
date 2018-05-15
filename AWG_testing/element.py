@@ -46,19 +46,19 @@ class Element:
 
 		if self.pulsar is not None:
 			self.clock = self.pulsar.clock
-			
-			
+
+
 			for c in self.pulsar.channels:
 				chan =  self.pulsar.channels[c]
 				delay = chan['delay'] if not (self.ignore_delays) else 0.
 				self.define_channel(name = c, type = chan['type'], high = chan['high'],
 									low = chan['low'], offset = chan['offset'], delay = delay, id = chan['id'])
-		
-				
+
+
 	# Channel managment
 	def define_channel(self, name, type = 'analog',  high = 1, low = 1,
 						offset = 0, delay = 0, id = 'ch'):
-		
+
 		self._channels[name]= {'type': type,
 							   'delay': delay,
 							   'offset': offset,
@@ -67,7 +67,7 @@ class Element:
 							   'id': id,
 							   'distorted': False}
 
-	
+
 
 	def get_channel_delay(self, cname):
 		return self._channels[cname]['delay']
@@ -102,7 +102,7 @@ class Element:
 
 	def ideal_length(self):
 		"""
-		Returns the nomimal length of the element before taking into account the 
+		Returns the nomimal length of the element before taking into account the
 		discretization using clock
 		"""
 
@@ -248,7 +248,7 @@ class Element:
 					t0 -= self.pulses[refpulse].effective_length()/2.
 
 		pulse._t0 = t0
-		
+
 		self.pulses[name] = pulse
 		self._last_added_pulse = name
 		# Shift all pulses to the fixed point for the first RO pulse encountered
@@ -277,7 +277,7 @@ class Element:
 				for c in self.pulses[p].channels:
 					idx0 = self.pulse_start_sample(p, c)
 					idx1 = self.pulse_end_sample(p, c) + 1
-					
+
 					c_tvals = np.round(tvals.copy()[idx0:idx1] +
 									   self.get_channel_delay(c) +
 									   self.time_offset,

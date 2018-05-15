@@ -74,7 +74,7 @@ class Tektronix_AWG520(instrument):
         self._numpoints = numpoints
         self.filename = ''
 
-        self.init_dir()
+        # self.init_dir()
 
         if reset:
             self.reset()

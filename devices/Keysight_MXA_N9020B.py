@@ -18,12 +18,21 @@ class Keysight_MXA_N9020B(instrument):
         '''
         return self.dev.write(':INSTrument:SELect BASIC')
 
-    def set_center(self, f_center):
+    def set_demodulation_frequency(self, f_center):
         '''
         sets center frequency for the demodulation (in Hz)
         '''
         logging.debug(__name__ + ' : Center frequency set to %d Hz' % f_center)
         return self.dev.write(':SENSe:FREQuency:CENTer %d' % f_center)
+
+
+    def get_demodulation_frequency(self):
+        '''
+        sets center frequency for the demodulation (in Hz)
+        '''
+        freq = self.dev.query(':SENSe:FREQuency:CENTer?')
+        return float(freq)
+
 
     def set_digital_IF_BW(self, IFBW=160e6):
         '''
@@ -43,7 +52,6 @@ class Keysight_MXA_N9020B(instrument):
         '''
         return self.dev.write(
                 ':SENSe:WAVeform:SRATe %d' % srate)
-
 
     def set_continuous_OFF(self):
         '''
@@ -147,65 +155,29 @@ class Keysight_MXA_N9020B(instrument):
         Q = data[1::2]
         return np.array([I, Q])
 
-    def measure_RFenvelope(self):
+    def measure_RFenvelope(self, i_start, i_finish):
         '''
         Measures the RF envelope (I^2+Q^2) which seems to support
         averaging.
         Data is returned in dB.
         '''
         data_string = self.dev.query(':READ:WAV2?')
+        data = np.fromstring(data_string, dtype=float, sep=',')
+        return np.average(data[i_start:i_finish])
 
-        settings_string = self.dev.query(':FETCH:WAV1?')
 
-        powers = np.fromstring(data_string, dtype=float, sep=',')
-        settings = np.fromstring(settings_string, dtype=float, sep=',')
 
-        timestep = settings[0]
-        n_samples = settings[3]
-
-        # print('timestep %.3f' %timestep)
-        # print('n_samples %.3f' %n_samples)
-
-        times = np.arange(0, n_samples) * timestep
-
-        data_columns = [times, powers]
-        names = ['time (s)', 'power (dB)']
-        final = stlabdict()
-
-        for name, data in zip(names, data_columns):
-            final[name] = data
-
-        return final
-
-    def measure_RFenvelope(self):
-        '''
-        Measures the RF envelope (I^2+Q^2) which seems to support
-        averaging.
-        Data is returned in dB.
-        '''
-        data_string = self.dev.query(':READ:WAV2?')
-
-        settings_string = self.dev.query(':FETCH:WAV1?')
-
-        powers = np.fromstring(data_string, dtype=float, sep=',')
-        settings = np.fromstring(settings_string, dtype=float, sep=',')
-
-        timestep = settings[0]
-        n_samples = settings[3]
-
-        # print('timestep %.3f' %timestep)
-        # print('n_samples %.3f' %n_samples)
-
-        times = np.arange(0, n_samples) * timestep
-
-        data_columns = [times, powers]
-        names = ['time (s)', 'power (dB)']
-        final = stlabdict()
-
-        for name, data in zip(names, data_columns):
-            final[name] = data
-
-        return final
+        # settings_string = self.dev.query(':FETCH:WAV1?')
+        # settings = np.fromstring(settings_string, dtype=float, sep=',')
+        # timestep = settings[0]
+        # n_samples = settings[3]
+        # times = np.arange(0, n_samples) * timestep
+        # data_columns = [times, powers]
+        # names = ['time (s)', 'power (dB)']
+        # final = stlabdict()
+        # for name, data in zip(names, data_columns):
+        #     final[name] = data
+        # return final
 
     def measure_mean_power(self):
         '''
@@ -217,11 +189,21 @@ class Keysight_MXA_N9020B(instrument):
 
         return results[2]
 
+    def measure_max_power(self):
+        '''
+        returns the mean averaged power over the time window specified.
+        '''
+        data_string = self.dev.query(':READ:WAV1?')
+
+        results = np.fromstring(data_string, dtype=float, sep=',')
+
+        return results[5]
+
     def set_IF_gain_LOW(self):
         return self.dev.write(':SENSe:WAV:IF:GAIN LOW')
 
     def set_IF_gain_HIGH(self):
         return self.dev.write(':SENSe:WAV:IF:GAIN HIGH')
 
-    def init_waveform(self):
-        return self.dev.write(':INITiate:WAVeform')
+    def set_waveform_mode(self):
+        return self.dev.write(':CONFigure:WAVeform:NDEFault')

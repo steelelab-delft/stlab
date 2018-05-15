@@ -43,6 +43,8 @@ def setup_AWG_pulsed_spec_sequence(sequence_name='Cool_Sequence',
     AWG = AWG_station.AWG_Station()
     AWG.AWG = devAWG
 
+    clock = devAWG.get_clock()
+
     devAWG.set_run_mode('ENH')
     devAWG.set_refclock_ext()
 
@@ -109,10 +111,10 @@ def setup_AWG_pulsed_spec_sequence(sequence_name='Cool_Sequence',
 
     test_element1 = element.Element(
         (sequence_name + '_element1'),
-        pulsar=AWG)  #, ignore_offset_correction=True)
+        pulsar=AWG, clock=clock)  #, ignore_offset_correction=True)
     test_element2 = element.Element(
         (sequence_name + '_element2'),
-        pulsar=AWG)  #, ignore_offset_correction=True)
+        pulsar=AWG, clock=clock)  #, ignore_offset_correction=True)
 
     test_element1.add(
         pulse.cp(

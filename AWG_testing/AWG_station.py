@@ -1,7 +1,7 @@
 # author: Wolfgang Pfaff
 # modified by: Sarwan Peiter
 """
-So I have already written the driver for the AWG. 
+So I have already written the driver for the AWG.
 Now the next step is to write an interface to communicates with driver.
 An also usefull interface is to write a library to generate pulses.
 
@@ -37,7 +37,6 @@ class AWG_Station():
 	"""
 	# AWG = None
 	AWG_type = 'regular'
-	clock = 1e9
 	channels_ids =  ['ch1', 'ch1_marker1', 'ch1_marker2',
 					'ch2', 'ch2_marker1', 'ch2_marker2']
 
@@ -48,10 +47,10 @@ class AWG_Station():
 		self.channels = {}
 		self.AWG = None
 		self.filename = None
-
+		self.clock = self.AWG.get_clock()
 
 	# define channels to for connection to environment
-	
+
 	def define_channels(self, id, name, type, delay, offset, high, low, active):
 
 		_doubles = []
@@ -74,7 +73,7 @@ class AWG_Station():
 
 
 
-	# Get the channels names by id 
+	# Get the channels names by id
 	def get_channel_names_by_id(self, id):
 		chans = {id: None, id+'_marker1': None, id+'_marker2': None}
 		for c in self.channels:
@@ -96,7 +95,7 @@ class AWG_Station():
 					self.channels[c]['id'][:3] not in chans:
 				chans.append(self.channels[c]['id'][:3])
 		return chans
-		
+
 
 	# Make function which programs AWG
 
@@ -109,7 +108,7 @@ class AWG_Station():
 
 	def delete_all_waveforms(self):
 		self.AWG.clear_waveforms()
-		
+
 
 	def program_awg(self, sequence,*elements,**kw):
 
@@ -127,7 +126,7 @@ class AWG_Station():
 		self.last_elements = elements
 
 		# making directory to store waveforms and sequences
-		
+
 
 		# old_timeout = self.AWG.timeout() # whats this function
 		# self.AWG.timeout(max(180, old_timeout))
@@ -169,7 +168,7 @@ class AWG_Station():
 				chan_wfs = {id: None, id+'_marker1': None, id+'_marker2': None}
 
 				grp = self.get_channel_names_by_id(id)
-				
+
 				for sid in grp:
 					if grp[sid] != None and grp[sid] in wfs:
 						chan_wfs[sid] = wfs[grp[sid]]
@@ -184,14 +183,14 @@ class AWG_Station():
 				# create wform files and send them to AWG
 				self.AWG.gen_waveform_files(chan_wfs[id],
 											chan_wfs[id+'_marker1'],
-											chan_wfs[id+'_marker2'], wfname, 
+											chan_wfs[id+'_marker2'], wfname,
 											int(element.clock))
 
 				# packed_waveforms[wfname] = self.test_send(chan_wfs[id],
 				# 							chan_wfs[id+'_marker1'],
-				# 							chan_wfs[id+'_marker2'], wfname, 
+				# 							chan_wfs[id+'_marker2'], wfname,
 				# 							int(element.clock))
-				
+
 		_t = time.time() - _t0
 
 		if verbose:
@@ -273,13 +272,13 @@ class AWG_Station():
 				logic_jump_l.append(0)
 			if elt['trigger_wait']:
 				wait_l.append(1)
-			   
+
 			else:
 				wait_l.append(0)
 
 		if loop:
 			goto_l[-1] = 1
-	  
+
 		# setting jump modes and loading the djump table
 		if sequence.djump_table != None and self.AWG_type not in ['opt09']:
 			raise Exception('AWG Station: The AWG configured does not support dynamic jumping')
@@ -308,7 +307,7 @@ class AWG_Station():
 											logic_jump_l)
 
 		self.filename = sequence.name+'_FILE.seq'
-		
+
 
 		# # Loading the sequence onto the AWG memory
 		self.AWG.gen_sequence_file(wfname_l[0],wfname_l[1],nrep_l,wait_l,goto_l,logic_jump_l,self.filename)
@@ -332,7 +331,7 @@ class AWG_Station():
 
 	def AWGrun(self):
 		# default mode is triggered
-		
+
 		self.AWG.write('*WAI')
 		self.AWG.set_run_mode('ENH')
 		self.AWG.set_status('on',1)
@@ -373,9 +372,9 @@ class AWG_Station():
 		folder_path = os.getcwd()
 
 		dirpath = self.AWG.awg_file_dir
-		
+
 		os.chdir(dirpath)
-		
+
 		f = open('ftp.txt','w')
 		f.write('open 192.168.1.51\n')
 		f.write('\n')
@@ -418,7 +417,7 @@ class AWG_Station():
 				len(nrep_l) == len(wait_l) == len(goto_l) ==
 				len(logic_jump_l)):
 			raise Exception('pulsar: sequence list of elements/properties has unequal length')
-	  
+
 	# def test_send(self,w,m1,m2,filename,clock):
 	# 	"""
 	# 	Sends a complete waveform. All parameters need to be specified.
@@ -440,7 +439,7 @@ class AWG_Station():
 
 	# 	if (not((len(w)==len(m1)) and ((len(m1)==len(m2))))):
 	# 		return 'error'
-		
+
 
 	# 	m = m1 + np.multiply(m2,2)
 	# 	ws = b''
@@ -453,15 +452,15 @@ class AWG_Station():
 	# 	s4 = 'CLOCK %.10e\r\n' % clock
 
 	# 	s2 = '#' + str(len(str(len(s3)))) + str(len(s3))
-		
-	
+
+
 
 	# 	mes =  s1.encode('ASCII')  + s2.encode('ASCII') + s3 + s4.encode('ASCII')
 
 	# 	with open(os.path.join(self.dir, filename), 'wb') as d:
 	# 		d.write(mes)
 	# 		d.close()
-		
+
 
 	# def test_send_sequence2(self,wfs1,wfs2,rep,wait,goto,logic_jump,filename):
 	# 	'''
@@ -481,7 +480,7 @@ class AWG_Station():
 
 
 	# 	N = str(len(rep))
-	
+
 	# 	s1 = 'MAGIC 3002\r\n'
 	# 	s3 = 'LINES %s\n'%N
 	# 	s4 = ''
@@ -501,7 +500,7 @@ class AWG_Station():
 	# def init_dir(self):
 
 	# 	print ( 'Initializing directory for AWG file transfering......' )
-	# 	self.dir = os.path.join(os.getcwd(), 
+	# 	self.dir = os.path.join(os.getcwd(),
 	# 		'AwgFiles'+datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 
 	# 	try:
