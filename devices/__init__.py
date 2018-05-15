@@ -1,6 +1,7 @@
 from stlab.devices.instrument import instrument
 from pydoc import locate
 import os.path
+import time
 
 class DeviceNotFound(Exception):
     pass
@@ -23,14 +24,15 @@ devdict = get_instr_definitions()
 
 def autodetect_instrument(addr,reset = False, verb = True, **kwargs):
 
-    dev = instrument(addr,reset,verb, **kwargs)
+    dev = instrument(addr,reset,verb, query_delay = 100e-3, **kwargs)
     idstr = dev.id()
+
     dev.close()
 
 
     found = False
     for idtag in devdict:
-        if (',' + idtag + ',' in idstr) or (', ' + idtag + ',' in idstr):
+        if (',' + idtag + ',' in idstr) or (', ' + idtag + ',' in idstr) or (',' + idtag + ' ,' in idstr):
             found = True
             devstr = devdict[idtag]
             devclass = 'stlab.devices.' + devstr + '.' + devstr

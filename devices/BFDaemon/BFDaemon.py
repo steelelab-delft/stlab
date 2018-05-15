@@ -11,8 +11,8 @@ import datetime
 
 # Function that takes commands from queue "qin".  qin has three elements, (qout, comm, args) where qout is the output queue, comm is the function and args are the arguments for the function
 # It first initializes communication to the instrument and then waits for commands to be added to the queue.  It can only run commands implemented in the BASE driver (not the wrapper)
-def command_handler(qin):
-    myBF =  Lakeshore_370()
+def command_handler(qin,addr):
+    myBF =  Lakeshore_370(addr)
     while True:
         nextcomm = qin.get()
         if nextcomm == 0:
@@ -47,8 +47,9 @@ else:
 #define input queue for the command handler    
 commandq = Queue(maxsize=0)
 
+addr = sys.argv[1]
 #Start the thread for the command handler.  Commands added to commandq will be run and the output will be put into whatever output queue is provided in the queue element
-myhandler = Thread(target=command_handler, args=(commandq,))
+myhandler = Thread(target=command_handler, args=(commandq,addr))
 myhandler.daemon = True
 myhandler.start()
 
