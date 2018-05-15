@@ -9,8 +9,22 @@ from stlab.utils.writematrix import writeparams as writeparams #Callable as stla
 from stlab.utils.writematrix import writeparnames as writeparnames
 from stlab.utils.writematrix import params_to_str as params_to_str
 from stlab.utils.writematrix import writeline as writeline
+from stlab.utils.writematrix import writeframe as saveframe
+from stlab.utils.writematrix import writeframearray as saveframearray
 from stlab.utils.stlabdict import stlabdict
 from stlab.utils.stlabdict import stlabmtx
+from stlab.utils.S11fit import fit as S11fit #Callable as stlab.S11fit(...)
+from stlab.utils.S11fit import S11full as S11func #Callable as stlab.S11fit(...)
+from stlab.utils.S11fit import backmodel as S11back #Callable as stlab.S11fit(...)
+from stlab.utils.S11fit import S11theo as S11theo #Callable as stlab.S11fit(...)
+
+
+'''
+try:
+except ImportError:
+    print('Fitting routines not imported.  Missing dependencies')
+'''
+'''
 import importlib.util
 lmfit_spec = importlib.util.find_spec("lmfit")
 found = lmfit_spec is not None
@@ -22,7 +36,5 @@ if foundsig:
     if 'savgol_filter' in dir(scipy.signal):
         foundsig=True
 if found and foundsig:
-    from stlab.utils.S11fit import fit as S11fit #Callable as stlab.S11fit(...)
-    from stlab.utils.S11fit import S11full as S11func #Callable as stlab.S11fit(...)
-    from stlab.utils.S11fit import backmodel as S11back #Callable as stlab.S11fit(...)
-    from stlab.utils.S11fit import S11theo as S11theo #Callable as stlab.S11fit(...)
+
+'''

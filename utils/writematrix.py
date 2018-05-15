@@ -64,7 +64,7 @@ def writeframearray(myfile,myframearray,f='%.10e',delim=', ',blocksep='\n'):
         writeframe(myfile,block,f,delim,blocksep)
     return
 
-def writetitle(myfile,vv,delim)
+def writetitle(myfile,vv,delim):
     #myfile.flush()
     if myfile.tell() == 0: #Is the file new?  If so, write title line from provided data
         varline = '#' + delim.join(vv) + '\n'
