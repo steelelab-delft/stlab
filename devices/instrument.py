@@ -4,9 +4,12 @@ import visa
 #Try to use NI-VISA
 #If this fails, revert to using pyvisa-py
 def makeRM():
-    global_rs = visa.ResourceManager('@ni')
-    print('Global NI ResourceManager created')
-    return global_rs,'@ni'
+    try:
+        global_rs = visa.ResourceManager('@ni')
+        print('Global NI ResourceManager created')
+        return global_rs,'@ni'
+    except OSError:
+        return makeRMpy()
 
 def makeRMpy():
     global_rs = visa.ResourceManager('@py') #Create resource manager using NI backend
