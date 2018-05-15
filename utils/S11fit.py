@@ -80,6 +80,13 @@ def trim(x,y,imin,imax):
     print(len(x),len(y))
     xnew = np.concatenate((x[0:imin],x[imax:]))
     ynew = np.concatenate((y[0:imin],y[imax:]))
+
+    if len(xnew) < 4 or len(ynew) < 4:
+        xnew = np.concatenate([x[0:2],x[-2:]])
+        ynew = np.concatenate([y[0:2],y[-2:]])
+
+    print(xnew,ynew)
+
     return (xnew,ynew)
 
 def backmodel(x,params):
