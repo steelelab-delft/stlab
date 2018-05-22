@@ -6,7 +6,8 @@ import os
 import datetime
 import glob
 
-LOGFOLDER = 'C:\\Entropy\\logs\\'
+#LOGFOLDER = 'C:\\Entropy\\logs\\'
+LOGFOLDER = 'C:\\Users\\user\\Desktop\\Entropy\\logs\\'
 
 def GetCurrentLogFolder():
     a = next(os.walk(LOGFOLDER))[1]
