@@ -10,15 +10,20 @@ class He7Temperature:
         self.addr = addr
         self.port = port
     def GetTemperature(self): #Get Temperature from BF computer.  Returns a float in K
-        # create an INET, STREAMing socket    
-        s = MySocket()
-        s.sock.connect((self.addr, self.port))
-        word = s.myreceive()
-        word = word.decode('utf_8')
-        temperature = float(word)
-        s.sock.close()
-        if self.verb:
-            print('He7 Temperature received: %f K' % (temperature))
+        # create an INET, STREAMing socket
+        try:    
+            s = MySocket()
+            s.sock.connect((self.addr, self.port))
+            word = s.myreceive()
+            word = word.decode('utf_8')
+            temperature = float(word)
+            s.sock.close()
+            if self.verb:
+                print('He7 Temperature received: %f K' % (temperature))
+        except:
+            # needs to be changed to proper ErrorType
+            temperature = -1
+            print('Error when reading temperature')
         return temperature #in K!!
     def reset(self):
         pass

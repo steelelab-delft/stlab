@@ -8,6 +8,7 @@ from stlab.devices.instrument import instrument
 class Lakeshore_370(instrument):
     def __init__(self,addr = 'ASRLCOM1::INSTR', reset=True, verb=True, baud_rate = 9600):
         #Custom reset function... There is a short dead time after reset
+        # values for He7: baud_rate=57600, addr='ASRLCOM7::INSTR'
         super().__init__(addr,reset=False,verb=verb, read_termination = '\r\n', parity = visa.constants.Parity.odd, baud_rate = baud_rate, data_bits = 7 )
         if reset:
             self.reset()
