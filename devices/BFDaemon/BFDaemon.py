@@ -44,6 +44,14 @@ else:
     ff.write('#' + ', '.join(varline)+'\n')
 '''
 
+def yes_or_no(question):
+    while "the answer is invalid":
+        reply = str(raw_input(question+' (y/n): ')).lower().strip()
+        if reply[0] == 'y':
+            return True
+        if reply[0] == 'n':
+            return False
+
 #define input queue for the command handler    
 commandq = Queue(maxsize=0)
 
@@ -60,9 +68,10 @@ myhandler = Thread(target=command_handler, args=(commandq,addr,baud_rate))
 myhandler.daemon = True
 myhandler.start()
 
-Another thread that also uses the same command queue
-loggerthread = Thread(target=BFlogger, args=(commandq,))
-loggerthread.start()
+#Another thread that also uses the same command queue
+if yes_or_no('Use BF logging?'):
+    loggerthread = Thread(target=B0Flogger, args=(commandq,))
+    loggerthread.start()
 
 # This is the main listening part of the daemon.  It is intended to listen on a specific TCP port for incoming connections.  When a connection arrives it receives 1 command that it adds to the commmandq.
 # Then the connection is closed and it goes back to listening for another command.
@@ -110,4 +119,5 @@ while True:
         break
 
 commandq.put(0)
-loggerthread.join()
+if loggerthread:
+    loggerthread.join()
