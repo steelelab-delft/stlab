@@ -2,7 +2,7 @@ from stlab.devices.Lakeshore_370 import Lakeshore_370
 from queue import Queue
 from threading import Thread
 import time
-#from logger import logger
+from BFlogger import BFlogger
 import socket
 from stlab.utils.MySocket import MySocket
 import sys
@@ -60,9 +60,9 @@ myhandler = Thread(target=command_handler, args=(commandq,addr,baud_rate))
 myhandler.daemon = True
 myhandler.start()
 
-# Another thread that also uses the same command queue
-#loggerthread = Thread(target=logger, args=(commandq,))
-#loggerthread.start()
+Another thread that also uses the same command queue
+loggerthread = Thread(target=BFlogger, args=(commandq,))
+loggerthread.start()
 
 # This is the main listening part of the daemon.  It is intended to listen on a specific TCP port for incoming connections.  When a connection arrives it receives 1 command that it adds to the commmandq.
 # Then the connection is closed and it goes back to listening for another command.
@@ -110,4 +110,4 @@ while True:
         break
 
 commandq.put(0)
-#loggerthread.join()
+loggerthread.join()

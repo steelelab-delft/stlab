@@ -15,6 +15,13 @@ class Lakeshore_370(instrument):
     def reset(self): #I need a short pause after reset.  Otherwise the system may hang.  Not even '*OPC?' works
         out = self.write('*RST')
         time.sleep(0.1)
+    def GetTemperature(self,i):
+        result = float(self.query('RDGK? {}'.format(i)))
+        return result
+    def GetResistance(self,i):
+        result = float(self.query('RDGR? {}'.format(i)))
+        return result
+
     
     '''
     def write(self,mystr): #REQUIRES SPECIAL WRITE WITH OPC CHECK...
