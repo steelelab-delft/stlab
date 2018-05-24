@@ -198,3 +198,54 @@ class basepna(instrument):
         self.SetContinuous(False)
         print(self.Trigger())  #Trigger single sweep and wait for response
         return self.GetAllData(keep_uncal)
+
+
+    def GetAllData_pd(self, keep_uncal=True):
+        pars, parnames = self.GetTraceNames()
+        self.SetActiveTrace(pars[0])
+        names = ['Frequency (Hz)']
+        alltrc = [self.GetFrequency()]
+        for pp in parnames:
+            names.append('%sre ()' % pp)
+            names.append('%sim ()' % pp)
+            names.append('%sdB (dB)' % pp)
+            names.append('%sPh (rad)' % pp)
+        for par in pars:
+            self.SetActiveTrace(par)
+            yyre, yyim = self.GetTraceData()
+            alltrc.append(yyre)
+            alltrc.append(yyim)
+            yydb = 20. * np.log10(np.abs(yyre + 1j * yyim))
+            yyph = np.unwrap(np.angle(yyre + 1j * yyim))
+            alltrc.append(yydb)
+            alltrc.append(yyph)
+        Cal = self.GetCal()
+        if Cal and keep_uncal:
+            for pp in parnames:
+                names.append('%sre unc ()' % pp)
+                names.append('%sim unc ()' % pp)
+                names.append('%sdB unc (dB)' % pp)
+                names.append('%sPh unc (rad)' % pp)
+            self.CalOff()
+            for par in pars:
+                self.SetActiveTrace(par)
+                yyre, yyim = self.GetTraceData()
+                alltrc.append(yyre)
+                alltrc.append(yyim)
+                yydb = 20. * np.log10(np.abs(yyre + 1j * yyim))
+                yyph = np.unwrap(np.angle(yyre + 1j * yyim))
+                alltrc.append(yydb)
+                alltrc.append(yyph)
+            self.CalOn()
+
+        final = pd.DataFrame()
+        for name, data in zip(names, alltrc):
+            final[name] = data
+        final['Power (dBm)'] = self.GetPower()
+        return final
+
+
+    def MeasureScreen_pd(self, keep_uncal=True):
+        self.SetContinuous(False)
+        print(self.Trigger())  #Trigger single sweep and wait for response
+        return self.GetAllData_pd(keep_uncal)

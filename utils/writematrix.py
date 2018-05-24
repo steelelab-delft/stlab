@@ -5,6 +5,7 @@
 # delim -> Delimiter separating row elements.  Rows are separated by (surprise, surprise) a newline
 # blocksep -> String inserted after the matrix.  By default an extra newline '\n' for spyview blocks
 import numpy as np
+import os
 def writematrix(myfile,mat,f='%.10e',delim=', ',blocksep='\n'):
     for line in mat:
         line = ['%.10e' % x for x in line]
@@ -13,6 +14,8 @@ def writematrix(myfile,mat,f='%.10e',delim=', ',blocksep='\n'):
     myfile.write(blocksep)
     
 def writedict(myfile,mydict,f='%.10e',delim=', ',blocksep='\n'):
+    vv = list(mydict.keys())
+    writetitle(myfile,vv,delim)
     mat = []
     for nn in mydict.keys():
         mat.append(mydict[nn])
@@ -21,12 +24,12 @@ def writedict(myfile,mydict,f='%.10e',delim=', ',blocksep='\n'):
     writematrix(myfile,mat,f,delim,blocksep)
 
 def writeparnames(myfile,params,delim=', '):
-    myfile.write('#' + ', '.join(params.keys()) + '\n')
+    myfile.write('#' + delim.join(params.keys()) + '\n')
     return
 
 def writeparams(myfile,params,f='%.10e',delim=', '):
     line = [f % x for x in [params[label].value for label in params.keys()] ]
-    myfile.write(', '.join(line) + '\n')
+    myfile.write(delim.join(line) + '\n')
     return
 
 def params_to_str(params,f='%.10e',delim=', '):
@@ -34,13 +37,35 @@ def params_to_str(params,f='%.10e',delim=', '):
     return delim.join(line)
 
 def writedictarray(myfile,mydictarray,f='%.10e',delim=', ',blocksep='\n'):
+    vv = list(mydictarray[0].keys())
+    writetitle(myfile,vv,delim)
     for block in mydictarray:
         writedict(myfile,block,f,delim,blocksep)
     return
-    
+
+#???
 def writeline(myfile,line,f='.10e',delim=', '):
     for x in line[:-1]:
         myfile.write("{:{form}}".format(x,form = f) + delim)
     myfile.write("{:{form}}\n".format(line[-1],form = f))
-    myfile.flush()
     return
+#???
+
+def writeframe(myfile,myframe,f='%.10e',delim=', ',blocksep='\n'):
+    vv = list(myframe)
+    writetitle(myfile,vv,delim)
+    mat = myframe.as_matrix()
+    writematrix(myfile,mat,f,delim,blocksep)
+
+def writeframearray(myfile,myframearray,f='%.10e',delim=', ',blocksep='\n'):
+    vv = list(myframearray[0])
+    writetitle(myfile,vv,delim)
+    for block in myframearray:
+        writeframe(myfile,block,f,delim,blocksep)
+    return
+
+def writetitle(myfile,vv,delim):
+    #myfile.flush()
+    if myfile.tell() == 0: #Is the file new?  If so, write title line from provided data
+        varline = '#' + delim.join(vv) + '\n'
+        myfile.write(varline)
