@@ -10,6 +10,7 @@ B2961A, Keysight_B2901A
 B2901A, Keysight_B2901A
 DP831A, instrument
 MODEL 2100, Keithley_2100
+MODEL 2000, Keithley_2100
 AWG520, Tektronix_AWG520
 11713B, instrument
 MODEL370, Lakeshore_370

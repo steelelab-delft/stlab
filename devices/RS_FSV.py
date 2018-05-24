@@ -1,9 +1,10 @@
 from stlab.devices.instrument import instrument
+from stlab.utils.stlabdict import stlabdict as stlabdict
 import numpy as np
 
 class RS_FSV(instrument): 
 
-    def __init__(self,addr = '192.168.1.105',reset=True,verb=True):
+    def __init__(self,addr = 'TCPIP::192.168.1.105::INSTR',reset=True,verb=True):
         super(RS_FSV, self).__init__(addr,reset,verb)
 
     def prepare_CW(CWsource_addr):
@@ -13,7 +14,7 @@ class RS_FSV(instrument):
         Also connect the clock of of SMB100A to FSV. No TTL handshake yet;
        
         """
-        self._CWsource = CWsource_adrr
+        self._CWsource = CWsource_addr
         self.reset()
         self.write('INST:NSEL 1')                           # Select mode sweepmode=1
         self.write('INIT:CONT OFF')                         # Turn off continious sweep
@@ -33,20 +34,20 @@ class RS_FSV(instrument):
         Use IQ aquisition mode
         """
         
-        # self._LOsource_addr = LOsource_addr
-        self.write("TRAC:IQ ON")
-        # self.write('ROSC:SOUR EXT')                         # sync FSV with generator
-        # self.write('SYST:COMM:RDEV:GEN1:TYPE \'SMB100A12\'') # generator type
-        # self.write('SYST:COMM:RDEV:GEN1:INT TCP')            # connection type
-        # self.write('SYST:COMM:TCP:RDEV:GEN1:ADDR ' + self._LOsource_addr)    # IP adress of generator
-        # self.write('SOUR:EXT1:ROSC INT')                      # specify oscillator for generator
+        self._LOsource_addr = LOsource_addr
+        self.reset()
+        self.write('ROSC:SOUR EXT')                         # sync FSV with generator
+        self.write('SYST:COMM:RDEV:GEN1:TYPE \'SMB100A12\'') # generator type
+        self.write('SYST:COMM:RDEV:GEN1:INT TCP')            # connection type
+        self.write('SYST:COMM:TCP:RDEV:GEN1:ADDR ' + self._LOsource_addr)    # IP adress of generator
+        self.write('SOUR:EXT1:ROSC INT')                      # specify oscillator for generator
         
         #COnfiguring IQ mode
-        # Select VSA mode, extraction of IQ
+        self.write('INST:SEL IQ')                           # Select VSA mode, extraction of IQ
         self.write('TRIG:SOUR EXT')                           # Set trigger to external AWG
-        # self.write('TRIG: POS')                               # will trigger on positive slope to start 
+        self.write('TRIG: POS')                               # will trigger on positive slope to start 
                                                               # measurement
-        # self.write('INP:SEL RF')                                                     
+        self.write('INP:SEL RF')                                                     
         self.write('INP:GAIN:STAT ON')
 
 
@@ -55,10 +56,6 @@ class RS_FSV(instrument):
         data = self.write("TRAC:IQ:DATA?")
         
         return data
-        
-        
-        
-        
 
     def frequency_sweep(self,fstart,fstop):
         self.initialize_CW('192.168.1.25')
@@ -109,4 +106,6 @@ class RS_FSV(instrument):
     
     def num2str(self, num):
         return '%12.8e' % num    
+    
+
     

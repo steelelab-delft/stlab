@@ -5,7 +5,7 @@ import time
 
 #All writes are queries.  If command does not contain a '?', an empty string is returned.
 class BFWrapper:
-    def __init__(self,addr="localhost",port=8472,reset=True,verb=True,**kwargs):
+    def __init__(self,addr="localhost",port=8472,reset=False,verb=True,**kwargs):
         self.verb = verb
     #    if reset:
     #        self.reset()
@@ -87,6 +87,7 @@ class BFWrapper:
         result = float(result)
         return result
     def WaitForTStable(self,channel=6,tol=0.001,timeout=600.,tsettle=40.):
+        print('Stabilizing temperature...')
         Tset = self.GetSetPoint()
         t0 = time.time()
         tnow = time.time()
