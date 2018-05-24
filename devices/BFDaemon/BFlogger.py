@@ -25,9 +25,9 @@ def BFlogger(commandq):
     labs = ['T','R']
     lls = [ (x,y) for x in chs for y in labs]
     ffs = []
-    foldername = './' + today.strftime('%Y-%m-%d') + '/' 
+    foldername = './' + today.strftime('%y-%m-%d') + '/' 
     for i,lab in lls:
-        filename = foldername + 'CH{} '.format(i) + '{} '.format(lab) + today.strftime('%Y-%m-%d')+ '.log'
+        filename = foldername + 'CH{} '.format(i) + '{} '.format(lab) + today.strftime('%y-%m-%d')+ '.log'
         if not os.path.exists(foldername):
             os.makedirs(foldername)
         print('File CH{} {}: '.format(i,lab), filename)
@@ -44,14 +44,14 @@ def BFlogger(commandq):
         while True:
             newday = datetime.date.today()
             if today != newday:
-                print('New day: {}'.format(newday.strftime('%Y-%m-%d')))    
+                print('New day: {}'.format(newday.strftime('%y-%m-%d')))    
                 for ff in ffs:
                     ff.close()
                 ffs = []
                 today = newday
                 for i,lab in lls:
-                    foldername = './' + today.strftime('%Y-%m-%d') + '/' 
-                    filename = foldername + 'CH{} {} '.format(i,lab) + today.strftime('%Y-%m-%d')+ '.log'
+                    foldername = './' + today.strftime('%y-%m-%d') + '/' 
+                    filename = foldername + 'CH{} {} '.format(i,lab) + today.strftime('%y-%m-%d')+ '.log'
                     if not os.path.exists(foldername):
                         os.makedirs(foldername)
                     print('File CH{} {}: '.format(i,lab), filename)
@@ -66,7 +66,7 @@ def BFlogger(commandq):
             current_time = datetime.datetime.now()
             for ff,(i,lab) in zip(ffs,lls):
                 line = []
-                line.append(current_time.strftime(' %d-%m-%Y'))
+                line.append(current_time.strftime(' %d-%m-%y'))
                 line.append(current_time.strftime('%H:%M:%S'))
                 if lab == 'T':
                     commandq.put( (resultq, Lakeshore_370.GetTemperature, (i,)) )
@@ -74,8 +74,9 @@ def BFlogger(commandq):
                     commandq.put( (resultq, Lakeshore_370.GetResistance, (i,)) )
                 xx = resultq.get()
                 resultq.task_done()
-                line.append(xx)
+                line.append('{:e}'.format(xx))
                 line = ','.join(line) + '\n'
+                ff.write(line.encode('ascii'))
                 ff.flush()
             time.sleep(30)
     except KeyboardInterrupt:

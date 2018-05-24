@@ -60,6 +60,7 @@ commandq = Queue(maxsize=0)
 
 addr = input('VISA address of Lakeshore: ')
 baud_rate = input('Serial Baud rate (9600): ')
+uselog = yes_or_no('Use BF logging?')
 try:
     baud_rate = int(baud_rate)
 except ValueError:
@@ -69,8 +70,8 @@ myhandler.daemon = True
 myhandler.start()
 
 #Another thread that also uses the same command queue
-if yes_or_no('Use BF logging?'):
-    loggerthread = Thread(target=B0Flogger, args=(commandq,))
+if uselog:
+    loggerthread = Thread(target=BFlogger, args=(commandq,))
     loggerthread.start()
 
 # This is the main listening part of the daemon.  It is intended to listen on a specific TCP port for incoming connections.  When a connection arrives it receives 1 command that it adds to the commmandq.
