@@ -75,7 +75,7 @@ def BFlogger(commandq):
                 xx = resultq.get()
                 resultq.task_done()
                 line.append('{:e}'.format(xx))
-                line = ','.join(line) + '\n'
+                line = ','.join(line) + os.linesep
                 ff.write(line.encode('ascii'))
                 ff.flush()
             time.sleep(30)
