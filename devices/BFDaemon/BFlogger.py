@@ -4,10 +4,7 @@ from queue import Queue
 from stlab.devices.Lakeshore_370 import Lakeshore_370
 import os
 
-varline = ['Time (s)'] 
-varline = varline + ['PT2 Head (K)','PT2 Plate (K)', 'Still Plate (K)','Cold Plate (K)','MC Cernox (K)','PT1 Head (K)','PT1 Plate (K)','MC Plate (K)'] 
-varline = varline + ['P%d (mbar)' % i for i in range(1,7)]
-varline = varline + ['Turbo power (W)', 'Turbo speed (Hz)', 'PST (C)','MT (C)','BT (C)','PBT (C)','ET (C)']
+SLEEPTIME = 30.
 
 def BFlogger(commandq,addr,port):
     
@@ -76,7 +73,7 @@ def BFlogger(commandq,addr,port):
                 line = ','.join(line) + os.linesep
                 ff.write(line.encode('ascii'))
                 ff.flush()
-            time.sleep(30)
+            time.sleep(SLEEPTIME)
     except KeyboardInterrupt:
         for ff in ffs:
             ff.close()
