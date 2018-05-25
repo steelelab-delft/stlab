@@ -1,6 +1,7 @@
 #New base instrument class to keep track of all instantiated instruments (whether or not they inherit from instrument) for metafile generation.
 import abc
 import os
+import datetime
 
 class base_instrument(abc.ABC):
     instrument_list = []    
@@ -15,14 +16,22 @@ class base_instrument(abc.ABC):
         pass
 
 # Function to save all instantiated instrument metadata to a file
-def SaveInstrumentMetadata(myfile = './mymetadata.meta.dat'): #Myfile should be the relevant measurement file
-    try:
-        metafilename,_ = os.path.splitext(myfile.name) + '.meta.dat'
-    except AttributeError:
-        metafilename = os.path.dirname(myfile.name)
+def SaveInstrumentMetadata(myfile = None): #Myfile should be the relevant measurement file
+    #if myfile is given, try to treat it like a measurement file handle first
+    if myfile:
+        try:
+            metafilename,_ = os.path.splitext(myfile.name) + '.meta.dat'
+        except AttributeError: #If myfile is not a file, then treat it as a string
+            metafilename = myfile
+    else: #if myfile is not given, make the metafile in the current folder with a timestamp
+        mytime = datetime.datetime.now()
+        datecode = '%s' % mytime.year + '_' + ('%s' % mytime.month).zfill(2) + '_' +('%s' % mytime.day).zfill(2)
+        timecode = ('%s' % mytime.hour).zfill(2) +'.' + ('%s' % mytime.minute).zfill(2) +'.' + ('%s' % mytime.second).zfill(2)
+        metafilename = './meta_' + datecode + '_' + timecode + '.dat'
+
     with open(metafilename,'w') as metafile:
         for dev in base_instrument.instrument_list:
-            metafile.write(dev.GetMetadataString())
             metafile.write('\n' + '*'*100 + '\n')
-            metafile.write('*'*100 + '\n\n')
+            metafile.write(dev.GetMetadataString() + '\n')
+            metafile.write('*'*100 + '\n')
     return
