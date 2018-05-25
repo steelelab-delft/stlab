@@ -104,3 +104,7 @@ class Stanford_CS580(instrument):
     def GetCompliance(self):
         mystr = self.query('VOLT?')
         return float(mystr)
+
+    def PrintMetadata(self):
+        print(self.GetCurrent())
+        return

@@ -9,9 +9,7 @@ def numtostr(mystr):
     return '%20.15e' % mystr
 
 
-class basepna(instrument):
-    __metaclass__ = abc.ABCMeta
-
+class basepna(instrument,abc.ABC):
     def __init__(self, addr, reset=True, verb=True):
         super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"

@@ -1,5 +1,6 @@
 # Basic visa instrument class.  Includes resoruce manager startup, basic query and write methods, id and reset methods
 import visa
+from stlab.devices.base_instrument import base_instrument
 
 #Try to use NI-VISA
 #If this fails, revert to using pyvisa-py
@@ -18,7 +19,7 @@ def makeRMpy():
     
 
 
-class instrument:
+class instrument(base_instrument):
     global_rs, rstype = makeRM()  #Static resource manager for all instruments.  rstype is '@ni' for NI backend and '@py' for pyvisa-py
     def __init__(self,addr,reset=False,verb=True,**kwargs):
 #        self.rs = visa.ResourceManager('@py')
@@ -56,6 +57,8 @@ class instrument:
         self.verb = verb  #Whether to print commands on screen
         if reset:
             self.reset()
+        super().__init__()
+
     def write(self,mystr):
         if self.verb:
             print(mystr)
@@ -80,3 +83,5 @@ class instrument:
     def close(self):
         self.dev.close()
         return
+
+    
