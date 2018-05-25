@@ -183,6 +183,5 @@ class IVVI_DAC(base_instrument):
     def close(self):
         self.serialport.close()
         return
-    def PrintMetadata(self):
-        print(self.ReadDACs())
-        return
+    def GetMetadataString(self):
+        return self.ReadDACs()

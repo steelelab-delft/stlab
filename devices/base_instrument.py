@@ -14,13 +14,13 @@ class base_instrument(abc.ABC):
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
         pass
 
-
-def SaveInstrumentMetadata(myfile = None, path = './'): #Myfile should be the relevant measurement file
-    if myfile:
-        metapath = os.path.dirname(os.path.realpath(myfile.name))
-    else:
-        metapath = path        
-    with open(metapath,'w') as metafile:
+# Function to save all instantiated instrument metadata to a file
+def SaveInstrumentMetadata(myfile = './mymetadata.meta.dat'): #Myfile should be the relevant measurement file
+    try:
+        metafilename,_ = os.path.splitext(myfile.name) + '.meta.dat'
+    except AttributeError:
+        metafilename = os.path.dirname(myfile.name)
+    with open(metafilename,'w') as metafile:
         for dev in base_instrument.instrument_list:
             metafile.write(dev.GetMetadataString())
             metafile.write('\n' + '*'*100 + '\n')
