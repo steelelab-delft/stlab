@@ -2,9 +2,6 @@ import visa
 import numpy as np
 from stlab.devices.instrument import instrument
 
-def numtostr(mystr):
-    return '%12.8e' % mystr
-
 # Driver for Keithley2100 multimeter.  Uses instrument_ni (NI backend) instead of normal instrument class
     
 class Keithley_2100(instrument):
@@ -77,4 +74,7 @@ class Keithley_2100(instrument):
         self.write('SENS:ZERO:AUTO ONCE')
         self.write('SENS:GAIN:AUTO ONCE')
         return
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
         

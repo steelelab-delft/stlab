@@ -1,5 +1,5 @@
 import socket
-from MySocket import MySocket
+from stlab.utils.MySocket import MySocket
 import datetime
 import os.path
 import os

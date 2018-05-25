@@ -34,3 +34,5 @@ class RS_SMB100A(instrument):
         self.write('OUTP ON')
     def RFoff(self):
         self.write('OUTP OFF')
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

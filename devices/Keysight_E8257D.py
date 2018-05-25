@@ -57,3 +57,6 @@ class Keysight_E8257D(instrument):
         '''
         bla = self.query(':SOURce:ROSCillator:SOURce?')
         print(bla)
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

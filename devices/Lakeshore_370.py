@@ -23,6 +23,9 @@ class Lakeshore_370(instrument):
         result = float(self.query('RDGR? {}'.format(i)))
         return result
 
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
+
     
     '''
     def write(self,mystr): #REQUIRES SPECIAL WRITE WITH OPC CHECK...

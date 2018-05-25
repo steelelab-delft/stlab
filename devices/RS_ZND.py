@@ -144,6 +144,6 @@ class RS_ZND(basepna):
         self.write('SENS:FREQ {}'.format(xx))
         return
     
-
-
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
 

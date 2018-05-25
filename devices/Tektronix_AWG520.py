@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from stlab.AWG_testing.instrument import instrument
+from stlab.devices.instrument import instrument
 import types
 import time
 from datetime import datetime
@@ -61,7 +61,7 @@ class Tektronix_AWG520(instrument):
             None
         '''
         logging.debug(__name__ + ' : Initializing instrument')
-        super(Tektronix_AWG520, self).__init__(
+        super().__init__(
             addr=addr, reset=False, verb=False, read_termination='\n')
 
         self._address = addr
@@ -759,3 +759,6 @@ class Tektronix_AWG520(instrument):
 
     def do_get_AWG_model(self):
         return 'AWG520'
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

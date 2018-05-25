@@ -107,5 +107,6 @@ class RS_FSV(instrument):
     def num2str(self, num):
         return '%12.8e' % num    
     
-
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
     

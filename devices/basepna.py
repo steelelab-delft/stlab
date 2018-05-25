@@ -247,3 +247,6 @@ class basepna(instrument,abc.ABC):
         self.SetContinuous(False)
         print(self.Trigger())  #Trigger single sweep and wait for response
         return self.GetAllData_pd(keep_uncal)
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

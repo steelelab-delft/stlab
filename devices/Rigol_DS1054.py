@@ -73,6 +73,9 @@ class Rigol_DS1054(instrument):
         xs = np.linspace(0,tscale*12,len(output))
         return xs,output
 
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
+
     '''
     def ReadWaveData(self,n=1,mdep=3e6):
         self.write('STOP')

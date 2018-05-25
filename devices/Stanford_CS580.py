@@ -105,6 +105,5 @@ class Stanford_CS580(instrument):
         mystr = self.query('VOLT?')
         return float(mystr)
 
-    def PrintMetadata(self):
-        print(self.GetCurrent())
-        return
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

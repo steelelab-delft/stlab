@@ -44,3 +44,6 @@ class Keysight_N5183B(instrument):
 
     def RFoff(self):
         self.write('OUTP OFF')
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
