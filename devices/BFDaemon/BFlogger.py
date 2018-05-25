@@ -1,8 +1,3 @@
-#This script "simply" retrieves temperature and pressure data from the Triton control computer and writes
-#the data to a simple ascii file.
-
-################### TO DO #####################################
-
 import time
 import datetime
 from queue import Queue
@@ -14,7 +9,7 @@ varline = varline + ['PT2 Head (K)','PT2 Plate (K)', 'Still Plate (K)','Cold Pla
 varline = varline + ['P%d (mbar)' % i for i in range(1,7)]
 varline = varline + ['Turbo power (W)', 'Turbo speed (Hz)', 'PST (C)','MT (C)','BT (C)','PBT (C)','ET (C)']
 
-def BFlogger(commandq):
+def BFlogger(commandq,addr,port):
     
 
     resultq = Queue(maxsize=0)
@@ -42,6 +37,9 @@ def BFlogger(commandq):
     # Main logging loop.  Exit with keyboard interrupt (CTRL + C)
     try:
         while True:
+            print('Time: ' + time.strftime('%c'))
+            print('Current IP: '+addr)
+            print('Current Port: '+str(port))
             newday = datetime.date.today()
             if today != newday:
                 print('New day: {}'.format(newday.strftime('%y-%m-%d')))    
