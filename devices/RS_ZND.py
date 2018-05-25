@@ -143,7 +143,3 @@ class RS_ZND(basepna):
     def SetCWfrequency(self,xx):
         self.write('SENS:FREQ {}'.format(xx))
         return
-    
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
-        pass
-

@@ -82,6 +82,7 @@ class instrument(base_instrument):
         self.verb = verb
     def close(self):
         self.dev.close()
+        if self in base_instrument.instrument_list: base_instrument.instrument_list.remove(self) #Remove yourself from the instrument_list
         return
 
     

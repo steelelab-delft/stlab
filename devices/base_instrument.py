@@ -32,6 +32,6 @@ def SaveInstrumentMetadata(myfile = None): #Myfile should be the relevant measur
     with open(metafilename,'w') as metafile:
         for dev in base_instrument.instrument_list:
             metafile.write('\n' + '*'*100 + '\n')
-            metafile.write(dev.GetMetadataString() + '\n')
+            metafile.write(str(dev.GetMetadataString()))
             metafile.write('*'*100 + '\n')
     return

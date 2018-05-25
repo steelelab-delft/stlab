@@ -22,9 +22,13 @@ def get_instr_definitions():
     
 devdict = get_instr_definitions()
 
+class test_instrument(instrument):  #instrument is abstract and can't be instantiated
+    def GetMetadataString(self):
+        return self.id()
+
 def autodetect_instrument(addr,reset = False, verb = True, **kwargs):
 
-    dev = instrument(addr,reset,verb, query_delay = 100e-3, **kwargs)
+    dev = test_instrument(addr,reset,verb, query_delay = 100e-3, **kwargs)
     idstr = dev.id()
 
     dev.close()

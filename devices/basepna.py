@@ -76,6 +76,12 @@ class basepna(instrument,abc.ABC):
         mystr = 'SENS:BWID ' + mystr
         self.write(mystr)
 
+    def GetIFBW(self):
+        mystr = 'SENS:BWID?'
+        pp = self.query(mystr)
+        pp = float(pp)
+        return pp
+
     def SetPower(self, x):
         mystr = numtostr(x)
         mystr = 'SOUR:POW ' + mystr
@@ -91,6 +97,12 @@ class basepna(instrument,abc.ABC):
         mystr = '%d' % x
         mystr = 'SENS:SWE:POIN ' + mystr
         self.write(mystr)
+
+    def GetPoints(self):
+        mystr = 'SENS:SWE:POIN?'
+        pp = self.query(mystr)
+        pp = int(pp)
+        return pp
 
     def Trigger(self):
         print((self.query('INIT;*OPC?')))
@@ -249,4 +261,10 @@ class basepna(instrument,abc.ABC):
         return self.GetAllData_pd(keep_uncal)
 
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
-        pass
+        result = self.id().strip() + '\n'
+        result += 'Range = [{}, {}] Hz'.format(self.GetStart(),self.GetEnd()) + '\n'
+        result += 'IFBW = {} Hz'.format(self.GetIFBW()) + '\n'
+        result += 'Power = {} dBm'.format(self.GetPower()) + '\n'
+        result += 'Npoints = {}'.format(self.GetPoints()) + '\n'
+        result += 'Traces = {}'.format(self.GetTraceNames()[1]) + '\n'
+        return result
