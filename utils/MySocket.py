@@ -42,8 +42,9 @@ class MySocket:
                     return b''.join(chunks)
                 chunks.append(chunk)
                 bytes_recd = bytes_recd + len(chunk)
+            return b''.join(chunks)
         except ConnectionResetError as err:
             print(err)
             print('Socket cleared, returned "None"')
             return None
-        return b''.join(chunks)
+
