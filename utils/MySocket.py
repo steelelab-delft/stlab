@@ -33,13 +33,18 @@ class MySocket:
     def myreceive(self):
         chunks = []
         bytes_recd = 0
-        while bytes_recd < MSGLEN:
-            chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
-            if chunk == b'#EOT':
-                print("Socket receive: Message finished")
-#                raise RuntimeError("socket connection broken")
-                return b''.join(chunks)
-            chunks.append(chunk)
-            bytes_recd = bytes_recd + len(chunk)
-            
-        return b''.join(chunks)
+        try:
+            while bytes_recd < MSGLEN:
+                chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
+                if chunk == b'#EOT':
+                    print("Socket receive: Message finished")
+    #                raise RuntimeError("socket connection broken")
+                    return b''.join(chunks)
+                chunks.append(chunk)
+                bytes_recd = bytes_recd + len(chunk)
+            return b''.join(chunks)
+        except ConnectionResetError as err:
+            print(err)
+            print('Socket cleared, returned "None"')
+            return None
+

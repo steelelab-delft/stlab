@@ -58,8 +58,8 @@ commandq = Queue(maxsize=0)
 #addr = sys.argv[1]
 #Start the thread for the command handler.  Commands added to commandq will be run and the output will be put into whatever output queue is provided in the queue element
 
-addr = input('VISA address of Lakeshore: ')
-baud_rate = input('Serial Baud rate (9600): ')
+addr = input('Enter VISA address of Lakeshore\n (old BF: ASRL1, new BF: ASRL11, He7: ASRL7):\n')
+baud_rate = input('Enter Serial Baud rate\n (default 9600, He7 uses 57600):\n')
 uselog = yes_or_no('Use BF logging?')
 try:
     baud_rate = int(baud_rate)
@@ -69,10 +69,7 @@ myhandler = Thread(target=command_handler, args=(commandq,addr,baud_rate))
 myhandler.daemon = True
 myhandler.start()
 
-#Another thread that also uses the same command queue
-if uselog:
-    loggerthread = Thread(target=BFlogger, args=(commandq,))
-    loggerthread.start()
+
 
 # This is the main listening part of the daemon.  It is intended to listen on a specific TCP port for incoming connections.  When a connection arrives it receives 1 command that it adds to the commmandq.
 # Then the connection is closed and it goes back to listening for another command.
@@ -87,17 +84,30 @@ serversocket.bind(('', port))
 serversocket.listen(5)
 print("Ready.  Listening on port %d and address %s" % (port,addr))
 
+#Another thread that also uses the same command queue
+if uselog:
+    loggerthread = Thread(target=BFlogger, args=(commandq,addr,port))
+    loggerthread.start()
+
+
 #Function to add a text command received from a socket receive to the commandq.
 def RunCommand(sock,resultq):
     #print('RunCommand: start')
     ss = MySocket(sock)
     word = ss.myreceive()
-    word = word.decode('utf_8')
+    try:
+        word = word.decode('utf_8')
+    except AttributeError as err:
+        print(err)
+        word = None
     #print('RunCommand:', word)
-    if '?' in word:
-        commandq.put( (resultq, Lakeshore_370.query, (word,)) )
+    if word:
+        if '?' in word:
+            commandq.put( (resultq, Lakeshore_370.query, (word,)) )
+        else:
+            commandq.put( (resultq, Lakeshore_370.write, (word,)) )
     else:
-        commandq.put( (resultq, Lakeshore_370.write, (word,)) )
+        return None
     xx = resultq.get()
     if xx == None:
         xx = ''
