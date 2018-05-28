@@ -23,8 +23,8 @@ class instrument(base_instrument):
     global_rs = None #Static resource manager for all instruments.  rstype is '@ni' for NI backend and '@py' for pyvisa-py
     rstype = None 
     def __init__(self,addr,reset=False,verb=True,**kwargs):
-        if not self.global_rs or not self.rstype:
-            self.global_rs, self.rstype = makeRM()
+        if not instrument.global_rs or not instrument.rstype:
+            instrument.global_rs, instrument.rstype = makeRM()
 #        self.rs = visa.ResourceManager('@py')
 #        self.dev = self.rs.open_resource(addr)
 

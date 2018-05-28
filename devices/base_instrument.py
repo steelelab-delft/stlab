@@ -14,10 +14,13 @@ class base_instrument():
 
 #    @abc.abstractmethod  #Must be implemented in children
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
-        getters = [method_name for method_name in dir(self)
-                    if callable(getattr(self, method_name))
-                    if method_name.startswith('Get')]]
-        getters.remove('GetMetadataString')
+        if 'MetaGetters' in dir(self):
+            getters = self.MetaGetters()
+        else:
+            getters = [method_name for method_name in dir(self)
+                        if callable(getattr(self, method_name))
+                        if method_name.startswith('Get') ]
+            getters.remove('GetMetadataString')
         print(getters)
         pairs = []
         for method in getters:  
@@ -25,7 +28,7 @@ class base_instrument():
             pairs.append( (method,method_to_call()) )
         result = ''
         for x,y in pairs:
-            result += x + ' = ' + str(y) + '\n
+            result += x + ' = ' + str(y) + '\n'
         return result
 
 # Function to save all instantiated instrument metadata to a file

@@ -1,6 +1,7 @@
 from stlab.devices.instrument import instrument
 from stlab.utils.stlabdict import stlabdict as stlabdict
 import numpy as np
+import pandas as pd
 
 import abc
 
@@ -259,7 +260,7 @@ class basepna(instrument,abc.ABC):
         self.SetContinuous(False)
         print(self.Trigger())  #Trigger single sweep and wait for response
         return self.GetAllData_pd(keep_uncal)
-
+    '''
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
         result = self.id().strip() + '\n'
         result += 'Range = [{}, {}] Hz'.format(self.GetStart(),self.GetEnd()) + '\n'
@@ -268,3 +269,17 @@ class basepna(instrument,abc.ABC):
         result += 'Npoints = {}'.format(self.GetPoints()) + '\n'
         result += 'Traces = {}'.format(self.GetTraceNames()[1]) + '\n'
         return result
+    '''
+
+    def MetaGetters(self):
+        getters = [method_name for method_name in dir(self)
+                    if callable(getattr(self, method_name))
+                    if method_name.startswith('Get') ]
+        getters.remove('GetAllData')
+        getters.remove('GetAllData_pd')
+        getters.remove('GetMetadataString')
+        getters.remove('GetFrequency')
+        getters.remove('GetTraceData')
+            
+        return getters
+
