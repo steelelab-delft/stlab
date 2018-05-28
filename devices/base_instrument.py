@@ -3,7 +3,8 @@ import abc
 import os
 import datetime
 
-class base_instrument(abc.ABC):
+#class base_instrument(abc.ABC):
+class base_instrument():
     instrument_list = []    
     def __init__(self):
         self.instrument_list.append(self) #when instantiated, automatically added to static instrument_list
@@ -11,9 +12,21 @@ class base_instrument(abc.ABC):
     def PrintMetadata(self): #Should show some relevant metadata on screen.  Will usually just print GetMetadataString
         print(self.GetMetadataString())
 
-    @abc.abstractmethod  #Must be implemented in children
+#    @abc.abstractmethod  #Must be implemented in children
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
-        pass
+        getters = [method_name for method_name in dir(self)
+                    if callable(getattr(self, method_name))
+                    if method_name.startswith('Get')]]
+        getters.remove('GetMetadataString')
+        print(getters)
+        pairs = []
+        for method in getters:  
+            method_to_call = getattr(self, method)
+            pairs.append( (method,method_to_call()) )
+        result = ''
+        for x,y in pairs:
+            result += x + ' = ' + str(y) + '\n
+        return result
 
 # Function to save all instantiated instrument metadata to a file
 def SaveInstrumentMetadata(myfile = None): #Myfile should be the relevant measurement file
