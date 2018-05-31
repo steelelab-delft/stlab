@@ -20,8 +20,7 @@ class He7Temperature:
             s.sock.close()
             if self.verb:
                 print('He7 Temperature received: %f K' % (temperature))
-        except:
-            # needs to be changed to proper ErrorType
+        except ValueError:
             temperature = -1
             print('Error when reading temperature')
         return temperature #in K!!
