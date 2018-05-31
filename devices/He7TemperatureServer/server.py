@@ -83,7 +83,11 @@ def GetTemperature(sock):
     word = word.split('\t')[1]
     ss.mysend(word.encode('utf_8'))
     now = datetime.datetime.today()
-    T = float(word)
+    try:
+        T = float(word)
+    except ValueError as err:
+        print(err)
+        T = -1.
     print("Temperature sent at %s, T = %f K" % (now.strftime('%y-%m-%d %H:%M:%S'),T))
     ss.sock.close()
 
