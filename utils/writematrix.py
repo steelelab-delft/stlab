@@ -54,7 +54,7 @@ def writeline(myfile,line,f='.10e',delim=', '):
 def writeframe(myfile,myframe,f='%.10e',delim=', ',blocksep='\n'):
     vv = list(myframe)
     writetitle(myfile,vv,delim)
-    mat = myframe.as_matrix()
+    mat = myframe.values
     writematrix(myfile,mat,f,delim,blocksep)
 
 def writeframearray(myfile,myframearray,f='%.10e',delim=', ',blocksep='\n'):
