@@ -5,6 +5,7 @@ import pickle
 import struct
 import scipy
 from scipy.ndimage.filters import gaussian_filter
+import pandas as pd
 
 
 class stlabdict(OrderedDict):
@@ -116,7 +117,7 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
             for line in data:
                 xx.append(line[xkey][0])
         #Case of y slow
-        #if x is slow, matrix is already correct
+        #if y is slow, matrix is already correct
         if yslow:
             yy = []
             for line in data:
@@ -463,3 +464,357 @@ class stlabmtx():
             s = np.matrix(np.reshape(s,(ny,nx),order='F'))
             self.mtx = s
             self.reset()
+
+#Main stlabmtx_pd class
+class stlabmtx_pd():
+    def __init__(self, mtx, xtitle='xtitle', ytitle='ytitle', ztitle = 'ztitle'):
+        self.mtx = copy.deepcopy(mtx)
+        self.mtx.index.name = str(ytitle)
+        self.mtx.columns.name = str(xtitle)
+        print(self.mtx.shape)
+        self.processlist = []
+        self.pmtx = self.mtx
+        self.xtitle=str(xtitle)
+        self.ytitle=str(ytitle)
+        self.ztitle = str(ztitle)
+        self.xtitle0=self.xtitle
+        self.ytitle0=self.ytitle
+        self.ztitle0=self.ztitle
+    def getextents(self):
+        xs = list(self.pmtx.columns)
+        ys = list(self.pmtx.index)
+        return (xs[0],xs[-1],ys[-1],ys[0])
+    # Functions from spyview
+    def absolute(self):
+        self.pmtx = np.abs(self.pmtx)
+        self.processlist.append('abs')
+    def crop(data,left=None,right=None,up=None,low=None):
+        #TODO check
+        valdict={'left':left,'right':right,'up':up,'low':low}
+        for key,val in valdict.items():
+            if val==0:
+                valdict[key] = None
+            else:
+                valdict[key] = int(val)
+        data.pmtx = data.pmtx.iloc[valdict['left']:valdict['right'],valdict['up']:valdict['low']]
+        for key,val in valdict.items():
+            if val==None:
+                valdict[key] = 0
+        data.processlist.append('crop {},{},{},{}'.format(valdict['left'],valdict['right'],valdict['up'],valdict['low']))
+    def flip(self,x=False,y=False):
+        x=bool(x)
+        y=bool(y)
+        if x:
+            self.pmtx = self.pmtx.iloc[:,::-1]
+        if y:
+            self.pmtx = self.pmtx.iloc[::-1,:]
+        self.processlist.append('flip {:d},{:d}'.format(x,y))
+    def log10(self):
+        self.pmtx = np.log10(self.pmtx)
+        self.processlist.append('log10')
+    def lowpass(self,x=0,y=0):
+        # TODO implement different filter types
+        self.pmtx.loc[:,:] = gaussian_filter( self.pmtx, sigma=[int(y),int(x)])
+        self.processlist.append('lowpass {},{}'.format(x,y))
+    def neg(self):
+        self.pmtx = -self.pmtx
+        self.processlist.append('neg')
+    def offset(self,x=0):
+        self.pmtx = self.pmtx + x
+        self.processlist.append('offset {}'.format(x))
+    def offset_axes(self,x=0,y=0):
+        self.pmtx.columns = self.pmtx.columns + x
+        self.pmtx.index = self.pmtx.index + y
+        self.processlist.append('offset_axes {},{}'.format(x,y))
+    def outlier(self,line,vertical=1):
+        axis = 1-vertical #swap 1 and 0 since vertical axis is 0 and horizontal is 1
+        self.pmtx = self.pmtx.drop(line,axis = axis)
+        self.processlist.append('outlier {},{}'.format(line,vertical))
+    def pixel_avg(self,nx=0,ny=0,center=0):
+        nx=int(nx); ny=int(ny)
+        if bool(center):
+            self.pmtx.loc[:,:] = ndimage.generic_filter(self.pmtx, np.nanmean, size=(nx,ny), mode='constant',cval=np.NaN)
+        else:
+            mask = np.ones((nx, ny))
+            mask[int(nx/2), int(ny/2)] = 0
+            self.pmtx.loc[:,:] = ndimage.generic_filter(self.pmtx, np.nanmean, footprint=mask, mode='constant', cval=np.NaN)
+        self.processlist.append('pixel_avg {},{},{}'.format(nx,ny,center))
+    def rotate_ccw(self):
+        # still lacking the switching of the axes
+        self.pmtx = self.pmtx.transpose()
+        self.pmtx = self.pmtx.iloc[::-1,:]
+        self.processlist.append('rotate_ccw')
+    def rotate_cw(self):
+        # still lacking the switching of the axes
+        self.pmtx = self.pmtx.transpose()
+        self.pmtx = self.pmtx.iloc[:,::-1]
+        self.processlist.append('rotate_cw')
+    def scale_data(self,factor=1.):
+        self.pmtx = factor*self.pmtx
+        self.processlist.append('scale {}'.format(factor))
+    def sub_lbl(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
+        self.pmtx.loc[:,:] = sub_lbl(self.pmtx.values,lowp,highp,low_limit,high_limit)
+        self.processlist.append('sub_lbl {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
+    def sub_cbc(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
+        self.pmtx.loc[:,:] = sub_lbl(self.pmtx.values.T,lowp,highp,low_limit,high_limit).T
+        self.processlist.append('sub_cbc {},{},{},{}'.format(lowp,highp,low_limit,high_limit))
+    def sub_linecut(self, pos, horizontal=1):
+        pos = int(pos)
+        if bool(horizontal):
+            v = self.pmtx.iloc[pos,:]
+            self.pmtx = self.pmtx.subtract(v,axis=1)
+        else:
+            v = self.pmtx.iloc[:,pos]
+            self.pmtx = self.pmtx.subtract(v,axis=0)
+        self.processlist.append('sub_linecut {},{}'.format(pos,horizontal))
+    def xderiv(self,direction=1):
+        self.pmtx = xderiv_pd(self.pmtx,direction)
+        self.processlist.append('xderiv {}'.format(direction))
+    def yderiv(self,direction=1):
+        self.pmtx = yderiv_pd(self.pmtx,direction)
+        self.processlist.append('yderiv {}'.format(direction))
+    def transpose(self):
+        self.pmtx = self.pmtx.transpose()
+        self.processlist.append('transpose')
+    
+    # Processlist
+    def saveprocesslist(self,filename = './process.pl'):
+        myfile = open(filename,'w')
+        for line in self.processlist:
+            myfile.write(line + '\n')
+        myfile.close()
+    def applystep(self,line):
+            sline = line.split(' ')
+            if len(sline) == 1:
+                func = sline[0]
+                pars = []
+            else:
+                pars = sline[1].split(',')
+                func = sline[0].strip()
+            if func is '':
+                return
+            else:
+                pars = [float(x) for x in pars]
+            method = getattr(self, func)
+            print(func,pars)
+            method(*pars)
+    def applyprocesslist(self,pl):
+        for line in pl:
+            self.applystep(line)
+    def applyprocessfile(self,filename):
+        with open(filename,'r') as myfile:
+            for line in myfile:
+                if '#' == line[0]:
+                    continue
+                self.applystep(line)
+    def reset(self):
+        self.processlist = []
+        self.xtitle = self.xtitle0
+        self.ytitle = self.ytitle0
+        self.pmtx = self.mtx
+    def delstep(self,ii):
+        newpl = copy.deepcopy(self.processlist)
+        del newpl[ii]
+        self.reset()
+        self.applyprocesslist(newpl)
+    def insertstep(self,ii,line):
+        newpl = copy.deepcopy(self.processlist)
+        newpl.insert(ii,line)
+        self.reset()
+        self.applyprocesslist(newpl)
+
+    #Uses pickle to save to file
+    def save(self,name = 'output'):
+        filename = name + '.mtx.pkl'
+        with open(filename, 'wb') as outfile:
+            pickle.dump(self,outfile, pickle.HIGHEST_PROTOCOL)
+    #To load:
+    #import pickle
+    #with open(filename, 'rb') as input:
+    #   mtx1 = pickle.load(input)
+
+    def savemtx(self,filename = './output'):
+        filename = filename + '.mtx'
+        with open(filename, 'wb') as outfile:
+            ztitle = self.ztitle
+            xx = np.array(self.pmtx.columns)
+            yy = np.array(self.pmtx.index)
+            line = ['Units',ztitle, self.xtitle,'{:e}'.format(xx[0]),'{:e}'.format(xx[-1]), self.ytitle,'{:e}'.format(yy[0]),'{:e}'.format(yy[-1]), 'Nothing',str(0),str(1)]
+            mystr = ', '.join(line)
+            mystr = bytes(mystr + '\n', 'ASCII')
+            outfile.write(mystr)
+            mystr = str(self.pmtx.shape[1]) + ' ' + str(self.pmtx.shape[0]) + ' ' + '1 8\n'
+            mystr = bytes(mystr, 'ASCII')
+            outfile.write(mystr)
+            data = self.pmtx.values
+            data = np.squeeze(np.asarray(np.ndarray.flatten(data,order='F')))
+            print(len(data))
+            s = struct.pack('d'*len(data), *data)
+            outfile.write(s)
+
+#           Units, Data Value ,Y, 0.000000e+00, 2.001000e+03,Z, 0.000000e+00, 6.010000e+02,Nothing, 0, 1
+#           2001 601 1 8
+
+            #Units, Dataset name, xname, xmin, xmax, yname, ymin, ymax, zname, zmin, zmax
+            #nx ny nz length
+
+            #dB, S21dB, Frequency (Hz), 6.000000e+09, 8.300000e+09, Vgate (V), 3.000000e+01, -3.000000e+01, Nothing, 0, 1
+            #2001 601 1 8
+
+    def loadmtx(self,filename):
+        with open(filename,'rb') as infile:
+            content = infile.readline()
+            content = content.decode('ASCII')
+            if content[:5] == 'Units':
+                content = content.split(',')
+                content = [x.strip() for x in content]
+                self.ztitle0 = content[1]
+                self.xtitle0 = content[2]
+                self.ytitle0 = content[5]
+                xlow = np.float64(content[3])
+                xhigh = np.float64(content[4])
+                ylow = np.float64(content[6])
+                yhigh = np.float64(content[7])
+                content = infile.readline()
+                content = content.decode('ASCII')
+                content = content.split(' ')
+                nx = int(content[0])
+                ny = int(content[1])
+                lb = int(content[3])
+                rangex0 = np.linspace(xlow,xhigh,nx)
+                rangey0 = np.linspace(ylow,yhigh,ny)
+            else:
+                content = content.decode('ASCII')
+                content = content.split(' ')
+                nx = int(content[0])
+                ny = int(content[1])
+                lb = int(content[3])
+                rangex0 = np.linspace(1,nx,nx)
+                rangey0 = np.linspace(1,ny,ny)
+            n = nx*ny
+            content = infile.read()
+            if lb == 8:
+                s = struct.unpack('d'*n, content)
+            elif lb == 4:
+                s = struct.unpack('f'*n, content)
+            s = np.asarray(s)
+            s = np.matrix(np.reshape(s,(ny,nx),order='F'))
+            self.mtx = pd.DataFrame(s)
+            self.mtx.columns = rangex0
+            self.mtx.index = rangey0
+            self.reset()
+
+
+
+def yderiv_pd(data,direction=1):
+    dy = np.diff(data.index)
+    data = data.diff(axis=0,periods=direction)
+    data = data.dropna(axis=0)
+    if direction==-1:
+        dy = -dy
+    data = data.divide(dy,axis='rows')
+    return data
+
+def xderiv_pd(data,direction=1):
+    return yderiv_pd(data.transpose(),direction).transpose()
+
+
+
+def framearr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xtitle=None, ytitle=None, ztitle = None):
+#data is an array of dict-like (dict, OrderedDict, stlabdict), key is the z data (matrix values) column.
+#if xkey/ykey is provided, this column is used as the x/y range values.  These values are also used as x/y titles.  x is made to run across matrix columns and y across lines.
+#This means that if x is the "slow" variable in the measurement file, the output matrix will be transposed relative to the default behavior.
+#if rangex/rangey are provided, these override the xkey/ykey assignment.  Should be array-like with the correct lengths.
+#if xtitle/ytitle are provided, these override the xkey/ykey title assignment.
+#If neither ranges, titles or keys are provided, defaults are given.  The z column for each set in the data array will be placed as a line in the output matrix (default behavior)
+#Script assumes that ranges are not changing from set to set in data.  Ranges can however be non linear.
+
+    #Build initial matrix.  Appends each data column as line in zz    
+    zz = [];
+    for line in data:
+        zz.append(line[key])
+    #convert to np matrix
+    #zz = np.array(zz)
+    if not ztitle:
+        ztitle = key
+
+    #No keys or ranges given:
+    if rangex==None and rangey==None and xkey==None and ykey==None:
+        if xtitle == None:
+            xtitle = 'xtitle' #Default title
+        if ytitle == None:
+            ytitle = 'ytitle' #Default title
+        zz = pd.DataFrame(zz)
+        return stlabmtx_pd(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
+
+    #If ranges but no keys are given
+    elif (xkey == None and ykey==None) and (rangex !=None and rangey != None):
+        if xtitle == None:
+            xtitle = 'xtitle' #Default title
+        if ytitle == None:
+            ytitle = 'ytitle' #Default title
+        zz = pd.DataFrame(zz, index = rangey, columns= rangex)
+        return stlabmtx_pd(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
+
+    #If keys but no ranges given
+    elif (xkey != None and ykey != None) and (rangex == None and rangey == None):
+        #Take first dataset and extract the two relevant columns
+        line = data[0]
+        xx = line[xkey]
+        yy = line[ykey]
+        #Check which is slow (one with all equal values is slow)
+        xslow,yslow = (checkEqual1(xx),checkEqual1(yy))
+        #Both can not be fast or slow
+        if xslow == yslow:
+            print('dictarr_to_mtx: Warning, invalid xkey and ykey.  Using defaults')
+            if xtitle == None:
+                xtitle = 'xtitle' #Default title
+            if ytitle == None:
+                ytitle = 'ytitle' #Default title
+            return stlabmtx_pd(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
+        #if x is slow, matrix needs to be transposed
+        if xslow:
+            xx = []
+            for line in data:
+                xx.append(line[xkey].iloc[0])
+        #Case of y slow
+        #if x is slow, matrix is already correct
+        if yslow:
+            yy = []
+            for line in data:
+                yy.append(line[ykey][0])
+        xx = np.asarray(xx)
+        yy = np.asarray(yy)
+        #Sort out titles
+        titles = tuple(data[0])
+        print(titles)
+        print(ykey)
+        print(xkey)
+        if xtitle == None:
+            if isinstance(xkey, str):
+                xtitle = xkey #Default title
+            elif isinstance(xkey, int):
+                xtitle = titles[xkey]
+        if ytitle == None:
+            if isinstance(ykey, str):
+                ytitle = ykey #Default title
+            elif isinstance(ykey, int):
+                ytitle = titles[ykey]
+
+        zz = pd.DataFrame(zz)
+        if xslow:
+            zz = zz.transpose()
+        zz.index = yy
+        zz.columns = xx
+        return stlabmtx_pd(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
+
+    #Mixed cases (one key and one range) are not implemented
+    else:
+        print('dictarr_to_mtx: Warning, invalid keys and ranges.  Using defaults')
+        if xtitle == None:
+            xtitle = 'xtitle' #Default title
+        if ytitle == None:
+            ytitle = 'ytitle' #Default title
+        zz = pd.DataFrame(np.matrix(zz))
+        return stlabmtx_pd(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
+    return 
