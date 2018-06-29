@@ -85,7 +85,7 @@ def trim(x,y,imin,imax):
         xnew = np.concatenate([x[0:2],x[-2:]])
         ynew = np.concatenate([y[0:2],y[-2:]])
 
-    print(xnew,ynew)
+    #print(xnew,ynew)
 
     return (xnew,ynew)
 
