@@ -173,6 +173,9 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     reusefitpars -> If set to True, uses parameters provided in "oldpars" as initial guess for fit parameters in main model fit (ignored by background fit)
     fitwidth -> If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit
     """
+    # Convert frequency and S11 into arrays
+    frec = np.array(frec)
+    S11 = np.array(S11)
 
     #Smooth data for initial guesses
     if margin == None or margin == 0: #If no smooting desired, pass None as margin
@@ -180,6 +183,8 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         sReS11 = S11.real
         sImS11 = S11.imag
         sS11 = np.array( [x+1j*y for x,y in zip(sReS11,sImS11) ] )
+    elif type(margin) != int or margin % 2 == 0 or margin <= 3:
+        raise ValueError('margin has to be either None, 0, or an odd integer larger than 3')
     else:
         sReS11 = np.array(smooth(S11.real,margin,3))
         sImS11 = np.array(smooth(S11.imag,margin,3))
