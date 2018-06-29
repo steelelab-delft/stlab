@@ -4,7 +4,7 @@ import numpy as np
 
 class keysight_EXA(instrument): 
     def __init__(self,addr = 'TCPIP::192.168.1.228::INSTR',reset=True,verb=True):
-        super(keysight_EXA, self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
     
     def SetStart(self,x):
         mystr = 'FREQ:STAR {}'.format(x)
@@ -57,3 +57,6 @@ class keysight_EXA(instrument):
         output['PSD (dBm)'] = yy
         output.addparcolumn('Res BW (Hz)', self.GetResolutionBW())
         return output
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

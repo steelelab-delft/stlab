@@ -180,13 +180,10 @@ def reads2p_pd(filename):
             myframe[name]=data
         return myframe
 
-# Imports a QUCS formatted data file.  The data is returned as a dict 
-# containing np.array's for each variable with the QUCS variable name
-# as dict key.  Complex values are conserved.
 
 pi = np.pi
 
-def readQUCS_pd(filename):
+def readQUCS_pd(filename):  #BROKEN
     with open(filename,'r') as f:
         ivar = 0
         mylists = pd.DataFrame()

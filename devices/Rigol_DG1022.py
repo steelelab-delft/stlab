@@ -53,5 +53,6 @@ class Rigol_DG1022(instrument):
             self.write('OUTP OFF')
         else:
             self.write('OUTP:CH{} OFF'.format(ch))
-    
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
     

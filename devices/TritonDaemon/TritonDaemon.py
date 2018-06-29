@@ -1,4 +1,4 @@
-from stlab.devices.triton import Triton
+from stlab.devices.Oxford_Triton import Oxford_Triton as Triton
 from queue import Queue
 from threading import Thread
 import time

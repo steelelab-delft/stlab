@@ -1,8 +1,9 @@
 # Basic interface to retrieve temperature measurement form BF computer
 # Server must be running on BF computer (The server just checks temperature log and returns last logged value)
-from .He7TemperatureServer.MySocket import MySocket
+from stlab.utils.MySocket import MySocket
+from stlab.devices.base_instrument import base_instrument
 
-class He7Temperature:
+class He7Temperature(base_instrument):
     def __init__(self,addr="131.180.32.72",port=8472,reset=True,verb=True,**kwargs):
         self.verb = verb
         if reset:
@@ -28,3 +29,6 @@ class He7Temperature:
         pass
     def setverbose(self,verb=True):
         self.verb = verb
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

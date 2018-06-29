@@ -6,10 +6,10 @@ import numpy as np
 import time
 from stlab.devices.instrument import instrument
 
-class Triton(instrument):
+class Oxford_Triton(instrument):
     def __init__(self,addr='TCPIP::192.168.1.178::33576::SOCKET',reset=True,verb=True):
         #The Triton does not understand *RST so we don't reset.  Also '\n' read termination is necessary
-        super(Triton, self).__init__(addr,reset=False,verb=verb,read_termination='\n')
+        super().__init__(addr,reset=False,verb=verb,read_termination='\n')
         if reset:
             pass
     def write(self,mystr): #All writes on triton are queries
@@ -88,3 +88,6 @@ class Triton(instrument):
         mystr = mystr.strip('h')
         result.append(float(mystr))
         return result
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

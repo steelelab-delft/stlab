@@ -6,9 +6,9 @@ def numtostr(mystr):
     return '%12.8e' % mystr
 
 
-class RigolDM3058(instrument):
+class Rigol_DM3058(instrument):
     def __init__(self,addr='TCPIP::192.168.1.216::INSTR',reset=True,verb=True):
-        super(RigolDM3058, self).__init__(addr,reset,verb,write_termination='\n',read_termination='\n')
+        super().__init__(addr,reset,verb,write_termination='\n',read_termination='\n')
         self.id()
     def write(self,mystr):
         mystr = ':' + mystr
@@ -39,6 +39,9 @@ class RigolDM3058(instrument):
     def SetSpeed(self,value = 'S'): #S,M or F (slow, medium, fast)
         self.write('RATE:VOLTage:DC %s' % value)
         return
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
 '''
         def GetVoltCurr(self):
         mystr = 'FORM:ELEM:SENS VOLT,CURR'

@@ -93,6 +93,7 @@ class Cryocon_44C(instrument):
             print("Channel " + channel + " UNSTABLE for " + str(Tset) + ' K')
         return success
 
-
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
 
 

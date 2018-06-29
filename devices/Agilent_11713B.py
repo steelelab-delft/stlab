@@ -30,6 +30,9 @@ class Agilent_11713B(instrument):
         self.write('ATT:Y ' +str(xy[0]*10))
         return att
 
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
+
 
 if __name__ == '__main__':
     vatt = Agilent_11713B(addr='TCPIP::192.168.1.113::INSTR',reset=False,verb=True) #Initialize device communication and reset

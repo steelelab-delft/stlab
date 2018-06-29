@@ -1,6 +1,7 @@
 import serial
 import numpy as np
 import time
+from stlab.devices.base_instrument import base_instrument
 
 from enum import Enum
 #Enumeration class to store polarity values
@@ -8,10 +9,10 @@ class pol(Enum):
     bipolar = 'BIP'
     positive = 'POS'
     negative = 'NEG'
-  
+
 # IVVI DACs basic driver.  The system only reads and writes short byte arrays.
 # DOES NOT INHERIT FROM THE "INSTRUMENT" CLASS
-class IVVI_DAC:
+class IVVI_DAC(base_instrument):
     # Constructor for IVVI Dac class.  Address is ASRLCOM1 if on COM1 serial port
     # The Serial parameters for this device are:
     # Baud = 115200, data bits = 8, parity = ODD, stop bit = 1
@@ -28,6 +29,7 @@ class IVVI_DAC:
             self.RampAllZero(tt=20.)
         return
         self.lastmessage = ()
+        super().__init__()
     #Function to set polarity.  This just informs the driver what polarities are in use so it can correctly set the voltages.
     #The driver cannot physically set the polarity.  The real polarity of the DACs can only be set form the hardware switches.
     def SetPolarity(self,polarity):
@@ -181,3 +183,5 @@ class IVVI_DAC:
     def close(self):
         self.serialport.close()
         return
+    def GetMetadataString(self):
+        return self.ReadDACs()

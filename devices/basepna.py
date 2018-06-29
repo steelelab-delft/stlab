@@ -10,9 +10,7 @@ def numtostr(mystr):
     return '%20.15e' % mystr
 
 
-class basepna(instrument):
-    __metaclass__ = abc.ABCMeta
-
+class basepna(instrument,abc.ABC):
     def __init__(self, addr, reset=True, verb=True):
         super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
@@ -79,6 +77,12 @@ class basepna(instrument):
         mystr = 'SENS:BWID ' + mystr
         self.write(mystr)
 
+    def GetIFBW(self):
+        mystr = 'SENS:BWID?'
+        pp = self.query(mystr)
+        pp = float(pp)
+        return pp
+
     def SetPower(self, x):
         mystr = numtostr(x)
         mystr = 'SOUR:POW ' + mystr
@@ -94,6 +98,12 @@ class basepna(instrument):
         mystr = '%d' % x
         mystr = 'SENS:SWE:POIN ' + mystr
         self.write(mystr)
+
+    def GetPoints(self):
+        mystr = 'SENS:SWE:POIN?'
+        pp = self.query(mystr)
+        pp = int(pp)
+        return pp
 
     def Trigger(self):
         print((self.query('INIT;*OPC?')))
@@ -250,3 +260,26 @@ class basepna(instrument):
         self.SetContinuous(False)
         print(self.Trigger())  #Trigger single sweep and wait for response
         return self.GetAllData_pd(keep_uncal)
+    '''
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        result = self.id().strip() + '\n'
+        result += 'Range = [{}, {}] Hz'.format(self.GetStart(),self.GetEnd()) + '\n'
+        result += 'IFBW = {} Hz'.format(self.GetIFBW()) + '\n'
+        result += 'Power = {} dBm'.format(self.GetPower()) + '\n'
+        result += 'Npoints = {}'.format(self.GetPoints()) + '\n'
+        result += 'Traces = {}'.format(self.GetTraceNames()[1]) + '\n'
+        return result
+    '''
+
+    def MetaGetters(self):
+        getters = [method_name for method_name in dir(self)
+                    if callable(getattr(self, method_name))
+                    if method_name.startswith('Get') ]
+        getters.remove('GetAllData')
+        getters.remove('GetAllData_pd')
+        getters.remove('GetMetadataString')
+        getters.remove('GetFrequency')
+        getters.remove('GetTraceData')
+            
+        return getters
+

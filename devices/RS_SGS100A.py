@@ -70,3 +70,6 @@ class RS_SGS100A(instrument):
 
     def INTref(self):
         self.write('SOUR:ROSC:SOUR INT')
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

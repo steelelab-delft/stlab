@@ -8,7 +8,7 @@ def numtostr(mystr):
 
 class RS_ZVB_pna(basepna):
     def __init__(self,addr='TCPIP::192.168.1.23::INSTR',reset=True,verb=True):
-        super(type(self), self).__init__(addr,reset,verb)
+        super().__init__(addr,reset,verb)
         self.twoportmode = False
         self.oneportmode = False
         self.DisplayOn()
@@ -142,6 +142,9 @@ class RS_ZVB_pna(basepna):
         if autoscale:
             self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE') #Autoscale trace
         return self.GetAllData()
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
 
     ''' Old routine before abclass
     def GetAllData(self):

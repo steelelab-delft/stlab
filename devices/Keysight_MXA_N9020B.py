@@ -9,7 +9,7 @@ class Keysight_MXA_N9020B(instrument):
                  addr='TCPIP::192.168.1.164::INSTR',
                  reset=True,
                  verb=True):
-        super(Keysight_MXA_N9020B, self).__init__(addr, reset, verb)
+        super().__init__(addr, reset, verb)
         self.dev.timeout = None
 
     def IQ_mode(self):
@@ -207,3 +207,6 @@ class Keysight_MXA_N9020B(instrument):
 
     def set_waveform_mode(self):
         return self.dev.write(':CONFigure:WAVeform:NDEFault')
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
