@@ -61,6 +61,7 @@ commandq = Queue(maxsize=0)
 addr = input('Enter VISA address of Lakeshore\n (old BF: ASRL1, new BF: ASRL11, He7: ASRL7):\n')
 baud_rate = input('Enter Serial Baud rate\n (default 9600, He7 uses 57600):\n')
 uselog = yes_or_no('Use BF logging?')
+
 try:
     baud_rate = int(baud_rate)
 except ValueError:

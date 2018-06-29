@@ -202,3 +202,67 @@ class PNAN5222A(PNAN5221A):
         self.write("CALC:MARK1:FUNC:TRAC ON")   # Don't know what this is but dosnt work without
         self.query('*OPC?')                     # Wait
         return eval(self.query("CALC:MARK1:X?"))# return minimum
+        
+        
+        
+    #For Segment sweeps
+
+    def DelAllSegm(self):
+        self.write('SENS:SEGM:DEL:ALL')
+        return
+
+    def AddSegm(self,snum=1):
+        self.write('SENS:SEGM{}:ADD'.format(snum))
+        return
+        
+    def SetSweepType(self, tt = 'LIN'): #Possible options: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe
+        self.write('SENS:SWE:TYPE {}'.format(tt))
+        return
+    
+    def SetArbitrarySegSweep(self, on=True):
+        if on:
+            self.write('SENS:SEGM:ARB ON')
+        else:
+            self.write('SENS:SEGM:ARB OFF')
+
+    def SetSegmStart(self, x, snum = 1):
+        mystr = numtostr(x)
+        mystr = 'SENS:SEGM{}:FREQ:STAR {}'.format(snum,mystr)
+        self.write(mystr)
+
+    def SetSegmEnd(self, x, snum = 1):
+        mystr = numtostr(x)
+        mystr = 'SENS:SEGM{}:FREQ:STOP {}'.format(snum,mystr)
+        self.write(mystr)
+        
+    def SetSegmPoints(self, x, snum=1):
+        mystr = '%d' % x
+        mystr = 'SENS:SEGM{}:SWE:POIN {}'.format(snum,mystr)
+        self.write(mystr)
+        
+    def SetSegmRange(self, start, end):
+        self.SetSegmStart(start)
+        self.SetSegmEnd(end)
+
+    def SetSegmState(self, state='ON'): #'ON' or 'OFF'
+        self.write('SENS:SEGM {}'.format(state))
+        return
+
+    def GetSweepTime(self):
+        result = self.query('SENSe:SWEep:TIME?')
+        return float(result)
+
+    #Not currently working for segments
+    '''
+    def SetSegmIFBW(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:SEGM:BWID '+mystr
+        self.write(mystr)
+    def SetSegmPower(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:SEGM:POW '+mystr
+        self.write(mystr)
+    '''
+
+
+

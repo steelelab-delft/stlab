@@ -1,7 +1,10 @@
 import os
 from . import readdata
+import numpy as np
 
 def fromarrays(myfile,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',colnames=None):
+    xarray = np.array(xarray)
+    yarray = np.array(yarray)
     Nx = len(xarray)
     xmin = xarray[0]
     xmax = xarray[-1]
@@ -13,6 +16,7 @@ def fromarrays(myfile,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',co
         zmin = None
         zmax = None
     else:
+        zarray = np.array(zarray)
         Nz = len(zarray)
         zmin = zarray[0]
         zmax = zarray[-1]

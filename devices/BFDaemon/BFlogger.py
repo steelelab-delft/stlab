@@ -6,7 +6,7 @@ import os
 
 SLEEPTIME = 30.
 
-def BFlogger(commandq,addr,port):
+def BFlogger(commandq,addr,port, logpath="D:/BF/logs"):
     
 
     resultq = Queue(maxsize=0)
@@ -17,7 +17,7 @@ def BFlogger(commandq,addr,port):
     labs = ['T','R']
     lls = [ (x,y) for x in chs for y in labs]
     ffs = []
-    foldername = './' + today.strftime('%y-%m-%d') + '/' 
+    foldername = logpath + './' + today.strftime('%y-%m-%d') + '/' 
     for i,lab in lls:
         filename = foldername + 'CH{} '.format(i) + '{} '.format(lab) + today.strftime('%y-%m-%d')+ '.log'
         if not os.path.exists(foldername):
