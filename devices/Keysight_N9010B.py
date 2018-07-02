@@ -70,3 +70,6 @@ class Keysight_N9010B(instrument):
         output['PSD (dBm)'] = yy
         output.addparcolumn('Res BW (Hz)', self.GetResolutionBW())
         return output
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass

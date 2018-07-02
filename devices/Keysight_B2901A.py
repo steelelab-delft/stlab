@@ -126,6 +126,9 @@ class Keysight_B2901A(instrument):
         else:
             self.write('SENS:REM OFF')
         return
+
+    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+        pass
         
 '''    
 dev.write('SWE:RANG BEST')

@@ -1,8 +1,8 @@
 # Basic interface to retrieve temperature measurement form Triton computer
-
+from stlab.devices.base_instrument import base_instrument
 from stlab.utils.MySocket import MySocket
 
-class TritonWrapper:
+class TritonWrapper(base_instrument):
     def __init__(self,addr="192.168.1.178",port=8472,reset=True,verb=True,**kwargs):
         self.verb = verb
         if reset:
@@ -133,3 +133,7 @@ class TritonWrapper:
         mystr = mystr.strip('h')
         result.append(float(mystr))
         return result
+
+    def GetMetadataString(self):
+        pass
+
