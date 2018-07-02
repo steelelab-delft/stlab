@@ -131,11 +131,16 @@ class PNAN5221A(basepna):
         self.write(mystr)
 
 
-# New commands added by Dani, test to set segment sweep parameters
+# For Segment sweeps
+    def DelAllSegm(self):
+        self.write('SENS:SEGM:DEL:ALL')
+        return
 
-    def SetSweepType(
-            self, mystr
-    ):  #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
+    def AddSegm(self,snum=1):
+        self.write('SENS:SEGM{}:ADD'.format(snum))
+        return
+        
+    def SetSweepType(self, mystr):  #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
         self.write('SENS:SWE:TYPE %s' % mystr)
 
     def SetCWfrequency(self, xx):
@@ -161,6 +166,23 @@ class PNAN5221A(basepna):
         mystr = numtostr(x)
         mystr = 'SENS:SEGM:FREQ:STOP ' + mystr
         self.write(mystr)
+    
+    def SetSegmPoints(self, x, snum=1):
+        mystr = '%d' % x
+        mystr = 'SENS:SEGM{}:SWE:POIN {}'.format(snum,mystr)
+        self.write(mystr)
+        
+    def SetSegmRange(self, start, end):
+        self.SetSegmStart(start)
+        self.SetSegmEnd(end)
+
+    def SetSegmState(self, state='ON'): #'ON' or 'OFF'
+        self.write('SENS:SEGM {}'.format(state))
+        return
+
+    def GetSweepTime(self):
+        result = self.query('SENSe:SWEep:TIME?')
+        return float(result)
 
     #Not currently working for segments
     '''
