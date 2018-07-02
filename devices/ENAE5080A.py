@@ -1,5 +1,6 @@
 import numpy as np
 from stlab.devices.PNAN5221A import PNAN5221A
+# from stlab.devices.PNAN5222A import PNAN5222A
 
 def numtostr(mystr):
     return '%20.15e' % mystr

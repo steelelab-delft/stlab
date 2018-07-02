@@ -10,8 +10,11 @@ class He7Temperature(base_instrument):
             self.reset()
         self.addr = addr
         self.port = port
-    def GetTemperature(self): #Get Temperature from BF computer.  Returns a float in K
-        # create an INET, STREAMing socket
+    def GetTemperature(self):
+        '''
+        Get Temperature from He7 computer.  Returns a float in K
+        create an INET, STREAMing socket
+        '''
         try:    
             s = MySocket()
             s.sock.connect((self.addr, self.port))
@@ -21,10 +24,10 @@ class He7Temperature(base_instrument):
             s.sock.close()
             if self.verb:
                 print('He7 Temperature received: %f K' % (temperature))
-        except ValueError:
+        except:
             temperature = -1
             print('Error when reading temperature')
-        return temperature #in K!!
+        return temperature
     def reset(self):
         pass
     def setverbose(self,verb=True):
