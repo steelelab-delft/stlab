@@ -16,7 +16,7 @@ class He7Temperature(base_instrument):
         create an INET, STREAMing socket
         '''
         try:    
-            s = MySocket()
+            s = MySocket(verb=self.verb)
             s.sock.connect((self.addr, self.port))
             word = s.myreceive()
             word = word.decode('utf_8')
