@@ -128,7 +128,7 @@ while True:
     clientsocket = None
     try:
         # accept connections from outside
-        print('Waiting for command...')
+        print('Waiting for connection...')
         (clientsocket, address) = serversocket.accept()
         print('Connection received')
         RunCommand(clientsocket,resultq)
