@@ -21,7 +21,7 @@ class MySocket:
     def mysend(self, msg):
         totalsent = 0
         while totalsent < MSGLEN:
-            print('Sending...')
+            #print('Sending...')
             sent = self.sock.send(msg[totalsent:])
             if sent == 0:
                 self.sock.send(b'#EOT')
@@ -38,7 +38,7 @@ class MySocket:
         bytes_recd = 0
         try:
             while bytes_recd < MSGLEN:
-                print('Receiving...')
+                #print('Receiving...')
                 chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
                 print(chunk)
                 if chunk == b'#EOT':
