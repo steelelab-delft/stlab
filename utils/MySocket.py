@@ -7,7 +7,8 @@ class MySocket:
       - coded for clarity, not efficiency
     """
 
-    def __init__(self, sock=None):
+    def __init__(self, sock=None,verb=False):
+        self.verb = verb
         if sock is None:
             self.sock = socket.socket(
                             socket.AF_INET, socket.SOCK_STREAM)
@@ -24,7 +25,8 @@ class MySocket:
             sent = self.sock.send(msg[totalsent:])
             if sent == 0:
                 self.sock.send(b'#EOT')
-                print("Socket send: Message finished")
+                if self.verb:
+                    print("Socket send: Message finished")
 #                raise RuntimeError("socket connection broken")
                 return
             totalsent = totalsent + sent
@@ -40,7 +42,8 @@ class MySocket:
                 chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
                 print(chunk)
                 if chunk == b'#EOT':
-                    print("Socket receive: Message finished")
+                    if self.verb:
+                        print("Socket receive: Message finished")
     #                raise RuntimeError("socket connection broken")
                     return b''.join(chunks)
                 elif chunk == b'':

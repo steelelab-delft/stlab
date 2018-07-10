@@ -25,11 +25,12 @@ class PNAN5221A(basepna):
         freq = np.asarray([float(xx) for xx in freq.split(',')])
         return freq
 
-    def GetTrcNames(self):
+    def GetTraceNames(self):
         pars = self.query('CALC:PAR:CAT:EXT?')
         pars = pars.strip('\n').strip('"').split(',')
         parnames = pars[1::2]
-        return parnames
+        pars = pars[::2]
+        return pars,parnames
 
     def SetActiveTrace(self, mystr, ch=1):
         self.write('CALC{}:PAR:SEL "{}"'.format(ch, mystr))
@@ -65,7 +66,7 @@ class PNAN5221A(basepna):
 
     def TwoPortSetup(self):
         self.SetContinuous(False)
-        trcnames = self.GetTrcNames()
+        trcnames = self.GetTraceNames()
         measnames = ['S11', 'S21', 'S12', 'S22']
         if trcnames == measnames:
             return
@@ -131,11 +132,16 @@ class PNAN5221A(basepna):
         self.write(mystr)
 
 
-# New commands added by Dani, test to set segment sweep parameters
+# For Segment sweeps
+    def DelAllSegm(self):
+        self.write('SENS:SEGM:DEL:ALL')
+        return
 
-    def SetSweepType(
-            self, mystr
-    ):  #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
+    def AddSegm(self,snum=1):
+        self.write('SENS:SEGM{}:ADD'.format(snum))
+        return
+        
+    def SetSweepType(self, mystr):  #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
         self.write('SENS:SWE:TYPE %s' % mystr)
 
     def SetCWfrequency(self, xx):
@@ -161,6 +167,23 @@ class PNAN5221A(basepna):
         mystr = numtostr(x)
         mystr = 'SENS:SEGM:FREQ:STOP ' + mystr
         self.write(mystr)
+    
+    def SetSegmPoints(self, x, snum=1):
+        mystr = '%d' % x
+        mystr = 'SENS:SEGM{}:SWE:POIN {}'.format(snum,mystr)
+        self.write(mystr)
+        
+    def SetSegmRange(self, start, end):
+        self.SetSegmStart(start)
+        self.SetSegmEnd(end)
+
+    def SetSegmState(self, state='ON'): #'ON' or 'OFF'
+        self.write('SENS:SEGM {}'.format(state))
+        return
+
+    def GetSweepTime(self):
+        result = self.query('SENSe:SWEep:TIME?')
+        return float(result)
 
     #Not currently working for segments
     '''
