@@ -20,6 +20,7 @@ class MySocket:
     def mysend(self, msg):
         totalsent = 0
         while totalsent < MSGLEN:
+            print('Sending...')
             sent = self.sock.send(msg[totalsent:])
             if sent == 0:
                 self.sock.send(b'#EOT')
@@ -35,10 +36,16 @@ class MySocket:
         bytes_recd = 0
         try:
             while bytes_recd < MSGLEN:
+                print('Receiving...')
                 chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
+                print(chunk)
                 if chunk == b'#EOT':
                     print("Socket receive: Message finished")
     #                raise RuntimeError("socket connection broken")
+                    return b''.join(chunks)
+                elif chunk == b'':
+                    print("Socket receive: Message broken?")
+                    raise RuntimeError("socket connection broken")
                     return b''.join(chunks)
                 chunks.append(chunk)
                 bytes_recd = bytes_recd + len(chunk)

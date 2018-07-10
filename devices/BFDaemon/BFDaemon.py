@@ -95,12 +95,15 @@ if uselog:
 def RunCommand(sock,resultq):
     #print('RunCommand: start')
     ss = MySocket(sock)
-    word = ss.myreceive()
     try:
+        word = ss.myreceive()
         word = word.decode('utf_8')
     except AttributeError as err:
         print(err)
         word = None
+    except RuntimeError as err:
+        print(err)
+        return None
     #print('RunCommand:', word)
     if word:
         if '?' in word:
@@ -131,5 +134,5 @@ while True:
         break
 
 commandq.put(0)
-if loggerthread:
+if uselog:
     loggerthread.join()
