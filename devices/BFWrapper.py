@@ -14,7 +14,7 @@ class BFWrapper(base_instrument):
         self.htr_ranges = (0, 0.0316, 0.1, 0.316, 1., 3.16, 10., 31.6, 100.) #For heater current ranges. 0 = Off, 1 = 31.6 μA, 2 = 100 μA, 3 = 316 μA, 4 = 1.00 mA, 5 = 3.16 mA, 6 = 10.0 mA, 7 = 31.6 mA, 8 = 100 mA
         super().__init__()
     def query(self,mystr):
-        s = MySocket()
+        s = MySocket(verb=self.verb)
         s.sock.connect((self.addr, self.port))
         if self.verb:
             print(mystr)
