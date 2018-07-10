@@ -95,11 +95,9 @@ if uselog:
 def RunCommand(sock,resultq):
     #print('RunCommand: start')
     ss = MySocket(sock)
-    print("Receiveing command")
     word = ss.myreceive()
     try:
         word = word.decode('utf_8')
-        print("'{}' received.  Sending to controller...".format(word))
     except AttributeError as err:
         print(err)
         word = None
@@ -112,14 +110,11 @@ def RunCommand(sock,resultq):
     else:
         return None
     xx = resultq.get()
-    print("'{}' response received".format(xx))
     if xx == None:
         xx = ''
     resultq.task_done()
-    print('Sending response...')
     ss.mysend(xx.encode('utf_8'))
     ss.sock.close()
-    print('Response sent')
     return word
     
 resultq = Queue(maxsize=0)
@@ -128,9 +123,7 @@ while True:
     clientsocket = None
     try:
         # accept connections from outside
-        print('Waiting for command...')
         (clientsocket, address) = serversocket.accept()
-        print('Connection received')
         RunCommand(clientsocket,resultq)
     except KeyboardInterrupt:
         print('Shutting down temperature server')
