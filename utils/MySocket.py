@@ -7,13 +7,15 @@ class MySocket:
       - coded for clarity, not efficiency
     """
 
-    def __init__(self, sock=None,verb=False):
+    def __init__(self, sock=None,verb=False,timeout=10):
         self.verb = verb
         if sock is None:
             self.sock = socket.socket(
                             socket.AF_INET, socket.SOCK_STREAM)
         else:
             self.sock = sock
+
+        self.sock.settimeout(timeout)
 
     def connect(self, host, port):
         self.sock.connect((host, port))
@@ -55,6 +57,9 @@ class MySocket:
             return b''.join(chunks)
         except ConnectionResetError as err:
             print(err)
-            print('Socket cleared, returned "None"')
+            print('Connection reset, returned "None"')
+            return None
+        except socket.timeout as err:
+            print('Receive timed out: ',err)
             return None
 
