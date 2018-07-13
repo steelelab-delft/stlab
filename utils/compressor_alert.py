@@ -80,7 +80,7 @@ while True:
             # to = ['m.d.jenkinssanchez@tudelft.nl']  
             to = ['steelelab-tnw@tudelft.nl']
             subject = 'EMERGENCY! COMPRESSOR ERROR!'  
-            body = 'EMERGENCY! EMERGENCY! THERE IS AN EMERGENCY GOING ON!\n\nIT\'S STILL GOING ON!\n\nLooking forward to hearing from you,\n\nBest regards,\n\nSteelab Compressor Alert Service'
+            body = 'EMERGENCY! EMERGENCY! THERE IS AN EMERGENCY GOING ON!\n\nIT\'S STILL GOING ON!\n\nLooking forward to hearing from you,\n\nBest regards,\n\nSteelelab Compressor Alert Service'
             msg = EmailMessage()
             msg.set_content(body)
             msg['Subject'] = subject
