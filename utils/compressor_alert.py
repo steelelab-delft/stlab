@@ -13,7 +13,7 @@ from email.message import EmailMessage
 # lrralxerojjirmpq   (app pass)
 
 #LOGFOLDER = 'C:\\Entropy\\logs\\'
-LOGFOLDER = '/home/yausern/Desktop/'
+LOGFOLDER = 'D:\\BF\\logs\\'
 
 def GetCurrentLogFolder():
     a = glob.glob(LOGFOLDER + '*-*-*/')
@@ -69,15 +69,16 @@ while True:
     try:
         stat = GetCompStatus()
         if stat == 0:
-            print('ok!')
+            # print('ok!')
+            pass
         else:
             print('ALERT: COMPRESSOR ERROR! EMERGENCY! EMERGENCY!')
             gmail_user = 'steelelab.tudelft'
             server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             server.login(gmail_user, "SteeleLab_18")
             sent_from = 'Steelelab compressor alert service'  
-            to = ['m.d.jenkinssanchez@tudelft.nl']  
-            #to = ['steelelab-tnw@tudelft.nl']
+            # to = ['m.d.jenkinssanchez@tudelft.nl']  
+            to = ['steelelab-tnw@tudelft.nl']
             subject = 'EMERGENCY! COMPRESSOR ERROR!'  
             body = 'EMERGENCY! EMERGENCY! THERE IS AN EMERGENCY GOING ON!\n\nIT\'S STILL GOING ON!\n\nLooking forward to hearing from you,\n\nBest regards,\n\nSteelab Compressor Alert Service'
             msg = EmailMessage()
