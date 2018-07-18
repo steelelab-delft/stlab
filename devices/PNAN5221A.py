@@ -25,11 +25,12 @@ class PNAN5221A(basepna):
         freq = np.asarray([float(xx) for xx in freq.split(',')])
         return freq
 
-    def GetTrcNames(self):
+    def GetTraceNames(self):
         pars = self.query('CALC:PAR:CAT:EXT?')
         pars = pars.strip('\n').strip('"').split(',')
         parnames = pars[1::2]
-        return parnames
+        pars = pars[::2]
+        return pars,parnames
 
     def SetActiveTrace(self, mystr, ch=1):
         self.write('CALC{}:PAR:SEL "{}"'.format(ch, mystr))
@@ -65,7 +66,7 @@ class PNAN5221A(basepna):
 
     def TwoPortSetup(self):
         self.SetContinuous(False)
-        trcnames = self.GetTrcNames()
+        trcnames = self.GetTraceNames()
         measnames = ['S11', 'S21', 'S12', 'S22']
         if trcnames == measnames:
             return
