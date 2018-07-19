@@ -6,6 +6,7 @@ import struct
 import scipy
 from scipy.ndimage.filters import gaussian_filter
 import pandas as pd
+from scipy.interpolate import interp1d
 
 
 class stlabdict(OrderedDict):
@@ -567,6 +568,12 @@ class stlabmtx_pd():
             v = self.pmtx.iloc[:,pos]
             self.pmtx = self.pmtx.subtract(v,axis=0)
         self.processlist.append('sub_linecut {},{}'.format(pos,horizontal))
+    def vi_to_iv(self,vmin,vmax,nbins):
+        vinterpol = np.linspace(vmin,vmax,nbins)
+        pmtx = [interp1d(x=self.pmtx[column],y=self.pmtx.axes[0],bounds_error=False,fill_value=np.nan)(vinterpol) for column in self.pmtx]
+        self.pmtx = pd.DataFrame(np.array(pmtx).T, index=vinterpol, columns=self.pmtx.axes[1])
+        self.pmtx.index.name = 'Vmeas (V)'
+        self.processlist.append('vi_to_iv {},{},{}'.format(vmin,vmax,nbins))
     def xderiv(self,direction=1):
         self.pmtx = xderiv_pd(self.pmtx,direction)
         self.processlist.append('xderiv {}'.format(direction))

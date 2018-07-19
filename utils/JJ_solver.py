@@ -44,8 +44,8 @@ class JJ_solver:
         return np.array([fp,gp])
 
     def solve(self, ts, Ifunc, Idict, init0=[0,0]):  #Standard time variable
-#        print(tuple([Infunc, kwargs]))
-#        print(self.wp)
+        # print(tuple([Infunc, kwargs]))
+        # print(self.wp)
         taus = ts*self.wp
         sols = odeint(self.JJeqn_model, init0, taus, args = (Ifunc, Idict) )
         sols = np.insert(sols,0,ts,axis=1)
@@ -65,7 +65,7 @@ class JJ_solver:
             self.I0 = ((self.Rm+self.R1)*self.Vfunc - self.R1*self.Vj)/(self.R1*self.Rm+self.R0*(self.R1+self.Rm)) #Source current in amps
         return self.sol
 
-    def solveIV(self,Ivals):
+    def solveIV(self,Ivals,testplot=False):
         def Ifunc(t,Idict):
             return Idict['I0']
         Ins = Ivals/self.Ic
@@ -82,7 +82,7 @@ class JJ_solver:
                 dphi0 = self.sol[2][-1]
             if Idict['I0']>self.Ic:
                 tscale = phi0/self.Reff(0)/np.sqrt(Idict['I0']**2-self.Ic**2)
-                #print(tscale)
+                # print(tscale)
                 tscale *= 50
             else:
                 if self.Q(0) >= 0.5:
@@ -91,13 +91,14 @@ class JJ_solver:
                     Q = self.Q(0)
                     lmd = 1/2/Q - np.sqrt(1/4/Q**2-1)
                     tscale = 1/lmd/self.wp
-                print(tscale)
+                # print(tscale)
                 tscale *= 100
             ts = np.linspace(0,tscale,20001)
             sols = self.solve(ts,init0=[phi00,dphi0],Idict=Idict,Ifunc=Ifunc) #solve for given time values
-            plt.clf()
-            plt.plot(ts/self.Trc(0),self.Vj)
-            plt.show()
+            if testplot:
+                plt.plot(ts/self.Trc(0),self.Vj)
+                plt.show()
+                plt.close()
             Vs.append(np.average(self.Vj[5000:]))
             Ijs.append(np.average(self.Ij[5000:]))
         Vs = np.array(Vs)
