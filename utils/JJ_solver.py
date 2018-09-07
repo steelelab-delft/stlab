@@ -4,6 +4,7 @@ import scipy.constants as const
 from scipy.integrate import odeint
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
+import pandas as pd
 
 phi0 = const.value('mag. flux quantum')
 
@@ -44,8 +45,8 @@ class JJ_solver:
         return np.array([fp,gp])
 
     def solve(self, ts, Ifunc, Idict, init0=[0,0]):  #Standard time variable
-        # print(tuple([Infunc, kwargs]))
-        # print(self.wp)
+#        print(tuple([Infunc, kwargs]))
+#        print(self.wp)
         taus = ts*self.wp
         sols = odeint(self.JJeqn_model, init0, taus, args = (Ifunc, Idict) )
         sols = np.insert(sols,0,ts,axis=1)
@@ -65,13 +66,16 @@ class JJ_solver:
             self.I0 = ((self.Rm+self.R1)*self.Vfunc - self.R1*self.Vj)/(self.R1*self.Rm+self.R0*(self.R1+self.Rm)) #Source current in amps
         return self.sol
 
-    def solveIV(self,Ivals,testplot=False):
+    def solveIV(self,Ivals,doplots=True,matrix=False):
         def Ifunc(t,Idict):
             return Idict['I0']
         Ins = Ivals/self.Ic
         Is = []
         Vs = []
         Ijs = []
+        fullset = None
+        if matrix:
+            fullset = []
         for i,ii in enumerate(Ins):
             Idict = {'I0':self.Ic*ii}
             if i==0:
@@ -82,8 +86,8 @@ class JJ_solver:
                 dphi0 = self.sol[2][-1]
             if Idict['I0']>self.Ic:
                 tscale = phi0/self.Reff(0)/np.sqrt(Idict['I0']**2-self.Ic**2)
-                # print(tscale)
-                tscale *= 50
+                #print(tscale)
+                tscale *= 100
             else:
                 if self.Q(0) >= 0.5:
                     tscale = self.Reff(0)*self.Cj
@@ -91,19 +95,26 @@ class JJ_solver:
                     Q = self.Q(0)
                     lmd = 1/2/Q - np.sqrt(1/4/Q**2-1)
                     tscale = 1/lmd/self.wp
-                # print(tscale)
+                #print(tscale)
                 tscale *= 100
             ts = np.linspace(0,tscale,20001)
             sols = self.solve(ts,init0=[phi00,dphi0],Idict=Idict,Ifunc=Ifunc) #solve for given time values
-            if testplot:
+            if doplots:            
+                plt.clf()
                 plt.plot(ts/self.Trc(0),self.Vj)
                 plt.show()
-                plt.close()
             Vs.append(np.average(self.Vj[5000:]))
             Ijs.append(np.average(self.Ij[5000:]))
+            if matrix:
+                ff = pd.DataFrame()
+                ff['t'] = np.array(ts)                
+                ff['In'] = Idict['I0']
+                ff['Ij'] = np.array(self.Ij)
+                ff['Vj'] = np.array(self.Vj)
+                fullset.append(ff)
         Vs = np.array(Vs)
         Ijs = np.array(Ijs)
-        return Ivals,Ijs,Vs
+        return Ivals,Ijs,Vs,fullset
 
 
     def Trc(self,V):
