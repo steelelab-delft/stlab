@@ -1,19 +1,64 @@
+"""Module for fitting resonance line shapes to different circuit models
+
+This module contains the functions necessary to fit some general lorentizian to
+simulations or measurements.  The main function is "fit" and is imported with
+stlab as "stlab.S11fit".  All other functions in this module are there to
+supplement this fitting function or are not generally used.
+
+"""
 import numpy as np
 from scipy.signal import savgol_filter as smooth
 import matplotlib.pyplot as plt
 from lmfit import minimize, Parameters, Parameter, report_fit
-#from smooth import smooth
+
 pi = np.pi
 
-def realimag(array):
+def newparams(f0=1,Qint=100,Qext=200,theta=0,a=1,b=0,c=0,ap=0,bp=0):
+    """Makes new Parameters object compatible with fitting routine
+
+    A new lmfit.Parameters object is created using the given values.  If
+    ommited
+
     """
-    Makes alternating real and imaginary part array from complex array
+
+def realimag(array):
+    """Makes alternating real and imaginary part array from complex array
+
+    Takes an array-like object of complex number elements and generates a
+    1-D array aleternating the real and imaginary part of each element of the
+    original array.  If array = (z1,z2,...,zn), then this function returns
+    (x1,y1,x2,y2,...,xn,yn) where xi = np.real(zi) and yi=np.imag(zi).
+
+    Parameters
+    ----------
+    array : array_like of complex
+        1-D array of complex numbers
+
+    Returns
+    -------
+    numpy.ndarray
+        New array of alternating real and imag parts of each element of
+        original array
+
     """
     return np.array([(x.real, x.imag) for x in array]).flatten()
 
 def un_realimag(array):
-    """
-    Makes complex array from alternating real and imaginary part array
+    """Makes complex array from alternating real and imaginary part array
+
+    Performs the reverse operation to realimag
+
+    Parameters
+    ----------
+    array : array_like of float
+        1-D array of real numbers.  Should have an even number of elements.
+
+    Returns
+    -------
+    numpy.ndarray of numpy.complex128
+        1-D array of complex numbers built by taking every two elements of
+        original array as the real and imaginary parts
+
     """
     z = []
     for x,y in zip(array[::2],array[1::2]):
@@ -21,8 +66,22 @@ def un_realimag(array):
     return np.array(z)
 
 def phaseunwrap(array):
-    """
-    unwraps the phase from a given complex array returning a signal with 0 average phase slope
+    """Removes a global phase slope from a complex array
+
+    Unwraps the phase of a sequence of complex numbers and subtracts the average
+    slope of the phase (desloped phase).
+
+    Parameters
+    ----------
+    array : array_like of complex
+        1-D array of complex numbers
+
+    Returns
+    -------
+    numpy.ndarray of numpy.complex128
+        Same array as original but with phase slope removed (0 average phase
+        slope)
+
     """
     data = np.asarray(array)
     phase = np.unwrap(np.angle(data))
@@ -31,26 +90,29 @@ def phaseunwrap(array):
 #    print(np.average(np.diff(np.angle(data))))
     return np.asarray(data)
 
-def getwidth(i0,vec):
-    """
-    Unused... Used before when using Imag to find peak width
-    """
-    f0 = vec[i0]
-    i2 = len(vec)-1
-    i1 = 0.
-    for i in range(i0,len(vec)):
-        if f0*vec[i] < 0:
-            i2 = i
-            break
-    for i in range(i0,-1,-1):
-        if f0*vec[i] < 0:
-            i1 = i
-            break
-    return (i1,i2)
-
 def getwidth_phase(i0,vec,margin):
-    """
-    Finds indices of peak width of array "vec" assuming "i0" is the peak maximum.  Ignores points within "margin" of the ends
+    """Finds indices for peak width around given maximum position
+
+    Auxiliary function for fit.  Given the complex array "vec" assuming "i0"
+    is the resonance index, this function finds resonance peak width from the
+    phase derivative of the signal.
+
+    Parameters
+    ----------
+    i0 : int
+        Array index of resonance
+    vec : array_like of complex
+        Complex array with resonance data
+    margin : int
+        Smoothing margin used on data.  Needed to remove spureous increases in
+        the phase array that occur at the head and tail of vec after smoothing.
+        Should be an odd number
+
+    Returns
+    -------
+    (int, int)
+        Indices of the lower and upper estimated edges of the resonance peak
+
     """
     maxvec = vec[i0]
     if margin == 0:
@@ -72,8 +134,24 @@ def getwidth_phase(i0,vec,margin):
     return (i1,i2)
 
 def trim(x,y,imin,imax):
-    """
-    removes range from imin to imax from vectors x,y
+    """Removes range from imin to imax from vectors x,y
+
+    Given two real arrays and indices corresponding to a lower and upper edge,
+    this function removes the index range between these edges from both input
+    arrays
+
+    Parameters
+    ----------
+    x, y : array_like of float
+        Arrays to be trimmed
+    imin, imax : int
+        Lower and upper edge of range to be removed (trimmed) from x,y
+
+    Returns
+    -------
+    (numpy.ndarray, numpy.ndarray)
+        Trimmed arrays
+
     """
     imin = int(imin)
     imax = int(imax)
@@ -90,8 +168,29 @@ def trim(x,y,imin,imax):
     return (xnew,ynew)
 
 def backmodel(x,params):
-    """
-    Function for background model.  Uses parameter object from lmfit
+    """Function for background model.
+
+    Returns the background model values for a given set of parameters and
+    frequency values.  Uses parameter object from lmfit.  The background model
+    is given by
+
+    .. math:: f_b(\omega)=(a+b\omega+c\omega^2)
+        \exp(j(a'+b'\omega)),
+
+    where :math:`a,b,c,a',b'` are real parameters.
+
+    Parameters
+    ----------
+    x : float or array_like of float
+        Frequency values to evaluate the model at
+    params : lmfit.Parameters
+        Parameters set with which to generate the background
+
+    Returns
+    -------
+    numpy.complex128 or numpy.ndarray of numpy.complex128
+        Background values at frequencies x with model parameters params
+
     """
     a = params['a'].value
     b = params['b'].value
@@ -102,16 +201,64 @@ def backmodel(x,params):
     return (a+b*x+c*np.power(x,2.))*np.exp( 1j*(ap+bp*x+cp*np.power(x,2.)) )
 
 def background2min(params, x, data):
-    """
-    Complex residual of for the background fit
+    """Background residual
+
+    Computes the residual vector for the background fitting.  Operates on
+    complex vectors but returns a real vector with alternating real and imag
+    parts
+
+    Parameters
+    ----------
+    params : lmfit.Parameters
+        Model parameters for background generation
+    x : float or array_like of float
+        Frequency values for background calculation.  backmodel function is
+        used.
+    data : complex or array_like of complex
+        Background values of signal to be compared to generated background at
+        frequency values x.
+
+    Returns
+    -------
+    numpy.ndarray of numpy.float
+        Residual values (model value - data value) at values given in x.
+        Alternates real and imaginary values
+
     """
     model = backmodel(x,params)
     res = model - data
     return realimag(res)
 
-def S11theo(frec,params,ftype='A'): # Equation 
-    """
-    Response function for resonator. Uses parameter object from lmfit
+def S11theo(frec,params,ftype='A'): # Equation
+    """Theoretical response functions of cavities with no background
+
+    Returns the theory values of cavity response functions for a given set of
+    parameters for different cavity models.
+
+    Parameters
+    ----------
+    frec : float or array_like of float
+        Frequency values to calculate the response function at
+    params : lmfit.Parameters
+        Parameter values for calculation
+    ftype : {'A','-A','B','-B','X'}, optional
+        Model for response function selection.  These are described in Daniel's
+        response function document.  The desired model should be found there and
+        selected with this parameter.
+
+        The possible models are (CHECK DANIEL'S RESPONSE FUNCTION DOCUMENT):
+
+        - 'A': Reflection cavity with short circuit boundary condition at input port (default selection)
+        - '-A': Reflection cavity with open circuit boundary condition at input port (= model A with a minus sign)
+        - 'B': Transmission through a side coupled geometry
+        - '-B': Same as model B but with a minux sign
+        - 'X': Non-standard model (used in a magnetic field sweep)
+
+    Returns
+    -------
+    numpy.complex128 or numpy.ndarray of numpy.complex128
+        Values of theoretical response function at frequencies given in frec
+
     """
     Qint = params['Qint'].value
     Qext = params['Qext'].value
@@ -136,8 +283,29 @@ def S11theo(frec,params,ftype='A'): # Equation
 
 
 def S11residual(params, frec, data,ftype='A'):
-    """
-    Residual for full fit including background
+    """Residual for full fit including background
+
+    Calculates the residual for the full signal and background with respect to
+    the given background and theory model.
+
+    Parameters
+    ----------
+    params : lmfit.Parameters
+        Parameter values for calculation
+    frec : float or array_like of float
+        Frequency values to calculate the combined signal and background
+        response function at using params
+    data : complex or array_like of complex
+        Original signal data values at frequencies frec
+    ftype : {'A','-A','B','-B','X'}, optional
+        Model for theory response function selection.  See S11theo for
+        explanation
+
+    Returns
+    -------
+        Residual values (model value - data value) at values given in x.
+        Alternates real and imaginary values
+
     """
     model = S11full(frec,params,ftype)
     residual = model - data
@@ -154,24 +322,50 @@ def S11full(frec,params,ftype='A'):
     return model
 
 
-def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False, fitwidth=None, returnchi2 = False):
-    
-    """MAIN FIT ROUTINE
+def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin = 51, oldpars=None, refitback = True, reusefitpars = False, fitwidth=None):
+    """**MAIN FIT ROUTINE**
+
     Fits complex data S11 vs frecuency to one of 4 models adjusting for a multiplicative complex background
     It fits the data in three steps.  Firstly it fits the background signal removing a certain window around the detected peak position.
     Then it fits the model times the background to the full data set keeping the background parameters fixed at the fitted values.  Finally it refits all background and
     model parameters once more starting from the previously fitted values.
-    frec -> Array of X values (typically frequency)
-    S11 -> Complex array of Y values (typically S11 data)
-    ftype -> Fit model function (A,B,-A,-B, see S11theo for formulas)
-    fitbackground -> If "True" will attempt to fit and remove background.  If "False", will use a constant background equal to 1 and fit only model function to data.
-    trimwidth -> Number of linewidths around resonance (estimated pre-fit) to remove for background only fit.
-    doplots -> If "True", shows debugging and intermediate plots
-    margin -> Smoothing window to apply to signal for initial guess procedures (the fit uses unsmoothed data)
-    oldpars -> Parameter data from previous fit (expects lmfit Parameter object). Used when "refitback" is "False" or "reusefitpars" is "True".
-    refitback -> If set to False, does not fit the background but uses parameters provided in "oldpars".  If set to "True", fits background normally
-    reusefitpars -> If set to True, uses parameters provided in "oldpars" as initial guess for fit parameters in main model fit (ignored by background fit)
-    fitwidth -> If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit
+
+    Parameters
+    ----------
+    frec : array_like
+        Array of X values (typically frequency)
+    S11 : array_like
+        Complex array of Z values (typically S11 data)
+    ftype : {'A','B','-A','-B', 'X'}, optional
+        Fit model function (A,B,-A,-B, see S11theo for formulas)
+    fitbackground : bool, optional
+        If "True" will attempt to fit and remove background.  If "False", will use a constant background equal to 1 and fit only model function to data.
+    trimwidth : float, optional
+        Number of linewidths around resonance (estimated pre-fit) to remove for background only fit.
+    doplots : bool, optional
+        If "True", shows debugging and intermediate plots
+    margin : float, optional
+        Smoothing window to apply to signal for initial guess procedures (the fit uses unsmoothed data)
+    oldpars : lmfit.Parameters, optional
+        Parameter data from previous fit (expects lmfit Parameter object). Used when "refitback" is "False" or "reusefitpars" is "True".
+    refitback : bool, optional
+        If set to False, does not fit the background but uses parameters provided in "oldpars".  If set to "True", fits background normally
+    reusefitpars : bool, optional
+        If set to True, uses parameters provided in "oldpars" as initial guess for fit parameters in main model fit (ignored by background fit)
+    fitwidth : float, optional
+        If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit
+
+    Returns
+    -------
+    params : lmfit.Parameters
+        Fitted parameter values
+    freq : numpy.ndarray
+        Array of frequency values within the fitted range
+    S11: numpy.ndarray
+        Array of complex signal values within the fitted range
+    finalresult : lmfit.MinimizerResult
+        The full minimizer result object (see lmfit documentation for details)
+
     """
     # Convert frequency and S11 into arrays
     frec = np.array(frec)
@@ -240,7 +434,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.title('Smoothed (ph-phavg)\^2')
         plt.plot(errvec)
         plt.plot([imin],[errvec[imin]],'ro')
-        plt.plot([imax],[errvec[imax]],'ro') 
+        plt.plot([imax],[errvec[imax]],'ro')
         plt.show()
 
     if not fitwidth==None:
@@ -340,7 +534,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
     params['cp'].set(value=0.,vary=False)
     result = minimize(background2min, params, args=(backfrec, backsig))
-    ''' 
+    '''
     params = result.params
     params['a'].set(vary=False)
     params['b'].set(vary=False)
@@ -375,7 +569,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.title('Signal and fitted background (Re,Im)')
         plt.plot(frec,S11.real)
         plt.plot(frec,S11.imag)
-        plt.plot(frec,fullbackground.real)   
+        plt.plot(frec,fullbackground.real)
         plt.plot(frec,fullbackground.imag)
         plt.show()
 
@@ -398,7 +592,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         ph = np.unwrap(np.angle(S11corr))
         plt.plot(frec,ph)
         plt.show()
- 
+
         plt.title('Signal with background removed (Polar)')
         plt.plot(S11corr.real,S11corr.imag)
         plt.show()
@@ -522,22 +716,15 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
     chi2 = finalresult.chisqr
 
-    if fitwidth == None:
-        if returnchi2 is True:
-            return params,chi2
-        else:
-            return params
-    else:
-        if returnchi2 is True:
-            return params,frec,S11,chi2
-        else:
-            return params,frec,S11
+
+    return params,frec,S11,finalresult
 
 
 
 def find_resonance(frec,S11,margin=31,doplots=False):
-    """
-    Returns the resonance frequency from maximum of the derivative of the phase
+    """Returns the resonance frequency from maximum of the derivative of the phase
+
+    Not currently in use.  Stripped down version of fit
     """
     #Smooth data for initial guesses
     sReS11 = np.array(smooth(S11.real,margin,3))
@@ -578,8 +765,9 @@ def find_resonance(frec,S11,margin=31,doplots=False):
     return f0i
 
 def diff_find_resonance(frec,diffS11,margin=31,doplots=False):
-    """
-    Returns the resonance frequency from maximum of the derivative of the phase
+    """Returns the resonance frequency from maximum of the derivative of the phase
+
+    Not currently in use.  Stripped down version of fit
     """
     #Smooth data for initial guesses
     sReS11 = np.array(smooth(diffS11.real,margin,3))
@@ -618,4 +806,3 @@ def diff_find_resonance(frec,diffS11,margin=31,doplots=False):
         plt.show()
 
     return f0i
-
