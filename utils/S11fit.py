@@ -16,10 +16,58 @@ pi = np.pi
 def newparams(f0=1,Qint=100,Qext=200,theta=0,a=1,b=0,c=0,ap=0,bp=0):
     """Makes new Parameters object compatible with fitting routine
 
-    A new lmfit.Parameters object is created using the given values.  If
-    ommited
+    A new lmfit.Parameters object is created using the given values.  Default
+    values are filled in for ommited parameters.  The fit model is:
+
+    .. math:: \Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
+        \Gamma(\omega,Q_\\textrm{int},Q_\\textrm{ext},\\theta),
+
+    Parameters
+    ----------
+    f0 : float, optional
+        Resonance frequency
+    Qint : float, optional
+        Internal quality factor
+    Qext : float, optional
+        External quality factor
+    theta : float, optional
+        Rotation angle to compensate additive background effects.  Should be
+        close to 0 for good fits.
+    a : float, optional
+        Background magnitude offset
+    b : float, optional
+        Background magnitude linear slope
+    c : float, optional
+        Background magnitude quadratic term
+    ap : float, optional
+        Background phase offset
+    bp : float, optional
+        Background phase slope
+
+    Returns
+    -------
+    params : lmfit.Parameters
+        lmfit fit object containing the provided parameters
 
     """
+
+    params = lmfit.Parameters()
+
+    params.add('a', value= a, vary=True)
+    params.add('b', value= b, vary=True)
+    params.add('c', value= c, vary=True)
+    params.add('ap', value= ap, vary=True)
+    params.add('bp', value= bp, vary=True)
+    params.add('cp', value= 0, vary=False)
+
+    params.add('Qint', value=Qint,vary=True,min = 0)
+    params.add('Qext', value=Qext,vary=True,min = 0)
+    params.add('f0', value=f0,vary=True)
+    params.add('theta', value=theta,vary=True)
+
+    return params
+
+
 
 def realimag(array):
     """Makes alternating real and imaginary part array from complex array
@@ -328,7 +376,11 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
     Fits complex data S11 vs frecuency to one of 4 models adjusting for a multiplicative complex background
     It fits the data in three steps.  Firstly it fits the background signal removing a certain window around the detected peak position.
     Then it fits the model times the background to the full data set keeping the background parameters fixed at the fitted values.  Finally it refits all background and
-    model parameters once more starting from the previously fitted values.
+    model parameters once more starting from the previously fitted values.  The fit model is:
+
+    .. math:: \Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
+        \Gamma(\omega,Q_\\textrm{int},Q_\\textrm{ext},\\theta),
+
 
     Parameters
     ----------
