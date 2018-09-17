@@ -2,6 +2,7 @@
 *~
 *.wfm
 *.seq
+
 utils/MySocket.py.orig
 devices/BFDaemon/BFDaemon_REMOTE_9904.py
 devices/BFDaemon/BFDaemon_REMOTE_3312.py
@@ -12,3 +13,8 @@ devices/BFDaemon/BFDaemon_BASE_3312.py
 devices/BFDaemon/BFDaemon_BACKUP_9904.py
 devices/BFDaemon/BFDaemon_BACKUP_3312.py
 devices/BFDaemon/BFDaemon.py.orig
+
+
+
+
+

@@ -23,7 +23,8 @@ Arguments:
 - autoindex - Specifies if indexing of successively opened files is desired.  Will add a running index to the prefix of the newly created file/folder.  This will be incremented by 1 for each new file with the same prefix.  If no files are found with the same prefix, it creates the first file name <prefix>1_yy_mm_dd_HH.MM.SS_<idstring>.  Successive files will be named <prefix><idx>_yy_mm_dd_HH.MM.SS_<idstring>.  Is False by default.
 '''
 
-def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=True, autoindex = False):
+def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,
+    usefolder=True, autoindex = False,return_folder_name=False):
 
     import __main__
     if hasattr(__main__, '__file__'):
@@ -38,7 +39,7 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
     # Autoindexing...  Prefix is followed by an incremental index.
     # Looks for already present files/folders with the same prefix and indexes and creates the next index.
     # If none are found, starts with the first.
-    
+
     if autoindex:
         if (prefix == '' or prefix == None):
             raise ValueError('No prefix given for autoindexing')
@@ -56,7 +57,7 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
             prefix = prefix + str(max(idxs)+1)
         else:
             prefix = prefix + '1'
-    
+
     if usedate:
         foldername = prefix + '_' + datecode+'_'+timecode+'_'+idstring
     else:
@@ -91,6 +92,9 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
     if colnames!=None:
         varline = '#' + ', '.join(colnames) + '\n'
         myfile.write(varline)
-    return myfile
+    if return_folder_name:
+        return myfile,fullfoldername
+    else:
+        return myfile
 
-    
+
