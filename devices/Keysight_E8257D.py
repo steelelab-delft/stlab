@@ -45,13 +45,8 @@ class Keysight_E8257D(instrument):
     def RFoff(self):
         self.write('OUTP OFF')
 
-    def set_reference(self, val):
-        '''
-        sets the 10 MHz reference source to INTernal or EXTernal.
-        '''
-        self.write(':SOURce:ROSCillator:SOURce ' + val)
 
-    def get_reference(self, val):
+    def get_reference(self):
         '''
         gets the 10 MHz reference source
         '''
@@ -60,3 +55,9 @@ class Keysight_E8257D(instrument):
 
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
         pass
+
+    def EXTref(self):
+        self.write('ROSC:SOUR EXT')
+
+    def INTref(self):
+        self.write('ROSC:SOUR INT')

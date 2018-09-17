@@ -47,3 +47,12 @@ class Keysight_N5183B(instrument):
 
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
         pass
+
+    def EXTref(self):
+        self.write('ROSC:SOUR EXT')
+
+    def INTref(self):
+        self.write('ROSC:SOUR INT')
+
+    def getReferenceOscillator(self):
+        return rf_source.query('ROSC:SOUR?')

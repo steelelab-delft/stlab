@@ -6,7 +6,7 @@ import time
 def numtostr(mystr):
     return '%12.8e' % mystr
 
-    
+
 
 class Stanford_CS580(instrument):
     def __init__(self,addr='TCPIP::192.168.1.41::1470::SOCKET',reset=True,verb=True,**kwargs):
@@ -81,7 +81,7 @@ class Stanford_CS580(instrument):
             time.sleep(tstep)
         return
 
-    def RampCurrent_TimeSteps(self,I1,rate,tstep = 1e-3): #Ramp current to final value at a certain rate (in amps/sec).  nsteps is the number of current points used.
+    def RampCurrent_TimeSteps(self,I1,rate,tstep = 1e-3):
         if not self.GetOn():
             self.SetCurrent(0.)
             self.SetOn()
@@ -101,6 +101,7 @@ class Stanford_CS580(instrument):
         mystr = numtostr(xx)
         self.write('VOLT ' + mystr)
         return
+
     def GetCompliance(self):
         mystr = self.query('VOLT?')
         return float(mystr)

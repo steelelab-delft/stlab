@@ -2,16 +2,15 @@ import os
 from . import readdata
 import numpy as np
 
-def fromarrays(myfile,xarray,yarray,zarray=None,xtitle='',ytitle='',ztitle='',colnames=None):
-    xarray = np.array(xarray)
-    yarray = np.array(yarray)
+
+def fromarrays(myfile,xarray,yarray,zarray=[],xtitle='',ytitle='',ztitle='',colnames=None):
     Nx = len(xarray)
     xmin = xarray[0]
     xmax = xarray[-1]
     Ny = len(yarray)
     ymax = yarray[-1]
     ymin = yarray[0]
-    if zarray == None:
+    if len(zarray) == 0:
         Nz = None
         zmin = None
         zmax = None

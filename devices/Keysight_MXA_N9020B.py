@@ -166,18 +166,22 @@ class Keysight_MXA_N9020B(instrument):
         return np.average(data[i_start:i_finish])
 
 
+    def measure_time_trace(self):
+        data_string = self.dev.query(':READ:WAV2?')
+        powers = np.fromstring(data_string, dtype=float, sep=',')
 
-        # settings_string = self.dev.query(':FETCH:WAV1?')
-        # settings = np.fromstring(settings_string, dtype=float, sep=',')
-        # timestep = settings[0]
-        # n_samples = settings[3]
-        # times = np.arange(0, n_samples) * timestep
-        # data_columns = [times, powers]
+        settings_string = self.dev.query(':FETCH:WAV1?')
+        settings = np.fromstring(settings_string, dtype=float, sep=',')
+        timestep = settings[0]
+        n_samples = settings[3]
+        times = np.arange(0, n_samples) * timestep
+
+
         # names = ['time (s)', 'power (dB)']
         # final = stlabdict()
         # for name, data in zip(names, data_columns):
         #     final[name] = data
-        # return final
+        return [times, powers]
 
     def measure_mean_power(self):
         '''

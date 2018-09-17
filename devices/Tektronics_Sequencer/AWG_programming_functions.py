@@ -19,11 +19,15 @@ def setup_AWG_pulsed_spec_sequence(sequence_name='Cool_Sequence',
                                    measurement_trigger_delay=2e-6,
                                    SSB_modulation_frequency=-50e6,
                                    measurement_pulse_length=10e-6,
-                                   measurement_pulse_amp=0.5,
                                    cooling_pulse_length=200e-6,
                                    cooling_measurement_delay=5e-6,
+                                   buffer_pulse_length = 2.e-6,
+                                   readout_trigger_length = 1.0e-6,
+                                   measurement_pulse_amp=0.5,
                                    doplot=True,
-                                   devAWG=Tektronix_AWG520(name='AWG')):
+                                   devAWG=Tektronix_AWG520(name='AWG'),
+                                   us_clock=True,
+                                   trigger_first=False):
     '''
     makes the AWG single element sequences for the cooling experiment.
     It contains a cooling pulse, a readout trigger and a readout pulse.
@@ -37,8 +41,20 @@ def setup_AWG_pulsed_spec_sequence(sequence_name='Cool_Sequence',
     such that the channels are zero there!
     '''
 
-    buffer_pulse_length = 0.1e-6
-    readout_trigger_length = 1.0e-6
+    if us_clock is True:
+        measurement_trigger_delay = measurement_trigger_delay*1e-3
+        SSB_modulation_frequency = SSB_modulation_frequency*1e-3
+        measurement_pulse_length = measurement_pulse_length*1e-3
+        cooling_measurement_delay = cooling_measurement_delay*1e-3
+        cooling_pulse_length = cooling_pulse_length*1e-3
+        buffer_pulse_length = buffer_pulse_length*1e-3
+        readout_trigger_length = 1*readout_trigger_length*1e-3
+
+    if trigger_first is True:
+        left_reference_pulse_name = 'readout trigger'
+    else:
+        left_reference_pulse_name = 'pulsed spec'
+
 
     AWG = AWG_station.AWG_Station()
     AWG.AWG = devAWG
@@ -111,10 +127,10 @@ def setup_AWG_pulsed_spec_sequence(sequence_name='Cool_Sequence',
 
     test_element1 = element.Element(
         (sequence_name + '_element1'),
-        pulsar=AWG, clock=clock)  #, ignore_offset_correction=True)
+        pulsar=AWG)  #, ignore_offset_correction=True)
     test_element2 = element.Element(
         (sequence_name + '_element2'),
-        pulsar=AWG, clock=clock)  #, ignore_offset_correction=True)
+        pulsar=AWG)  #, ignore_offset_correction=True)
 
     test_element1.add(
         pulse.cp(
@@ -147,7 +163,7 @@ def setup_AWG_pulsed_spec_sequence(sequence_name='Cool_Sequence',
             readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
         start=-1 * buffer_pulse_length,
         name='buffer left',
-        refpulse='pulsed spec',
+        refpulse=left_reference_pulse_name,
         refpoint='start')
 
     test_element1.add(
@@ -189,7 +205,7 @@ def setup_AWG_pulsed_spec_sequence(sequence_name='Cool_Sequence',
             readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
         start=-1 * buffer_pulse_length,
         name='buffer left',
-        refpulse='pulsed spec',
+        refpulse=left_reference_pulse_name,
         refpoint='start')
 
     test_element2.add(
