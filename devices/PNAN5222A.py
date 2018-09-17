@@ -7,11 +7,83 @@ from stlab.utils.stlabdict import stlabdict
 
 def numtostr(mystr):
     return '%20.15e' % mystr
-#    return '%20.10f' % mystr
+
+class PNA_rfsource(object):
+    """class that allows one to use the third port of the
+    PNA as a RF source"""
+    def __init__(self, pna,N_pow,N_rang):
+        super(PNA_rfsource, self).__init__()
+        self.pna = pna
+        self.N_pow = N_pow
+        self.N_rang = N_rang
+
+    def RFoff(self):
+        self.pna.write("SOUR:POW%d:MODE OFF"%self.N_pow)
+    def RFon(self, ):
+        self.pna.write("SOUR:POW%d:MODE ON"%self.N_pow)
+    def EXTref(self):
+        pass
+    def INTref(self):
+        pass
+    def setCWpower(self,power):
+        self.pna.write("SOUR:POW%d %s" %(self.N_pow,power))
+    def setCWfrequency(self,frequency):
+        self.pna.write("SENS:FOM:RANG%d:FREQ:CW %s" %(self.N_rang,frequency))
+
 
 class PNAN5222A(PNAN5221A):
     def __init__(self,addr='TCPIP::192.168.1.42::INSTR',reset=True,verb=True):
         super().__init__(addr,reset,verb)
+
+    def create_source(self):
+
+        self.write("SENS1:FOM:STATE 1")      #switch on Frequency Offset Module
+        self.write("SENS1:FOM:RANG4:COUP 0")           #decouple source
+        self.write("SENS1:FOM:RANG4:SWE:TYPE CW")       #set Source in CW mode
+        self.write("SOUR:POW:COUP 0")                   #decouple powers
+
+        return PNA_rfsource(self,N_pow = 3,N_rang = 4)
+
+    def create_two_sources(self):
+        self.reset()
+        self.SetContinuous(False)
+        self.ClearAll()
+        self.AddTraces('S21')
+
+        #switch on Frequency Offset Module
+        # to allow decoupling of the ports
+        # from the frequency sweep
+        self.write("SENS:FOM:STATE 1")
+
+        # RANG corresponds to the row when one
+        # opens the frequency offset module on the PNA
+        # RANG1: primary
+        # RANG2: source (1)
+        # RANG3: receivers
+        # RANG4: source 2
+        # We want to decouple everything
+        self.write("SENS:FOM:RANG2:COUP 0")           #decouple source
+        self.write("SENS:FOM:RANG3:COUP 0")           #decouple source
+        self.write("SENS:FOM:RANG4:COUP 0")           #decouple source
+
+        # This decouples all the sources in terms of power
+        self.write("SOUR:POW:COUP 0")
+
+        # Turn off the power on the one that
+        # is on by default after reset
+        self.write("SOUR:POW1:MODE OFF")
+        self.write("SOUR:POW2:MODE OFF")
+        self.write("SOUR:POW3:MODE OFF")
+        self.write("SOUR:POW4:MODE OFF")
+
+        # RANG2 and RANG4 are the sources, corresponding
+        # to ports 1 and 3 respectively,
+        # we set both to CW mode
+        self.write("SENS:FOM:RANG2:SWE:TYPE CW")
+        self.write("SENS:FOM:RANG4:SWE:TYPE CW")
+
+        return PNA_rfsource(self,N_pow = 1,N_rang = 2), PNA_rfsource(self,N_pow = 3,N_rang = 4)
+
 
     def TwoPortSetup(self,port1=1,port2=2):
         ports = [port1,port2]
@@ -28,24 +100,6 @@ class PNAN5222A(PNAN5221A):
         self.write('DISP:WIND:TRAC2:MOVE 2')
         self.write('DISP:WIND:TRAC3:MOVE 2')
 
-    def setSource2On(self,freq,power):
-        self.write("SENS1:FOM:STATE 1")      #switch on Frequency Offset Module
-        self.write("SENS1:FOM:RANG4:COUP 0")           #decouple source
-        self.write("SENS1:FOM:RANG4:SWE:TYPE CW")    #set Source in CW mode
-        self.setSource2Freq(freq)#set cw freq to source
-        self.write("SOUR:POW:COUP 0")                   #decouple powers
-        self.setSource2Pow(power)
-        self.write("SOUR:POW3:MODE ON")                 #switch on port3
-
-
-
-    def setSource2Off(self):
-        self.write("SOUR:POW3:MODE OFF")                 #switch on port3
-    def setSource2Freq(self,freq):
-        self.write("SENS1:FOM:RANG4:FREQ:CW %s" %(freq)) #set cw freq to source
-    def setSource2Pow(self,power):
-        self.write("SOUR:POW3 %s" %(power))
-
     def TwoToneSetup(self,
         f_probe_start,
         f_probe_stop,
@@ -56,10 +110,10 @@ class PNAN5222A(PNAN5221A):
         f_pump_stop,
         f_pump_points,
         pump_ifbw,
-        pump_power): 
+        pump_power):
         self.write('*RST')      #stop any OPCs and go to preset (same as 'Preset' button) (overkill) (better)
         self.write('SYST:FPR')  #do reset with all windows and traces deleted
-    
+
 
         #setup two displays
         self.write("DISP:WIND1:STATE ON")
@@ -112,7 +166,7 @@ class PNAN5222A(PNAN5221A):
         ##
         self.write("SENS2:FOM:STATE 1")      #switch on Frequency Offset Module
         self.write("SENS2:FOM:RANG3:COUP 0")     #decouple Receivers
-        self.write("SENS2:FOM:RANG2:COUP 0")     #decouple Source 
+        self.write("SENS2:FOM:RANG2:COUP 0")     #decouple Source
         ##
         self.write("SENS2:FOM:RANG3:SWE:TYPE CW")    #set Receivers in CW mode
         self.write("SENS2:FOM:RANG2:SWE:TYPE CW")    #set Source in CW mode
@@ -120,7 +174,7 @@ class PNAN5222A(PNAN5221A):
         self.write("SENS2:FOM:RANG3:FREQ:CW %s" %(f_probe_start)) #set cw freq to receivers
         self.write("SENS2:FOM:RANG2:FREQ:CW %s" %(f_probe_start)) #set cw freq to source1
         ##
-        self.write("SENS2:FOM:DISP:SEL 'Primary'")       #set x-axis to primary 
+        self.write("SENS2:FOM:DISP:SEL 'Primary'")       #set x-axis to primary
         ##
         self.write("SOUR2:POW:COUP 0")                   #decouple powers
         self.write("SOUR2:POW1 %s" %(probe_power))
@@ -138,7 +192,7 @@ class PNAN5222A(PNAN5221A):
         self.write("INIT:CONT OFF")
 
         # Trigger top screen measurement
-        self.write("INIT1:IMM" )    
+        self.write("INIT1:IMM" )
         self.query('*OPC?')
 
         # Autoscale and copy scale to lower screen
@@ -152,6 +206,8 @@ class PNAN5222A(PNAN5221A):
 
         return eval(self.query("CALC1:MARK2:X?"))
 
+    def TwoToneSetPumpPower(self,pump_power):
+        self.write("SOUR2:POW3 %s" %(pump_power))
 
     def TwoToneSetProbeFrequency(self,frequency):
         self.write("SENS2:FOM:RANG3:FREQ:CW %s" %(frequency)) #set cw freq to receivers
@@ -202,9 +258,9 @@ class PNAN5222A(PNAN5221A):
         self.write("CALC:MARK1:FUNC:TRAC ON")   # Don't know what this is but dosnt work without
         self.query('*OPC?')                     # Wait
         return eval(self.query("CALC:MARK1:X?"))# return minimum
-        
-        
-        
+
+
+
     #For Segment sweeps
 
     def DelAllSegm(self):
@@ -214,11 +270,11 @@ class PNAN5222A(PNAN5221A):
     def AddSegm(self,snum=1):
         self.write('SENS:SEGM{}:ADD'.format(snum))
         return
-        
+
     def SetSweepType(self, tt = 'LIN'): #Possible options: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe
         self.write('SENS:SWE:TYPE {}'.format(tt))
         return
-    
+
     def SetArbitrarySegSweep(self, on=True):
         if on:
             self.write('SENS:SEGM:ARB ON')
@@ -234,12 +290,12 @@ class PNAN5222A(PNAN5221A):
         mystr = numtostr(x)
         mystr = 'SENS:SEGM{}:FREQ:STOP {}'.format(snum,mystr)
         self.write(mystr)
-        
+
     def SetSegmPoints(self, x, snum=1):
         mystr = '%d' % x
         mystr = 'SENS:SEGM{}:SWE:POIN {}'.format(snum,mystr)
         self.write(mystr)
-        
+
     def SetSegmRange(self, start, end):
         self.SetSegmStart(start)
         self.SetSegmEnd(end)

@@ -205,9 +205,19 @@ class basepna(instrument,abc.ABC):
         final.addparcolumn('Power (dBm)', self.GetPower())
         return final
 
-    def MeasureScreen(self, keep_uncal=True):
+    def MeasureScreen(self, keep_uncal=True, N_averages = 1):
         self.SetContinuous(False)
-        print(self.Trigger())  #Trigger single sweep and wait for response
+        if N_averages==1:
+            self.Trigger()  #Trigger single sweep and wait for response
+        elif N_averages>1:
+            self.write('SENS:AVER:COUN %d'%N_averages)
+            self.write('SENS:AVER ON')
+            self.write('SENS:AVER:CLEAR')
+            naver = int(self.query('SENS:AVER:COUN?'))
+            for j in range(naver):
+                self.Trigger()
+                self.AutoScaleAll()
+            self.write('SENS:AVER OFF')
         return self.GetAllData(keep_uncal)
 
 

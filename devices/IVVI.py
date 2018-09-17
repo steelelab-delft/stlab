@@ -37,7 +37,7 @@ class IVVI_DAC(base_instrument):
             print('DAC WARNING: wrong number of polarity settings')
         self.polarity = [pol(x) for x in polarity]
         self.make_polmatrix()
-        if self.verb:        
+        if self.verb:
             print('Polarity settings')
             for x,y in zip(self.polarity,range(4)):
                 print('DACs '+'%d-%d: ' % ((y+1)*4-3,(y+1)*4) + x.value)
@@ -71,7 +71,7 @@ class IVVI_DAC(base_instrument):
         output is a list of two bytes
         Input:
             mvoltage (float) : a mvoltage in the 0mV-4000mV range
-    
+
         Output:
             (dataH, dataL) (int, int) : The high and low value byte equivalent
         '''
@@ -118,7 +118,8 @@ class IVVI_DAC(base_instrument):
         except ValueError as error:
             print('Error when setting:' + repr(error))
         setmvoltage = (DataH*256 + DataL)/65535.*4000. - self.polmatrix[dac-1]
-        print('DAC {} set to {} mV'.format(dac,setmvoltage))
+        if self.verb:
+            print('DAC {} set to {} mV'.format(dac,setmvoltage))
     def SetValue(self,dac,val):
         val = int(val)
         #We get the byte values corresponding to the desired voltage.  We need to add the polarity dependant offset from polmatrix to get the correct byte values
@@ -142,6 +143,19 @@ class IVVI_DAC(base_instrument):
         for vv in voltages:
             self.SetVoltage(dac,vv)
             time.sleep(twait)
+
+    def RampVoltage_TimeSteps(self,dac,mvoltage,rate,tstep = 1e-3):
+        v0 = self.ReadDAC(dac)
+        if np.abs(v0-mvoltage)<1.:
+            self.SetVoltage(dac,mvoltage)
+            return
+        nsteps = int(abs(mvoltage-v0)/rate/tstep)
+        voltages = np.linspace(v0,mvoltage,nsteps)
+        for vv in voltages:
+            self.SetVoltage(dac,vv)
+            time.sleep(tstep)
+        return
+
     def ReadDACs(self):
         #Prepare message to read bytes from DACS
         message = (4, 0, self.ndacs*2+2, 2)
@@ -183,5 +197,6 @@ class IVVI_DAC(base_instrument):
     def close(self):
         self.serialport.close()
         return
+
     def GetMetadataString(self):
         return self.ReadDACs()
