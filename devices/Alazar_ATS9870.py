@@ -55,7 +55,7 @@ class Alazar_ATS9870(Instrument):
             <name>.start_with_trigger_and_waitready()
             <name>.readout_singlemode_float()
         Input:
-            name (string) : name of the instrument
+            name (string) : name of  the instrument
         Output:
             None
         '''
@@ -207,7 +207,7 @@ class Alazar_ATS9870(Instrument):
         self._initialized = True
         self._stuck_on_error = 0
         self.configure_board()
-        self.get_serial_number()
+        self.get_serial_number() 
         self.get_board_kind()
         self.get_latest_cal_date()
 
