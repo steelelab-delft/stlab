@@ -20,6 +20,7 @@ from stlab.utils.S11fit import backmodel as S11back #Callable as stlab.S11fit(..
 from stlab.utils.S11fit import S11theo as S11theo #Callable as stlab.S11fit(...)
 from stlab.devices.base_instrument import SaveInstrumentMetadata #Callable as stlab.SaveInstrumentMetadata(...)
 from stlab.devices import autodetect_instrument as adi #Callable as stlab.devices.adi(...)
+from stlab.utils.autoplotter import autoplot #Call as stlab.autoplot(...)
 
 '''
 try:

@@ -161,10 +161,7 @@ def readdat_pd(filename,delim=', ',nlines=None):
             for name,dat in zip(names,block):
                 newframe[name] = dat
             arrayofframes.append(newframe)
-        if len(arrayofframes) == 1:
-            return arrayofframes[0]
-        else:
-            return arrayofframes
+        return arrayofframes
 
 def reads2p_pd(filename):
     with open(filename,'r') as f:
