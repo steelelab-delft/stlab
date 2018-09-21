@@ -13,6 +13,7 @@ from stlab.utils.writematrix import writeframe as saveframe
 from stlab.utils.writematrix import writeframearray as saveframearray
 from stlab.utils.stlabdict import stlabdict
 from stlab.utils.stlabdict import stlabmtx
+from stlab.utils.stlabdict import framearr_to_mtx
 from stlab.utils.S11fit import fit as S11fit #Callable as stlab.S11fit(...)
 from stlab.utils.S11fit import S11full as S11func #Callable as stlab.S11fit(...)
 from stlab.utils.S11fit import backmodel as S11back #Callable as stlab.S11fit(...)
