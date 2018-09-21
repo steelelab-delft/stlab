@@ -1,3 +1,10 @@
+"""Example script to retrieve a single trace from a PNA
+
+Does not reset PNA.  The idea is that the user sets up the trace on screen and then
+runs this script to retrieve it.
+
+"""
+
 import stlab
 import numpy as np
 
@@ -10,5 +17,5 @@ data = pna.MeasureScreen_pd() #Trigger 2 port measurement and retrieve data in R
 myfile = stlab.newfile(prefix,idstring,autoindex=True)
 stlab.saveframe(myfile, data) #Save measured data to file.  Written as a block for spyview.
 #Create metafile for spyview at each measurement step
-stlab.metagen.fromarrays(myfile,data['Frequency (Hz)'],[0,1],xtitle='Frequency (Hz)',ytitle='None',colnames=list(data))
+stlab.metagen.fromarrays(myfile,data['Frequency (Hz)'],[0],xtitle='Frequency (Hz)',ytitle='None',colnames=list(data))
 myfile.close() #Close file

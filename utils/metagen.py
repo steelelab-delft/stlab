@@ -7,9 +7,15 @@ def fromarrays(myfile,xarray,yarray,zarray=[],xtitle='',ytitle='',ztitle='',coln
     Nx = len(xarray)
     xmin = xarray[0]
     xmax = xarray[-1]
+    if xmin == xmax:
+        xmax = xmin + 1
+        print('metagen.fromarrays: Warning, equal values for xmin and xmax. Correcting')
     Ny = len(yarray)
     ymax = yarray[-1]
     ymin = yarray[0]
+    if ymin == ymax:
+        ymax = ymin +1
+        print('metagen.fromarrays: Warning, equal values for ymin and ymax. Correcting')
     if len(zarray) == 0:
         Nz = None
         zmin = None
@@ -19,6 +25,9 @@ def fromarrays(myfile,xarray,yarray,zarray=[],xtitle='',ytitle='',ztitle='',coln
         Nz = len(zarray)
         zmin = zarray[0]
         zmax = zarray[-1]
+        if zmin == zmax:
+            zmax = zmin +1
+            print('metagen.fromarrays: Warning, equal values for zmin and zmax. Correcting')
     fromlimits(myfile,Nx,xmin,xmax,Ny,ymin,ymax,Nz,zmin,zmax,xtitle,ytitle,ztitle,colnames)
     return
 
@@ -57,6 +66,7 @@ def fromlimits(myfile,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xtit
         f.write(str(ztitle)+'\n')
     f.write('#Column labels\n')
     if colnames!=None:
+        colnames = list(colnames)
         for i,name in enumerate(colnames):
             f.write(str(i+1)+'\n')
             f.write(str(name)+'\n')
