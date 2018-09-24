@@ -184,13 +184,13 @@ def getwidth_phase(i0,vec,margin):
 def trim(x,y,imin,imax):
     """Removes range from imin to imax from vectors x,y
 
-    Given two real arrays and indices corresponding to a lower and upper edge,
+    Given two (possibly complex) arrays and indices corresponding to a lower and upper edge,
     this function removes the index range between these edges from both input
     arrays
 
     Parameters
     ----------
-    x, y : array_like of float
+    x, y : array_like of complex
         Arrays to be trimmed
     imin, imax : int
         Lower and upper edge of range to be removed (trimmed) from x,y
@@ -204,8 +204,17 @@ def trim(x,y,imin,imax):
     imin = int(imin)
     imax = int(imax)
     print(len(x),len(y))
-    xnew = np.concatenate((x[0:imin],x[imax:]))
-    ynew = np.concatenate((y[0:imin],y[imax:]))
+
+    def corr(xx):
+        xpart1 = xx[0:imin]
+        xpart2 = xx[imax:]
+        if len(xpart1) == 0:
+            xpart1 = xx[0:1]
+        if len(xpart2) == 0:
+            xpart2 = xx[-1:]
+        return xpart1,xpart2
+    xnew = np.concatenate(corr(x))
+    ynew = np.concatenate(corr(y))
 
     if len(xnew) < 4 or len(ynew) < 4:
         xnew = np.concatenate([x[0:2],x[-2:]])

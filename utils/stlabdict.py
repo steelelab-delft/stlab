@@ -743,7 +743,7 @@ def framearr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, x
     #convert to np matrix
     #zz = np.array(zz)
     if not ztitle:
-        ztitle = key
+        ztitle = str(key)
 
     #No keys or ranges given:
     if rangex==None and rangey==None and xkey==None and ykey==None:
@@ -781,9 +781,11 @@ def framearr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, x
             return stlabmtx_pd(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
         #if x is slow, matrix needs to be transposed
         if xslow:
+            zz = zz.transpose()
             xx = []
             for line in data:
                 xx.append(line[xkey].iloc[0])
+
         #Case of y slow
         #if x is slow, matrix is already correct
         if yslow:
@@ -798,19 +800,11 @@ def framearr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, x
         print(ykey)
         print(xkey)
         if xtitle == None:
-            if isinstance(xkey, str):
-                xtitle = xkey #Default title
-            elif isinstance(xkey, int):
-                xtitle = titles[xkey]
+            xtitle = str(xkey) #Default title
         if ytitle == None:
-            if isinstance(ykey, str):
-                ytitle = ykey #Default title
-            elif isinstance(ykey, int):
-                ytitle = titles[ykey]
+            ytitle = str(ykey) #Default title
 
         zz = pd.DataFrame(zz)
-        if xslow:
-            zz = zz.transpose()
         zz.index = yy
         zz.columns = xx
         return stlabmtx_pd(zz, xtitle=xtitle, ytitle=ytitle, ztitle=ztitle)
