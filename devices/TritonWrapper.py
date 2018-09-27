@@ -133,7 +133,13 @@ class TritonWrapper(base_instrument):
         mystr = mystr.strip('h')
         result.append(float(mystr))
         return result
-
+        
+    def SetPTOn(self):
+        self.write('SET:DEV:C1:PTC:SIG:STATE:ON')
+        return
+    def SetPTOff(self):
+        self.write('SET:DEV:C1:PTC:SIG:STATE:OFF')
+        return
     def GetMetadataString(self):
         pass
 
