@@ -98,7 +98,7 @@ serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #serversocket.bind((socket.gethostname(), 8001))
 addr = socket.gethostbyname(socket.gethostname())
 port = 8472
-serversocket.bind(('', port))
+serversocket.bind(('0.0.0.0', port))
 # become a server socket
 serversocket.listen(5)
 print("Ready.  Listening on port %d and address %s" % (port,addr))
