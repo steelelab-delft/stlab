@@ -37,7 +37,7 @@ def autoplot(datafile,xlab,ylab,zlab=None,show=True,**kwargs):
     """
     try:
         datafile.flush()
-        fname = data.name
+        fname = datafile.name
     except AttributeError:
         fname = datafile
     except ValueError:

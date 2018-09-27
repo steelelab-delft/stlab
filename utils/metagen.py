@@ -4,6 +4,9 @@ import numpy as np
 
 
 def fromarrays(myfile,xarray,yarray,zarray=[],xtitle='',ytitle='',ztitle='',colnames=None):
+    xarray = np.array(xarray)
+    yarray = np.array(yarray)
+    zarray = np.array(zarray)
     Nx = len(xarray)
     xmin = xarray[0]
     xmax = xarray[-1]
