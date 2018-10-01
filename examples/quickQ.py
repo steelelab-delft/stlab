@@ -12,7 +12,7 @@ import sys
 import re
 import os
 
-pna = adi(addr="TCPIP::192.168.1.122::INSTR",reset=False,verb=True) #Initialize device but do not reset.  Needs correct address
+pna = stlab.adi(addr="TCPIP::192.168.1.229::INSTR",reset=False,verb=True) #Initialize device but do not reset.  Needs correct address
 #'addr' is the VISA address string for the device
 #Since reset is set to False, this script assumes that the sweep settings are already set before starting
 #These could of course be set through member methods of the pna.  See driver for options.
@@ -20,6 +20,7 @@ data = pna.MeasureScreen_pd() #Trigger measurement and retrieve data.  Data is r
 # If calibration is used, both calibrated and uncalibrated data is returned
 measpow = data['Power (dBm)'][0] #retrieve power for plot
 print(data.keys()) #Show available data columns on screen
+pna.close()
 
 x = data['Frequency (Hz)'] #Get frequency array from measurement
 #Regular expression to find correct label for fitting columns.  Will assing SXX into sparam for first found S parameter trace in measurement
