@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import stlab
 import os
 
-def autoplot(datafile,xlab,ylab,zlab=None,show=True,**kwargs):
+def autoplot(datafile,xlab,ylab,zlab=None,show=False,**kwargs):
     """Autoplot function
 
     Takes a data file handle (still open or recently closed) or a filename and plots the requested
@@ -28,7 +28,7 @@ def autoplot(datafile,xlab,ylab,zlab=None,show=True,**kwargs):
         a color plot is returned
     **kwargs
         Arguments to be passed to plotting function (plt.plot or plt.imshow)
-     
+
     Returns
     -------
     None
@@ -51,9 +51,11 @@ def autoplot(datafile,xlab,ylab,zlab=None,show=True,**kwargs):
     else:
         mymtx = stlab.framearr_to_mtx(data, zlab, xkey=xlab, ykey=ylab)
         plt.imshow(mymtx.pmtx, aspect='auto', cmap='seismic', extent=mymtx.getextents(), **kwargs)
-        cbar = plt.colorbar() 
+        cbar = plt.colorbar()
         cbar.set_label(zlab)
     plt.xlabel(xlab)
     plt.ylabel(ylab)
     plt.savefig(basename+'.png',dpi=600)
-    plt.show()
+    if show:
+        plt.show()
+    plt.close()
