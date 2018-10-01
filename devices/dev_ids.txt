@@ -14,6 +14,7 @@ MODEL 2000, Keithley_2100
 AWG520, Tektronix_AWG520
 11713B, instrument
 MODEL370, Lakeshore_370
+Model 18I, Cryocon_44C
 Model 44C, Cryocon_44C
 N5183B, Keysight_N5183B
 ZND-2Port, RS_ZND
