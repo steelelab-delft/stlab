@@ -59,7 +59,6 @@ for q in params:
 newstr+='RFpow = '+str(measpow)+' dBm'
 ax1 = plt.gca()
 plt.text(0.55,0.15,newstr,fontsize=7,transform=ax1.transAxes)
-plt.show()
 
 
 try:
@@ -74,6 +73,7 @@ myfile = stlab.newfile(prefix,idstring,data.keys(),usedate=True,usefolder=True,a
 outfilename = os.path.splitext(myfile.name)[0]
 stlab.saveframe(myfile,data)
 myfile.close()
+plt.show()
 
 #Save figure
 fig.savefig(outfilename + '.plot.png')

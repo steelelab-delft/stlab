@@ -53,6 +53,7 @@ def autoplot(datafile,xlab,ylab,zlab=None,show=False,**kwargs):
         plt.imshow(mymtx.pmtx, aspect='auto', cmap='seismic', extent=mymtx.getextents(), **kwargs)
         cbar = plt.colorbar()
         cbar.set_label(zlab)
+    plt.title(os.path.basename(fname))
     plt.xlabel(xlab)
     plt.ylabel(ylab)
     plt.savefig(basename+'.png',dpi=600)
