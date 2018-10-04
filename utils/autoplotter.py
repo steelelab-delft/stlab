@@ -26,6 +26,10 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
     zlab : str or None
         Label for z axis data.  If set to none, a line plot is returned.  If set to str
         a color plot is returned
+    title : str
+        Text label to be included in the title
+    caption : str
+        Comment included below figure
     **kwargs
         Arguments to be passed to plotting function (plt.plot or plt.imshow)
 
