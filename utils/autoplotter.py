@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import stlab
 import os
 
-def autoplot(datafile,xlab,ylab,zlab=None,show=False,**kwargs):
+def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption='YOU SHOULD ADD A COMMENT',show=False,**kwargs):
     """Autoplot function
 
     Takes a data file handle (still open or recently closed) or a filename and plots the requested
@@ -45,6 +45,9 @@ def autoplot(datafile,xlab,ylab,zlab=None,show=False,**kwargs):
     data = stlab.readdata.readdat_pd(fname)
     basename = os.path.splitext(fname)[0]
 
+    fig = plt.figure(figsize=(10,8))
+    ax1 = fig.add_axes((0.2, 0.2, 0.8, 0.7))
+
     if zlab is None:
         for line in data:
             plt.plot(line[xlab],line[ylab],**kwargs)
@@ -53,9 +56,10 @@ def autoplot(datafile,xlab,ylab,zlab=None,show=False,**kwargs):
         plt.imshow(mymtx.pmtx, aspect='auto', cmap='seismic', extent=mymtx.getextents(), **kwargs)
         cbar = plt.colorbar()
         cbar.set_label(zlab)
-    plt.title(os.path.basename(fname))
+    plt.title(os.path.basename(fname) + '\n' + title,fontsize = 10)
     plt.xlabel(xlab)
     plt.ylabel(ylab)
+    plt.figtext(0.5, 0.05, caption, wrap=True, horizontalalignment='center', fontsize=10)
     plt.savefig(basename+'.png',dpi=600)
     if show:
         plt.show()

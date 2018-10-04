@@ -741,7 +741,7 @@ def framearr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, x
     for line in data:
         zz.append(line[key])
     #convert to np matrix
-    #zz = np.array(zz)
+    zz = np.array(zz)
     if not ztitle:
         ztitle = str(key)
 
