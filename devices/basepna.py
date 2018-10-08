@@ -108,6 +108,14 @@ class basepna(instrument,abc.ABC):
     def Trigger(self):
         print((self.query('INIT;*OPC?')))
         return
+        
+    def SetPowerOff(self):
+        self.write("SOUR1:POW1:MODE OFF")  
+        return
+        
+    def SetPowerOn(self):
+        self.write("SOUR1:POW1:MODE ON")  
+        return   
 
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
