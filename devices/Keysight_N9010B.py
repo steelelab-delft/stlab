@@ -1,6 +1,7 @@
 from stlab.devices.instrument import instrument
 from stlab.utils.stlabdict import stlabdict
 import numpy as np
+import pandas as pd
 
 
 class Keysight_N9010B(instrument):
@@ -8,7 +9,8 @@ class Keysight_N9010B(instrument):
                  addr='TCPIP::192.168.1.228::INSTR',
                  reset=True,
                  verb=True):
-        super(Keysight_N9010B, self).__init__(addr, reset, verb)
+        super().__init__(addr,reset,verb)
+        self.dev.timeout = None
 
     def SetStart(self, x):
         mystr = 'FREQ:STAR {}'.format(x)
@@ -34,12 +36,10 @@ class Keysight_N9010B(instrument):
         mystr = 'BAND:RES?'
         x = self.query(mystr)
         return float(x)
-
-    def SetPoints(self, x):
-        self.write('SWE:POIN {}'.format(x))
-
-    def SetAverages(self, navg):
-        self.write('AVER:TYPE RMS')  # Power averaging
+    def SetPoints(self,x):
+        self.write('SWE:POIN {}'.format(x))    
+    def SetAverages(self,navg):
+        #self.write('AVER:TYPE RMS')   # Power averaging
         self.write('AVER:COUNT {}'.format(navg))
         if navg > 1:
             self.write(':TRAC:TYPE AVER')
@@ -54,21 +54,30 @@ class Keysight_N9010B(instrument):
         else:
             return 1
 
+    def SetContinuous(self,state=True):
+        if state:
+            self.write('INIT:CONT 1')
+        else:
+            self.write('INIT:CONT 0')
+        return
+
     def GetSweepTime(self):
         sweeptime = self.query('SWE:TIME?')
         return float(sweeptime)
 
     def MeasureScreen(self):
+        self.SetContinuous(False)
         result = self.query('READ:SAN?')
         result = result.split(',')
         result = [float(x) for x in result]
         result = np.asarray(result)
         xx = result[::2]
         yy = result[1::2]
-        output = stlabdict()
+        #output = stlabdict()
+        output = pd.DataFrame()
         output['Frequency (Hz)'] = xx
         output['PSD (dBm)'] = yy
-        output.addparcolumn('Res BW (Hz)', self.GetResolutionBW())
+        output['Res BW (Hz)']= self.GetResolutionBW()
         return output
 
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
