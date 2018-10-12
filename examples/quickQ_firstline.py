@@ -56,7 +56,9 @@ plt.ylabel(sparam +' (dB)')
 newstr = ''
 for q in params:
     if params[q].name in ['Qint','Qext','f0','theta']:
-        newstr+="{} = {} +- {}\n".format(params[q].name,params[q].value,params[q].stderr)
+        newstr+="{} = {} \n     +- {}\n".format(params[q].name,params[q].value,params[q].stderr)
+Ql = 1/(1/params['Qint'].value+1/params['Qext'].value)
+newstr+='Qloaded = {}\n'.format(Ql)        
 newstr+='RFpow = '+str(measpow)+' dBm'
 ax1 = plt.gca()
 plt.text(0.55,0.15,newstr,fontsize=7,transform=ax1.transAxes)
