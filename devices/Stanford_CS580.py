@@ -15,6 +15,7 @@ class Stanford_CS580(instrument):
             kwargs['read_termination'] = '\r\n'
         super().__init__(addr,reset,verb,**kwargs)
         self.id()
+        self.GainTable = [1e-9,10e-9,100e-9,1e-6,10e-6,100e-6,1e-3,10e-3,50e-3] #A/V
     def SetGain(self,ii):
     #Sets the gain of the source.  The full range is always +-2V times the gain value
     #0 -> 1 nA/V
@@ -28,6 +29,9 @@ class Stanford_CS580(instrument):
     #8 -> 50 mA/V
         self.write('GAIN %d' % ii)
         return
+    def GetGain(self):
+        i = int(self.query('GAIN?'))
+        return self.GainTable[i]
     def SetCurrent(self,curr):
         mystr = numtostr(curr)
         self.query('CURR ' + mystr + ';*OPC?')

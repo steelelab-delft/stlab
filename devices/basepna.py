@@ -105,8 +105,11 @@ class basepna(instrument,abc.ABC):
         pp = int(pp)
         return pp
 
-    def Trigger(self):
-        print((self.query('INIT;*OPC?')))
+    def Trigger(self,block=True):
+        if block:
+            print((self.query('INIT;*OPC?')))
+        else:
+            self.write('INIT')
         return
         
     def SetPowerOff(self):
