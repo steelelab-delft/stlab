@@ -70,15 +70,15 @@ AWG.define_channels(
 #-------------------------------------------------------
 
 
-sequence_name='blub'
-measurement_trigger_delay=2e-6
+sequence_name='pulsed_spec_sequence'
+measurement_trigger_delay=500e-9
 SSB_modulation_frequency=-50e6
-measurement_pulse_length=5e-6
-cooling_pulse_length=20e-6
-cooling_measurement_delay=5e-6
-buffer_pulse_length = 2.e-6
-readout_trigger_length = 1.01e-6
-measurement_pulse_amp=0.5
+measurement_pulse_length=1e-6
+spec_pulse_length=20e-6
+spec_pulse_measurement_delay=100e-9
+buffer_pulse_length = 1.e-6
+readout_trigger_length = 500e-9
+spec_pulse_amp=0.3
 
 left_reference_pulse_name = 'pulsed spec'
 
@@ -90,23 +90,15 @@ left_reference_pulse_name = 'pulsed spec'
 sin_pulse = pulse.CosPulse(channel='RF1', name='A sine pulse on RF')
 sin_pulse_2 = pulse.CosPulse(channel='RF2', name='A sine pulse on RF')
 
-SSB_pulse = pulse.MW_IQmod_pulse(
+qubit_spec_SSB_pulse = pulse.MW_IQmod_pulse(
     I_channel='RF1', Q_channel='RF2', name='SSB pulse')
 
-pulsed_spec_pulse = pulse.SquarePulse(
+readout_switch_marker = pulse.SquarePulse(
     channel='MW_pulsemod', name='A square pulse on MW pmod')
 
-readout_trigger_pulse = pulse.SquarePulse(
+ATS_trigger_pulse = pulse.SquarePulse(
     channel='readout_trigger', name='A square pulse on MW pmod')
 
-readout_trigger_pulse = pulse.SquarePulse(
-    channel='readout_trigger', name='A square pulse on MW pmod')
-
-sq_pulse_ch1 = pulse.SquarePulse(
-    channel='RF1', name='A square pulse on MW pmod')
-
-sq_pulse_ch2 = pulse.SquarePulse(
-    channel='RF2', name='A square pulse on MW pmod')
 
 test_element1 = element.Element(
     (sequence_name + '_element1'),
@@ -117,87 +109,95 @@ test_element2 = element.Element(
 
 test_element1.add(
     pulse.cp(
-        readout_trigger_pulse, amplitude=1.,
+        ATS_trigger_pulse, amplitude=1.,
+        length=readout_trigger_length),
+    start=0.1e-6,
+    name='readout trigger',
+    refpoint='start')  
+
+test_element1.add(
+    pulse.cp(readout_switch_marker, amplitude=1., length=measurement_pulse_length),
+    start=measurement_trigger_delay,
+    name='readout switch marker',
+    refpulse='readout trigger',
+    refpoint='start')
+
+
+test_element1.add(
+    pulse.cp(
+        qubit_spec_SSB_pulse,
+        mod_frequency=SSB_modulation_frequency,
+        amplitude=spec_pulse_amp,
+        length=spec_pulse_length),
+    start=-spec_pulse_measurement_delay - spec_pulse_length,
+    name='qubit spec SSB pulse',
+    refpulse='readout switch marker',
+    refpoint='start')
+
+
+test_element1.add(
+    pulse.cp(
+        ATS_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+    start=-1 * buffer_pulse_length,
+    name='buffer left',
+    refpulse='qubit spec SSB pulse',
+    refpoint='start')
+
+test_element1.add(
+    pulse.cp(
+        ATS_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+    start=0,
+    name='buffer right',
+    refpulse='readout switch marker',
+    refpoint='end')
+
+
+#### Element 2 is identical to element 1
+
+test_element2.add(
+    pulse.cp(
+        ATS_trigger_pulse, amplitude=1.,
         length=readout_trigger_length),
     start=0.1e-6,
     name='readout trigger',
     refpoint='start')
 
-test_element1.add(
-    pulse.cp(
-        SSB_pulse,
-        mod_frequency=SSB_modulation_frequency,
-        amplitude=measurement_pulse_amp,
-        length=measurement_pulse_length),
+test_element2.add(
+    pulse.cp(readout_switch_marker, amplitude=1., length=measurement_pulse_length),
     start=measurement_trigger_delay,
-    name='readout pulse',
+    name='readout switch marker',
     refpulse='readout trigger',
     refpoint='start')
 
-test_element1.add(
-    pulse.cp(pulsed_spec_pulse, amplitude=1., length=cooling_pulse_length),
-    start=-1 * cooling_measurement_delay - cooling_pulse_length,
-    name='pulsed spec',
-    refpulse='readout pulse',
-    refpoint='start')
-
-test_element1.add(
-    pulse.cp(
-        readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
-    start=-1 * buffer_pulse_length,
-    name='buffer left',
-    refpulse=left_reference_pulse_name,
-    refpoint='start')
-
-test_element1.add(
-    pulse.cp(
-        readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
-    start=0,
-    name='buffer right',
-    refpulse='readout pulse',
-    refpoint='end')
 
 test_element2.add(
     pulse.cp(
-        readout_trigger_pulse, amplitude=1.,
-        length=readout_trigger_length),
-    start=0.1e-6,
-    name='readout trigger',
-    refpoint='start')
-
-test_element2.add(
-    pulse.cp(
-        SSB_pulse,
+        qubit_spec_SSB_pulse,
         mod_frequency=SSB_modulation_frequency,
-        amplitude=measurement_pulse_amp,
-        length=measurement_pulse_length),
-    start=measurement_trigger_delay,
-    name='readout pulse',
-    refpulse='readout trigger',
+        amplitude=spec_pulse_amp,
+        length=spec_pulse_length),
+    start=-spec_pulse_measurement_delay - spec_pulse_length,
+    name='qubit spec SSB pulse',
+    refpulse='readout switch marker',
     refpoint='start')
 
-test_element2.add(
-    pulse.cp(pulsed_spec_pulse, amplitude=1., length=cooling_pulse_length),
-    start=-1 * cooling_measurement_delay - cooling_pulse_length,
-    name='pulsed spec',
-    refpulse='readout pulse',
-    refpoint='start')
 
 test_element2.add(
     pulse.cp(
-        readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+        ATS_trigger_pulse, amplitude=0., length=buffer_pulse_length),
     start=-1 * buffer_pulse_length,
     name='buffer left',
-    refpulse=left_reference_pulse_name,
+    refpulse='qubit spec SSB pulse',
     refpoint='start')
 
 test_element2.add(
     pulse.cp(
-        readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+        ATS_trigger_pulse, amplitude=0., length=buffer_pulse_length),
     start=0,
     name='buffer right',
-    refpulse='readout pulse',
+    refpulse='readout switch marker',
     refpoint='end')
+
 
 
 print('Channel definitions: ')
@@ -219,16 +219,16 @@ viewer.show_element_stlab(test_element2, delay = False, channels = 'all', ax = N
 #-------------------------------------------------------
 # now to send everything to the AWG, we have perform the last step by putting everything 
 # into a sequence
-seq = sequence.Sequence('blub')
-seq.append(name='first_element', wfname='blub_element1', trigger_wait=True)#,
+seq = sequence.Sequence(sequence_name)
+seq.append(name='first_element', wfname=sequence_name + '_element1', trigger_wait=True)#,
 #            # goto_target='first_element')#, jump_target='first special element')
 
-seq.append(name='second element', wfname='blub_element2', trigger_wait=True)#,
+seq.append(name='second element', wfname=sequence_name + '_element1', trigger_wait=True)#,
 #            # goto_target='third element', jump_target='second special element')
 
 
 AWG.program_awg(seq,test_element1, test_element2, verbose = True)#, test_element2)
 
 AWG.AWGrun()
-
+  
 
