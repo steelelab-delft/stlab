@@ -1,3 +1,10 @@
+"""PNA testing script
+
+Script used to test VNA/PNA behavior with operations that should be common
+to all VNAs
+
+"""
+
 import stlab
 from stlab.devices.PNAN5221A import PNAN5221A as pnaclass
 #from stlab.devices.PNAN5222A import PNAN5222A as pnaclass

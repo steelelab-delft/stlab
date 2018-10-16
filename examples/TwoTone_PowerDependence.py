@@ -1,4 +1,9 @@
-#Two tone measurement using PNA and SMB microwave source sweeping SMB power.
+"""Two tone measurement using PNA and SMB microwave source sweeping SMB power.
+
+Two tone measurement using PNA and SMB microwave source sweeping SMB power.
+
+"""
+
 import stlab
 from stlab.devices.RS_ZND import RS_ZND_pna as pna #import the PNA in use
 from stlab.devices.SMB100A import SMB100A_SG as sg #import the SMB driver

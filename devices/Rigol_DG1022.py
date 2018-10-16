@@ -32,6 +32,16 @@ class Rigol_DG1022(instrument):
         else:
             self.write('VOLT:CH{}:UNIT VPP'.format(ch)) #{VPP|VRMS|DBM}
             self.write('VOLT:CH{} {}'.format(ch,vv))
+            
+    def GetVpp(self,ch=1):
+        if ch == 1:
+            self.write('VOLT:UNIT VPP') #{VPP|VRMS|DBM}
+            result = self.query('VOLT?')
+        else:
+            self.write('VOLT:CH{}:UNIT VPP'.format(ch)) #{VPP|VRMS|DBM}
+            result = self.query('VOLT:CH{}?'.format(ch))
+        return float(result)
+
     def SetVoffset(self, vv, ch=1):
         if ch ==1:
             self.write('VOLT:OFFSET {}'.format(vv))
@@ -43,6 +53,14 @@ class Rigol_DG1022(instrument):
             self.write('FREQ {}'.format(ff))
         else:
             self.write('FREQ:CH{} {}'.format(ch,ff))
+            
+    def GetFrequency(self, ch=1):
+        if ch == 1:
+            result = self.query('FREQ?')
+        else:
+            result = self.query('FREQ:CH{}?'.format(ch))
+        return float(result)
+    
     def SetOn(self,ch=1):
         if ch ==1: 
             self.write('OUTP ON')

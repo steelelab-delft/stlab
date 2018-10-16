@@ -5,7 +5,9 @@ import datetime
 
 #class base_instrument(abc.ABC):
 class base_instrument():
+    #Currently suppressed since nobody uses it or cares.  Uncomment body to re-enable
     instrument_list = []    
+    '''
     def __init__(self):
         self.instrument_list.append(self) #when instantiated, automatically added to static instrument_list
 
@@ -30,6 +32,7 @@ class base_instrument():
         for x,y in pairs:
             result += x + ' = ' + str(y) + '\n'
         return result
+    '''
 
 # Function to save all instantiated instrument metadata to a file
 def SaveInstrumentMetadata(myfile = None): #Myfile should be the relevant measurement file

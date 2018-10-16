@@ -89,7 +89,7 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,
         scriptname = os.path.basename(mainfile)
         shutil.copyfile(mainfile,os.path.normpath(fullfoldername + '/' + scriptname))
     myfile = open(fullfilename, 'w')
-    if colnames!=None:
+    if colnames is not None:
         varline = '#' + ', '.join(colnames) + '\n'
         myfile.write(varline)
     if return_folder_name:

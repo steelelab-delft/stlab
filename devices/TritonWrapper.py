@@ -2,6 +2,7 @@
 from stlab.devices.base_instrument import base_instrument
 from stlab.utils.MySocket import MySocket
 
+
 class TritonWrapper(base_instrument):
     def __init__(self,addr="192.168.1.178",port=8472,reset=True,verb=True,**kwargs):
         self.verb = verb
@@ -133,7 +134,13 @@ class TritonWrapper(base_instrument):
         mystr = mystr.strip('h')
         result.append(float(mystr))
         return result
-
+        
+    def SetPTOn(self):
+        self.write('SET:DEV:C1:PTC:SIG:STATE:ON')
+        return
+    def SetPTOff(self):
+        self.write('SET:DEV:C1:PTC:SIG:STATE:OFF')
+        return
     def GetMetadataString(self):
         pass
 

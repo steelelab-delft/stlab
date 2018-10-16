@@ -1,3 +1,11 @@
+"""Keysight SMU sweeping functionality test
+
+Script used to measure using Keysight SMU without setting/getting with every
+current/voltage step.  Instead this uses the internal sweeping functions of
+the SMU.
+
+"""
+
 import stlab
 from stlab.devices.keysight import keysightB2901A as sourceclass
 from matplotlib import pyplot as plt
