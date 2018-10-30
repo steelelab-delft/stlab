@@ -41,3 +41,6 @@ class MKS_901P(base_instrument):
         self.write(str)
         result = self.read()
         return result
+    def close(self):
+        self.ser.close()
+        return
