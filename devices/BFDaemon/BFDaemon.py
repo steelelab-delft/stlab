@@ -58,7 +58,7 @@ commandq = Queue(maxsize=0)
 #addr = sys.argv[1]
 #Start the thread for the command handler.  Commands added to commandq will be run and the output will be put into whatever output queue is provided in the queue element
 
-addr = input('Enter VISA address of Lakeshore\n (old BF: ASRL1, new BF: ASRL11, He7: ASRL7):\n')
+addr = input('Enter VISA address of Lakeshore\n (old BF: ASRL3, new BF: ASRL11, He7: ASRL7):\n')
 baud_rate = input('Enter Serial Baud rate\n (default 9600, He7 uses 57600):\n')
 uselog = yes_or_no('Use BF logging?')
 
