@@ -31,13 +31,41 @@ class Keysight_N9010B(instrument):
     def SetResolutionBW(self, x):
         mystr = 'BAND:RES {}'.format(x)
         self.write(mystr)
-
+        
     def GetResolutionBW(self):
         mystr = 'BAND:RES?'
         x = self.query(mystr)
+        return float(x)   
+        
+    def SetDigitalIFBW(self,x):
+        mystr = 'WAV:DIF:BAND {}'.format(x)
+        self.write(mystr)
+
+    def GetDigitalIFBW(self):
+        mystr = 'WAV:DIF:BAND?' 
+        x = self.query(mystr)
         return float(x)
+        
+    def SetSampleRate(self,x):
+        mystr = 'WAV:SRAT {}'.format(x)
+        self.write(mystr)
+        
+    def GetSampleRate(self):
+        mystr = 'WAV:SRAT?' 
+        x = self.query(mystr)
+        return float(x)
+
+    def SetIQSweepTime(self,x):
+        mystr = 'WAVeform:SWEep:TIME {}'.format(x)
+        self.write(mystr)
+        
+    def GetIQSweepTime(self):
+        mystr = 'WAVeform:SWEep:TIME?' 
+        x = self.query(mystr)
+        return float(x)
+
     def SetPoints(self,x):
-        self.write('SWE:POIN {}'.format(x))    
+        self.write('SWE:POIN {}'.format(x))
     def SetAverages(self,navg):
         #self.write('AVER:TYPE RMS')   # Power averaging
         self.write('AVER:COUNT {}'.format(navg))
@@ -64,7 +92,31 @@ class Keysight_N9010B(instrument):
     def GetSweepTime(self):
         sweeptime = self.query('SWE:TIME?')
         return float(sweeptime)
-
+    
+    def MeasureIQ(self):
+        self.SetContinuous(False)
+        result = self.query(':READ:WAVeform0?')
+        result = result.split(',')
+        result = [float(x) for x in result]
+        result = np.asarray(result)
+        I = result[::2]
+        Q = result[1::2]
+        tend = self.GetIQSweepTime()
+        t = np.linspace(0,tend,len(I)+1)
+        t = t[1:]
+        #print((t[1]-t[0]))
+        #print(1/(t[1]-t[0]))
+        #print(self.GetSampleRate())
+        output = pd.DataFrame()
+        output['Time (s)'] = t
+        output['I (V)'] = I
+        output['Q (V)']= Q
+        output['Digital IFBW (Hz)'] = self.GetDigitalIFBW()
+        
+        return output
+        
+        
+        
     def MeasureScreen(self):
         self.SetContinuous(False)
         result = self.query('READ:SAN?')

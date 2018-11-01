@@ -113,12 +113,12 @@ class basepna(instrument,abc.ABC):
         return
         
     def SetPowerOff(self):
-        self.write("SOUR1:POW1:MODE OFF")  
+        self.write("SOUR1:POW1:MODE OFF")
         return
         
     def SetPowerOn(self):
-        self.write("SOUR1:POW1:MODE ON")  
-        return   
+        self.write("SOUR1:POW1:MODE ON")
+        return
 
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
