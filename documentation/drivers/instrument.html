@@ -1,0 +1,260 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The instrument class &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="He7Temperature - He7 Temperature Server" href="He7Temperature.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="He7Temperature.html" title="He7Temperature - He7 Temperature Server"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="He7Temperature.html"
+                        title="previous chapter">He7Temperature - He7 Temperature Server</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/drivers/instrument.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-stlab.devices.instrument">
+<span id="the-instrument-class"></span><span id="instrument-class"></span><h1>The instrument class<a class="headerlink" href="#module-stlab.devices.instrument" title="Permalink to this headline">¶</a></h1>
+<p>Module implementing instrument class</p>
+<p>This module is at the center of the instrument control scheme.  Almost all
+instrument drivers inherit from this class.  It basically repackages the basic
+pyvisa write and query commands and handles the creation of the pyvisa
+resource manager.  It also adds some basic reset and id commands common to
+all devices that inherit from it</p>
+<p>The class can in principle be used directly in measurement scripts but
+you will be forced to explicitly write the VISA commands directly.  Most drivers
+already include a collection of commands and specific quality of life methods
+that allow you to already do basic functions.</p>
+<dl class="class">
+<dt id="stlab.devices.instrument.instrument">
+<em class="property">class </em><code class="descclassname">stlab.devices.instrument.</code><code class="descname">instrument</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main instrument class all visa instruments should inherit from</p>
+<p>Implements basic read/write/query communication for visa instruments using
+pyvisa and visa backend (usually NI-VISA).  Includes a few extra methods
+that should be common for all instruments.  Keep in mind that these methods
+can always be overridden by children of this class (for example if you always
+need to include a wait time after querying or an <code class="docutils literal notranslate"><span class="pre">'*OPC?'</span></code> after writing).</p>
+<dl class="attribute">
+<dt id="stlab.devices.instrument.instrument.global_rs">
+<code class="descname">global_rs</code><a class="headerlink" href="#stlab.devices.instrument.instrument.global_rs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>pyvisa.highlevel.ResourceManager</em> – Visa resource manager used to instantiate each visa instrument.
+This member is static and shared by all instrument objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="stlab.devices.instrument.instrument.rstype">
+<code class="descname">rstype</code><a class="headerlink" href="#stlab.devices.instrument.instrument.rstype" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – String that stores the current backend the resource manager is
+using.  Can be <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">‘<span>&#64;</span>ni</a>’ or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">‘<span>&#64;</span>py</a>’ for NI-VISA or pyvisa-py backend.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="stlab.devices.instrument.instrument.dev">
+<code class="descname">dev</code><a class="headerlink" href="#stlab.devices.instrument.instrument.dev" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>pyvisa.resources.Resource</em> – pyvisa resource that points to the desired device.  Created
+upon instantiation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.instrument.instrument.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instrument __init__ method.</p>
+<p>Sets up the instrument using pyvisa and instantiates the resource
+manager if not done yet.  Upon first call it also instantiantes the
+pyvisa ResourceManager for the whole session.  It is single static member
+available to all instrument subclasses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Address of the VISA instrument to be instantiated</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Will call <a class="reference internal" href="#stlab.devices.instrument.instrument.reset" title="stlab.devices.instrument.instrument.reset"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">reset</span></code></a> on instantiation to reset instrument to default settings</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Print strings written to the device on screen</li>
+<li><strong>**kwargs</strong> – Additional keyword arguments to be passed to pyvisa’s open_resource method.
+See pyvisa documentation for details.  Examples could be baud_rate,
+read_termination, etc…</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.instrument.instrument.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the pyvisa resource</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.instrument.instrument.id">
+<code class="descname">id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument.id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query the device id string</p>
+<p>Also printed on screen.  Passes <code class="docutils literal notranslate"><span class="pre">'*IDN?'</span></code> to the device and prints the response.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>out</strong> – The instrument id string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.instrument.instrument.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>mystr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a string to instrument and read the reply</p>
+<p>Passes input string forward to the pyvisa resource query method and retrieves its reply</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> – The string to write</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>out</strong> – The instrument reply string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.instrument.instrument.read">
+<code class="descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read from the instrument</p>
+<p>Performs a read using the pyvisa read method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>out</strong> – The string read from the instrument</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.instrument.instrument.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a reset command to the instrument</p>
+<p>Typically the reset command for VISA instruments is <code class="docutils literal notranslate"><span class="pre">*RST</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.instrument.instrument.setverbose">
+<code class="descname">setverbose</code><span class="sig-paren">(</span><em>verb=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument.setverbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument.setverbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set whether the device will print the sent commands to screen (verbosity)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Set verbosity to on or off</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.instrument.instrument.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>mystr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/instrument.html#instrument.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.instrument.instrument.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write string to instrument</p>
+<p>Simply passes input string forward to the pyvisa resource write method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The sring to write</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="He7Temperature.html" title="He7Temperature - He7 Temperature Server"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

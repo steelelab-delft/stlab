@@ -1,0 +1,165 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Documentation for STLab &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="MySocket – Basic TCP socket" href="utils/MySocket.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utils/MySocket.html" title="MySocket – Basic TCP socket"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Documentation for STLab</a></li>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="utils/MySocket.html"
+                        title="next chapter">MySocket – Basic TCP socket</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="documentation-for-stlab">
+<h1>Documentation for STLab<a class="headerlink" href="#documentation-for-stlab" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils/MySocket.html">MySocket – Basic TCP socket</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/S11fit.html">S11fit – Resonance fitting routines and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/autoplotter.html">Autoplot – Quick plots for measurement reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/metagen.html">Metagen – Spyview metafile generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/stlabdict.html">stlabdict – Data structures and matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/BFDaemon.html">BFDaemon - BF Temperature Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/BFWrapper.html">BFWrapper - Driver for remote BF Temperature Controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/He7Daemon.html">He7Daemon - He7 Temperature Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/He7Temperature.html">He7Temperature - He7 Temperature Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/instrument.html">The instrument class</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>STLab is a collection of drivers and scripts used for equipment control and measurement
+automation.  For the most part it is built upon pyvisa and is inteded to avoid the complications
+of low level communication with measurement instruments without including an inconvenient level
+of additional complexity (see <a class="reference external" href="https://en.wikipedia.org/wiki/KISS_principle">KISS principle</a>).</p>
+<p>The instrument drivers should in general only contain basic commonly used commands and not
+sophisticated setup and measurement schemes.  While things like “Get power” or “Get Trace” are
+acceptable, methods like “Perform 2 tone measurement” should not be included in basic device drivers.
+The latter kind of method should reside on a higher level of abstration since its use is likely
+to be very specific and would only clutter the driver for others.</p>
+<p>The basic structure of the package is as follows:</p>
+<div class="line-block">
+<div class="line">stlab</div>
+<div class="line">├── __init__.py</div>
+<div class="line">├── LICENCE.md</div>
+<div class="line">├── README.md</div>
+<div class="line">├── devices</div>
+<div class="line">│   ├── …</div>
+<div class="line">│   └── …</div>
+<div class="line">├── utils</div>
+<div class="line">│   ├── instrument.py</div>
+<div class="line">│   └── …</div>
+<div class="line">├── examples</div>
+<div class="line">│   ├── …</div>
+<div class="line">│   └── …</div>
+<div class="line">├── doc</div>
+<div class="line">│   ├── …</div>
+<div class="line">│   └── …</div>
+</div>
+<ul class="simple">
+<li>The “devices” folder contains all the implemented drivers as well as the basic instrument class.</li>
+<li>The “utils” folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.</li>
+<li>“examples” contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.</li>
+<li>“doc” contains this documentation.</li>
+<li>The __init__.py file contains the modules and names imported when running “import stlab”.  Note that some modules and functions are renamed for convenience.</li>
+</ul>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utils/MySocket.html" title="MySocket – Basic TCP socket"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>MySocket – Basic TCP socket &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="S11fit – Resonance fitting routines and utilities" href="S11fit.html" />
+    <link rel="prev" title="Documentation for STLab" href="../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="S11fit.html" title="S11fit – Resonance fitting routines and utilities"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Documentation for STLab"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Documentation for STLab</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="S11fit.html"
+                        title="next chapter">S11fit – Resonance fitting routines and utilities</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/utils/MySocket.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-stlab.utils.MySocket">
+<span id="mysocket-basic-tcp-socket"></span><h1>MySocket – Basic TCP socket<a class="headerlink" href="#module-stlab.utils.MySocket" title="Permalink to this headline">¶</a></h1>
+<p>Basic socket implementation to communicate with temperature servers</p>
+<p>Simple implementation of a python TCP socket.  Basically copied from some
+example online and elaborated on.  Implements both the receiving and sending
+so both the server and client use the same class.  Is used by all temperature
+servers (Triton, BF, He7)</p>
+<dl class="class">
+<dt id="stlab.utils.MySocket.MySocket">
+<em class="property">class </em><code class="descclassname">stlab.utils.MySocket.</code><code class="descname">MySocket</code><span class="sig-paren">(</span><em>sock=None</em>, <em>verb=False</em>, <em>timeout=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Socket class</p>
+<p>The original comment on the example this is base on was:
+<code class="docutils literal notranslate"><span class="pre">demonstration</span> <span class="pre">class</span> <span class="pre">only</span> <span class="pre">-</span> <span class="pre">coded</span> <span class="pre">for</span> <span class="pre">clarity,</span> <span class="pre">not</span> <span class="pre">efficiency</span></code></p>
+<dl class="method">
+<dt id="stlab.utils.MySocket.MySocket.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>sock=None</em>, <em>verb=False</em>, <em>timeout=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init method for socket</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sock</strong> (<em>socket.socket</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – If a socket has already be created it may be passed here.  If None
+then a new socket is created.</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Enables or disables priting of debugging strings</li>
+<li><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Timeout for socket communication.  Used to avoid scripts hanging
+indefinitely waiting for a response.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.MySocket.MySocket.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>host</em>, <em>port</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to given host with given port</p>
+<p>Connects the tcp socket to host ip address using given TCP port number</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – IP address of host</li>
+<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – TCP port to use</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.MySocket.MySocket.myreceive">
+<code class="descname">myreceive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.myreceive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.myreceive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receive a message from connected port</p>
+<p>Receives a message from a previously connected port.  Will stop when timeout happens,</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Bytes received from socket or None if nothing was received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)">bytes</a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.MySocket.MySocket.mysend">
+<code class="descname">mysend</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.mysend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.mysend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a message to the connected port</p>
+<p>Sends given message to the connected port.  Sends ‘#EOT’ to end transmission</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Message to be sent</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="S11fit.html" title="S11fit – Resonance fitting routines and utilities"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Documentation for STLab"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlab.utils.MySocket &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.utils.MySocket</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Basic socket implementation to communicate with temperature servers</span>
+
+<span class="sd">Simple implementation of a python TCP socket.  Basically copied from some</span>
+<span class="sd">example online and elaborated on.  Implements both the receiving and sending</span>
+<span class="sd">so both the server and client use the same class.  Is used by all temperature</span>
+<span class="sd">servers (Triton, BF, He7)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="n">MSGLEN</span> <span class="o">=</span> <span class="mi">2048</span>
+
+<div class="viewcode-block" id="MySocket"><a class="viewcode-back" href="../../../utils/MySocket.html#stlab.utils.MySocket.MySocket">[docs]</a><span class="k">class</span> <span class="nc">MySocket</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Socket class</span>
+
+<span class="sd">        The original comment on the example this is base on was:</span>
+<span class="sd">        ``demonstration class only - coded for clarity, not efficiency``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MySocket.__init__"><a class="viewcode-back" href="../../../utils/MySocket.html#stlab.utils.MySocket.MySocket.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sock</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init method for socket</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sock : socket.socket or None, optional</span>
+<span class="sd">            If a socket has already be created it may be passed here.  If None</span>
+<span class="sd">            then a new socket is created.</span>
+<span class="sd">        verb : bool, optional</span>
+<span class="sd">            Enables or disables priting of debugging strings</span>
+<span class="sd">        timeout : float, optional</span>
+<span class="sd">            Timeout for socket communication.  Used to avoid scripts hanging</span>
+<span class="sd">            indefinitely waiting for a response.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verb</span> <span class="o">=</span> <span class="n">verb</span>
+        <span class="k">if</span> <span class="n">sock</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span>
+                            <span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sock</span> <span class="o">=</span> <span class="n">sock</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MySocket.connect"><a class="viewcode-back" href="../../../utils/MySocket.html#stlab.utils.MySocket.MySocket.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Connect to given host with given port</span>
+
+<span class="sd">        Connects the tcp socket to host ip address using given TCP port number</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        host : str</span>
+<span class="sd">            IP address of host</span>
+<span class="sd">        port : int</span>
+<span class="sd">            TCP port to use</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MySocket.mysend"><a class="viewcode-back" href="../../../utils/MySocket.html#stlab.utils.MySocket.MySocket.mysend">[docs]</a>    <span class="k">def</span> <span class="nf">mysend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send a message to the connected port</span>
+
+<span class="sd">        Sends given message to the connected port.  Sends &#39;#EOT&#39; to end transmission</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        msg : str</span>
+<span class="sd">            Message to be sent</span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">totalsent</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">totalsent</span> <span class="o">&lt;</span> <span class="n">MSGLEN</span><span class="p">:</span>
+            <span class="c1">#print(&#39;Sending...&#39;)</span>
+            <span class="n">sent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="n">totalsent</span><span class="p">:])</span>
+            <span class="k">if</span> <span class="n">sent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;#EOT&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Socket send: Message finished&quot;</span><span class="p">)</span>
+<span class="c1">#                raise RuntimeError(&quot;socket connection broken&quot;)</span>
+                <span class="k">return</span>
+            <span class="n">totalsent</span> <span class="o">=</span> <span class="n">totalsent</span> <span class="o">+</span> <span class="n">sent</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span></div>
+            
+
+<div class="viewcode-block" id="MySocket.myreceive"><a class="viewcode-back" href="../../../utils/MySocket.html#stlab.utils.MySocket.MySocket.myreceive">[docs]</a>    <span class="k">def</span> <span class="nf">myreceive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Receive a message from connected port</span>
+
+<span class="sd">        Receives a message from a previously connected port.  Will stop when timeout happens,</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bytes or None</span>
+<span class="sd">            Bytes received from socket or None if nothing was received.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bytes_recd</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">bytes_recd</span> <span class="o">&lt;</span> <span class="n">MSGLEN</span><span class="p">:</span>
+                <span class="c1">#print(&#39;Receiving...&#39;)</span>
+                <span class="n">chunk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">MSGLEN</span> <span class="o">-</span> <span class="n">bytes_recd</span><span class="p">,</span> <span class="mi">2048</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">chunk</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;#EOT&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Socket receive: Message finished&quot;</span><span class="p">)</span>
+    <span class="c1">#                raise RuntimeError(&quot;socket connection broken&quot;)</span>
+                    <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">chunk</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Socket receive: Message broken?&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;socket connection broken&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+                <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                <span class="n">bytes_recd</span> <span class="o">=</span> <span class="n">bytes_recd</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+            <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ConnectionResetError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Connection reset, returned &quot;None&quot;&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Receive timed out: &#39;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>
