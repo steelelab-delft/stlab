@@ -1,3 +1,9 @@
+'''He7 Daemon, Temperature server
+
+He7 Temperature server
+
+'''
+
 import socket
 from stlab.utils.MySocket import MySocket
 import datetime
@@ -91,27 +97,29 @@ def GetTemperature(sock):
     print("Temperature sent at %s, T = %f K" % (now.strftime('%y-%m-%d %H:%M:%S'),T))
     ss.sock.close()
 
-print("StLab Temperature server for He7.  Initializing...")
-# create an INET, STREAMing socket
-serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# bind the socket to a public host, and a well-known port
-#serversocket.bind((socket.gethostname(), 8001))
-addr = socket.gethostbyname(socket.gethostname())
-port = 8472
-serversocket.bind(('0.0.0.0', port))
-# become a server socket
-serversocket.listen(5)
-print("Ready.  Listening on port %d and address %s" % (port,addr))
+
+if __name__ == "__main__":
+    print("StLab Temperature server for He7.  Initializing...")
+    # create an INET, STREAMing socket
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # bind the socket to a public host, and a well-known port
+    #serversocket.bind((socket.gethostname(), 8001))
+    addr = socket.gethostbyname(socket.gethostname())
+    port = 8472
+    serversocket.bind(('0.0.0.0', port))
+    # become a server socket
+    serversocket.listen(5)
+    print("Ready.  Listening on port %d and address %s" % (port,addr))
 
 
 
 
-try:
-    while True:
-        # accept connections from outside
-        (clientsocket, address) = serversocket.accept()
-        GetTemperature(clientsocket)
+    try:
+        while True:
+            # accept connections from outside
+            (clientsocket, address) = serversocket.accept()
+            GetTemperature(clientsocket)
 
-except KeyboardInterrupt:
-    print('Shutting down temperature server')
-    serversocket.close()
+    except KeyboardInterrupt:
+        print('Shutting down temperature server')
+        serversocket.close()

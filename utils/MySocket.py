@@ -1,13 +1,38 @@
+"""Basic socket implementation to communicate with temperature servers
+
+Simple implementation of a python TCP socket.  Basically copied from some
+example online and elaborated on.  Implements both the receiving and sending
+so both the server and client use the same class.  Is used by all temperature
+servers (Triton, BF, He7)
+
+"""
+
 import socket
 import time
 MSGLEN = 2048
 
 class MySocket:
-    """demonstration class only
-      - coded for clarity, not efficiency
+    """ Socket class
+
+        The original comment on the example this is base on was:
+        ``demonstration class only - coded for clarity, not efficiency``
     """
 
     def __init__(self, sock=None,verb=False,timeout=10):
+        """Init method for socket
+
+        Parameters
+        ==========
+        sock : socket.socket or None, optional
+            If a socket has already be created it may be passed here.  If None
+            then a new socket is created.
+        verb : bool, optional
+            Enables or disables priting of debugging strings
+        timeout : float, optional
+            Timeout for socket communication.  Used to avoid scripts hanging
+            indefinitely waiting for a response.
+
+        """
         self.verb = verb
         if sock is None:
             self.sock = socket.socket(
