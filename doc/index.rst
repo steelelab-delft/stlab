@@ -51,7 +51,7 @@ The basic structure of the package is as follows:
 * The "utils" folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.
 * "examples" contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.
 * "doc" contains this documentation.
-* The __init__.py file contains the modules and names imported when running "import stlab".  Note that some modules are renamed for convenience.
+* The __init__.py file contains the modules and names imported when running "import stlab".  Note that some modules and functions are renamed for convenience.
 
 Indices and tables
 ==================

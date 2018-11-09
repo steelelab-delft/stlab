@@ -7,13 +7,29 @@ Function definition for simple plotting routine to be run at end of mesurement
 import matplotlib.pyplot as plt
 import stlab
 import os
+import traceback
+import logging
+from functools import wraps
 
+
+def catchexception(func):
+    @wraps(func)
+    def overfunc(*args,**kwargs):
+        try:
+            func(*args,**kwargs)
+        except Exception as e:
+            logging.error(traceback.format_exc())
+            print('Continuing...')
+    return overfunc
+
+@catchexception
 def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption='YOU SHOULD ADD A COMMENT',show=False,**kwargs):
     """Autoplot function
 
     Takes a data file handle (still open or recently closed) or a filename and plots the requested
     columns).  Saves figure as a png alongside the original data file with the same name.
-
+    As a precaution, if an exception is raised during the execution of this function, it will be caught internally
+    so as not to interrupt the caller.
 
     Parameters
     ----------
@@ -23,22 +39,18 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
         Label for x axis data
     ylab : str
         Label for y axis data
-    zlab : str or None
+    zlab : str or None, optional
         Label for z axis data.  If set to none, a line plot is returned.  If set to str
         a color plot is returned
-    title : str
+    title : str, optional
         Text label to be included in the title
-    caption : str
+    caption : str, optional
         Comment included below figure
     **kwargs
         Arguments to be passed to plotting function (plt.plot or plt.imshow)
 
-    Returns
-    -------
-    None
-        Does not return any value
-
     """
+
     try:
         datafile.flush()
         fname = datafile.name
@@ -68,3 +80,6 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
     if show:
         plt.show()
     plt.close()
+
+
+
