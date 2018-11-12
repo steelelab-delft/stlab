@@ -80,7 +80,9 @@
 <li class="toctree-l1"><a class="reference internal" href="utils/S11fit.html">S11fit – Resonance fitting routines and utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/autoplotter.html">Autoplot – Quick plots for measurement reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/metagen.html">Metagen – Spyview metafile generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/newfile.html">newfile – New measurement folder creation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/stlabdict.html">stlabdict – Data structures and matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/writematrix.html">writematrix – Data file writing methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/BFDaemon.html">BFDaemon - BF Temperature Server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/BFWrapper.html">BFWrapper - Driver for remote BF Temperature Controller</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/He7Daemon.html">He7Daemon - He7 Temperature Server</a></li>
@@ -115,7 +117,10 @@ to be very specific and would only clutter the driver for others.</p>
 <div class="line">├── examples</div>
 <div class="line">│   ├── …</div>
 <div class="line">│   └── …</div>
-<div class="line">├── doc</div>
+<div class="line">├── docs</div>
+<div class="line">│   ├── …</div>
+<div class="line">│   └── …</div>
+<div class="line">├── doc_gen</div>
 <div class="line">│   ├── …</div>
 <div class="line">│   └── …</div>
 </div>
@@ -123,7 +128,7 @@ to be very specific and would only clutter the driver for others.</p>
 <li>The “devices” folder contains all the implemented drivers as well as the basic instrument class.</li>
 <li>The “utils” folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.</li>
 <li>“examples” contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.</li>
-<li>“doc” contains this documentation.</li>
+<li>“docs” contains this documentation and “doc_gen” contains the sphynx scripts for generating it.</li>
 <li>The __init__.py file contains the modules and names imported when running “import stlab”.  Note that some modules and functions are renamed for convenience.</li>
 </ul>
 </div>

@@ -1,0 +1,206 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlab.utils.newfile &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.utils.newfile</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Method for opening a new file for writing</span>
+
+<span class="sd">This module contains a single method used for creating a new datafile.  This method</span>
+<span class="sd">handles timestamping the measurement folder, keeping track of the index of the measurement</span>
+<span class="sd">(if desired) and makes backup copies of the previously run scripts for reference.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># Creates new measurement folder using prefix + datetime + idstring.</span>
+<span class="c1"># If colnames (array of column names) is included, the title line is written</span>
+<span class="c1"># Also copies main script file to measurement folder</span>
+
+<div class="viewcode-block" id="newfile"><a class="viewcode-back" href="../../../utils/newfile.html#stlab.utils.newfile.newfile">[docs]</a><span class="k">def</span> <span class="nf">newfile</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span><span class="n">idstring</span><span class="p">,</span><span class="n">colnames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mypath</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">,</span><span class="n">usedate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">usefolder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoindex</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span><span class="n">return_folder_name</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a new file for storing data.</span>
+
+<span class="sd">    By default will create a folder (at the location of the running script) with a new file open for writing</span>
+<span class="sd">    and a copy of the script the function was called from.  The naming scheme for the folder is :code:`&lt;prefix&gt;_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;`.</span>
+<span class="sd">    The file is named the same with a &quot;.dat&quot; extension.</span>
+
+<span class="sd">    Generally, if using default options, overwriting an existing file should not happen (date and time will never be exactly equal).</span>
+<span class="sd">    However, if the desired filename already exists, this method will overwrite the old file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prefix : str</span>
+<span class="sd">        A string to be placed in front of the timestamp in the filename.  Can be blank or None but must be specified</span>
+<span class="sd">    idstring : str</span>
+<span class="sd">        A string to be placed behind the timestamp.  Can also be blank or None but must be specified</span>
+<span class="sd">    colnames : list of str, optional</span>
+<span class="sd">        Array-like containing column titles for data.  This will be written in the first line of the file delimited by &#39;, &#39;.</span>
+<span class="sd">        As an example, if colnames = [&#39;abc&#39;, &#39;def&#39;, &#39;ghi&#39;], the first line in the file will be :code:`\&quot;# abc, def, ghi\\n\&quot;`.  By default is left blank</span>
+<span class="sd">    mypath : str, optional</span>
+<span class="sd">        Path for folder (or file) creation if pwd is not the desired path.  By default it is pwd.</span>
+<span class="sd">    usedate : bool, optional</span>
+<span class="sd">        Boolean to include timestamp.  If False, the timestamp is excluded from the file/folder name.  True by default</span>
+<span class="sd">    usefolder : bool, optional</span>
+<span class="sd">        If set to False the file will be opened at the specified location with the usual naming but with no</span>
+<span class="sd">        subfolder and no copy will be made of the running script.  True by default</span>
+<span class="sd">    autoindex : bool, optional</span>
+<span class="sd">        Specifies if indexing of successively opened files is desired.  Will add a running index to the prefix of the newly created file/folder.</span>
+<span class="sd">        This will be incremented by 1 for each new file with the same prefix.  If no files are found with the same prefix, it creates the</span>
+<span class="sd">        first file name &lt;prefix&gt;1_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;.  Successive files will be named &lt;prefix&gt;&lt;idx&gt;_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;.</span>
+<span class="sd">        Is False by default.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    myfile : _io.TextIOWrapper</span>
+<span class="sd">        Open file handle for writing</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">__main__</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">__main__</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">):</span>
+        <span class="n">mainfile</span> <span class="o">=</span> <span class="n">__main__</span><span class="o">.</span><span class="vm">__file__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mainfile</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mainfile</span><span class="p">)</span>
+    <span class="n">mytime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">datecode</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">day</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">timecode</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">second</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Autoindexing...  Prefix is followed by an incremental index.</span>
+    <span class="c1"># Looks for already present files/folders with the same prefix and indexes and creates the next index.</span>
+    <span class="c1"># If none are found, starts with the first.</span>
+
+    <span class="k">if</span> <span class="n">autoindex</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">prefix</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No prefix given for autoindexing&#39;</span><span class="p">)</span>
+        <span class="n">namelist</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">mypath</span><span class="p">)]</span>
+        <span class="n">idxs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;^&#39;</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">d+$&#39;</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">namelist</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">nn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):])</span>
+                <span class="n">idxs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idxs</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;1&#39;</span>
+
+    <span class="k">if</span> <span class="n">usedate</span><span class="p">:</span>
+        <span class="n">foldername</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">datecode</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">timecode</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">idstring</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">foldername</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span><span class="n">idstring</span>
+
+    <span class="c1">#Check if prefix or idstring are blank and remove unnecessary underscores</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">idstring</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">idstring</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">foldername</span> <span class="o">=</span> <span class="n">foldername</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">prefix</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">foldername</span> <span class="o">=</span> <span class="n">foldername</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">foldername</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No name given... Add at least a prefix or idstring or date&#39;</span><span class="p">)</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">foldername</span><span class="o">+</span><span class="s1">&#39;.dat&#39;</span>
+
+
+    <span class="k">if</span> <span class="n">usefolder</span><span class="p">:</span>
+        <span class="n">fullfoldername</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">foldername</span><span class="p">)</span>
+        <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">foldername</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fullfoldername</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fullfoldername</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fullfilename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fullfoldername</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">fullfoldername</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Measurement Name: &#39;</span><span class="p">,</span> <span class="n">foldername</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mainfile</span> <span class="o">!=</span><span class="kc">None</span> <span class="ow">and</span> <span class="n">usefolder</span><span class="p">:</span>
+        <span class="n">scriptname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">mainfile</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">mainfile</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">fullfoldername</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">scriptname</span><span class="p">))</span>
+    <span class="n">myfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fullfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">colnames</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">varline</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colnames</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">myfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">varline</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">return_folder_name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">myfile</span><span class="p">,</span><span class="n">fullfoldername</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">myfile</span></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

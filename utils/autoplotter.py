@@ -12,8 +12,8 @@ import logging
 from functools import wraps
 
 
-def catchexception(func):
-    @wraps(func)
+def catchexception(func):#Decorator function
+    @wraps(func) #So that docstrings of the original function are conserved and sphynx works properly
     def overfunc(*args,**kwargs):
         try:
             func(*args,**kwargs)

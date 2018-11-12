@@ -32,6 +32,8 @@ def fromarrays(myfile,xarray,yarray,zarray=[],xtitle='',ytitle='',ztitle='',coln
     Column titles are added manually providing a list of titles or by autogenerating from the
     file title line.
 
+    Internally, this function calls :any:`fromlimits`
+
     Parameters
     ----------
     myfile : file or string
