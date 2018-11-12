@@ -27,6 +27,8 @@ def readdat(filename,delim=', ',nlines=None):
         nblocks = 0
             
         for point in f:
+            if point[0] == '#':
+                continue
             if point == '\n':
                 block = np.asarray(block)
                 block = block.T
