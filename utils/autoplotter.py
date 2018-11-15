@@ -62,7 +62,7 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
     basename = os.path.splitext(fname)[0]
 
     fig = plt.figure(figsize=(10,8))
-    ax1 = fig.add_axes((0.2, 0.2, 0.8, 0.7))
+    ax1 = fig.add_axes((0.2, 0.2, 0.75, 0.75))
 
     if zlab is None:
         for line in data:
