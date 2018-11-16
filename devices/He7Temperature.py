@@ -22,7 +22,7 @@ from stlab.devices.base_instrument import base_instrument
 class He7Temperature(base_instrument):
     """Class to implement temperature readout from He7 server
 
-    A new socket (See :doc:`../utils/MySocket` for implementation) is created and discarded every
+    A new socket is created and discarded every
     time a temperature is received.
 
     """

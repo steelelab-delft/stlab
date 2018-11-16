@@ -15,7 +15,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="MySocket – Basic TCP socket" href="utils/MySocket.html" /> 
+    <link rel="next" title="S11fit – Resonance fitting routines and utilities" href="utils/S11fit.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,7 +27,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="utils/MySocket.html" title="MySocket – Basic TCP socket"
+          <a href="utils/S11fit.html" title="S11fit – Resonance fitting routines and utilities"
              accesskey="N">next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">STLab  documentation</a> &#187;</li> 
       </ul>
@@ -42,8 +42,8 @@
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="utils/MySocket.html"
-                        title="next chapter">MySocket – Basic TCP socket</a></p>
+  <p class="topless"><a href="utils/S11fit.html"
+                        title="next chapter">S11fit – Resonance fitting routines and utilities</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -76,18 +76,21 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="utils/MySocket.html">MySocket – Basic TCP socket</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/S11fit.html">S11fit – Resonance fitting routines and utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/autoplotter.html">Autoplot – Quick plots for measurement reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/metagen.html">Metagen – Spyview metafile generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/newfile.html">newfile – New measurement folder creation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/stlabdict.html">stlabdict – Data structures and matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/writematrix.html">writematrix – Data file writing methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="drivers/BFDaemon.html">BFDaemon - BF Temperature Server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="drivers/BFWrapper.html">BFWrapper - Driver for remote BF Temperature Controller</a></li>
-<li class="toctree-l1"><a class="reference internal" href="drivers/He7Daemon.html">He7Daemon - He7 Temperature Server</a></li>
-<li class="toctree-l1"><a class="reference internal" href="drivers/He7Temperature.html">He7Temperature - He7 Temperature Server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/instrument.html">The instrument class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/temperature_servers.html">Temperature servers and Daemons for BlueFors and He7 fridges</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#mysocket-basic-tcp-socket">MySocket – Basic TCP socket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#module-stlab.devices.BFDaemon.BFDaemon">BFDaemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#module-stlab.devices.BFWrapper">BFWrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#module-stlab.devices.He7Daemon.He7Daemon">He7Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#module-stlab.devices.He7Temperature">He7Temperature</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -109,10 +112,11 @@ to be very specific and would only clutter the driver for others.</p>
 <div class="line">├── LICENCE.md</div>
 <div class="line">├── README.md</div>
 <div class="line">├── devices</div>
-<div class="line">│   ├── …</div>
-<div class="line">│   └── …</div>
-<div class="line">├── utils</div>
 <div class="line">│   ├── instrument.py</div>
+<div class="line">│   └── instrument drivers</div>
+<div class="line">│   ├──</div>
+<div class="line">├── utils</div>
+<div class="line">│   ├──</div>
 <div class="line">│   └── …</div>
 <div class="line">├── examples</div>
 <div class="line">│   ├── …</div>
@@ -129,8 +133,54 @@ to be very specific and would only clutter the driver for others.</p>
 <li>The “utils” folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.</li>
 <li>“examples” contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.</li>
 <li>“docs” contains this documentation and “doc_gen” contains the sphynx scripts for generating it.</li>
-<li>The __init__.py file contains the modules and names imported when running “import stlab”.  Note that some modules and functions are renamed for convenience.</li>
+<li>The __init__.py file contains the modules and names imported when running “import stlab”.  Note that some modules and functions are renamed for (in?)convenience.</li>
 </ul>
+<p>The imports done when doing <code class="code docutils literal notranslate"><span class="pre">import</span> <span class="pre">stlab</span></code> are:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Loads utils with shorter names</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.newfile</span> <span class="kn">import</span> <span class="n">newfile</span> <span class="c1">#Callable as stlab.newfile(...)</span>
+<span class="kn">import</span> <span class="nn">stlab.utils.metagen</span> <span class="kn">as</span> <span class="nn">metagen</span> <span class="c1">#Callable as stlab.metagen.fromlimits(...)</span>
+<span class="kn">import</span> <span class="nn">stlab.utils.readdata</span> <span class="kn">as</span> <span class="nn">readdata</span> <span class="c1">#Callable as stlab.readdata.readQUCS(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writematrix</span> <span class="k">as</span> <span class="n">savetxt</span> <span class="c1">#Callable as stlab.savetxt(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writedict</span> <span class="k">as</span> <span class="n">savedict</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writedictarray</span> <span class="k">as</span> <span class="n">savedictarray</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeparams</span> <span class="k">as</span> <span class="n">writeparams</span> <span class="c1">#Callable as stlab.savetxt(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeparnames</span> <span class="k">as</span> <span class="n">writeparnames</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">params_to_str</span> <span class="k">as</span> <span class="n">params_to_str</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeline</span> <span class="k">as</span> <span class="n">writeline</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeframe</span> <span class="k">as</span> <span class="n">saveframe</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeframearray</span> <span class="k">as</span> <span class="n">saveframearray</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">stlabdict</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">stlabmtx</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">framearr_to_mtx</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">fit</span> <span class="k">as</span> <span class="n">S11fit</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">S11full</span> <span class="k">as</span> <span class="n">S11func</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">backmodel</span> <span class="k">as</span> <span class="n">S11back</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">S11theo</span> <span class="k">as</span> <span class="n">S11theo</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
+<span class="c1">#from stlab.devices.base_instrument import SaveInstrumentMetadata #Callable as stlab.SaveInstrumentMetadata(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.devices</span> <span class="kn">import</span> <span class="n">autodetect_instrument</span> <span class="k">as</span> <span class="n">adi</span> <span class="c1">#Callable as stlab.devices.adi(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.autoplotter</span> <span class="kn">import</span> <span class="n">autoplot</span> <span class="c1">#Call as stlab.autoplot(...)</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">try:</span>
+<span class="sd">except ImportError:</span>
+<span class="sd">    print(&#39;Fitting routines not imported.  Missing dependencies&#39;)</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">import importlib.util</span>
+<span class="sd">lmfit_spec = importlib.util.find_spec(&quot;lmfit&quot;)</span>
+<span class="sd">found = lmfit_spec is not None</span>
+<span class="sd">sigspec = importlib.util.find_spec(&quot;scipy.signal&quot;)</span>
+<span class="sd">foundsig = sigspec is not None</span>
+<span class="sd">if foundsig:</span>
+<span class="sd">    import scipy.signal</span>
+<span class="sd">    foundsig=False</span>
+<span class="sd">    if &#39;savgol_filter&#39; in dir(scipy.signal):</span>
+<span class="sd">        foundsig=True</span>
+<span class="sd">if found and foundsig:</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -157,7 +207,7 @@ to be very specific and would only clutter the driver for others.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="utils/MySocket.html" title="MySocket – Basic TCP socket"
+          <a href="utils/S11fit.html" title="S11fit – Resonance fitting routines and utilities"
              >next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">STLab  documentation</a> &#187;</li> 
       </ul>
