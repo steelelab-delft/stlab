@@ -2,7 +2,7 @@
 
 This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the
 standard socket package.  The socket implementation is in stlab.utils.MySocket.
-The idea is that the server script (see :doc:`He7Daemon`) is run on the He7 control computer 
+The idea is that the server script is run on the He7 control computer 
 while this driver is imported in the measurement script.  The server will, upon request, 
 provide the last He3 head temperature from the running log to this driver.  This is because,
 typically, the BF and Entropy software blocks direct communication to the Lakeshore controller 
@@ -11,7 +11,6 @@ to the temperature controller or fridge.
 
 To do write operations (like temperature control, etc.) use the BFWrapper/BFDaemon
 driver/script which works for the old and new BF as well as the He7.
-See :doc:`BFWrapper` for details.
 
 """
 

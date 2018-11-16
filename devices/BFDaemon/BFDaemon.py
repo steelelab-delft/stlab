@@ -1,8 +1,13 @@
+"""BF Daemon
+
+Test
+
+"""
 from stlab.devices.Lakeshore_370 import Lakeshore_370
 from queue import Queue
 from threading import Thread
 import time
-from BFlogger import BFlogger
+from stlab.devices.BFDaemon.BFlogger import BFlogger
 import socket
 from stlab.utils.MySocket import MySocket
 import sys
@@ -26,24 +31,6 @@ def command_handler(qin,addr,baud_rate):
         qin.task_done()
         qout.put(ret)
 
-print("StLab Temperature server for BlueFors.  Initializing...")
-
-
-'''
-if len(sys.argv) >= 2:
-    filename = sys.argv[1]
-    ff = open(filename,'a')
-    ff.write('\n')
-else:
-    t0 = datetime.datetime.now()
-    filename = 'log_' + t0.strftime('%y_%m_%d__%H_%M_%S') + '.dat'
-    varline = ['Time (s)'] + ['PT2 Head (K)','PT2 Plate (K)', 'Still Plate (K)','Cold Plate (K)','MC Cernox (K)','PT1 Head (K)','PT1 Plate (K)','MC Plate (K)'] + ['P%d (mbar)' % i for i in range(1,7)]
-    #varline = ['Time (s)'] + ['T%d (K)' % i for i in range(1,10)] + ['P%d (mbar)' % i for i in range(1,7)]
-    print(varline)
-    ff = open(filename,'w')
-    ff.write('#' + ', '.join(varline)+'\n')
-'''
-
 def yes_or_no(question):
     while "the answer is invalid":
         reply = str(input(question+' (y/n): ')).lower().strip()
@@ -51,45 +38,6 @@ def yes_or_no(question):
             return True
         if reply[:1] == 'n':
             return False
-
-#define input queue for the command handler    
-commandq = Queue(maxsize=0)
-
-#addr = sys.argv[1]
-#Start the thread for the command handler.  Commands added to commandq will be run and the output will be put into whatever output queue is provided in the queue element
-
-addr = input('Enter VISA address of Lakeshore\n (old BF: ASRL3, new BF: ASRL11, He7: ASRL7):\n')
-baud_rate = input('Enter Serial Baud rate\n (default 9600, He7 uses 57600):\n')
-uselog = yes_or_no('Use BF logging?')
-
-try:
-    baud_rate = int(baud_rate)
-except ValueError:
-    baud_rate = 9600
-myhandler = Thread(target=command_handler, args=(commandq,addr,baud_rate))
-myhandler.daemon = True
-myhandler.start()
-
-
-
-# This is the main listening part of the daemon.  It is intended to listen on a specific TCP port for incoming connections.  When a connection arrives it receives 1 command that it adds to the commmandq.
-# Then the connection is closed and it goes back to listening for another command.
-# create an INET, STREAMing socket
-serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# bind the socket to a public host, and a well-known port
-#serversocket.bind((socket.gethostname(), 8001))
-addr = socket.gethostbyname(socket.gethostname())
-port = 8472
-serversocket.bind(('0.0.0.0', port))
-# become a server socket
-serversocket.listen(5)
-print("Ready.  Listening on port %d and address %s" % (port,addr))
-
-#Another thread that also uses the same command queue
-if uselog:
-    loggerthread = Thread(target=BFlogger, args=(commandq,addr,port))
-    loggerthread.start()
-
 
 #Function to add a text command received from a socket receive to the commandq.
 def RunCommand(sock,resultq):
@@ -119,20 +67,82 @@ def RunCommand(sock,resultq):
     ss.mysend(xx.encode('utf_8'))
     ss.sock.close()
     return word
-    
-resultq = Queue(maxsize=0)
-    
-while True:
-    clientsocket = None
-    try:
-        # accept connections from outside
-        (clientsocket, address) = serversocket.accept()
-        RunCommand(clientsocket,resultq)
-    except KeyboardInterrupt:
-        print('Shutting down temperature server')
-        serversocket.close()
-        break
 
-commandq.put(0)
-if uselog:
-    loggerthread.join()
+
+if __name__ == "__main__":
+
+    print("StLab Temperature server for BlueFors.  Initializing...")
+
+    '''
+    if len(sys.argv) >= 2:
+        filename = sys.argv[1]
+        ff = open(filename,'a')
+        ff.write('\n')
+    else:
+        t0 = datetime.datetime.now()
+        filename = 'log_' + t0.strftime('%y_%m_%d__%H_%M_%S') + '.dat'
+        varline = ['Time (s)'] + ['PT2 Head (K)','PT2 Plate (K)', 'Still Plate (K)','Cold Plate (K)','MC Cernox (K)','PT1 Head (K)','PT1 Plate (K)','MC Plate (K)'] + ['P%d (mbar)' % i for i in range(1,7)]
+        #varline = ['Time (s)'] + ['T%d (K)' % i for i in range(1,10)] + ['P%d (mbar)' % i for i in range(1,7)]
+        print(varline)
+        ff = open(filename,'w')
+        ff.write('#' + ', '.join(varline)+'\n')
+    '''
+
+
+    #define input queue for the command handler    
+    commandq = Queue(maxsize=0)
+
+    #addr = sys.argv[1]
+    #Start the thread for the command handler.  Commands added to commandq will be run and the output will be put into whatever output queue is provided in the queue element
+
+    addr = input('Enter VISA address of Lakeshore\n (old BF: ASRL3, new BF: ASRL11, He7: ASRL7):\n')
+    baud_rate = input('Enter Serial Baud rate\n (default 9600, He7 uses 57600):\n')
+    uselog = yes_or_no('Use BF logging?')
+
+    try:
+        baud_rate = int(baud_rate)
+    except ValueError:
+        baud_rate = 9600
+    myhandler = Thread(target=command_handler, args=(commandq,addr,baud_rate))
+    myhandler.daemon = True
+    myhandler.start()
+
+
+
+    # This is the main listening part of the daemon.  It is intended to listen on a specific TCP port for incoming connections.  When a connection arrives it receives 1 command that it adds to the commmandq.
+    # Then the connection is closed and it goes back to listening for another command.
+    # create an INET, STREAMing socket
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # bind the socket to a public host, and a well-known port
+    #serversocket.bind((socket.gethostname(), 8001))
+    addr = socket.gethostbyname(socket.gethostname())
+    port = 8472
+    serversocket.bind(('0.0.0.0', port))
+    # become a server socket
+    serversocket.listen(5)
+    print("Ready.  Listening on port %d and address %s" % (port,addr))
+
+    #Another thread that also uses the same command queue
+    if uselog:
+        loggerthread = Thread(target=BFlogger, args=(commandq,addr,port))
+        loggerthread.start()
+
+
+
+        
+    resultq = Queue(maxsize=0)
+        
+    while True:
+        clientsocket = None
+        try:
+            # accept connections from outside
+            (clientsocket, address) = serversocket.accept()
+            RunCommand(clientsocket,resultq)
+        except KeyboardInterrupt:
+            print('Shutting down temperature server')
+            serversocket.close()
+            break
+
+    commandq.put(0)
+    if uselog:
+        loggerthread.join()
