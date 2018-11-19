@@ -1,8 +1,21 @@
-'''He7 Daemon, Temperature server
+"""He7 Daemon - He7 temperature server
 
-He7 Temperature server
+He7 Temperature server.  This script should be run on the He7 control computer to
+allow the measurement computer to retrieve the last logged temperature.  It listens for temperature 
+requests on port 8472 on any of the available network interfaces (this includes Zerotier addresses).
+It does not allow control of the Lakeshore directly.
 
-'''
+Run as::
+  
+  python He7Daemon.py <path to log folder>
+
+The log folder path is optional and if not provided a default will be used.  The path to be provided
+refers to the top level log folder (not the running log folder).  The script will
+look for the most recent log in that folder and get the temperature from there.  This means it will
+automatically switch to the latest log file.  The default log folder can be adjusted in the code,
+:code:`LOGFOLDER` variable at the top of the file.
+
+"""
 
 import socket
 from stlab.utils.MySocket import MySocket
@@ -11,12 +24,13 @@ import os.path
 import os
 import datetime
 import glob
+import sys
 
-#LOGFOLDER = 'C:\\Entropy\\logs\\'
+#DEFAULT LOGFOLDER FOR MAJOR TOM
 LOGFOLDER = 'C:\\Users\\user\\Desktop\\Entropy\\logs\\'
 
-def GetCurrentLogFolder():
-    a = next(os.walk(LOGFOLDER))[1]
+def GetCurrentLogFolder(mylogfolder):
+    a = next(os.walk(mylogfolder))[1]
     a.sort()
     a = a[::-1]
     #print(a)
@@ -75,10 +89,10 @@ def tail( f, lines=20 ):
     all_read_text = ''.join(reversed(blocks))
     return '\n'.join(all_read_text.splitlines()[-total_lines_wanted:])
 
-def GetTemperature(sock):
+def GetTemperature(sock,mylogfolder):
     now = datetime.datetime.now()
-    foldername = GetCurrentLogFolder()
-    foldername = LOGFOLDER + foldername
+    foldername = GetCurrentLogFolder(mylogfolder)
+    foldername = mylogfolder + foldername
     foldername = os.path.normpath(foldername)
     path = foldername + '\\*3He Head.log'
     path = glob.glob(path)
@@ -111,14 +125,16 @@ if __name__ == "__main__":
     serversocket.listen(5)
     print("Ready.  Listening on port %d and address %s" % (port,addr))
 
-
-
+    #LOGFOLDER = 'C:\\Entropy\\logs\\'
+    if len(sys.argv) > 1:
+        LOGFOLDER = sys.argv[1]
 
     try:
         while True:
             # accept connections from outside
             (clientsocket, address) = serversocket.accept()
-            GetTemperature(clientsocket)
+            GetTemperature(clientsocket,LOGFOLDER)
+            print("Listening on port %d and address %s" % (port,addr))
 
     except KeyboardInterrupt:
         print('Shutting down temperature server')

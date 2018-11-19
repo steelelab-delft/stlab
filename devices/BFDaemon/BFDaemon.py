@@ -1,6 +1,20 @@
-"""BF Daemon
+"""BFDaemon - BlueFors and Lakeshore temperature server
 
-Test
+This script contains the temeperature server to be used on both our BF systems and the He7
+when complete control of the Lakeshore unit is necessary.  The script should be run on the fridge control computer
+AFTER the official temperature control software is shutdown.
+It operates by simply forwarding text commands received from a BFWrapper object on port 8472 to the Lakeshore unit, 
+retrieving any responses, and returning them to the BFWrapper object.
+In parallel to this, it can optionally perform logging following the
+BF log style in a given folder.  This avoids the issue when closing the official temperature
+that interrupts the running logs.  The code that performs this logging is located in :code:`stlab/devices/BFDaemon/BFlogger.py`.
+
+The script is run as::
+
+  python BFDaemon
+
+The possible options are input after running.  These are the Lakeshore COM port, the baud rate and the log
+folder if desired.
 
 """
 from stlab.devices.Lakeshore_370 import Lakeshore_370
@@ -13,6 +27,8 @@ from stlab.utils.MySocket import MySocket
 import sys
 import datetime
 
+
+LOGFOLDER = "D:/BF/logs"
 
 # Function that takes commands from queue "qin".  qin has three elements, (qout, comm, args) where qout is the output queue, comm is the function and args are the arguments for the function
 # It first initializes communication to the instrument and then waits for commands to be added to the queue.  It can only run commands implemented in the BASE driver (not the wrapper)
@@ -95,9 +111,13 @@ if __name__ == "__main__":
     #addr = sys.argv[1]
     #Start the thread for the command handler.  Commands added to commandq will be run and the output will be put into whatever output queue is provided in the queue element
 
-    addr = input('Enter VISA address of Lakeshore\n (old BF: ASRL3, new BF: ASRL11, He7: ASRL7):\n')
+    addr = input('Enter VISA address of Lakeshore\n (old BF: ASRL3, new BF: ASRL3, He7: ASRL7):\n')
     baud_rate = input('Enter Serial Baud rate\n (default 9600, He7 uses 57600):\n')
     uselog = yes_or_no('Use BF logging?')
+    if uselog:
+        logfolder = input('Enter BF log folder location (default "D:/BF/logs"):\n')
+    else:
+        logfolder = LOGFOLDER
 
     try:
         baud_rate = int(baud_rate)
@@ -124,7 +144,7 @@ if __name__ == "__main__":
 
     #Another thread that also uses the same command queue
     if uselog:
-        loggerthread = Thread(target=BFlogger, args=(commandq,addr,port))
+        loggerthread = Thread(target=BFlogger, args=(commandq,addr,port,logfolder))
         loggerthread.start()
 
 
@@ -138,6 +158,7 @@ if __name__ == "__main__":
             # accept connections from outside
             (clientsocket, address) = serversocket.accept()
             RunCommand(clientsocket,resultq)
+            print("Listening on port %d and address %s" % (port,addr))
         except KeyboardInterrupt:
             print('Shutting down temperature server')
             serversocket.close()

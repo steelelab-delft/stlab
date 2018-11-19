@@ -1,4 +1,4 @@
-"""Driver to communicate with the custom He7 Temperature server
+"""He7Temperature - Driver to communicate with the custom He7 Temperature server
 
 This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the
 standard socket package.  The socket implementation is in stlab.utils.MySocket.

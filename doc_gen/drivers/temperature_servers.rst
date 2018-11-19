@@ -19,8 +19,8 @@ Others take a more rudimentary approach of providing access to the last logged t
 communication with the controller.  This has the advantage of being able to keep the standard logging provided running while
 still being able to access the temperatures.  However, no temperature control is available.
 
-MySocket -- Basic TCP socket
-----------------------------
+MySocket.py -- Basic TCP socket
+-------------------------------
 
 This is the basic TCP socket used for the implementation of the temperature servers
 
@@ -29,31 +29,50 @@ This is the basic TCP socket used for the implementation of the temperature serv
   :special-members:
   :exclude-members: __weakref__
 
-BFDaemon
---------
+BFDaemon.py
+-----------
+
+File location: :code:`stlab/devices/BFDaemon/BFDaemon.py`
 
 .. automodule:: stlab.devices.BFDaemon.BFDaemon
   :special-members:
   :members:
 
 
-BFWrapper
----------
+BFWrapper.py
+------------
+
+File location: :code:`stlab/devices/BFWrapper.py`.
+
+Imported similar to an intrument::
+
+  from stlab.devices.BFWrapper import BFWrapper
+  dev = BFWrapper(addr)
 
 .. automodule:: stlab.devices.BFWrapper
   :special-members:
   :members:
 
-He7Daemon
----------
+He7Daemon.py
+------------
+
+File location: :code:`stlab/devices/He7Daemon/He7Daemon.py`
 
 .. automodule:: stlab.devices.He7Daemon.He7Daemon
   :special-members:
   :members:
 
 
-He7Temperature
---------------
+He7Temperature.py
+-----------------
+
+File location: :code:`stlab/devices/He7Temperature.py`
+
+Imported similar to an intrument::
+
+  from stlab.devices.He7Temperature import He7Temperature
+  dev = He7Temperature(addr)
+
 
 .. automodule:: stlab.devices.He7Temperature
   :special-members:
