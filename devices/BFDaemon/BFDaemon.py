@@ -116,8 +116,9 @@ if __name__ == "__main__":
     uselog = yes_or_no('Use BF logging?')
     if uselog:
         logfolder = input('Enter BF log folder location (default "D:/BF/logs"):\n')
-    else:
-        logfolder = LOGFOLDER
+        if logfolder == '':
+            logfolder = LOGFOLDER
+
 
     try:
         baud_rate = int(baud_rate)

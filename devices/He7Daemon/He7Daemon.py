@@ -7,9 +7,9 @@ It does not allow control of the Lakeshore directly.
 
 Run as::
   
-  python He7Daemon.py <path to log folder>
+  python He7Daemon.py
 
-The log folder path is optional and if not provided a default will be used.  The path to be provided
+The script will ask for the path to the log folder.  The path to be provided
 refers to the top level log folder (not the running log folder).  The script will
 look for the most recent log in that folder and get the temperature from there.  This means it will
 automatically switch to the latest log file.  The default log folder can be adjusted in the code,
@@ -27,7 +27,7 @@ import glob
 import sys
 
 #DEFAULT LOGFOLDER FOR MAJOR TOM
-LOGFOLDER = 'C:\\Users\\user\\Desktop\\Entropy\\logs\\'
+LOGFOLDER = 'C:/Users/user/Desktop/Entropy/logs/'
 
 def GetCurrentLogFolder(mylogfolder):
     a = next(os.walk(mylogfolder))[1]
@@ -126,14 +126,19 @@ if __name__ == "__main__":
     print("Ready.  Listening on port %d and address %s" % (port,addr))
 
     #LOGFOLDER = 'C:\\Entropy\\logs\\'
-    if len(sys.argv) > 1:
-        LOGFOLDER = sys.argv[1]
+#    if len(sys.argv) > 1:
+#        LOGFOLDER = sys.argv[1]
+    logfolder = input('Enter He7 log folder location (default "{}"):\n'.format(LOGFOLDER))
+    if logfolder == '':
+        logfolder = LOGFOLDER
+    logfolder = os.path.normpath(logfolder)
+    
 
     try:
         while True:
             # accept connections from outside
             (clientsocket, address) = serversocket.accept()
-            GetTemperature(clientsocket,LOGFOLDER)
+            GetTemperature(clientsocket,logfolder)
             print("Listening on port %d and address %s" % (port,addr))
 
     except KeyboardInterrupt:

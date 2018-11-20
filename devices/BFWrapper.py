@@ -7,13 +7,17 @@ while this driver is imported in the measurement script.  The server will forwar
 requests from this object to the Lakeshore temperature controller and return any 
 replies.
 
+Note that a separate driver exists for the Lakeshore when directly connected to it (like
+any other instrument in this package).  This wrapper, however, does not use it since it
+only communicates with the BF Daemon.  The Lakeshore driver is used only on the Daemon side and
+only the query method is used.
+
 """
 
 from stlab.devices.base_instrument import base_instrument
 from stlab.utils.MySocket import MySocket
 import time
 
-#All writes are queries.  If command does not contain a '?', an empty string is returned.
 class BFWrapper(base_instrument):
     """Class to implement remote temperature readout from Lakeshore
 
@@ -52,6 +56,11 @@ class BFWrapper(base_instrument):
 
         Sends a VISA string (intended for the lakeshore) to the temperature to the server and retrieves a response.
 
+        Parameters
+        ----------
+        mystr : str
+            VISA string to send
+
         Returns
         -------
         word : str
@@ -70,10 +79,11 @@ class BFWrapper(base_instrument):
             print(word)
         s.sock.close()
         return word
-    def write(self,mystr):
+    def write(self,mystr): #All writes are queries.  If command does not contain a '?', an empty string is returned.
         """Query function
 
-        Sends a VISA string (intended for the lakeshore) to the temperature to the server.
+        Sends a VISA string (intended for the lakeshore) to the temperature to the server.  Sumbmitted as query
+        but any reply is discarded.
 
         Parameters
         -------
