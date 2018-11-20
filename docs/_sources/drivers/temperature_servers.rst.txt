@@ -77,3 +77,28 @@ Imported similar to an intrument::
 .. automodule:: stlab.devices.He7Temperature
   :special-members:
   :members:
+
+TritonDaemon.py
+---------------
+
+File location: :code:`stlab/devices/TritonDaemon/TritonDaemon.py`
+
+.. automodule:: stlab.devices.TritonDaemon.TritonDaemon
+  :special-members:
+  :members:
+
+TritonWrapper.py
+----------------
+
+File location: :code:`stlab/devices/TrtionWrapper.py`.
+
+Imported similar to an intrument::
+
+  from stlab.devices.TritonWrapper import TritonWrapper
+  dev = TritonWrapper(addr)
+
+.. automodule:: stlab.devices.TritonWrapper
+  :special-members:
+  :members:
+
+

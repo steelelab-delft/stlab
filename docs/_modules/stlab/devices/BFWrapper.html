@@ -61,13 +61,17 @@
 <span class="sd">requests from this object to the Lakeshore temperature controller and return any </span>
 <span class="sd">replies.</span>
 
+<span class="sd">Note that a separate driver exists for the Lakeshore when directly connected to it (like</span>
+<span class="sd">any other instrument in this package).  This wrapper, however, does not use it since it</span>
+<span class="sd">only communicates with the BF Daemon.  The Lakeshore driver is used only on the Daemon side and</span>
+<span class="sd">only the query method is used.</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">stlab.devices.base_instrument</span> <span class="k">import</span> <span class="n">base_instrument</span>
 <span class="kn">from</span> <span class="nn">stlab.utils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<span class="c1">#All writes are queries.  If command does not contain a &#39;?&#39;, an empty string is returned.</span>
 <div class="viewcode-block" id="BFWrapper"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper">[docs]</a><span class="k">class</span> <span class="nc">BFWrapper</span><span class="p">(</span><span class="n">base_instrument</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to implement remote temperature readout from Lakeshore</span>
 
@@ -106,6 +110,11 @@
 
 <span class="sd">        Sends a VISA string (intended for the lakeshore) to the temperature to the server and retrieves a response.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mystr : str</span>
+<span class="sd">            VISA string to send</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        word : str</span>
@@ -124,10 +133,11 @@
             <span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
         <span class="n">s</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">word</span></div>
-<div class="viewcode-block" id="BFWrapper.write"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mystr</span><span class="p">):</span>
+<div class="viewcode-block" id="BFWrapper.write"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mystr</span><span class="p">):</span> <span class="c1">#All writes are queries.  If command does not contain a &#39;?&#39;, an empty string is returned.</span>
         <span class="sd">&quot;&quot;&quot;Query function</span>
 
-<span class="sd">        Sends a VISA string (intended for the lakeshore) to the temperature to the server.</span>
+<span class="sd">        Sends a VISA string (intended for the lakeshore) to the temperature to the server.  Sumbmitted as query</span>
+<span class="sd">        but any reply is discarded.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>

@@ -42,6 +42,8 @@
 <li><a class="reference internal" href="#bfwrapper-py">BFWrapper.py</a></li>
 <li><a class="reference internal" href="#he7daemon-py">He7Daemon.py</a></li>
 <li><a class="reference internal" href="#he7temperature-py">He7Temperature.py</a></li>
+<li><a class="reference internal" href="#tritondaemon-py">TritonDaemon.py</a></li>
+<li><a class="reference internal" href="#tritonwrapper-py">TritonWrapper.py</a></li>
 </ul>
 </li>
 </ul>
@@ -216,6 +218,10 @@ The idea is that the server script is run on the fridge control computer
 while this driver is imported in the measurement script.  The server will forward any
 requests from this object to the Lakeshore temperature controller and return any
 replies.</p>
+<p>Note that a separate driver exists for the Lakeshore when directly connected to it (like
+any other instrument in this package).  This wrapper, however, does not use it since it
+only communicates with the BF Daemon.  The Lakeshore driver is used only on the Daemon side and
+only the query method is used.</p>
 <dl class="class">
 <dt id="stlab.devices.BFWrapper.BFWrapper">
 <em class="property">class </em><code class="descclassname">stlab.devices.BFWrapper.</code><code class="descname">BFWrapper</code><span class="sig-paren">(</span><em>addr='localhost'</em>, <em>port=8472</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/BFWrapper.html#BFWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.BFWrapper.BFWrapper" title="Permalink to this definition">¶</a></dt>
@@ -479,9 +485,11 @@ tolerance.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> – Response from server (Lakeshore)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – VISA string to send</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> – Response from server (Lakeshore)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
 </tr>
 </tbody>
 </table>
@@ -491,7 +499,8 @@ tolerance.</li>
 <dt id="stlab.devices.BFWrapper.BFWrapper.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>mystr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/BFWrapper.html#BFWrapper.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.BFWrapper.BFWrapper.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Query function</p>
-<p>Sends a VISA string (intended for the lakeshore) to the temperature to the server.</p>
+<p>Sends a VISA string (intended for the lakeshore) to the temperature to the server.  Sumbmitted as query
+but any reply is discarded.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -514,10 +523,10 @@ allow the measurement computer to retrieve the last logged temperature.  It list
 requests on port 8472 on any of the available network interfaces (this includes Zerotier addresses).
 It does not allow control of the Lakeshore directly.</p>
 <p>Run as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">He7Daemon</span><span class="o">.</span><span class="n">py</span> <span class="o">&lt;</span><span class="n">path</span> <span class="n">to</span> <span class="n">log</span> <span class="n">folder</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">He7Daemon</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-<p>The log folder path is optional and if not provided a default will be used.  The path to be provided
+<p>The script will ask for the path to the log folder.  The path to be provided
 refers to the top level log folder (not the running log folder).  The script will
 look for the most recent log in that folder and get the temperature from there.  This means it will
 automatically switch to the latest log file.  The default log folder can be adjusted in the code,
@@ -582,6 +591,305 @@ time a temperature is received.</p>
 <li><strong>**kwargs</strong> – No function</li>
 </ul>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="tritondaemon-py">
+<h2>TritonDaemon.py<a class="headerlink" href="#tritondaemon-py" title="Permalink to this headline">¶</a></h2>
+<p>File location: <code class="code docutils literal notranslate"><span class="pre">stlab/devices/TritonDaemon/TritonDaemon.py</span></code></p>
+<span class="target" id="module-stlab.devices.TritonDaemon.TritonDaemon"></span><p>Triton Daemon - Communication server for Oxford Triton system</p>
+<p>The Triton fridge already has communication capacity to directly control and read both the temperatures and other elements
+of the fridge (pressure sensors, valves, compressor, …).  However, the Triton logging uses binary format files that can
+only be opened in their (very flaky) propriety program.  This Daemon acts as an intermediary between the Triton system and
+the measurement computer, allowing the measurement computer to send commands to the system while it maintains an ASCII log
+of the system parameters.  These logfiles can then be opened using cryoLogger.  Note that the binary logs are still
+kept in any case.</p>
+<p>Run as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">TritonDaemon</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>This Daemon is intended to be run on the Triton control computer but can actually be run from any system that has network access
+to the triton control computer.  The address will be requested when the script is started as well as the folder where the logs
+should be saved.  The defaults can be adjusted in the variables <code class="code docutils literal notranslate"><span class="pre">TRITONADDR</span></code> and <code class="code docutils literal notranslate"><span class="pre">LOGFOLDER</span></code> at the top of the script.</p>
+</div>
+<div class="section" id="tritonwrapper-py">
+<h2>TritonWrapper.py<a class="headerlink" href="#tritonwrapper-py" title="Permalink to this headline">¶</a></h2>
+<p>File location: <code class="code docutils literal notranslate"><span class="pre">stlab/devices/TrtionWrapper.py</span></code>.</p>
+<p>Imported similar to an intrument:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">stlab.devices.TritonWrapper</span> <span class="k">import</span> <span class="n">TritonWrapper</span>
+<span class="n">dev</span> <span class="o">=</span> <span class="n">TritonWrapper</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+</pre></div>
+</div>
+<span class="target" id="module-stlab.devices.TritonWrapper"></span><p>TritonWrapper - Driver to communicate with the custom Triton server</p>
+<p>This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the
+standard socket package.  The socket implementation is in <a class="reference internal" href="#module-stlab.utils.MySocket" title="stlab.utils.MySocket"><code class="xref any py py-mod docutils literal notranslate"><span class="pre">stlab.utils.MySocket</span></code></a>.
+The the server script is run on the fridge control computer
+while this driver is imported in the measurement script.  The server will forward any
+requests from this object to the Triton fridge software and return any
+replies.</p>
+<p>Note that a separate Triton driver exists when communication directly with the official fridge software (like
+any other instrument in this package).  This wrapper, however, does not use it since it
+only communicates with the Triton Daemon.  The Triton driver is used only on the Daemon side and
+only the query method is used.</p>
+<dl class="class">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper">
+<em class="property">class </em><code class="descclassname">stlab.devices.TritonWrapper.</code><code class="descname">TritonWrapper</code><span class="sig-paren">(</span><em>addr='192.168.1.178'</em>, <em>port=8472</em>, <em>reset=True</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to implement remote control of Triton Fridge through the Triton Daemon</p>
+<p>A new socket is created and discarded every read/write operation.</p>
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.GetPTC">
+<code class="descname">GetPTC</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.GetPTC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.GetPTC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get compressor status string</p>
+<p>Returns compressor values in order WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS (whatever the abbreviations mean…)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> – Array containing current values of compressor and pulse tube parameters [WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.GetPressure">
+<code class="descname">GetPressure</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.GetPressure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.GetPressure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get pressure reading</p>
+<p>Reads the pressure (in mbar) of the requested sensor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of the requested pressure sensor</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Pressure in mbar.  -1 if invalid sensor specified.  <code class="code docutils literal notranslate"><span class="pre">getpressure</span></code> also works</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.GetTemperature">
+<code class="descname">GetTemperature</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.GetTemperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.GetTemperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Temperature reading</p>
+<p>Reads the temperature (in K) of the requested sensor.  <code class="code docutils literal notranslate"><span class="pre">gettemperature</span></code> also works.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of the requested pressure sensor</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Temperature in K.  -1 if invalid sensor specified</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.GetTurbo">
+<code class="descname">GetTurbo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.GetTurbo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.GetTurbo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get turbo status string</p>
+<p>Returns turbo values in order Power, Speed, PST, MT, BT, PBT, ET (temperatures… whatever they mean…)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> – Array containing current values of Turbo parameters [Power, Speed, PST, MT, BT, PBT, ET]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetEnableTsensor">
+<code class="descname">SetEnableTsensor</code><span class="sig-paren">(</span><em>ii</em>, <em>state=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetEnableTsensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetEnableTsensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/Disable temperature sensors</p>
+<p>Enables or disables the requested temperature sensor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of temperature sensor</li>
+<li><strong>state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – True enables the sensor and False disables it</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetHeaterRange">
+<code class="descname">SetHeaterRange</code><span class="sig-paren">(</span><em>val</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetHeaterRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetHeaterRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set mixing chamber heater range</p>
+<p>Sets the range for the mixing chamber heater (for temperature control and PID)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired range value (in mA).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetMCHeater">
+<code class="descname">SetMCHeater</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetMCHeater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetMCHeater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set mixing chamber heater power</p>
+<p>Set the mixing chamber heater power (in uW?) to given value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired heater power</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetPID">
+<code class="descname">SetPID</code><span class="sig-paren">(</span><em>val=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetPID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetPID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables or disables the mixing chamber PID loop</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – True enables the PID loop, False disables it</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetPIDTemperature">
+<code class="descname">SetPIDTemperature</code><span class="sig-paren">(</span><em>val=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetPIDTemperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetPIDTemperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the mixing chamber temperature set point</p>
+<p>Adjusts the desired mixing chamber temperature for the PID loop</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – New temperature setpoint</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetPTOff">
+<code class="descname">SetPTOff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetPTOff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetPTOff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn of compressor/pulse tube cooler</p>
+<p>Stops the compressor</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetPTOn">
+<code class="descname">SetPTOn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetPTOn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetPTOn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn on compressor/pulse tube cooler</p>
+<p>Starts the compressor</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetStillHeater">
+<code class="descname">SetStillHeater</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetStillHeater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetStillHeater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set still heater power</p>
+<p>Set the still heater power (in uW?) to given value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired heater power</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.SetVerbose">
+<code class="descname">SetVerbose</code><span class="sig-paren">(</span><em>verb=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.SetVerbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.SetVerbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change verbosity</p>
+<p>Enables/disables printing of debugging strings</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – True enables debugging strings, False disables them.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>addr='192.168.1.178'</em>, <em>port=8472</em>, <em>reset=True</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>init method</p>
+<p>Initialization of the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – IP address of the system running the Daemon (192.168.1.178) by default</li>
+<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – TCP port the server is listening on (8472 by default)</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – No function</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Print debugging strings</li>
+<li><strong>**kwargs</strong> – No function</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>mystr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query function</p>
+<p>Sends a VISA string (intended for the Triton) to the Triton Daemon and retrieves a response.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – VISA string to send</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> – Response from server (Triton)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.TritonWrapper.TritonWrapper.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>mystr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write function</p>
+<p>Sends a VISA string (intended for the Triton) to the Triton Daemon.  Does not expect a response
+Given the nature of the daemon, a response is always received so all writes are
+in fact submitted as queries and the reply simply discarded.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> – Response from server (Triton)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
 </tr>
 </tbody>
 </table>

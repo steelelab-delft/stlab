@@ -1,0 +1,425 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlab.devices.TritonWrapper &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.devices.TritonWrapper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;TritonWrapper - Driver to communicate with the custom Triton server</span>
+
+<span class="sd">This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the</span>
+<span class="sd">standard socket package.  The socket implementation is in :any:`stlab.utils.MySocket`.</span>
+<span class="sd">The the server script is run on the fridge control computer </span>
+<span class="sd">while this driver is imported in the measurement script.  The server will forward any</span>
+<span class="sd">requests from this object to the Triton fridge software and return any </span>
+<span class="sd">replies.</span>
+
+<span class="sd">Note that a separate Triton driver exists when communication directly with the official fridge software (like</span>
+<span class="sd">any other instrument in this package).  This wrapper, however, does not use it since it</span>
+<span class="sd">only communicates with the Triton Daemon.  The Triton driver is used only on the Daemon side and</span>
+<span class="sd">only the query method is used.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Basic interface to retrieve temperature measurement form Triton computer</span>
+<span class="kn">from</span> <span class="nn">stlab.devices.base_instrument</span> <span class="k">import</span> <span class="n">base_instrument</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
+
+
+<div class="viewcode-block" id="TritonWrapper"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper">[docs]</a><span class="k">class</span> <span class="nc">TritonWrapper</span><span class="p">(</span><span class="n">base_instrument</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to implement remote control of Triton Fridge through the Triton Daemon</span>
+
+<span class="sd">    A new socket is created and discarded every read/write operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TritonWrapper.__init__"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">addr</span><span class="o">=</span><span class="s2">&quot;192.168.1.178&quot;</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="mi">8472</span><span class="p">,</span><span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;init method</span>
+
+<span class="sd">        Initialization of the device.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        addr : str, optional</span>
+<span class="sd">            IP address of the system running the Daemon (192.168.1.178) by default</span>
+<span class="sd">        port : int, optional</span>
+<span class="sd">            TCP port the server is listening on (8472 by default)</span>
+<span class="sd">        reset : bool, optional</span>
+<span class="sd">            No function</span>
+<span class="sd">        verb : bool, optional</span>
+<span class="sd">            Print debugging strings</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            No function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verb</span> <span class="o">=</span> <span class="n">verb</span>
+        <span class="k">if</span> <span class="n">reset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addr</span> <span class="o">=</span> <span class="n">addr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span></div>
+<div class="viewcode-block" id="TritonWrapper.query"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mystr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Query function</span>
+
+<span class="sd">        Sends a VISA string (intended for the Triton) to the Triton Daemon and retrieves a response.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mystr : str</span>
+<span class="sd">            VISA string to send</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        word : str</span>
+<span class="sd">            Response from server (Triton)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">MySocket</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">addr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">mysend</span><span class="p">(</span><span class="n">mystr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf_8&#39;</span><span class="p">))</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">myreceive</span><span class="p">()</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf_8&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">word</span></div>
+<div class="viewcode-block" id="TritonWrapper.write"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mystr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write function</span>
+
+<span class="sd">        Sends a VISA string (intended for the Triton) to the Triton Daemon.  Does not expect a response</span>
+<span class="sd">        Given the nature of the daemon, a response is always received so all writes are</span>
+<span class="sd">        in fact submitted as queries and the reply simply discarded.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        word : str</span>
+<span class="sd">            Response from server (Triton)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">getpressure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetPressure</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<div class="viewcode-block" id="TritonWrapper.GetPressure"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.GetPressure">[docs]</a>    <span class="k">def</span> <span class="nf">GetPressure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get pressure reading</span>
+
+<span class="sd">        Reads the pressure (in mbar) of the requested sensor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            Index of the requested pressure sensor</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Pressure in mbar.  -1 if invalid sensor specified.  :code:`getpressure` also works</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;READ:DEV:P</span><span class="si">%d</span><span class="s1">:PRES:SIG:PRES&#39;</span> <span class="o">%</span> <span class="n">i</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="s1">&#39;NOT_FOUND&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sensor P</span><span class="si">%d</span><span class="s1"> not found&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;mB&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">gettemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTemperature</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<div class="viewcode-block" id="TritonWrapper.GetTemperature"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.GetTemperature">[docs]</a>    <span class="k">def</span> <span class="nf">GetTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get Temperature reading</span>
+
+<span class="sd">        Reads the temperature (in K) of the requested sensor.  :code:`gettemperature` also works.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            Index of the requested pressure sensor</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Temperature in K.  -1 if invalid sensor specified</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">i</span><span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;gettemperature: Invalid sensor&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;READ:DEV:T</span><span class="si">%d</span><span class="s1">:TEMP:SIG:TEMP&#39;</span> <span class="o">%</span> <span class="n">i</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="s1">&#39;NOT_FOUND&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sensor P</span><span class="si">%d</span><span class="s1"> not found&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+<div class="viewcode-block" id="TritonWrapper.SetMCHeater"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetMCHeater">[docs]</a>    <span class="k">def</span> <span class="nf">SetMCHeater</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set mixing chamber heater power</span>
+
+<span class="sd">        Set the mixing chamber heater power (in uW?) to given value</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        xx : float</span>
+<span class="sd">            Desired heater power</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;SET:DEV:H1:HTR:SIG:POWR:</span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">xx</span>
+        <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">[</span><span class="n">reply</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">):])</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="TritonWrapper.SetStillHeater"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetStillHeater">[docs]</a>    <span class="k">def</span> <span class="nf">SetStillHeater</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set still heater power</span>
+
+<span class="sd">        Set the still heater power (in uW?) to given value</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        xx : float</span>
+<span class="sd">            Desired heater power</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;SET:DEV:H2:HTR:SIG:POWR:</span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">xx</span>
+        <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">[</span><span class="n">reply</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="TritonWrapper.SetEnableTsensor"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetEnableTsensor">[docs]</a>    <span class="k">def</span> <span class="nf">SetEnableTsensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">state</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enable/Disable temperature sensors</span>
+
+<span class="sd">        Enables or disables the requested temperature sensor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ii : int</span>
+<span class="sd">            Index of temperature sensor</span>
+<span class="sd">        state : bool, optional</span>
+<span class="sd">            True enables the sensor and False disables it</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ii</span><span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SetEnableTsensor: Invalid sensor &#39;</span><span class="p">,</span><span class="n">ii</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span>
+        <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;SET:DEV:T</span><span class="si">%d</span><span class="s1">:TEMP:MEAS:ENAB:ON&#39;</span> <span class="o">%</span> <span class="n">ii</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">state</span><span class="p">:</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;SET:DEV:T</span><span class="si">%d</span><span class="s1">:TEMP:MEAS:ENAB:OFF&#39;</span> <span class="o">%</span> <span class="n">ii</span>
+        <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="TritonWrapper.GetTurbo"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.GetTurbo">[docs]</a>    <span class="k">def</span> <span class="nf">GetTurbo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get turbo status string</span>
+
+<span class="sd">        Returns turbo values in order Power, Speed, PST, MT, BT, PBT, ET (temperatures... whatever they mean...)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list of float</span>
+<span class="sd">            Array containing current values of Turbo parameters [Power, Speed, PST, MT, BT, PBT, ET]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="n">mystr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;READ:DEV:TURB1:PUMP:SIG:POWR&#39;</span><span class="p">)</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+        
+        <span class="n">mystr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;READ:DEV:TURB1:PUMP:SIG:SPD&#39;</span><span class="p">)</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+        
+        <span class="n">temps</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PST&#39;</span><span class="p">,</span><span class="s1">&#39;MT&#39;</span><span class="p">,</span><span class="s1">&#39;BT&#39;</span><span class="p">,</span><span class="s1">&#39;PBT&#39;</span><span class="p">,</span><span class="s1">&#39;ET&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="n">temps</span><span class="p">:</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;READ:DEV:TURB1:PUMP:SIG:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ss</span><span class="p">))</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1">#No reset for the triton</span>
+        <span class="k">pass</span>
+<div class="viewcode-block" id="TritonWrapper.SetVerbose"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetVerbose">[docs]</a>    <span class="k">def</span> <span class="nf">SetVerbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Change verbosity</span>
+
+<span class="sd">        Enables/disables printing of debugging strings</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verb : bool, optional</span>
+<span class="sd">            True enables debugging strings, False disables them.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verb</span> <span class="o">=</span> <span class="n">verb</span></div>
+<div class="viewcode-block" id="TritonWrapper.SetPID"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetPID">[docs]</a>    <span class="k">def</span> <span class="nf">SetPID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">val</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enables or disables the mixing chamber PID loop</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        val : bool, optional</span>
+<span class="sd">            True enables the PID loop, False disables it</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">val</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SET:DEV:T8:TEMP:LOOP:MODE:ON&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SET:DEV:T8:TEMP:LOOP:MODE:OFF&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="TritonWrapper.SetHeaterRange"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetHeaterRange">[docs]</a>    <span class="k">def</span> <span class="nf">SetHeaterRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">val</span><span class="p">):</span>  <span class="c1">#Value is in mA</span>
+        <span class="sd">&quot;&quot;&quot;Set mixing chamber heater range</span>
+
+<span class="sd">        Sets the range for the mixing chamber heater (for temperature control and PID)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        val : float</span>
+<span class="sd">            Desired range value (in mA).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SET:DEV:T8:TEMP:LOOP:RANGE:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="TritonWrapper.SetPIDTemperature"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetPIDTemperature">[docs]</a>    <span class="k">def</span> <span class="nf">SetPIDTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">val</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the mixing chamber temperature set point</span>
+
+<span class="sd">        Adjusts the desired mixing chamber temperature for the PID loop</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        val : float, optional</span>
+<span class="sd">            New temperature setpoint</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SET:DEV:T8:TEMP:LOOP:TSET:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="TritonWrapper.GetPTC"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.GetPTC">[docs]</a>    <span class="k">def</span> <span class="nf">GetPTC</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1">#Returns PTC values in order WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS</span>
+        <span class="sd">&quot;&quot;&quot; Get compressor status string</span>
+
+<span class="sd">        Returns compressor values in order WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS (whatever the abbreviations mean...)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list of float</span>
+<span class="sd">            Array containing current values of compressor and pulse tube parameters [WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+ 
+        <span class="n">temps</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WIT&#39;</span><span class="p">,</span><span class="s1">&#39;WOT&#39;</span><span class="p">,</span><span class="s1">&#39;OILT&#39;</span><span class="p">,</span><span class="s1">&#39;HT&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="n">temps</span><span class="p">:</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;READ:DEV:C1:PTC:SIG:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ss</span><span class="p">))</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+
+        <span class="n">mystr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;READ:DEV:C1:PTC:SIG:HLP&#39;</span><span class="p">)</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+        
+        <span class="n">mystr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;READ:DEV:C1:PTC:SIG:HHP&#39;</span><span class="p">)</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+
+        <span class="n">mystr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;READ:DEV:C1:PTC:SIG:MCUR&#39;</span><span class="p">)</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+
+        <span class="n">mystr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;READ:DEV:C1:PTC:SIG:HRS&#39;</span><span class="p">)</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="n">mystr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+        
+<div class="viewcode-block" id="TritonWrapper.SetPTOn"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetPTOn">[docs]</a>    <span class="k">def</span> <span class="nf">SetPTOn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Turn on compressor/pulse tube cooler</span>
+
+<span class="sd">        Starts the compressor</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SET:DEV:C1:PTC:SIG:STATE:ON&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="TritonWrapper.SetPTOff"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetPTOff">[docs]</a>    <span class="k">def</span> <span class="nf">SetPTOff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Turn of compressor/pulse tube cooler</span>
+
+<span class="sd">        Stops the compressor</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SET:DEV:C1:PTC:SIG:STATE:OFF&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+    <span class="k">def</span> <span class="nf">GetMetadataString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>
