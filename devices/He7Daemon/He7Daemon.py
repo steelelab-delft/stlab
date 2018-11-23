@@ -92,9 +92,10 @@ def tail( f, lines=20 ):
 def GetTemperature(sock,mylogfolder):
     now = datetime.datetime.now()
     foldername = GetCurrentLogFolder(mylogfolder)
-    foldername = mylogfolder + foldername
+    foldername = mylogfolder + '/' + foldername
     foldername = os.path.normpath(foldername)
     path = foldername + '\\*3He Head.log'
+    path = os.path.normpath(path)
     path = glob.glob(path)
     filename = path[0]   
     myfile = open(filename,'rb')
@@ -132,14 +133,15 @@ if __name__ == "__main__":
     if logfolder == '':
         logfolder = LOGFOLDER
     logfolder = os.path.normpath(logfolder)
+    print("Using: {}".format(logfolder))
     
 
     try:
         while True:
             # accept connections from outside
+            print("Listening on port %d and address %s" % (port,addr))
             (clientsocket, address) = serversocket.accept()
             GetTemperature(clientsocket,logfolder)
-            print("Listening on port %d and address %s" % (port,addr))
 
     except KeyboardInterrupt:
         print('Shutting down temperature server')
