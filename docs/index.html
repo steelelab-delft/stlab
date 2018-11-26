@@ -82,7 +82,9 @@
 <li class="toctree-l1"><a class="reference internal" href="utils/newfile.html">newfile – New measurement folder creation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/stlabdict.html">stlabdict – Data structures and matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils/writematrix.html">writematrix – Data file writing methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/autodetect_instrument.html">stlabdict – Data structures and matrices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/instrument.html">The instrument class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/instrument.html#instrument-autodetection">Instrument autodetection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/temperature_servers.html">Temperature servers and Daemons for BlueFors and He7 fridges</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#mysocket-py-basic-tcp-socket">MySocket.py – Basic TCP socket</a></li>
 <li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#bfdaemon-py">BFDaemon.py</a></li>
@@ -159,7 +161,7 @@ to be very specific and would only clutter the driver for others.</p>
 <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">backmodel</span> <span class="k">as</span> <span class="n">S11back</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
 <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">S11theo</span> <span class="k">as</span> <span class="n">S11theo</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
 <span class="c1">#from stlab.devices.base_instrument import SaveInstrumentMetadata #Callable as stlab.SaveInstrumentMetadata(...)</span>
-<span class="kn">from</span> <span class="nn">stlab.devices</span> <span class="kn">import</span> <span class="n">autodetect_instrument</span> <span class="k">as</span> <span class="n">adi</span> <span class="c1">#Callable as stlab.devices.adi(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.devices.autodetect_instrument</span> <span class="kn">import</span> <span class="n">autodetect_instrument</span> <span class="k">as</span> <span class="n">adi</span> <span class="c1">#Callable as stlab.devices.adi(...)</span>
 <span class="kn">from</span> <span class="nn">stlab.utils.autoplotter</span> <span class="kn">import</span> <span class="n">autoplot</span> <span class="c1">#Call as stlab.autoplot(...)</span>
 
 <span class="sd">&#39;&#39;&#39;</span>
