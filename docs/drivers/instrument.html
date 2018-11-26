@@ -15,7 +15,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="He7Temperature - He7 Temperature Server" href="He7Temperature.html" /> 
+    <link rel="next" title="Temperature servers and Daemons for BlueFors and He7 fridges" href="temperature_servers.html" />
+    <link rel="prev" title="stlabdict – Data structures and matrices" href="autodetect_instrument.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,16 +28,28 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="He7Temperature.html" title="He7Temperature - He7 Temperature Server"
+          <a href="temperature_servers.html" title="Temperature servers and Daemons for BlueFors and He7 fridges"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="autodetect_instrument.html" title="stlabdict – Data structures and matrices"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The instrument class</a></li>
+<li><a class="reference internal" href="#instrument-autodetection">Instrument autodetection</a></li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="He7Temperature.html"
-                        title="previous chapter">He7Temperature - He7 Temperature Server</a></p>
+  <p class="topless"><a href="autodetect_instrument.html"
+                        title="previous chapter">stlabdict – Data structures and matrices</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="temperature_servers.html"
+                        title="next chapter">Temperature servers and Daemons for BlueFors and He7 fridges</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -230,6 +243,45 @@ read_termination, etc…</li>
 </dd></dl>
 
 </div>
+<div class="section" id="instrument-autodetection">
+<h1>Instrument autodetection<a class="headerlink" href="#instrument-autodetection" title="Permalink to this headline">¶</a></h1>
+<p>A function to autodetect instruments and load the correct driver is also provided</p>
+<span class="target" id="module-stlab.devices.autodetect_instrument"></span><p>Module that handles autodetection of instruments</p>
+<dl class="exception">
+<dt id="stlab.devices.autodetect_instrument.DeviceNotFound">
+<em class="property">exception </em><code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">DeviceNotFound</code><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#DeviceNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.DeviceNotFound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="stlab.devices.autodetect_instrument.autodetect_instrument">
+<code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">autodetect_instrument</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#autodetect_instrument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.autodetect_instrument" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autodetect instrument function</p>
+<p>Attempts automatically detect the desired instrument at the given address and creates
+a new session with it using its corresponding driver.  It uses the response from <code class="code docutils literal notranslate"><span class="pre">*IDN?</span></code>
+to identify the correct driver to load from the <code class="code docutils literal notranslate"><span class="pre">dev_ids.txt</span></code> file.  This file contains
+model string and driver name pairs that this function searches in to find the correct driver.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Visa address string to autodetect</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True sends <code class="code docutils literal notranslate"><span class="pre">*RST</span></code> to the instrument after connecting to it</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, prints debugging messages and strings sent</li>
+<li><strong>kwargs</strong> – Additional parameters to be passed to the visa.open_instrument method (a common one is <code class="code docutils literal notranslate"><span class="pre">read_termination</span></code> for example)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="stlab.devices.autodetect_instrument.test_instrument">
+<em class="property">class </em><code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">test_instrument</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#test_instrument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.test_instrument" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
 
 
           </div>
@@ -247,7 +299,10 @@ read_termination, etc…</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="He7Temperature.html" title="He7Temperature - He7 Temperature Server"
+          <a href="temperature_servers.html" title="Temperature servers and Daemons for BlueFors and He7 fridges"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="autodetect_instrument.html" title="stlabdict – Data structures and matrices"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
       </ul>

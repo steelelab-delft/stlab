@@ -1,4 +1,0 @@
-BFDaemon - BF Temperature Server
-================================
-
-

@@ -52,11 +52,11 @@
           <div class="body" role="main">
             
   <h1>Source code for stlab.devices.He7Temperature</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Driver to communicate with the custom He7 Temperature server</span>
+<span></span><span class="sd">&quot;&quot;&quot;He7Temperature - Driver to communicate with the custom He7 Temperature server</span>
 
 <span class="sd">This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the</span>
 <span class="sd">standard socket package.  The socket implementation is in stlab.utils.MySocket.</span>
-<span class="sd">The idea is that the server script (see :doc:`He7Daemon`) is run on the He7 control computer </span>
+<span class="sd">The idea is that the server script is run on the He7 control computer </span>
 <span class="sd">while this driver is imported in the measurement script.  The server will, upon request, </span>
 <span class="sd">provide the last He3 head temperature from the running log to this driver.  This is because,</span>
 <span class="sd">typically, the BF and Entropy software blocks direct communication to the Lakeshore controller </span>
@@ -65,7 +65,6 @@
 
 <span class="sd">To do write operations (like temperature control, etc.) use the BFWrapper/BFDaemon</span>
 <span class="sd">driver/script which works for the old and new BF as well as the He7.</span>
-<span class="sd">See :doc:`BFWrapper` for details.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -74,14 +73,14 @@
 <span class="kn">from</span> <span class="nn">stlab.utils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
 <span class="kn">from</span> <span class="nn">stlab.devices.base_instrument</span> <span class="k">import</span> <span class="n">base_instrument</span>
 
-<div class="viewcode-block" id="He7Temperature"><a class="viewcode-back" href="../../../drivers/He7Temperature.html#stlab.devices.He7Temperature.He7Temperature">[docs]</a><span class="k">class</span> <span class="nc">He7Temperature</span><span class="p">(</span><span class="n">base_instrument</span><span class="p">):</span>
+<div class="viewcode-block" id="He7Temperature"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature">[docs]</a><span class="k">class</span> <span class="nc">He7Temperature</span><span class="p">(</span><span class="n">base_instrument</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to implement temperature readout from He7 server</span>
 
-<span class="sd">    A new socket (See :doc:`../utils/MySocket` for implementation) is created and discarded every</span>
+<span class="sd">    A new socket is created and discarded every</span>
 <span class="sd">    time a temperature is received.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="He7Temperature.__init__"><a class="viewcode-back" href="../../../drivers/He7Temperature.html#stlab.devices.He7Temperature.He7Temperature.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">addr</span><span class="o">=</span><span class="s2">&quot;131.180.32.72&quot;</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="mi">8472</span><span class="p">,</span><span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="He7Temperature.__init__"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">addr</span><span class="o">=</span><span class="s2">&quot;131.180.32.72&quot;</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="mi">8472</span><span class="p">,</span><span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;He7Temperature __init__ method.</span>
 
 <span class="sd">        Sets up the He7 temperature socket to read from the server.</span>
@@ -105,7 +104,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addr</span> <span class="o">=</span> <span class="n">addr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span></div>
-<div class="viewcode-block" id="He7Temperature.GetTemperature"><a class="viewcode-back" href="../../../drivers/He7Temperature.html#stlab.devices.He7Temperature.He7Temperature.GetTemperature">[docs]</a>    <span class="k">def</span> <span class="nf">GetTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="He7Temperature.GetTemperature"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature.GetTemperature">[docs]</a>    <span class="k">def</span> <span class="nf">GetTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets temperature from server</span>
 
 <span class="sd">        Get Temperature from He7 computer (last logged value).  Returns a float in K</span>

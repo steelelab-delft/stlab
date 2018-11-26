@@ -4,7 +4,7 @@
 import time
 import datetime
 from queue import Queue
-from stlab.devices.triton import Triton
+from stlab.devices.Oxford_Triton import Oxford_Triton as Triton
 import os
 
 
@@ -18,12 +18,12 @@ varline = varline + ['PTC Water In (C)', 'PTC Water Out (C)', 'PTC Oil Temperatu
 
 
 
-def logger(commandq):
+def TritonLogger(commandq, logfolder = './'):
     
     resultq = Queue(maxsize=0)
     today = datetime.date.today()
-    foldername = './' + today.strftime('%Y-%m-%d') + '/' 
-    filename = foldername + 'log_' + today.strftime('%Y-%m-%d')+ '.dat'
+    foldername = os.path.normpath(logfolder + '/' +today.strftime('%Y-%m-%d') + '/' )
+    filename = os.path.normpath(foldername + 'log_' + today.strftime('%Y-%m-%d')+ '.dat')
     if not os.path.exists(foldername):
         os.makedirs(foldername)
     print('Measurement Folder: ', foldername)
@@ -42,8 +42,8 @@ def logger(commandq):
             if today != newday:
                     ff.close()
                     today = newday
-                    foldername = './' + today.strftime('%Y-%m-%d') + '/' 
-                    filename = foldername + 'log_' + today.strftime('%Y-%m-%d')+ '.dat'
+                    foldername = os.path.normpath(logfolder + '/' + today.strftime('%Y-%m-%d') + '/' )
+                    filename = os.path.normpath(foldername + 'log_' + today.strftime('%Y-%m-%d')+ '.dat')
                     if not os.path.exists(foldername):
                         os.makedirs(foldername)
                     print('New day - Measurement Folder: ', foldername)

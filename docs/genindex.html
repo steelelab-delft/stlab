@@ -85,12 +85,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.__getitem__">__getitem__() (stlab.utils.stlabdict.stlabdict method)</a>
 </li>
-      <li><a href="drivers/He7Temperature.html#stlab.devices.He7Temperature.He7Temperature.__init__">__init__() (stlab.devices.He7Temperature.He7Temperature method)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.__init__">__init__() (stlab.devices.BFWrapper.BFWrapper method)</a>
 
       <ul>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature.__init__">(stlab.devices.He7Temperature.He7Temperature method)</a>
+</li>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.__init__">(stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
         <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.__init__">(stlab.devices.instrument.instrument method)</a>
 </li>
-        <li><a href="utils/MySocket.html#stlab.utils.MySocket.MySocket.__init__">(stlab.utils.MySocket.MySocket method)</a>
+        <li><a href="drivers/temperature_servers.html#stlab.utils.MySocket.MySocket.__init__">(stlab.utils.MySocket.MySocket method)</a>
 </li>
         <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.__init__">(stlab.utils.stlabdict.stlabdict method)</a>
 </li>
@@ -115,6 +119,8 @@
 </li>
       <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.applystep">applystep() (stlab.utils.stlabdict.stlabmtx method)</a>
 </li>
+      <li><a href="drivers/instrument.html#stlab.devices.autodetect_instrument.autodetect_instrument">autodetect_instrument() (in module stlab.devices.autodetect_instrument)</a>
+</li>
       <li><a href="utils/autoplotter.html#stlab.utils.autoplotter.autoplot">autoplot() (in module stlab.utils.autoplotter)</a>
 </li>
   </ul></td>
@@ -124,6 +130,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils/S11fit.html#stlab.utils.S11fit.backmodel">backmodel() (in module stlab.utils.S11fit)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper">BFWrapper (class in stlab.devices.BFWrapper)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -137,7 +147,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="utils/MySocket.html#stlab.utils.MySocket.MySocket.connect">connect() (stlab.utils.MySocket.MySocket method)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.utils.MySocket.MySocket.connect">connect() (stlab.utils.MySocket.MySocket method)</a>
 </li>
       <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.crop">crop() (stlab.utils.stlabdict.stlabmtx method)</a>
 </li>
@@ -149,9 +159,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.delstep">delstep() (stlab.utils.stlabdict.stlabmtx method)</a>
 </li>
+      <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.dev">dev (stlab.devices.instrument.instrument attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.dev">dev (stlab.devices.instrument.instrument attribute)</a>
+      <li><a href="drivers/instrument.html#stlab.devices.autodetect_instrument.DeviceNotFound">DeviceNotFound</a>
 </li>
       <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.dictarr_to_mtx">dictarr_to_mtx() (in module stlab.utils.stlabdict)</a>
 </li>
@@ -181,10 +193,28 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.getextents">getextents() (stlab.utils.stlabdict.stlabmtx method)</a>
 </li>
-      <li><a href="drivers/He7Temperature.html#stlab.devices.He7Temperature.He7Temperature.GetTemperature">GetTemperature() (stlab.devices.He7Temperature.He7Temperature method)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.GetHeaterRange">GetHeaterRange() (stlab.devices.BFWrapper.BFWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.GetHeaterValue">GetHeaterValue() (stlab.devices.BFWrapper.BFWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.GetPressure">GetPressure() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.GetPTC">GetPTC() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.GetSetPoint">GetSetPoint() (stlab.devices.BFWrapper.BFWrapper method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.GetTemperature">GetTemperature() (stlab.devices.BFWrapper.BFWrapper method)</a>
+
+      <ul>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature.GetTemperature">(stlab.devices.He7Temperature.He7Temperature method)</a>
+</li>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.GetTemperature">(stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      </ul></li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.GetTurbo">GetTurbo() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
       <li><a href="utils/S11fit.html#stlab.utils.S11fit.getwidth_phase">getwidth_phase() (in module stlab.utils.S11fit)</a>
 </li>
       <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.global_rs">global_rs (stlab.devices.instrument.instrument attribute)</a>
@@ -195,7 +225,7 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="drivers/He7Temperature.html#stlab.devices.He7Temperature.He7Temperature">He7Temperature (class in stlab.devices.He7Temperature)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature">He7Temperature (class in stlab.devices.He7Temperature)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -239,11 +269,11 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="utils/MySocket.html#stlab.utils.MySocket.MySocket.myreceive">myreceive() (stlab.utils.MySocket.MySocket method)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.utils.MySocket.MySocket.myreceive">myreceive() (stlab.utils.MySocket.MySocket method)</a>
 </li>
-      <li><a href="utils/MySocket.html#stlab.utils.MySocket.MySocket.mysend">mysend() (stlab.utils.MySocket.MySocket method)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.utils.MySocket.MySocket.mysend">mysend() (stlab.utils.MySocket.MySocket method)</a>
 </li>
-      <li><a href="utils/MySocket.html#stlab.utils.MySocket.MySocket">MySocket (class in stlab.utils.MySocket)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.utils.MySocket.MySocket">MySocket (class in stlab.utils.MySocket)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -301,8 +331,14 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.query">query() (stlab.devices.instrument.instrument method)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.query">query() (stlab.devices.BFWrapper.BFWrapper method)</a>
+
+      <ul>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.query">(stlab.devices.TritonWrapper.TritonWrapper method)</a>
 </li>
+        <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.query">(stlab.devices.instrument.instrument method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -345,21 +381,69 @@
 </li>
       <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.scale_data">scale_data() (stlab.utils.stlabdict.stlabmtx method)</a>
 </li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetAutorange">SetAutorange() (stlab.devices.BFWrapper.BFWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetControl">SetControl() (stlab.devices.BFWrapper.BFWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetEnableTsensor">SetEnableTsensor() (stlab.devices.BFWrapper.BFWrapper method)</a>
+
+      <ul>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetEnableTsensor">(stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      </ul></li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetHeaterRange">SetHeaterRange() (stlab.devices.BFWrapper.BFWrapper method)</a>
+
+      <ul>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetHeaterRange">(stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      </ul></li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetHeaterValue">SetHeaterValue() (stlab.devices.BFWrapper.BFWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetMCHeater">SetMCHeater() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetPID">SetPID() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetPIDTemperature">SetPIDTemperature() (stlab.devices.BFWrapper.BFWrapper method)</a>
+
+      <ul>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetPIDTemperature">(stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      </ul></li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetPTOff">SetPTOff() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetPTOn">SetPTOn() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetRamp">SetRamp() (stlab.devices.BFWrapper.BFWrapper method)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetStillHeater">SetStillHeater() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
       <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.setverbose">setverbose() (stlab.devices.instrument.instrument method)</a>
-</li>
-      <li><a href="drivers/BFWrapper.html#module-stlab.devices.BFWrapper">stlab.devices.BFWrapper (module)</a>
-</li>
-      <li><a href="drivers/He7Temperature.html#module-stlab.devices.He7Temperature">stlab.devices.He7Temperature (module)</a>
-</li>
-      <li><a href="drivers/instrument.html#module-stlab.devices.instrument">stlab.devices.instrument (module)</a>
-</li>
-      <li><a href="utils/autoplotter.html#module-stlab.utils.autoplotter">stlab.utils.autoplotter (module)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.SetVerbose">SetVerbose() (stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+      <li><a href="drivers/instrument.html#module-stlab.devices.autodetect_instrument">stlab.devices.autodetect_instrument (module)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#module-stlab.devices.BFDaemon.BFDaemon">stlab.devices.BFDaemon.BFDaemon (module)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#module-stlab.devices.BFWrapper">stlab.devices.BFWrapper (module)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#module-stlab.devices.He7Daemon.He7Daemon">stlab.devices.He7Daemon.He7Daemon (module)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#module-stlab.devices.He7Temperature">stlab.devices.He7Temperature (module)</a>
+</li>
+      <li><a href="drivers/instrument.html#module-stlab.devices.instrument">stlab.devices.instrument (module)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#module-stlab.devices.TritonDaemon.TritonDaemon">stlab.devices.TritonDaemon.TritonDaemon (module)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#module-stlab.devices.TritonWrapper">stlab.devices.TritonWrapper (module)</a>
+</li>
+      <li><a href="utils/autoplotter.html#module-stlab.utils.autoplotter">stlab.utils.autoplotter (module)</a>
+</li>
       <li><a href="utils/metagen.html#module-stlab.utils.metagen">stlab.utils.metagen (module)</a>
 </li>
-      <li><a href="utils/MySocket.html#module-stlab.utils.MySocket">stlab.utils.MySocket (module)</a>
+      <li><a href="drivers/temperature_servers.html#module-stlab.utils.MySocket">stlab.utils.MySocket (module)</a>
 </li>
       <li><a href="utils/newfile.html#module-stlab.utils.newfile">stlab.utils.newfile (module)</a>
 </li>
@@ -387,11 +471,15 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="drivers/instrument.html#stlab.devices.autodetect_instrument.test_instrument">test_instrument (class in stlab.devices.autodetect_instrument)</a>
+</li>
       <li><a href="utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.transpose">transpose() (stlab.utils.stlabdict.stlabmtx method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils/S11fit.html#stlab.utils.S11fit.trim">trim() (in module stlab.utils.S11fit)</a>
+</li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper">TritonWrapper (class in stlab.devices.TritonWrapper)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -415,18 +503,26 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.write">write() (stlab.devices.instrument.instrument method)</a>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.WaitForTStable">WaitForTStable() (stlab.devices.BFWrapper.BFWrapper method)</a>
 </li>
+      <li><a href="drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.write">write() (stlab.devices.BFWrapper.BFWrapper method)</a>
+
+      <ul>
+        <li><a href="drivers/temperature_servers.html#stlab.devices.TritonWrapper.TritonWrapper.write">(stlab.devices.TritonWrapper.TritonWrapper method)</a>
+</li>
+        <li><a href="drivers/instrument.html#stlab.devices.instrument.instrument.write">(stlab.devices.instrument.instrument method)</a>
+</li>
+      </ul></li>
       <li><a href="utils/writematrix.html#stlab.utils.writematrix.writedict">writedict() (in module stlab.utils.writematrix)</a>
 </li>
       <li><a href="utils/writematrix.html#stlab.utils.writematrix.writedictarray">writedictarray() (in module stlab.utils.writematrix)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils/writematrix.html#stlab.utils.writematrix.writeframe">writeframe() (in module stlab.utils.writematrix)</a>
 </li>
       <li><a href="utils/writematrix.html#stlab.utils.writematrix.writeframearray">writeframearray() (in module stlab.utils.writematrix)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils/writematrix.html#stlab.utils.writematrix.writeline">writeline() (in module stlab.utils.writematrix)</a>
 </li>
       <li><a href="utils/writematrix.html#stlab.utils.writematrix.writematrix">writematrix() (in module stlab.utils.writematrix)</a>

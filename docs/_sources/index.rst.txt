@@ -35,10 +35,11 @@ The basic structure of the package is as follows:
 | ├── LICENCE.md
 | ├── README.md
 | ├── devices
-| │   ├── ...
-| │   └── ...
-| ├── utils
 | │   ├── instrument.py
+| │   └── instrument drivers
+| │   ├── 
+| ├── utils
+| │   ├── 
 | │   └── ...
 | ├── examples
 | │   ├── ...
@@ -54,7 +55,12 @@ The basic structure of the package is as follows:
 * The "utils" folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.
 * "examples" contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.
 * "docs" contains this documentation and "doc_gen" contains the sphynx scripts for generating it.
-* The __init__.py file contains the modules and names imported when running "import stlab".  Note that some modules and functions are renamed for convenience.
+* The __init__.py file contains the modules and names imported when running "import stlab".  Note that some modules and functions are renamed for (in?)convenience.
+
+The imports done when doing :code:`import stlab` are:
+
+.. literalinclude:: ../__init__.py
+  :language: python
 
 Indices and tables
 ==================
