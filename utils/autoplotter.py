@@ -10,6 +10,7 @@ import os
 import traceback
 import logging
 from functools import wraps
+import numpy as np
 
 
 def catchexception(func):#Decorator function
@@ -23,7 +24,19 @@ def catchexception(func):#Decorator function
     return overfunc
 
 @catchexception
-def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption='YOU SHOULD ADD A COMMENT',show=False,dpi=400,pl=None,cmap='bwr',**kwargs):
+def autoplot(datafile,
+            xlab,
+            ylab,
+            zlab=None,
+            title='YOU SHOULD ADD A TITLE',
+            caption='YOU SHOULD ADD A COMMENT',
+            show=False,
+            dpi=400,
+            pl=None,
+            cmap='bwr',
+            wbval = (0.1,0.1), #percent
+            **kwargs):
+
     """Autoplot function
 
     Takes a data file handle (still open or recently closed) or a filename and plots the requested
@@ -59,6 +72,11 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
     **kwargs
         Other arguments to be passed to plotting function (plt.plot or plt.imshow)
 
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Final figure that has been saved to file
+
     """
 
     try:
@@ -79,9 +97,14 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
             plt.plot(line[xlab],line[ylab],**kwargs)
     else:
         mymtx = stlab.framearr_to_mtx(data, zlab, xkey=xlab, ykey=ylab)
-        if 'pl' is not None:
-            mymtx.applyprocesslist(kwargs.get('pl'))
-        plt.imshow(mymtx.pmtx, aspect='auto', cmap=cmap, extent=mymtx.getextents(), **kwargs)
+        if pl is not None:
+            mymtx.applyprocesslist(pl)
+            zlab = zlab + '    (' + ', '.join(pl) + ')'
+        lims = np.percentile(mymtx.pmtx.values, (wbval[0],100-wbval[1]) )
+        vmin = lims[0]
+        vmax = lims[1]
+
+        plt.imshow(mymtx.pmtx, aspect='auto', cmap=cmap, extent=mymtx.getextents(), vmin=vmin, vmax=vmax, **kwargs)
         cbar = plt.colorbar()
         cbar.set_label(zlab)
     plt.title(os.path.basename(fname) + '\n' + title,fontsize = 10)
@@ -100,7 +123,7 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
     plt.savefig(basename+'.png',dpi=dpi)
     if show:
         plt.show()
-    plt.close()
+    return fig
 
 
 
