@@ -23,7 +23,7 @@ def catchexception(func):#Decorator function
     return overfunc
 
 @catchexception
-def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption='YOU SHOULD ADD A COMMENT',show=False,dpi=400,pl=None,**kwargs):
+def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption='YOU SHOULD ADD A COMMENT',show=False,dpi=400,pl=None,cmap='bwr',**kwargs):
     """Autoplot function
 
     Takes a data file handle (still open or recently closed) or a filename and plots the requested
@@ -79,7 +79,7 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
         mymtx = stlab.framearr_to_mtx(data, zlab, xkey=xlab, ykey=ylab)
         if 'pl' is not None:
             mymtx.applyprocesslist(kwargs.get('pl'))
-        plt.imshow(mymtx.pmtx, aspect='auto', cmap='seismic', extent=mymtx.getextents(), **kwargs)
+        plt.imshow(mymtx.pmtx, aspect='auto', cmap=cmap, extent=mymtx.getextents(), **kwargs)
         cbar = plt.colorbar()
         cbar.set_label(zlab)
     plt.title(os.path.basename(fname) + '\n' + title,fontsize = 10)
