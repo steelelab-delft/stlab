@@ -54,6 +54,8 @@ def autoplot(datafile,xlab,ylab,zlab=None,title='YOU SHOULD ADD A TITLE',caption
     pl : list of str, optional
         If provided, is an stlabmtx process list (in case processing is required on a 2d color plot).
         See :class:`stlabmtx <stlab.utils.stlabdict.stlabmtx>` for details
+    cmap : str
+        Matplotlib colormap string for 2D plots. By defulat 'bwr'
     **kwargs
         Other arguments to be passed to plotting function (plt.plot or plt.imshow)
 
