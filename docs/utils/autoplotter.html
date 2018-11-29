@@ -77,7 +77,7 @@
 <p>Function definition for simple plotting routine to be run at end of mesurement</p>
 <dl class="function">
 <dt id="stlab.utils.autoplotter.autoplot">
-<code class="descclassname">stlab.utils.autoplotter.</code><code class="descname">autoplot</code><span class="sig-paren">(</span><em>datafile</em>, <em>xlab</em>, <em>ylab</em>, <em>zlab=None</em>, <em>title='YOU SHOULD ADD A TITLE'</em>, <em>caption='YOU SHOULD ADD A COMMENT'</em>, <em>show=False</em>, <em>dpi=400</em>, <em>pl=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/autoplotter.html#autoplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.autoplotter.autoplot" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">stlab.utils.autoplotter.</code><code class="descname">autoplot</code><span class="sig-paren">(</span><em>datafile</em>, <em>xlab</em>, <em>ylab</em>, <em>zlab=None</em>, <em>title='YOU SHOULD ADD A TITLE'</em>, <em>caption='YOU SHOULD ADD A COMMENT'</em>, <em>show=False</em>, <em>dpi=400</em>, <em>pl=None</em>, <em>cmap='bwr'</em>, <em>wbval=(0.1</em>, <em>0.1)</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/autoplotter.html#autoplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.autoplotter.autoplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Autoplot function</p>
 <p>Takes a data file handle (still open or recently closed) or a filename and plots the requested
 columns).  Saves figure as a png alongside the original data file with the same name.
@@ -88,7 +88,7 @@ it creates a new file with an index.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>datafile</strong> (<em>_io.TextIOWrapper</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Data file handle (can be open or closed) or data file name for reading</li>
 <li><strong>xlab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Label for x axis data</li>
 <li><strong>ylab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Label for y axis data</li>
@@ -100,8 +100,15 @@ a color plot is returned</li>
 <li><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – dpi for matplotlib savefig function</li>
 <li><strong>pl</strong> (<em>list of str</em><em>, </em><em>optional</em>) – If provided, is an stlabmtx process list (in case processing is required on a 2d color plot).
 See <a class="reference internal" href="stlabdict.html#stlab.utils.stlabdict.stlabmtx" title="stlab.utils.stlabdict.stlabmtx"><code class="xref py py-class docutils literal notranslate"><span class="pre">stlabmtx</span></code></a> for details</li>
+<li><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Matplotlib colormap string for 2D plots. By defulat ‘bwr’</li>
 <li><strong>**kwargs</strong> – Other arguments to be passed to plotting function (plt.plot or plt.imshow)</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> – Final figure that has been saved to file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">matplotlib.figure.Figure</p>
 </td>
 </tr>
 </tbody>
@@ -136,7 +143,7 @@ See <a class="reference internal" href="stlabdict.html#stlab.utils.stlabdict.stl
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

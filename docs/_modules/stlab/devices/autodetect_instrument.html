@@ -61,7 +61,7 @@
 <span class="kn">import</span> <span class="nn">os.path</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<div class="viewcode-block" id="DeviceNotFound"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.DeviceNotFound">[docs]</a><span class="k">class</span> <span class="nc">DeviceNotFound</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="DeviceNotFound"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.autodetect_instrument.DeviceNotFound">[docs]</a><span class="k">class</span> <span class="nc">DeviceNotFound</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
     
@@ -80,11 +80,11 @@
     
 <span class="n">devdict</span> <span class="o">=</span> <span class="n">get_instr_definitions</span><span class="p">()</span>
 
-<div class="viewcode-block" id="test_instrument"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.test_instrument">[docs]</a><span class="k">class</span> <span class="nc">test_instrument</span><span class="p">(</span><span class="n">instrument</span><span class="p">):</span>  <span class="c1">#instrument is abstract and can&#39;t be instantiated... I use this placeholder instrument</span>
+<div class="viewcode-block" id="test_instrument"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.autodetect_instrument.test_instrument">[docs]</a><span class="k">class</span> <span class="nc">test_instrument</span><span class="p">(</span><span class="n">instrument</span><span class="p">):</span>  <span class="c1">#instrument is abstract and can&#39;t be instantiated... I use this placeholder instrument</span>
     <span class="k">def</span> <span class="nf">GetMetadataString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="autodetect_instrument"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.autodetect_instrument">[docs]</a><span class="k">def</span> <span class="nf">autodetect_instrument</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="n">reset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="autodetect_instrument"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.autodetect_instrument.autodetect_instrument">[docs]</a><span class="k">def</span> <span class="nf">autodetect_instrument</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="n">reset</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Autodetect instrument function</span>
 
 <span class="sd">    Attempts automatically detect the desired instrument at the given address and creates</span>
@@ -155,7 +155,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

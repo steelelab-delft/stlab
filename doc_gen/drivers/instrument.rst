@@ -8,9 +8,8 @@ The instrument class
   :members:
 
 Instrument autodetection
-========================
+------------------------
 
 A function to autodetect instruments and load the correct driver is also provided
 
-.. automodule:: stlab.devices.autodetect_instrument
-  :members:
+.. autofunction:: stlab.devices.autodetect_instrument.autodetect_instrument

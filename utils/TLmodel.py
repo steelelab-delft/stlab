@@ -1,19 +1,34 @@
 """Module for the calculation of transmission line impedances
 
-params = {
-    'Z0': 64.611,
-    'Cj': 1.77e-15,
-    'Z0p': 79.400384766937506,
-    'Lg': 1.0432952403781536e-10,
-    'Rj': 1027.6618763504205,
-    'n': 2.876042565429968,
-    'type': 'lambda/2',
-    'alpha': 0.0060728306929787035,
-    'Lj': 2.0916766016363636e-10,
-    'Pin': -122,
-    'Cs': 2.657e-11,
-    'l': 0.006119
-    }
+Most functions require a dictionary with specific elements regarding circuit parameters in it.::
+
+    params = {
+        'Z0': 64.611, # characteristic impedance of TL resonator (e.g. geometric and kinetic), in Ohm
+        'Cj': 1.77e-15, # Capacitance of the junction (RCSJ model) loading the TL resonator, in F
+        'Z0p': 50, # reference impedance of the input line, in Ohm
+        'Lg': 1.0432952403781536e-10, # geometric inductance of the junction leads loading the TL resonator, in H
+        'Rj': 1027.6618763504205, # Resistance of the junction (RCSJ model) loading the TL resonator, in Ohm
+        'n': 2.876042565429968, # refraction index for the TL resonator (v_ph = c / n)
+        'type': 'lambda/2', # expected type of TL resonator. Only used in Zincircuit_approx. Can be 'lambda/2', 'lambda/4'
+        'alpha': 0.0060728306929787035,  # attenuation constant for the TL resonator. This mainly sets the internal losses, in 1/m
+        'Lj': 2.0916766016363636e-10, # Josephson inductance of the junction (RCSJ model) loading the TL resonator, in H
+        'Pin': -122, # input power at the coupler of the TL resonator, in dBm
+        'Cs': 2.657e-11, # shunt capacitance of the coupler, in F
+        'l': 0.006119 # length of the TL resonator, in m
+        }
+
+The model calculated here is valid for a transmission line resonator coupled to the input line via a shunt capacitance Cs.
+At the far end, the TL resonator can be loaded by a RCSJ-type junction with an extra series inductor Lg and parallel capacitance Cg.
+
+.. figure::  ../images/TLmodel.jpg
+   :align:   center
+
+   Circuit model used for :code:`TLmodel.py`.
+
+For more details see `A ballistic graphene superconducting microwave circuit <https://www.nature.com/articles/s41467-018-06595-2/>`_
+
+Functions
+=========
 
 """
 import numpy as np
@@ -23,7 +38,7 @@ from scipy.optimize import brentq
 import copy
 
 def S11theo(f,f0,kint,kext):
-    """Lorenztian absortion function
+    """Lorentzian absortion function
 
     Approximate formula for a Series RLC circuit capacitively
     coupled on one side to a transmission line. The frequencies can
@@ -153,6 +168,9 @@ def ZTL(Z0,Zl,gammal):
 
     Calculates the input impedance of a termniated transmission line with a given load impedance
 
+        
+    .. math:: \\gamma_l = \\alpha + i\\beta = \\alpha+i\\frac{\\omega}{v_{\\rm ph}}
+
     Parameters
     ----------
     Z0 : complex
@@ -162,8 +180,6 @@ def ZTL(Z0,Zl,gammal):
     gammal : complex
         propagation constant including losses
 
-        .. math:: \gamma_l = \alpha + i\beta = \alpha+i\frac{\omega}{v_{\rm ph}}
-    
     Returns
     -------
     result : complex

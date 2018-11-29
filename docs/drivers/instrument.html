@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Temperature servers and Daemons for BlueFors and He7 fridges" href="temperature_servers.html" />
-    <link rel="prev" title="stlabdict – Data structures and matrices" href="autodetect_instrument.html" /> 
+    <link rel="prev" title="writematrix – Data file writing methods" href="../utils/writematrix.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -31,22 +31,24 @@
           <a href="temperature_servers.html" title="Temperature servers and Daemons for BlueFors and He7 fridges"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="autodetect_instrument.html" title="stlabdict – Data structures and matrices"
+          <a href="../utils/writematrix.html" title="writematrix – Data file writing methods"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">The instrument class</a></li>
+<li><a class="reference internal" href="#">The instrument class</a><ul>
 <li><a class="reference internal" href="#instrument-autodetection">Instrument autodetection</a></li>
+</ul>
+</li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="autodetect_instrument.html"
-                        title="previous chapter">stlabdict – Data structures and matrices</a></p>
+  <p class="topless"><a href="../utils/writematrix.html"
+                        title="previous chapter">writematrix – Data file writing methods</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="temperature_servers.html"
                         title="next chapter">Temperature servers and Daemons for BlueFors and He7 fridges</a></p>
@@ -101,22 +103,46 @@ need to include a wait time after querying or an <code class="docutils literal n
 <dl class="attribute">
 <dt id="stlab.devices.instrument.instrument.global_rs">
 <code class="descname">global_rs</code><a class="headerlink" href="#stlab.devices.instrument.instrument.global_rs" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>pyvisa.highlevel.ResourceManager</em> – Visa resource manager used to instantiate each visa instrument.
+<dd><p>Visa resource manager used to instantiate each visa instrument.
 This member is static and shared by all instrument objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">pyvisa.highlevel.ResourceManager</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="stlab.devices.instrument.instrument.rstype">
 <code class="descname">rstype</code><a class="headerlink" href="#stlab.devices.instrument.instrument.rstype" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – String that stores the current backend the resource manager is
+<dd><p>String that stores the current backend the resource manager is
 using.  Can be <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">‘<span>&#64;</span>ni</a>’ or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">‘<span>&#64;</span>py</a>’ for NI-VISA or pyvisa-py backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="stlab.devices.instrument.instrument.dev">
 <code class="descname">dev</code><a class="headerlink" href="#stlab.devices.instrument.instrument.dev" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>pyvisa.resources.Resource</em> – pyvisa resource that points to the desired device.  Created
+<dd><p>pyvisa resource that points to the desired device.  Created
 upon instantiation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">pyvisa.resources.Resource</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -242,16 +268,9 @@ read_termination, etc…</li>
 
 </dd></dl>
 
-</div>
 <div class="section" id="instrument-autodetection">
-<h1>Instrument autodetection<a class="headerlink" href="#instrument-autodetection" title="Permalink to this headline">¶</a></h1>
+<h2>Instrument autodetection<a class="headerlink" href="#instrument-autodetection" title="Permalink to this headline">¶</a></h2>
 <p>A function to autodetect instruments and load the correct driver is also provided</p>
-<span class="target" id="module-stlab.devices.autodetect_instrument"></span><p>Module that handles autodetection of instruments</p>
-<dl class="exception">
-<dt id="stlab.devices.autodetect_instrument.DeviceNotFound">
-<em class="property">exception </em><code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">DeviceNotFound</code><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#DeviceNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.DeviceNotFound" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="function">
 <dt id="stlab.devices.autodetect_instrument.autodetect_instrument">
 <code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">autodetect_instrument</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#autodetect_instrument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.autodetect_instrument" title="Permalink to this definition">¶</a></dt>
@@ -276,11 +295,7 @@ model string and driver name pairs that this function searches in to find the co
 </table>
 </dd></dl>
 
-<dl class="class">
-<dt id="stlab.devices.autodetect_instrument.test_instrument">
-<em class="property">class </em><code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">test_instrument</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#test_instrument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.test_instrument" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+</div>
 </div>
 
 
@@ -302,14 +317,14 @@ model string and driver name pairs that this function searches in to find the co
           <a href="temperature_servers.html" title="Temperature servers and Daemons for BlueFors and He7 fridges"
              >next</a> |</li>
         <li class="right" >
-          <a href="autodetect_instrument.html" title="stlabdict – Data structures and matrices"
+          <a href="../utils/writematrix.html" title="writematrix – Data file writing methods"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>
