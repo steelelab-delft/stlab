@@ -4,6 +4,7 @@ import time
 from stlab.devices.instrument import instrument
 from stlab.devices.PNAN5221A import PNAN5221A
 from stlab.utils.stlabdict import stlabdict
+import pandas as pd
 
 def numtostr(mystr):
     return '%20.15e' % mystr
@@ -34,6 +35,14 @@ class PNA_rfsource(object):
 class PNAN5222A(PNAN5221A):
     def __init__(self,addr='TCPIP::192.168.1.42::INSTR',reset=True,verb=True):
         super().__init__(addr,reset,verb)
+
+
+    #******************************************************************************************
+    #******************************************************************************************
+    #******       Two tone spectroscopy funcitons.  Should be removed to TwoToneSpectroscopy.py
+    #******************************************************************************************
+    #******************************************************************************************
+    #******************************************************************************************
 
     def create_source(self):
 
@@ -84,21 +93,6 @@ class PNAN5222A(PNAN5221A):
 
         return PNA_rfsource(self,N_pow = 1,N_rang = 2), PNA_rfsource(self,N_pow = 3,N_rang = 4)
 
-
-    def TwoPortSetup(self,port1=1,port2=2):
-        ports = [port1,port2]
-        trcnames = self.GetTrcNames()
-        measnames = ['S%d%d' % (b,a) for a in ports for b in ports]
-        if trcnames == measnames:
-            return
-        self.ClearAll()
-        self.write('DISP:WIND1 ON')
-        tracenames = ['CH1_S%d%d' % (b,a) for a in ports for b in ports]
-        for i,(meas,trc) in enumerate(zip(measnames,tracenames)):
-            self.write("CALC:PAR:DEF:EXT '%s', '%s'" % (trc,meas))
-            self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))
-        self.write('DISP:WIND:TRAC2:MOVE 2')
-        self.write('DISP:WIND:TRAC3:MOVE 2')
 
     def TwoToneSetup(self,
         f_probe_start,
@@ -206,6 +200,27 @@ class PNAN5222A(PNAN5221A):
 
         return eval(self.query("CALC1:MARK2:X?"))
 
+    def TwoToneProbeForMax(self):
+
+        #set continuous off
+        self.write("SENS1:SWE:MODE HOLD")
+        self.write("INIT:CONT OFF")
+
+        # Trigger top screen measurement
+        self.write("INIT1:IMM" )
+        self.query('*OPC?')
+
+        # Autoscale and copy scale to lower screen
+        self.write('DISP:WIND1:Y:AUTO')
+
+        self.write('DISP:WIND2:TRAC:Y:PDIV  %s' %eval(self.query('DISP:WIND1:TRAC:Y:PDIV?')))
+        self.write('DISP:WIND2:TRAC:Y:RLEV  %s' %eval(self.query('DISP:WIND1:TRAC:Y:RLEV?')))
+        self.write('DISP:WIND2:TRAC:Y:RPOS  %s' %eval(self.query('DISP:WIND1:TRAC:Y:RPOS?')))
+
+        self.write("CALC1:MARK2:FUNC MAX")
+
+        return eval(self.query("CALC1:MARK2:X?"))
+
     def TwoToneSetPumpPower(self,pump_power):
         self.write("SOUR2:POW3 %s" %(pump_power))
 
@@ -242,6 +257,7 @@ class PNAN5222A(PNAN5221A):
             mydict = stlabdict()
             for name,data in zip(names,alltrc):
                 mydict[name]=data
+            mydict = pd.DataFrame(mydict)
             result.append(mydict)
 
         return result
@@ -259,8 +275,19 @@ class PNAN5222A(PNAN5221A):
         self.query('*OPC?')                     # Wait
         return eval(self.query("CALC:MARK1:X?"))# return minimum
 
+    def GetMax(self):
+        self.write("CALC:MARK1 ON")             # Turn on marker
+        self.write("CALC:MARK1:FUNC MAX")       # Set to maximum
+        self.write("CALC:MARK1:FUNC:TRAC ON")   # Don't know what this is but dosnt work without
+        self.query('*OPC?')                     # Wait
+        return eval(self.query("CALC:MARK1:X?"))# return maximum
 
 
+
+    #******************************************************************************************
+    #******************************************************************************************
+    #******************************************************************************************
+    #******************************************************************************************
     #For Segment sweeps
 
     def DelAllSegm(self):
@@ -307,6 +334,21 @@ class PNAN5222A(PNAN5221A):
     def GetSweepTime(self):
         result = self.query('SENSe:SWEep:TIME?')
         return float(result)
+
+    def TwoPortSetup(self,port1=1,port2=2):
+        ports = [port1,port2]
+        trcnames = self.GetTraceNames()
+        measnames = ['S%d%d' % (b,a) for a in ports for b in ports]
+        if trcnames == measnames:
+            return
+        self.ClearAll()
+        self.write('DISP:WIND1 ON')
+        tracenames = ['CH1_S%d%d' % (b,a) for a in ports for b in ports]
+        for i,(meas,trc) in enumerate(zip(measnames,tracenames)):
+            self.write("CALC:PAR:DEF:EXT '%s', '%s'" % (trc,meas))
+            self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))
+        self.write('DISP:WIND:TRAC2:MOVE 2')
+        self.write('DISP:WIND:TRAC3:MOVE 2')
 
     #Not currently working for segments
     '''
