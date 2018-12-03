@@ -15,8 +15,6 @@ class PNAN5221A(basepna):
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
-        if reset:
-            self.TwoPortSetup()
 
 ### OBLIGATORY METHODS TO BE IMPLEMENTED FROM ABCLASS
 
