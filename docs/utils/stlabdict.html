@@ -1,0 +1,877 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlabdict – Data structures and matrices &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="writematrix – Data file writing methods" href="writematrix.html" />
+    <link rel="prev" title="newfile – New measurement folder creation" href="newfile.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="writematrix.html" title="writematrix – Data file writing methods"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="newfile.html" title="newfile – New measurement folder creation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="newfile.html"
+                        title="previous chapter">newfile – New measurement folder creation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="writematrix.html"
+                        title="next chapter">writematrix – Data file writing methods</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/utils/stlabdict.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-stlab.utils.stlabdict">
+<span id="stlabdict-data-structures-and-matrices"></span><h1>stlabdict – Data structures and matrices<a class="headerlink" href="#module-stlab.utils.stlabdict" title="Permalink to this headline">¶</a></h1>
+<p>Module providing data structures for data collection and analysis</p>
+<p>The main features provided in this module are the stlabmtx class and the stlabdict class as
+well as the framearr_to_mtx function.</p>
+<dl class="function">
+<dt id="stlab.utils.stlabdict.checkEqual1">
+<code class="descclassname">stlab.utils.stlabdict.</code><code class="descname">checkEqual1</code><span class="sig-paren">(</span><em>iterator</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#checkEqual1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.checkEqual1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all elements in iterator are equal or is empty</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if iterator empty or has the same value for all elements.  False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.stlabdict.dictarr_to_mtx">
+<code class="descclassname">stlab.utils.stlabdict.</code><code class="descname">dictarr_to_mtx</code><span class="sig-paren">(</span><em>data</em>, <em>key</em>, <em>rangex=None</em>, <em>rangey=None</em>, <em>xkey=None</em>, <em>ykey=None</em>, <em>xtitle=None</em>, <em>ytitle=None</em>, <em>ztitle=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#dictarr_to_mtx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.dictarr_to_mtx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an array of dicts (or stlabdicts) to an stlabmtx object</p>
+<p>Takes an array of dict-like (dict, OrderedDict, stlabdict), typically from a measurement file, and selects the appropriate columns for
+conversion into an stlabmtx that allows spyview like operations and processing.</p>
+<p>If neither ranges or titles are given, some defaults are filled in.  The chosen data column from each data array element will be placed
+as a line in the final matrix sequentially.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>array of dict</em>) – Input array of data dicts.  The dicts are expected to contain a series of arrays of floats with the same length.</li>
+<li><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Index of the appropriate column of each dict for the data axis of the final matrix (data values for each pixel)</li>
+<li><strong>ykey</strong> (<em>xkey</em><em>,</em>) – Columns to use to calculate the desired x and y ranges for the final matrix.  If these are proviced they are also
+used as the x and y titles.  x runs across the matrix columns and y along the rows.  This means that if x is the “slow” variable
+in the measurement file, the output matrix will be transposed to accomodate this.  The ranges are assumed to be the same for all lines.</li>
+<li><strong>rangey</strong> (<em>rangex</em><em>,</em>) – If provided, they override the xkey and ykey assingnment.  They should contain arrays of the correct length for use
+on the axes.  These ranges will be saved along with the data (can be unevenly spaced).  The ranges are assumed to be the same for all lines.</li>
+<li><strong>ytitle</strong><strong>, </strong><strong>ztitle</strong> (<em>xtitle</em><em>,</em>) – Titles for the x, y and z axes.  If provided, they override the titles provided in xkey, ykey and key.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Resulting stlabmtx.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#stlab.utils.stlabdict.stlabmtx" title="stlab.utils.stlabdict.stlabmtx">stlabmtx</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.stlabdict.framearr_to_mtx">
+<code class="descclassname">stlab.utils.stlabdict.</code><code class="descname">framearr_to_mtx</code><span class="sig-paren">(</span><em>data</em>, <em>key</em>, <em>rangex=None</em>, <em>rangey=None</em>, <em>xkey=None</em>, <em>ykey=None</em>, <em>xtitle=None</em>, <em>ytitle=None</em>, <em>ztitle=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#framearr_to_mtx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.framearr_to_mtx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an array of pandas DataFrame to an stlabmtx object</p>
+<p>Takes an array of pandas.DataFrame, typically from a measurement file, and selects the appropriate columns for
+conversion into an stlabmtx that allows spyview like operations and processing.  Is essentially the same as <a class="reference internal" href="#stlab.utils.stlabdict.dictarr_to_mtx" title="stlab.utils.stlabdict.dictarr_to_mtx"><code class="xref any py py-func docutils literal notranslate"><span class="pre">dictarr_to_mtx</span></code></a>
+but adapted for pandas DataFrame.</p>
+<p>If neither ranges or titles are given, some defaults are filled in.  The chosen data column from each data array element will be placed
+as a line in the final matrix sequentially.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>array of dict</em>) – Input array of frames.</li>
+<li><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Index of the appropriate column of each frame for the data axis of the final matrix (data values for each pixel)</li>
+<li><strong>ykey</strong> (<em>xkey</em><em>,</em>) – Columns to use to calculate the desired x and y ranges for the final matrix.  If these are proviced they are also
+used as the x and y titles.  x runs across the matrix columns and y along the rows.  This means that if x is the “slow” variable
+in the measurement file, the output matrix will be transposed to accomodate this.  The ranges are assumed to be the same for all lines.</li>
+<li><strong>rangey</strong> (<em>rangex</em><em>,</em>) – If provided, they override the xkey and ykey assingnment.  They should contain arrays of the correct length for use
+on the axes.  These ranges will be saved along with the data (can be unevenly spaced).  The ranges are assumed to be the same for all lines.</li>
+<li><strong>ytitle</strong><strong>, </strong><strong>ztitle</strong> (<em>xtitle</em><em>,</em>) – Titles for the x, y and z axes.  If provided, they override the titles provided in xkey, ykey and key.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Resulting stlabmtx.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#stlab.utils.stlabdict.stlabmtx" title="stlab.utils.stlabdict.stlabmtx">stlabmtx</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="stlab.utils.stlabdict.stlabdict">
+<em class="property">class </em><code class="descclassname">stlab.utils.stlabdict.</code><code class="descname">stlabdict</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabdict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to hold a data table with multiple lines and columns</p>
+<p>This class is DEPRECATED in favor of pandas DataFrame.  They serve the same
+function as an stlabdict but have much more functionality (and documentation…).</p>
+<p>This class is essentialy an ordered_dict (is a child of) with a few
+convenience methods included.  Each element of the dict has an index that
+labels the column and contains an array of numbers with the column data.
+It is basically a matrix where the column index are string constants instead
+of numbers (to more explicitly keep track or what each column contains).
+Can also be indexed by column number.</p>
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabdict.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabdict.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabdict.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overloaded indexing of the dict</p>
+<p>Reimplements the getting of items from the dict to allow for indexing by column position as well
+as by label</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Desired column index or position.  If a int is given, the method first checks if it is already an
+index.  If it is not, it returns the column given by the index position.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabdict.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabdict.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabdict.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init method for stlabdict</p>
+<p>Simply calls the ordered_dict constructor</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabdict.addparcolumn">
+<code class="descname">addparcolumn</code><span class="sig-paren">(</span><em>colname</em>, <em>colval</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabdict.addparcolumn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabdict.addparcolumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a parameter column</p>
+<p>A parameter column is typically a column with a constant value for all lines (i.e. power in a vna trace).
+Simply repeats the same value in an array of the same length as the other columns.  Does not work
+if there are no existing columns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>colname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Column title for the new parameter column</li>
+<li><strong>colval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Value to fill the parameter column</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabdict.line">
+<code class="descname">line</code><span class="sig-paren">(</span><em>nn</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabdict.line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabdict.line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a line from the table</p>
+<p>Takes a line from the stlabdict given by index.  While getting a column can be done by
+simply taking mystlabdict[myindex], getting a line requires iterating over the dict and
+pulling out the desired line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Line number to be extracted</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>ret</strong> – New stlabdict with only the desired line (each element is labelled by the same column
+name as before but only contains a single float in each).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#stlab.utils.stlabdict.stlabdict" title="stlab.utils.stlabdict.stlabdict">stlabdict</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabdict.matrix">
+<code class="descname">matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabdict.matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabdict.matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts entire table into a numpy matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Matrix containing the same data as the stlabdict.  Loses column titles.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.matrix</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabdict.ncol">
+<code class="descname">ncol</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabdict.ncol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabdict.ncol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of columns</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Number of columnms in stlabdict</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabdict.nline">
+<code class="descname">nline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabdict.nline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabdict.nline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of lines in dict</p>
+<p>Checks that all columns have the same number of lines</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Number of lines in first column (should be the same for any column)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="stlab.utils.stlabdict.stlabmtx">
+<em class="property">class </em><code class="descclassname">stlab.utils.stlabdict.</code><code class="descname">stlabmtx</code><span class="sig-paren">(</span><em>mtx</em>, <em>xtitle='xtitle'</em>, <em>ytitle='ytitle'</em>, <em>ztitle='ztitle'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx" title="Permalink to this definition">¶</a></dt>
+<dd><p>stlabmtx class for spyview-like operations</p>
+<p>This class implements a matrix in the form of a pandas DataFrame and contains
+methods analogous to those present in spyview.</p>
+<dl class="attribute">
+<dt id="stlab.utils.stlabdict.stlabmtx.mtx">
+<code class="descname">mtx</code><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.mtx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original dataframe before any processing.  The dataframe indexes are considered
+the x and y ranges on the final matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">pandas.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="stlab.utils.stlabdict.stlabmtx.pmtx">
+<code class="descname">pmtx</code><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.pmtx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processed dataframe (filters applied)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">pandas.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="stlab.utils.stlabdict.stlabmtx.processlist">
+<code class="descname">processlist</code><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.processlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>List strings specifying the applied filters (in order)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">array of str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">xtitle, ytitle, ztitle</code></dt>
+<dd><p>Titles for the x,y and z (data) axes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">xtitle0, ytitle0, ztitle0</code></dt>
+<dd><p>Initial Titles for the x,y and z (data) axes (so, in case they are changed, reset can recover them)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>mtx</em>, <em>xtitle='xtitle'</em>, <em>ytitle='ytitle'</em>, <em>ztitle='ztitle'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>stlab mtx initialization</p>
+<p>Takes an input DataFrame and sets up the object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mtx</strong> (<em>pandas.DataFrame</em>) – Intup Dataframe</li>
+<li><strong>ytitle</strong><strong>, </strong><strong>ztitle</strong> (<em>xtitle</em><em>,</em>) – Title for x,y and z axes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.absolute">
+<code class="descname">absolute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.absolute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.absolute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Absolute value filter</p>
+<p>Applies np.abs to all elements of the matrix.  Process string <code class="code docutils literal notranslate"><span class="pre">abs</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.applyprocessfile">
+<code class="descname">applyprocessfile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.applyprocessfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.applyprocessfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply all steps in a process list file</p>
+<p>Takes in input file containing a process list and applies them to the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Process file name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.applyprocesslist">
+<code class="descname">applyprocesslist</code><span class="sig-paren">(</span><em>pl</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.applyprocesslist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.applyprocesslist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply all steps in array of process strings</p>
+<p>Takes in input list of strings descibing filters to be applied to the data and runs them.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – String describing the desired filter to be applied</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.applystep">
+<code class="descname">applystep</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.applystep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.applystep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply step from a process list string</p>
+<p>Takes in input string descibing one filter application and applies it to the data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – String describing the desired filter to be applied</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.crop">
+<code class="descname">crop</code><span class="sig-paren">(</span><em>left=None</em>, <em>right=None</em>, <em>up=None</em>, <em>low=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.crop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crop filter</p>
+<p>Crops data matrix to the given extents.  Process string <code class="code docutils literal notranslate"><span class="pre">crop</span> <span class="pre">left,right,up,low</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>left</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – New first column of cropped array.  If None, is assumed to be the first column of the whole set (no crop)</li>
+<li><strong>right</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – New last column of cropped array.  If None, is assumed to be the last column of the whole set (no crop).
+When given a value, the actual index specified is not included in the crop</li>
+<li><strong>up</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – New first row of the cropped array.  If None, is assumed to be the first line of the whole set (no crop)
+When given a value, the actual index specified is not included in the crop</li>
+<li><strong>low</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – New first row of the cropped array.  If None, is assumed to be the last line of the whole set (no crop)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.delstep">
+<code class="descname">delstep</code><span class="sig-paren">(</span><em>ii</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.delstep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.delstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a filter from the current process list by index</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of filter to be removed from applied filters</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.flip">
+<code class="descname">flip</code><span class="sig-paren">(</span><em>x=False</em>, <em>y=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.flip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.flip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flip filter</p>
+<p>Reverses x and/or y axis.  Process string <code class="code docutils literal notranslate"><span class="pre">flip</span> <span class="pre">x,y</span></code> (0 is false, 1 is true).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>y</strong> (<em>x</em><em>,</em>) – If True, x or y is flipped</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.getextents">
+<code class="descname">getextents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.getextents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.getextents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the extents of the matrix</p>
+<p>Returns a tuple containing (xmin, xmax, ymin, ymax) from the axis ranges,
+typically to correctly scale the axes when plotting with matplotlib.pyplot.imshow</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Four element tuple containing (xmin,xmax,ymin,ymax)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple of float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.insertstep">
+<code class="descname">insertstep</code><span class="sig-paren">(</span><em>ii</em>, <em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.insertstep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.insertstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts new filter into process list</p>
+<p>Adds a new filter at a specific position in the process list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index for the position of the new filter</li>
+<li><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Process string for the new filter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.loadmtx">
+<code class="descname">loadmtx</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.loadmtx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.loadmtx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load matrix from an existing Spyview mtx file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) – Name of the mtx file to open</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.log10">
+<code class="descname">log10</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.log10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.log10" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log10 filter</p>
+<p>Applies np.log10 to all elements in the matrix.  Process string <code class="code docutils literal notranslate"><span class="pre">log10</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.lowpass">
+<code class="descname">lowpass</code><span class="sig-paren">(</span><em>x=0</em>, <em>y=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.lowpass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.lowpass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Low Pass filter</p>
+<p>Applies a gaussian filter to the data with given pixel widths.  Other filters are yet to be implemented.
+Process string <code class="code docutils literal notranslate"><span class="pre">lowpass</span> <span class="pre">x,y</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong><strong>,</strong><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Width of the filter in the x and y direction</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.neg">
+<code class="descname">neg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.neg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.neg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Negative filter</p>
+<p>Multiplies matrix by -1.  Process string <code class="code docutils literal notranslate"><span class="pre">neg</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.offset">
+<code class="descname">offset</code><span class="sig-paren">(</span><em>x=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.offset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Offset filter</p>
+<p>Offsets data values by adding given value.  Process string <code class="code docutils literal notranslate"><span class="pre">offset</span> <span class="pre">x</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to add to all data values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.offset_axes">
+<code class="descname">offset_axes</code><span class="sig-paren">(</span><em>x=0</em>, <em>y=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.offset_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.offset_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Axes offset filter</p>
+<p>Offset axis values.  Process string <code class="code docutils literal notranslate"><span class="pre">offset_axes</span> <span class="pre">x,y</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>y</strong> (<em>x</em><em>,</em>) – Values to add to the axes values of the matrix</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.outlier">
+<code class="descname">outlier</code><span class="sig-paren">(</span><em>line</em>, <em>vertical=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.outlier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.outlier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outlier filter</p>
+<p>Drop a line or column from the data.  Process string <code class="code docutils literal notranslate"><span class="pre">outlier</span> <span class="pre">line,vertical</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Line or column number to drop</li>
+<li><strong>vertical</strong> (<em>{1</em><em>,</em><em>0}</em><em>, </em><em>optional</em>) – If 1, drops a column.  If 0, drops a line</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.pixel_avg">
+<code class="descname">pixel_avg</code><span class="sig-paren">(</span><em>nx=0</em>, <em>ny=0</em>, <em>center=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.pixel_avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.pixel_avg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pixel average filter</p>
+<p>Performs pixel averaging on matrix.  Process string <code class="code docutils literal notranslate"><span class="pre">pixel_avg</span> <span class="pre">nx,ny,center</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nx</strong><strong>,</strong><strong>ny</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Width and height of averaging window</li>
+<li><strong>center</strong> (<em>{0</em><em>,</em><em>1}</em><em>, </em><em>optional</em>) – I don’t know what this does…
+Looks like it omits the center point of each averaging window from the average?</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset filters</p>
+<p>Resets all filters and returns matrix to its initial state</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.rotate_ccw">
+<code class="descname">rotate_ccw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.rotate_ccw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.rotate_ccw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate counter-clockwise filter</p>
+<p>Rotates matrix and axes counter-clockwise.  Process string <code class="code docutils literal notranslate"><span class="pre">rotate_ccw</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.rotate_cw">
+<code class="descname">rotate_cw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.rotate_cw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.rotate_cw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate clockwise filter</p>
+<p>Rotates matrix and axes clockwise.  Process string <code class="code docutils literal notranslate"><span class="pre">rotate_cw</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>name='output'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save matrix to file</p>
+<p>Pickels the object and saves it to given file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Base filename to be used.  “.mtx.pkl” will be appended to given filename</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.savemtx">
+<code class="descname">savemtx</code><span class="sig-paren">(</span><em>filename='./output'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.savemtx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.savemtx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save to Spyview mtx format</p>
+<p>Saves current processed matrix to a spyview mtx file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the new mtx file.  “.mtx” will be appended.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.saveprocesslist">
+<code class="descname">saveprocesslist</code><span class="sig-paren">(</span><em>filename='./process.pl'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.saveprocesslist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.saveprocesslist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save applied filter list</p>
+<p>Saves the applied filters and parameters to a text file (process.pl in the current folder by default)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the new file to save the list in.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.scale_data">
+<code class="descname">scale_data</code><span class="sig-paren">(</span><em>factor=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.scale_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.scale_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale filter</p>
+<p>Scales all data by given factor.  Process string <code class="code docutils literal notranslate"><span class="pre">scale</span> <span class="pre">x</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Value to scale the data by</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.sub_cbc">
+<code class="descname">sub_cbc</code><span class="sig-paren">(</span><em>lowp=40</em>, <em>highp=40</em>, <em>low_limit=-1e+99</em>, <em>high_limit=1e+99</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.sub_cbc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.sub_cbc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subtract column by column filter</p>
+<p>Same as <a class="reference internal" href="#stlab.utils.stlabdict.stlabmtx.sub_lbl" title="stlab.utils.stlabdict.stlabmtx.sub_lbl"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">sub_lbl</span></code></a> but done on a column by column basis.  Process string <code class="code docutils literal notranslate"><span class="pre">sub_cbc</span> <span class="pre">lowp,highp,low_limit,high_limit</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.sub_lbl">
+<code class="descname">sub_lbl</code><span class="sig-paren">(</span><em>lowp=40</em>, <em>highp=40</em>, <em>low_limit=-1e+99</em>, <em>high_limit=1e+99</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.sub_lbl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.sub_lbl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Substract line by line filter</p>
+<p>The average value of each line is substracted from the data.  Parts of each line cut can be
+excluded using the high and low percentile options.  The idea is that all points are sorted in
+increasing order and a percentage from the back and front of the list is rejected for the average
+calculation.  Process string <code class="code docutils literal notranslate"><span class="pre">sub_lbl</span> <span class="pre">lowp,highp,low_limit,high_limit</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>lowp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Percentage of points to be rejected from the averaging on the low side.</li>
+<li><strong>highp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Percentage of points to be rejected from the averaging on the high side.</li>
+<li><strong>low_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Absolute value below which points are ignored for the average (and percentile calculations)</li>
+<li><strong>low_limit</strong> – Absolute value above which points are ignored for the average (and percentile calculations)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.sub_linecut">
+<code class="descname">sub_linecut</code><span class="sig-paren">(</span><em>pos</em>, <em>horizontal=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.sub_linecut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.sub_linecut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subtract lincut filter</p>
+<p>Selects a line or column and subtracts it from all othe lines or columns in the matrix.
+Process string <code class="code docutils literal notranslate"><span class="pre">sub_linecut</span> <span class="pre">pos,horizontal</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of line or column to be subtracted</li>
+<li><strong>horizontal</strong> (<em>{1</em><em>,</em><em>0}</em>) – If 1, a line is subtrcted.  If 0 a column is subtracted</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.transpose">
+<code class="descname">transpose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.transpose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.transpose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transpose filter</p>
+<p>Transposes the data matrix (and axes).  Process string <code class="code docutils literal notranslate"><span class="pre">transpose</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.vi_to_iv">
+<code class="descname">vi_to_iv</code><span class="sig-paren">(</span><em>vmin</em>, <em>vmax</em>, <em>nbins</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.vi_to_iv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.vi_to_iv" title="Permalink to this definition">¶</a></dt>
+<dd><p>vi to iv filter</p>
+<p>Reverses the data axis with the y axis of the matrix.  For example, if the data contains the voltage and the axis the current
+this filter replaces the voltage data with the corresponding current data and the axis with the voltage (I think…).
+Since the axes are expected to be ordered, this is not an immediate operation and may not be possible in many cases (repeated data values?).</p>
+<p>If one desires to do this with the x axis instead of the y, the matrix must first be transposed.  After the filter is applied the transpose
+can be undone.</p>
+<p>Process string <code class="code docutils literal notranslate"><span class="pre">vi_to_iv</span> <span class="pre">vmin,vmax,nbins</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Lower end of the new y axis</li>
+<li><strong>vmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Upper end of the new y axis</li>
+<li><strong>nbins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of points in the new axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.xderiv">
+<code class="descname">xderiv</code><span class="sig-paren">(</span><em>direction=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.xderiv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.xderiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>X derivative filter</p>
+<p>Apply a derivative along the lines of the matrix.  Process string <code class="code docutils literal notranslate"><span class="pre">xderiv</span> <span class="pre">direction</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>direction</strong> (<em>{1</em><em>,</em><em>-1}</em>) – Direction for derivative.  1 by default (normal diff derivative)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.utils.stlabdict.stlabmtx.yderiv">
+<code class="descname">yderiv</code><span class="sig-paren">(</span><em>direction=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.yderiv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.yderiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Y derivative filter</p>
+<p>Apply a derivative along the columns of the matrix.  Process string <code class="code docutils literal notranslate"><span class="pre">yderiv</span> <span class="pre">direction</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>direction</strong> (<em>{1</em><em>,</em><em>-1}</em>) – Direction for derivative.  1 by default (normal diff derivative)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="stlab.utils.stlabdict.stlabmtx_pd">
+<code class="descclassname">stlab.utils.stlabdict.</code><code class="descname">stlabmtx_pd</code><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx_pd" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#stlab.utils.stlabdict.stlabmtx" title="stlab.utils.stlabdict.stlabmtx"><code class="xref py py-class docutils literal notranslate"><span class="pre">stlab.utils.stlabdict.stlabmtx</span></code></a></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="writematrix.html" title="writematrix – Data file writing methods"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="newfile.html" title="newfile – New measurement folder creation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

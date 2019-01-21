@@ -1,0 +1,949 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlab.utils.S11fit &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.utils.S11fit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for fitting resonance line shapes to different circuit models</span>
+
+<span class="sd">This module contains the functions necessary to fit some general lorentizian to</span>
+<span class="sd">simulations or measurements.  The main function is &quot;fit&quot; and is imported with</span>
+<span class="sd">stlab as &quot;stlab.S11fit&quot;.  All other functions in this module are there to</span>
+<span class="sd">supplement this fitting function or are not generally used.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="k">import</span> <span class="n">savgol_filter</span> <span class="k">as</span> <span class="n">smooth</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">lmfit</span> <span class="k">import</span> <span class="n">minimize</span><span class="p">,</span> <span class="n">Parameters</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">report_fit</span>
+
+<span class="n">pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+<div class="viewcode-block" id="newparams"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.newparams">[docs]</a><span class="k">def</span> <span class="nf">newparams</span><span class="p">(</span><span class="n">f0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">Qint</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">Qext</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span><span class="n">theta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">ap</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">bp</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Makes new Parameters object compatible with fitting routine</span>
+
+<span class="sd">    A new lmfit.Parameters object is created using the given values.  Default</span>
+<span class="sd">    values are filled in for ommited parameters.  The fit model is:</span>
+
+<span class="sd">    .. math:: \Gamma&#39;(\omega)=(a+b\omega+c\omega^2)\exp(j(a&#39;+b&#39;\omega))\cdot</span>
+<span class="sd">        \Gamma(\omega,Q_\\textrm{int},Q_\\textrm{ext},\\theta),</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f0 : float, optional</span>
+<span class="sd">        Resonance frequency</span>
+<span class="sd">    Qint : float, optional</span>
+<span class="sd">        Internal quality factor</span>
+<span class="sd">    Qext : float, optional</span>
+<span class="sd">        External quality factor</span>
+<span class="sd">    theta : float, optional</span>
+<span class="sd">        Rotation angle to compensate additive background effects.  Should be</span>
+<span class="sd">        close to 0 for good fits.</span>
+<span class="sd">    a : float, optional</span>
+<span class="sd">        Background magnitude offset</span>
+<span class="sd">    b : float, optional</span>
+<span class="sd">        Background magnitude linear slope</span>
+<span class="sd">    c : float, optional</span>
+<span class="sd">        Background magnitude quadratic term</span>
+<span class="sd">    ap : float, optional</span>
+<span class="sd">        Background phase offset</span>
+<span class="sd">    bp : float, optional</span>
+<span class="sd">        Background phase slope</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    params : lmfit.Parameters</span>
+<span class="sd">        lmfit fit object containing the provided parameters</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="n">lmfit</span><span class="o">.</span><span class="n">Parameters</span><span class="p">()</span>
+
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">c</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;ap&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">ap</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;bp&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">bp</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;cp&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;Qint&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">Qint</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;Qext&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">Qext</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;f0&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">f0</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">params</span></div>
+
+
+
+<div class="viewcode-block" id="realimag"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.realimag">[docs]</a><span class="k">def</span> <span class="nf">realimag</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Makes alternating real and imaginary part array from complex array</span>
+
+<span class="sd">    Takes an array-like object of complex number elements and generates a</span>
+<span class="sd">    1-D array aleternating the real and imaginary part of each element of the</span>
+<span class="sd">    original array.  If array = (z1,z2,...,zn), then this function returns</span>
+<span class="sd">    (x1,y1,x2,y2,...,xn,yn) where xi = np.real(zi) and yi=np.imag(zi).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array : array_like of complex</span>
+<span class="sd">        1-D array of complex numbers</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        New array of alternating real and imag parts of each element of</span>
+<span class="sd">        original array</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">array</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="un_realimag"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.un_realimag">[docs]</a><span class="k">def</span> <span class="nf">un_realimag</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Makes complex array from alternating real and imaginary part array</span>
+
+<span class="sd">    Performs the reverse operation to realimag</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array : array_like of float</span>
+<span class="sd">        1-D array of real numbers.  Should have an even number of elements.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray of numpy.complex128</span>
+<span class="sd">        1-D array of complex numbers built by taking every two elements of</span>
+<span class="sd">        original array as the real and imaginary parts</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">array</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span><span class="n">array</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+        <span class="n">z</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="phaseunwrap"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.phaseunwrap">[docs]</a><span class="k">def</span> <span class="nf">phaseunwrap</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Removes a global phase slope from a complex array</span>
+
+<span class="sd">    Unwraps the phase of a sequence of complex numbers and subtracts the average</span>
+<span class="sd">    slope of the phase (desloped phase).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array : array_like of complex</span>
+<span class="sd">        1-D array of complex numbers</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray of numpy.complex128</span>
+<span class="sd">        Same array as original but with phase slope removed (0 average phase</span>
+<span class="sd">        slope)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+    <span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">phase</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">avg</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">)]</span>
+<span class="c1">#    print(np.average(np.diff(np.angle(data))))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="getwidth_phase"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.getwidth_phase">[docs]</a><span class="k">def</span> <span class="nf">getwidth_phase</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span><span class="n">vec</span><span class="p">,</span><span class="n">margin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Finds indices for peak width around given maximum position</span>
+
+<span class="sd">    Auxiliary function for fit.  Given the complex array &quot;vec&quot; assuming &quot;i0&quot;</span>
+<span class="sd">    is the resonance index, this function finds resonance peak width from the</span>
+<span class="sd">    phase derivative of the signal.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    i0 : int</span>
+<span class="sd">        Array index of resonance</span>
+<span class="sd">    vec : array_like of complex</span>
+<span class="sd">        Complex array with resonance data</span>
+<span class="sd">    margin : int</span>
+<span class="sd">        Smoothing margin used on data.  Needed to remove spureous increases in</span>
+<span class="sd">        the phase array that occur at the head and tail of vec after smoothing.</span>
+<span class="sd">        Should be an odd number</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (int, int)</span>
+<span class="sd">        Indices of the lower and upper estimated edges of the resonance peak</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">maxvec</span> <span class="o">=</span> <span class="n">vec</span><span class="p">[</span><span class="n">i0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">margin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">avgvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">avgvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">vec</span><span class="p">[</span><span class="n">margin</span><span class="p">:</span><span class="o">-</span><span class="n">margin</span><span class="p">])</span>
+<span class="c1">#    print maxvec, avgvec</span>
+    <span class="n">i2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">i1</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">)):</span>
+<span class="c1">#        print (maxvec-vec[i]), (maxvec-avgvec)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">maxvec</span><span class="o">-</span><span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">maxvec</span><span class="o">-</span><span class="n">avgvec</span><span class="p">)</span><span class="o">/</span><span class="mf">1.</span><span class="p">:</span>
+            <span class="n">i2</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">break</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">maxvec</span><span class="o">-</span><span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">maxvec</span><span class="o">-</span><span class="n">avgvec</span><span class="p">)</span><span class="o">/</span><span class="mf">1.</span><span class="p">:</span>
+            <span class="n">i1</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">i1</span><span class="p">,</span><span class="n">i2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="trim"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.trim">[docs]</a><span class="k">def</span> <span class="nf">trim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">imin</span><span class="p">,</span><span class="n">imax</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Removes range from imin to imax from vectors x,y</span>
+
+<span class="sd">    Given two (possibly complex) arrays and indices corresponding to a lower and upper edge,</span>
+<span class="sd">    this function removes the index range between these edges from both input</span>
+<span class="sd">    arrays</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x, y : array_like of complex</span>
+<span class="sd">        Arrays to be trimmed</span>
+<span class="sd">    imin, imax : int</span>
+<span class="sd">        Lower and upper edge of range to be removed (trimmed) from x,y</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (numpy.ndarray, numpy.ndarray)</span>
+<span class="sd">        Trimmed arrays</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">imin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imin</span><span class="p">)</span>
+    <span class="n">imax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imax</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">corr</span><span class="p">(</span><span class="n">xx</span><span class="p">):</span>
+        <span class="n">xpart1</span> <span class="o">=</span> <span class="n">xx</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">imin</span><span class="p">]</span>
+        <span class="n">xpart2</span> <span class="o">=</span> <span class="n">xx</span><span class="p">[</span><span class="n">imax</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xpart1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">xpart1</span> <span class="o">=</span> <span class="n">xx</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xpart2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">xpart2</span> <span class="o">=</span> <span class="n">xx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">xpart1</span><span class="p">,</span><span class="n">xpart2</span>
+    <span class="n">xnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">corr</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">ynew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">corr</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xnew</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ynew</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">xnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]])</span>
+        <span class="n">ynew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]])</span>
+
+    <span class="c1">#print(xnew,ynew)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">xnew</span><span class="p">,</span><span class="n">ynew</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="backmodel"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.backmodel">[docs]</a><span class="k">def</span> <span class="nf">backmodel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function for background model.</span>
+
+<span class="sd">    Returns the background model values for a given set of parameters and</span>
+<span class="sd">    frequency values.  Uses parameter object from lmfit.  The background model</span>
+<span class="sd">    is given by</span>
+
+<span class="sd">    .. math:: f_b(\omega)=(a+b\omega+c\omega^2)</span>
+<span class="sd">        \exp(j(a&#39;+b&#39;\omega)),</span>
+
+<span class="sd">    where :math:`a,b,c,a&#39;,b&#39;` are real parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : float or array_like of float</span>
+<span class="sd">        Frequency values to evaluate the model at</span>
+<span class="sd">    params : lmfit.Parameters</span>
+<span class="sd">        Parameters set with which to generate the background</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.complex128 or numpy.ndarray of numpy.complex128</span>
+<span class="sd">        Background values at frequencies x with model parameters params</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">ap</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">bp</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">cp</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">c</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mf">2.</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">ap</span><span class="o">+</span><span class="n">bp</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">cp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mf">2.</span><span class="p">))</span> <span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">background2min</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Background residual</span>
+
+<span class="sd">    Computes the residual vector for the background fitting.  Operates on</span>
+<span class="sd">    complex vectors but returns a real vector with alternating real and imag</span>
+<span class="sd">    parts</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : lmfit.Parameters</span>
+<span class="sd">        Model parameters for background generation</span>
+<span class="sd">    x : float or array_like of float</span>
+<span class="sd">        Frequency values for background calculation.  backmodel function is</span>
+<span class="sd">        used.</span>
+<span class="sd">    data : complex or array_like of complex</span>
+<span class="sd">        Background values of signal to be compared to generated background at</span>
+<span class="sd">        frequency values x.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray of numpy.float</span>
+<span class="sd">        Residual values (model value - data value) at values given in x.</span>
+<span class="sd">        Alternates real and imaginary values</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">backmodel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">model</span> <span class="o">-</span> <span class="n">data</span>
+    <span class="k">return</span> <span class="n">realimag</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<div class="viewcode-block" id="S11theo"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.S11theo">[docs]</a><span class="k">def</span> <span class="nf">S11theo</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">):</span> <span class="c1"># Equation</span>
+    <span class="sd">&quot;&quot;&quot;Theoretical response functions of cavities with no background</span>
+
+<span class="sd">    Returns the theory values of cavity response functions for a given set of</span>
+<span class="sd">    parameters for different cavity models.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frec : float or array_like of float</span>
+<span class="sd">        Frequency values to calculate the response function at</span>
+<span class="sd">    params : lmfit.Parameters</span>
+<span class="sd">        Parameter values for calculation</span>
+<span class="sd">    ftype : {&#39;A&#39;,&#39;-A&#39;,&#39;B&#39;,&#39;-B&#39;,&#39;X&#39;}, optional</span>
+<span class="sd">        Model for response function selection.  These are described in Daniel&#39;s</span>
+<span class="sd">        response function document.  The desired model should be found there and</span>
+<span class="sd">        selected with this parameter.</span>
+
+<span class="sd">        The possible models are (CHECK DANIEL&#39;S RESPONSE FUNCTION DOCUMENT):</span>
+
+<span class="sd">        - &#39;A&#39;: Reflection cavity with short circuit boundary condition at input port (default selection)</span>
+<span class="sd">        - &#39;-A&#39;: Reflection cavity with open circuit boundary condition at input port (= model A with a minus sign)</span>
+<span class="sd">        - &#39;B&#39;: Transmission through a side coupled geometry</span>
+<span class="sd">        - &#39;-B&#39;: Same as model B but with a minux sign</span>
+<span class="sd">        - &#39;X&#39;: Non-standard model (used in a magnetic field sweep)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.complex128 or numpy.ndarray of numpy.complex128</span>
+<span class="sd">        Values of theoretical response function at frequencies given in frec</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Qint</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Qint&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">Qext</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Qext&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">f0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">w0</span> <span class="o">=</span> <span class="n">f0</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">frec</span>
+    <span class="n">kint</span> <span class="o">=</span> <span class="n">w0</span><span class="o">/</span><span class="n">Qint</span>
+    <span class="n">kext</span> <span class="o">=</span> <span class="n">w0</span><span class="o">/</span><span class="n">Qext</span>
+    <span class="n">dw</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="n">w0</span>
+<span class="c1">#    return (kint+2j*dw) / (kext+kint+2j*dw)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span><span class="o">+</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">kext</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">theta</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">kext</span><span class="o">+</span><span class="n">kint</span><span class="o">+</span><span class="mi">2</span><span class="n">j</span><span class="o">*</span><span class="n">dw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ftype</span><span class="o">==</span> <span class="s1">&#39;-A&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">kext</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">theta</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">kext</span><span class="o">+</span><span class="n">kint</span><span class="o">+</span><span class="mi">2</span><span class="n">j</span><span class="o">*</span><span class="n">dw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ftype</span><span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span><span class="o">+</span><span class="p">(</span><span class="n">kext</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">theta</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">kext</span><span class="o">+</span><span class="n">kint</span><span class="o">+</span><span class="mi">2</span><span class="n">j</span><span class="o">*</span><span class="n">dw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ftype</span><span class="o">==</span> <span class="s1">&#39;-B&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="n">kext</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">theta</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">kext</span><span class="o">+</span><span class="n">kint</span><span class="o">+</span><span class="mi">2</span><span class="n">j</span><span class="o">*</span><span class="n">dw</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ftype</span><span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.</span><span class="o">-</span><span class="p">(</span><span class="n">kext</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">theta</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">kext</span><span class="o">+</span><span class="n">kint</span><span class="o">-</span><span class="mi">2</span><span class="n">j</span><span class="o">*</span><span class="n">dw</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">S11residual</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">frec</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span><span class="n">ftype</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Residual for full fit including background</span>
+
+<span class="sd">    Calculates the residual for the full signal and background with respect to</span>
+<span class="sd">    the given background and theory model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : lmfit.Parameters</span>
+<span class="sd">        Parameter values for calculation</span>
+<span class="sd">    frec : float or array_like of float</span>
+<span class="sd">        Frequency values to calculate the combined signal and background</span>
+<span class="sd">        response function at using params</span>
+<span class="sd">    data : complex or array_like of complex</span>
+<span class="sd">        Original signal data values at frequencies frec</span>
+<span class="sd">    ftype : {&#39;A&#39;,&#39;-A&#39;,&#39;B&#39;,&#39;-B&#39;,&#39;X&#39;}, optional</span>
+<span class="sd">        Model for theory response function selection.  See S11theo for</span>
+<span class="sd">        explanation</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Residual values (model value - data value) at values given in x.</span>
+<span class="sd">        Alternates real and imaginary values</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">S11full</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="p">)</span>
+    <span class="n">residual</span> <span class="o">=</span> <span class="n">model</span> <span class="o">-</span> <span class="n">data</span>
+    <span class="k">return</span> <span class="n">realimag</span><span class="p">(</span><span class="n">residual</span><span class="p">)</span>
+
+<div class="viewcode-block" id="S11full"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.S11full">[docs]</a><span class="k">def</span> <span class="nf">S11full</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function for total response from background model and resonator response</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="o">-</span><span class="n">S11theo</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="p">)</span><span class="o">*</span><span class="n">backmodel</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-A&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-B&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">S11theo</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="p">)</span><span class="o">*</span><span class="n">backmodel</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+<div class="viewcode-block" id="fit"><a class="viewcode-back" href="../../../utils/S11fit.html#stlab.utils.S11fit.fit">[docs]</a><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="p">,</span><span class="n">ftype</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="n">fitbackground</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">trimwidth</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span><span class="n">doplots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">margin</span> <span class="o">=</span> <span class="mi">51</span><span class="p">,</span> <span class="n">oldpars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">refitback</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">reusefitpars</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fitwidth</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;**MAIN FIT ROUTINE**</span>
+
+<span class="sd">    Fits complex data S11 vs frecuency to one of 4 models adjusting for a multiplicative complex background</span>
+<span class="sd">    It fits the data in three steps.  Firstly it fits the background signal removing a certain window around the detected peak position.</span>
+<span class="sd">    Then it fits the model times the background to the full data set keeping the background parameters fixed at the fitted values.  Finally it refits all background and</span>
+<span class="sd">    model parameters once more starting from the previously fitted values.  The fit model is:</span>
+
+<span class="sd">    .. math:: \Gamma&#39;(\omega)=(a+b\omega+c\omega^2)\exp(j(a&#39;+b&#39;\omega))\cdot</span>
+<span class="sd">        \Gamma(\omega,Q_\\textrm{int},Q_\\textrm{ext},\\theta),</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frec : array_like</span>
+<span class="sd">        Array of X values (typically frequency)</span>
+<span class="sd">    S11 : array_like</span>
+<span class="sd">        Complex array of Z values (typically S11 data)</span>
+<span class="sd">    ftype : {&#39;A&#39;,&#39;B&#39;,&#39;-A&#39;,&#39;-B&#39;, &#39;X&#39;}, optional</span>
+<span class="sd">        Fit model function (A,B,-A,-B, see S11theo for formulas)</span>
+<span class="sd">    fitbackground : bool, optional</span>
+<span class="sd">        If &quot;True&quot; will attempt to fit and remove background.  If &quot;False&quot;, will use a constant background equal to 1 and fit only model function to data.</span>
+<span class="sd">    trimwidth : float, optional</span>
+<span class="sd">        Number of linewidths around resonance (estimated pre-fit) to remove for background only fit.</span>
+<span class="sd">    doplots : bool, optional</span>
+<span class="sd">        If &quot;True&quot;, shows debugging and intermediate plots</span>
+<span class="sd">    margin : float, optional</span>
+<span class="sd">        Smoothing window to apply to signal for initial guess procedures (the fit uses unsmoothed data)</span>
+<span class="sd">    oldpars : lmfit.Parameters, optional</span>
+<span class="sd">        Parameter data from previous fit (expects lmfit Parameter object). Used when &quot;refitback&quot; is &quot;False&quot; or &quot;reusefitpars&quot; is &quot;True&quot;.</span>
+<span class="sd">    refitback : bool, optional</span>
+<span class="sd">        If set to False, does not fit the background but uses parameters provided in &quot;oldpars&quot;.  If set to &quot;True&quot;, fits background normally</span>
+<span class="sd">    reusefitpars : bool, optional</span>
+<span class="sd">        If set to True, uses parameters provided in &quot;oldpars&quot; as initial guess for fit parameters in main model fit (ignored by background fit)</span>
+<span class="sd">    fitwidth : float, optional</span>
+<span class="sd">        If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    params : lmfit.Parameters</span>
+<span class="sd">        Fitted parameter values</span>
+<span class="sd">    freq : numpy.ndarray</span>
+<span class="sd">        Array of frequency values within the fitted range</span>
+<span class="sd">    S11: numpy.ndarray</span>
+<span class="sd">        Array of complex signal values within the fitted range</span>
+<span class="sd">    finalresult : lmfit.MinimizerResult</span>
+<span class="sd">        The full minimizer result object (see lmfit documentation for details)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert frequency and S11 into arrays</span>
+    <span class="n">frec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frec</span><span class="p">)</span>
+    <span class="n">S11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">S11</span><span class="p">)</span>
+
+    <span class="c1">#Smooth data for initial guesses</span>
+    <span class="k">if</span> <span class="n">margin</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">margin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#If no smooting desired, pass None as margin</span>
+        <span class="n">margin</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">sReS11</span> <span class="o">=</span> <span class="n">S11</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">sImS11</span> <span class="o">=</span> <span class="n">S11</span><span class="o">.</span><span class="n">imag</span>
+        <span class="n">sS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sReS11</span><span class="p">,</span><span class="n">sImS11</span><span class="p">)</span> <span class="p">]</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">margin</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span> <span class="ow">or</span> <span class="n">margin</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">margin</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;margin has to be either None, 0, or an odd integer larger than 3&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sReS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">smooth</span><span class="p">(</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">margin</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">sImS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">smooth</span><span class="p">(</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span><span class="n">margin</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">sS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sReS11</span><span class="p">,</span><span class="n">sImS11</span><span class="p">)</span> <span class="p">]</span> <span class="p">)</span>
+    <span class="c1">#Make smoothed phase vector removing 2pi jumps</span>
+    <span class="n">sArgS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">sS11</span><span class="p">)</span>
+    <span class="n">sArgS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">sArgS11</span><span class="p">)</span>
+    <span class="n">sdiffang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">sArgS11</span><span class="p">)</span>
+
+    <span class="c1">#sdiffang = [ x if np.abs(x)&lt;pi else -pi for x in np.diff(np.angle(sS11)) ]</span>
+    <span class="c1">#Get resonance index from maximum of the derivative of the imaginary part</span>
+    <span class="c1">#ires = np.argmax(np.abs(np.diff(sImS11)))</span>
+    <span class="c1">#f0i=frec[ires]</span>
+
+    <span class="c1">#Get resonance index from maximum of the derivative of the phase</span>
+    <span class="n">avgph</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">)</span>
+    <span class="n">errvec</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">avgph</span><span class="p">,</span><span class="mf">2.</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sdiffang</span><span class="p">]</span>
+    <span class="c1">#ires = np.argmax(np.abs(sdiffang[margin:-margin]))+margin</span>
+    <span class="k">if</span> <span class="n">margin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ires</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">errvec</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ires</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">errvec</span><span class="p">[</span><span class="n">margin</span><span class="p">:</span><span class="o">-</span><span class="n">margin</span><span class="p">])</span><span class="o">+</span><span class="n">margin</span>
+    <span class="n">f0i</span><span class="o">=</span><span class="n">frec</span><span class="p">[</span><span class="n">ires</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max index: &quot;</span><span class="p">,</span><span class="n">ires</span><span class="p">,</span><span class="s2">&quot; Max frequency: &quot;</span><span class="p">,</span><span class="n">f0i</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Original signal (Re,Im)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">sS11</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Smoothed Phase&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">margin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">[</span><span class="n">margin</span><span class="p">:</span><span class="o">-</span><span class="n">margin</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Diff of Smoothed Phase&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1">#Get peak width by finding width of spike in diffphase plot</span>
+    <span class="p">(</span><span class="n">imin</span><span class="p">,</span><span class="n">imax</span><span class="p">)</span> <span class="o">=</span> <span class="n">getwidth_phase</span><span class="p">(</span><span class="n">ires</span><span class="p">,</span><span class="n">errvec</span><span class="p">,</span><span class="n">margin</span><span class="p">)</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="n">imax</span><span class="o">-</span><span class="n">imin</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Peak limits: &quot;</span><span class="p">,</span><span class="n">imin</span><span class="p">,</span><span class="n">imax</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Lower edge: &quot;</span><span class="p">,</span><span class="n">frec</span><span class="p">[</span><span class="n">imin</span><span class="p">],</span><span class="s2">&quot; Center: &quot;</span><span class="p">,</span><span class="n">frec</span><span class="p">[</span><span class="n">ires</span><span class="p">],</span><span class="s2">&quot; Upper edge: &quot;</span><span class="p">,</span><span class="n">frec</span><span class="p">[</span><span class="n">imax</span><span class="p">],</span><span class="s2">&quot; Points in width: &quot;</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Smoothed (ph-phavg)\^2&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">errvec</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">imin</span><span class="p">],[</span><span class="n">errvec</span><span class="p">[</span><span class="n">imin</span><span class="p">]],</span><span class="s1">&#39;ro&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">imax</span><span class="p">],[</span><span class="n">errvec</span><span class="p">[</span><span class="n">imax</span><span class="p">]],</span><span class="s1">&#39;ro&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fitwidth</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+        <span class="n">i1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ires</span><span class="o">-</span><span class="n">di</span><span class="o">*</span><span class="n">fitwidth</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">i2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ires</span><span class="o">+</span><span class="n">di</span><span class="o">*</span><span class="n">fitwidth</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">frec</span><span class="p">))</span>
+        <span class="n">frec</span> <span class="o">=</span> <span class="n">frec</span><span class="p">[</span><span class="n">i1</span><span class="p">:</span><span class="n">i2</span><span class="p">]</span>
+        <span class="n">S11</span> <span class="o">=</span> <span class="n">S11</span><span class="p">[</span><span class="n">i1</span><span class="p">:</span><span class="n">i2</span><span class="p">]</span>
+        <span class="n">ires</span> <span class="o">=</span> <span class="n">ires</span> <span class="o">-</span> <span class="n">i1</span>
+        <span class="n">imin</span> <span class="o">=</span> <span class="n">imin</span> <span class="o">-</span> <span class="n">i1</span>
+        <span class="n">imax</span> <span class="o">=</span> <span class="n">imax</span> <span class="o">-</span> <span class="n">i1</span>
+
+
+    <span class="c1">#Trim peak from data (trimwidth times the width)</span>
+    <span class="p">(</span><span class="n">backfrec</span><span class="p">,</span> <span class="n">backsig</span><span class="p">)</span> <span class="o">=</span> <span class="n">trim</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="p">,</span><span class="n">ires</span><span class="o">-</span><span class="n">trimwidth</span><span class="o">*</span><span class="n">di</span><span class="p">,</span><span class="n">ires</span><span class="o">+</span><span class="n">trimwidth</span><span class="o">*</span><span class="n">di</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Trimmed signal for background fit (Re,Im)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">backfrec</span><span class="p">,</span><span class="n">backsig</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">backfrec</span><span class="p">,</span><span class="n">backsig</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Trimmed signal for background fit (Abs)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">backfrec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">backsig</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S11</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Trimmed signal for background fit (Phase)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">backfrec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">backsig</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">S11</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+    <span class="k">if</span> <span class="n">fitbackground</span><span class="p">:</span>
+        <span class="c1">#Make initial background guesses</span>
+        <span class="n">b0</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sS11</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sS11</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">frec</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">frec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1">#    a0 = np.abs(sS11)[0] - b0*frec[0]</span>
+        <span class="n">a0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sS11</span><span class="p">))</span> <span class="o">-</span> <span class="n">b0</span><span class="o">*</span><span class="n">backfrec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1">#    a0 = np.abs(sS11)[0] - b0*backfrec[0]</span>
+        <span class="n">c0</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="c1">#    bp0 = ( np.angle(sS11[di])-np.angle(sS11[0]) )/(frec[di]-frec[0])</span>
+        <span class="n">xx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">backfrec</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">backfrec</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">backfrec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">dtheta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">backsig</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">backsig</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dtheta</span><span class="p">)</span><span class="o">&gt;</span><span class="n">pi</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">xx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dtheta</span><span class="o">/</span><span class="n">df</span><span class="p">)</span>
+        <span class="c1">#Remove infinite values in xx (from repeated frequency points for example)</span>
+        <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
+        <span class="n">xx</span> <span class="o">=</span> <span class="n">xx</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="c1">#    bp0 = np.average([ x if np.abs(x)&lt;pi else 0 for x in np.diff(np.angle(backsig))] )/(frec[1]-frec[0])</span>
+        <span class="n">bp0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
+    <span class="c1">#   ap0 = np.angle(sS11[0]) - bp0*frec[0]</span>
+    <span class="c1">#   ap0 = np.average(np.unwrap(np.angle(backsig))) - bp0*backfrec[0]</span>
+        <span class="n">ap0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">backsig</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">bp0</span><span class="o">*</span><span class="n">backfrec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cp0</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">a0</span><span class="p">,</span><span class="n">b0</span><span class="p">,</span><span class="n">ap0</span><span class="p">,</span><span class="n">bp0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a0</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">b0</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">c0</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">ap0</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">bp0</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">cp0</span><span class="o">=</span><span class="mi">0</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">()</span>
+    <span class="n">myvary</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">a0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="n">myvary</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">b0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="n">myvary</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">c0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="n">myvary</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;ap&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">ap0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="n">myvary</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;bp&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">bp0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="n">myvary</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;cp&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="n">cp0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="n">myvary</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fitbackground</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-A&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-B&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">refitback</span> <span class="ow">and</span> <span class="n">oldpars</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;bp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;cp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># do background fit</span>
+
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">background2min</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">backfrec</span><span class="p">,</span> <span class="n">backsig</span><span class="p">))</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    params = result.params</span>
+<span class="sd">    params[&#39;a&#39;].set(vary=False)</span>
+<span class="sd">    params[&#39;b&#39;].set(vary=False)</span>
+<span class="sd">    params[&#39;c&#39;].set(vary=False)</span>
+<span class="sd">    params[&#39;ap&#39;].set(vary=False)</span>
+<span class="sd">    params[&#39;bp&#39;].set(vary=False)</span>
+<span class="sd">    params[&#39;cp&#39;].set(vary=True)</span>
+<span class="sd">    result = minimize(background2min, params, args=(backfrec, backsig))</span>
+
+<span class="sd">    params = result.params</span>
+<span class="sd">    params[&#39;a&#39;].set(vary=True)</span>
+<span class="sd">    params[&#39;b&#39;].set(vary=True)</span>
+<span class="sd">    params[&#39;c&#39;].set(vary=True)</span>
+<span class="sd">    params[&#39;ap&#39;].set(vary=True)</span>
+<span class="sd">    params[&#39;bp&#39;].set(vary=True)</span>
+<span class="sd">    params[&#39;cp&#39;].set(vary=True)</span>
+<span class="sd">    result = minimize(background2min, params, args=(backfrec, backsig))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="c1"># write error report</span>
+    <span class="n">report_fit</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+<span class="c1">#calculate final background and remove background from original data</span>
+    <span class="n">complexresidual</span> <span class="o">=</span> <span class="n">un_realimag</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">residual</span><span class="p">)</span>
+    <span class="n">backgroundfit</span> <span class="o">=</span> <span class="n">backsig</span> <span class="o">+</span> <span class="n">complexresidual</span>
+    <span class="n">fullbackground</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">backmodel</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">frec</span><span class="p">])</span>
+    <span class="n">S11corr</span> <span class="o">=</span> <span class="o">-</span><span class="n">S11</span> <span class="o">/</span> <span class="n">fullbackground</span>
+    <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-A&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-B&#39;</span><span class="p">:</span>
+        <span class="n">S11corr</span> <span class="o">=</span> <span class="o">-</span><span class="n">S11corr</span>
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Signal and fitted background (Re,Im)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">fullbackground</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">fullbackground</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Signal and fitted background (Phase)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">S11</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">fullbackground</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Signal and fitted background (Polar)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fullbackground</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">fullbackground</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Signal with background removed (Re,Im)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11corr</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11corr</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Signal with background removed (Phase)&#39;</span><span class="p">)</span>
+        <span class="n">ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">S11corr</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">ph</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Signal with background removed (Polar)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S11corr</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">S11corr</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="c1">#Make initial guesses for peak fit</span>
+<span class="c1">#    ires = np.argmax(S11corr.real)</span>
+<span class="c1">#    f0i=frec[ires]</span>
+<span class="c1">#    imin = np.argmax(S11corr.imag)</span>
+<span class="c1">#    imax = np.argmin(S11corr.imag)</span>
+
+
+    <span class="n">ktot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">frec</span><span class="p">[</span><span class="n">imax</span><span class="p">]</span><span class="o">-</span><span class="n">frec</span><span class="p">[</span><span class="n">imin</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span><span class="p">:</span>
+        <span class="n">Tres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S11corr</span><span class="p">[</span><span class="n">ires</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">kext0</span> <span class="o">=</span> <span class="n">ktot</span><span class="o">*</span><span class="n">Tres</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="k">elif</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-A&#39;</span><span class="p">:</span>
+        <span class="n">Tres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">S11corr</span><span class="p">[</span><span class="n">ires</span><span class="p">])</span>
+        <span class="n">kext0</span> <span class="o">=</span> <span class="n">ktot</span><span class="o">*</span><span class="n">Tres</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="k">elif</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-B&#39;</span><span class="p">:</span>
+        <span class="n">Tres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S11corr</span><span class="p">[</span><span class="n">ires</span><span class="p">])</span>
+        <span class="n">kext0</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Tres</span><span class="p">)</span><span class="o">*</span><span class="n">ktot</span>
+    <span class="k">elif</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+        <span class="n">Tres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S11corr</span><span class="p">[</span><span class="n">ires</span><span class="p">])</span>
+        <span class="n">kext0</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Tres</span><span class="p">)</span><span class="o">*</span><span class="n">ktot</span>
+    <span class="k">elif</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
+        <span class="n">Tres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S11corr</span><span class="p">[</span><span class="n">ires</span><span class="p">])</span>
+        <span class="n">kext0</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">Tres</span><span class="p">)</span><span class="o">*</span><span class="n">ktot</span>
+    <span class="n">kint0</span> <span class="o">=</span> <span class="n">ktot</span><span class="o">-</span><span class="n">kext0</span>
+    <span class="k">if</span> <span class="n">kint0</span><span class="o">&lt;=</span> <span class="mf">0.</span><span class="p">:</span>
+        <span class="n">kint0</span> <span class="o">=</span> <span class="n">kext0</span>
+    <span class="n">Qint0</span> <span class="o">=</span> <span class="n">f0i</span><span class="o">/</span><span class="n">kint0</span>
+    <span class="n">Qext0</span> <span class="o">=</span> <span class="n">f0i</span><span class="o">/</span><span class="n">kext0</span>
+
+<span class="c1">#Make new parameter object (includes previous fitted background values)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">params</span>
+    <span class="k">if</span> <span class="n">reusefitpars</span> <span class="ow">and</span> <span class="n">oldpars</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;Qint&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;Qint&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;Qext&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;Qext&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;f0&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;f0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">oldpars</span><span class="p">[</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;Qint&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">Qint0</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;Qext&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">Qext0</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;f0&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">f0i</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1">#Do final fit</span>
+    <span class="n">finalresult</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">S11residual</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span> <span class="n">S11</span><span class="p">,</span> <span class="n">ftype</span><span class="p">))</span>
+<span class="c1"># write error report</span>
+    <span class="n">report_fit</span><span class="p">(</span><span class="n">finalresult</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">finalresult</span><span class="o">.</span><span class="n">params</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;QLoaded = &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Qint&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">+</span><span class="mf">1.</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Qext&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;QLoaded = &#39;</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Pre-Final signal and fit (Re,Im)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11corr</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11corr</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11theo</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11theo</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Pre-Final signal and fit (Polar)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S11full</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">S11full</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">ftype</span><span class="p">)</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="s1">&#39;datalim&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1">#REDO final fit varying all parameters</span>
+    <span class="k">if</span> <span class="n">refitback</span> <span class="ow">and</span> <span class="n">fitbackground</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;ap&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;bp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">vary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">finalresult</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">S11residual</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span> <span class="n">S11</span><span class="p">,</span> <span class="n">ftype</span><span class="p">))</span>
+
+<span class="c1"># write error report</span>
+        <span class="n">report_fit</span><span class="p">(</span><span class="n">finalresult</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">finalresult</span><span class="o">.</span><span class="n">params</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;QLoaded = &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Qint&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">+</span><span class="mf">1.</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Qext&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;QLoaded = &#39;</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+
+
+<span class="c1">#calculate final result and background</span>
+    <span class="n">complexresidual</span> <span class="o">=</span> <span class="n">un_realimag</span><span class="p">(</span><span class="n">finalresult</span><span class="o">.</span><span class="n">residual</span><span class="p">)</span>
+    <span class="n">finalfit</span> <span class="o">=</span> <span class="n">S11</span> <span class="o">+</span> <span class="n">complexresidual</span>
+    <span class="n">newbackground</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">backmodel</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">finalresult</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">frec</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Final signal and fit (Re,Im)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">finalfit</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">finalfit</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Final signal and fit (Polar)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">finalfit</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">finalfit</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="s1">&#39;datalim&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Final signal and fit (Abs)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S11</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">finalfit</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">chi2</span> <span class="o">=</span> <span class="n">finalresult</span><span class="o">.</span><span class="n">chisqr</span>
+
+
+    <span class="k">return</span> <span class="n">params</span><span class="p">,</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="p">,</span><span class="n">finalresult</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">find_resonance</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="p">,</span><span class="n">margin</span><span class="o">=</span><span class="mi">31</span><span class="p">,</span><span class="n">doplots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the resonance frequency from maximum of the derivative of the phase</span>
+
+<span class="sd">    Not currently in use.  Stripped down version of fit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Smooth data for initial guesses</span>
+    <span class="n">sReS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">smooth</span><span class="p">(</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">margin</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">sImS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">smooth</span><span class="p">(</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span><span class="n">margin</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">sS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sReS11</span><span class="p">,</span><span class="n">sImS11</span><span class="p">)</span> <span class="p">]</span> <span class="p">)</span>
+    <span class="c1">#Make smoothed phase vector removing 2pi jumps</span>
+    <span class="n">sArgS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">sS11</span><span class="p">)</span>
+    <span class="n">sArgS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">sArgS11</span><span class="p">)</span>
+    <span class="n">sdiffang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">sArgS11</span><span class="p">)</span>
+
+    <span class="c1">#Get resonance index from maximum of the derivative of the phase</span>
+    <span class="n">avgph</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">)</span>
+    <span class="n">errvec</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">avgph</span><span class="p">,</span><span class="mf">2.</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sdiffang</span><span class="p">]</span>
+    <span class="n">ires</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">errvec</span><span class="p">[</span><span class="n">margin</span><span class="p">:</span><span class="o">-</span><span class="n">margin</span><span class="p">])</span><span class="o">+</span><span class="n">margin</span>
+    <span class="n">f0i</span><span class="o">=</span><span class="n">frec</span><span class="p">[</span><span class="n">ires</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max index: &quot;</span><span class="p">,</span><span class="n">ires</span><span class="p">,</span><span class="s2">&quot; Max frequency: &quot;</span><span class="p">,</span><span class="n">f0i</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Original signal (Re,Im)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">sS11</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Smoothed Phase&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">[</span><span class="n">margin</span><span class="p">:</span><span class="o">-</span><span class="n">margin</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Diff of Smoothed Phase&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Smoothed (ph-phavg)\^2&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">errvec</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">ires</span><span class="p">],[</span><span class="n">errvec</span><span class="p">[</span><span class="n">ires</span><span class="p">]],</span><span class="s1">&#39;ro&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">f0i</span>
+
+<span class="k">def</span> <span class="nf">diff_find_resonance</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">diffS11</span><span class="p">,</span><span class="n">margin</span><span class="o">=</span><span class="mi">31</span><span class="p">,</span><span class="n">doplots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the resonance frequency from maximum of the derivative of the phase</span>
+
+<span class="sd">    Not currently in use.  Stripped down version of fit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Smooth data for initial guesses</span>
+    <span class="n">sReS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">smooth</span><span class="p">(</span><span class="n">diffS11</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="n">margin</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">sImS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">smooth</span><span class="p">(</span><span class="n">diffS11</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span><span class="n">margin</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">sS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sReS11</span><span class="p">,</span><span class="n">sImS11</span><span class="p">)</span> <span class="p">]</span> <span class="p">)</span>
+    <span class="c1">#Make smoothed phase vector removing 2pi jumps</span>
+    <span class="n">sArgS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">sS11</span><span class="p">)</span>
+    <span class="n">sArgS11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">sArgS11</span><span class="p">)</span>
+    <span class="n">sdiffang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">sArgS11</span><span class="p">)</span>
+
+    <span class="c1">#Get resonance index from maximum of the derivative of the phase</span>
+    <span class="n">avgph</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">)</span>
+    <span class="n">errvec</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">avgph</span><span class="p">,</span><span class="mf">2.</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sdiffang</span><span class="p">]</span>
+    <span class="n">ires</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">errvec</span><span class="p">[</span><span class="n">margin</span><span class="p">:</span><span class="o">-</span><span class="n">margin</span><span class="p">])</span><span class="o">+</span><span class="n">margin</span>
+    <span class="n">f0i</span><span class="o">=</span><span class="n">frec</span><span class="p">[</span><span class="n">ires</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max index: &quot;</span><span class="p">,</span><span class="n">ires</span><span class="p">,</span><span class="s2">&quot; Max frequency: &quot;</span><span class="p">,</span><span class="n">f0i</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Original signal (Re,Im)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">diffS11</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">diffS11</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">diffS11</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">sS11</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Smoothed Phase&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sdiffang</span><span class="p">[</span><span class="n">margin</span><span class="p">:</span><span class="o">-</span><span class="n">margin</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Diff of Smoothed Phase&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Smoothed (ph-phavg)\^2&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">errvec</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">ires</span><span class="p">],[</span><span class="n">errvec</span><span class="p">[</span><span class="n">ires</span><span class="p">]],</span><span class="s1">&#39;ro&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">f0i</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

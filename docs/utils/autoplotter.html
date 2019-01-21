@@ -1,0 +1,149 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Autoplot – Quick plots for measurement reference &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Metagen – Spyview metafile generation" href="metagen.html" />
+    <link rel="prev" title="S11fit – Resonance fitting routines and utilities" href="S11fit.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="metagen.html" title="Metagen – Spyview metafile generation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="S11fit.html" title="S11fit – Resonance fitting routines and utilities"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="S11fit.html"
+                        title="previous chapter">S11fit – Resonance fitting routines and utilities</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="metagen.html"
+                        title="next chapter">Metagen – Spyview metafile generation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/utils/autoplotter.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-stlab.utils.autoplotter">
+<span id="autoplot-quick-plots-for-measurement-reference"></span><h1>Autoplot – Quick plots for measurement reference<a class="headerlink" href="#module-stlab.utils.autoplotter" title="Permalink to this headline">¶</a></h1>
+<p>Autoplotting measurements</p>
+<p>Function definition for simple plotting routine to be run at end of mesurement</p>
+<dl class="function">
+<dt id="stlab.utils.autoplotter.autoplot">
+<code class="descclassname">stlab.utils.autoplotter.</code><code class="descname">autoplot</code><span class="sig-paren">(</span><em>datafile</em>, <em>xlab</em>, <em>ylab</em>, <em>zlab=None</em>, <em>title='YOU SHOULD ADD A TITLE'</em>, <em>caption='YOU SHOULD ADD A COMMENT'</em>, <em>show=False</em>, <em>dpi=400</em>, <em>pl=None</em>, <em>cmap='bwr'</em>, <em>wbval=(0.1</em>, <em>0.1)</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/autoplotter.html#autoplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.autoplotter.autoplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autoplot function</p>
+<p>Takes a data file handle (still open or recently closed) or a filename and plots the requested
+columns).  Saves figure as a png alongside the original data file with the same name.
+As a precaution, if an exception is raised during the execution of this function, it will be caught internally
+so as not to interrupt the caller.  It now doesn’t overwrite any previous figure.  If a figure file already exists,
+it creates a new file with an index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>datafile</strong> (<em>_io.TextIOWrapper</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Data file handle (can be open or closed) or data file name for reading</li>
+<li><strong>xlab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Label for x axis data</li>
+<li><strong>ylab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Label for y axis data</li>
+<li><strong>zlab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Label for z axis data.  If set to none, a line plot is returned.  If set to str
+a color plot is returned</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Text label to be included in the title</li>
+<li><strong>caption</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Comment included below figure</li>
+<li><strong>show</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Show the plot on screen (blocks execution until closed)</li>
+<li><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – dpi for matplotlib savefig function</li>
+<li><strong>pl</strong> (<em>list of str</em><em>, </em><em>optional</em>) – If provided, is an stlabmtx process list (in case processing is required on a 2d color plot).
+See <a class="reference internal" href="stlabdict.html#stlab.utils.stlabdict.stlabmtx" title="stlab.utils.stlabdict.stlabmtx"><code class="xref py py-class docutils literal notranslate"><span class="pre">stlabmtx</span></code></a> for details</li>
+<li><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Matplotlib colormap string for 2D plots. By defulat ‘bwr’</li>
+<li><strong>**kwargs</strong> – Other arguments to be passed to plotting function (plt.plot or plt.imshow)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> – Final figure that has been saved to file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">matplotlib.figure.Figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="metagen.html" title="Metagen – Spyview metafile generation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="S11fit.html" title="S11fit – Resonance fitting routines and utilities"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

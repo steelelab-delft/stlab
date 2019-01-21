@@ -1,0 +1,433 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlab.devices.BFWrapper &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.devices.BFWrapper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;BFWrapper - Driver to communicate with the custom BFDaemon Temperature server</span>
+
+<span class="sd">This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the</span>
+<span class="sd">standard socket package.  The socket implementation is in :any:`stlab.utils.MySocket`.</span>
+<span class="sd">The idea is that the server script is run on the fridge control computer </span>
+<span class="sd">while this driver is imported in the measurement script.  The server will forward any</span>
+<span class="sd">requests from this object to the Lakeshore temperature controller and return any </span>
+<span class="sd">replies.</span>
+
+<span class="sd">Note that a separate driver exists for the Lakeshore when directly connected to it (like</span>
+<span class="sd">any other instrument in this package).  This wrapper, however, does not use it since it</span>
+<span class="sd">only communicates with the BF Daemon.  The Lakeshore driver is used only on the Daemon side and</span>
+<span class="sd">only the query method is used.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">stlab.devices.base_instrument</span> <span class="k">import</span> <span class="n">base_instrument</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="BFWrapper"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper">[docs]</a><span class="k">class</span> <span class="nc">BFWrapper</span><span class="p">(</span><span class="n">base_instrument</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to implement remote temperature readout from Lakeshore</span>
+
+<span class="sd">    A new socket is created and discarded every read/write operation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BFWrapper.__init__"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">addr</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="mi">8472</span><span class="p">,</span><span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;BFWrapper __init__ method.</span>
+
+<span class="sd">        Sets up the socket to read/write from the server.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        addr : str, optional</span>
+<span class="sd">            IP address of the server.  Has a default value</span>
+<span class="sd">        port : int, optional</span>
+<span class="sd">            TCP port of the server.  8472 by default</span>
+<span class="sd">        reset : bool, optional</span>
+<span class="sd">            Does nothing</span>
+<span class="sd">        verb : bool, optional</span>
+<span class="sd">            Enables or disables printing of status strings</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            No function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verb</span> <span class="o">=</span> <span class="n">verb</span>
+    <span class="c1">#    if reset:</span>
+    <span class="c1">#        self.reset()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addr</span> <span class="o">=</span> <span class="n">addr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">htr_ranges</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0316</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.316</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">3.16</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">31.6</span><span class="p">)</span> <span class="c1">#For heater current ranges. 0 = Off, 1 = 31.6 μA, 2 = 100 μA, 3 = 316 μA, 4 = 1.00 mA, 5 = 3.16 mA, 6 = 10.0 mA, 7 = 31.6 mA</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+<div class="viewcode-block" id="BFWrapper.query"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mystr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Query function</span>
+
+<span class="sd">        Sends a VISA string (intended for the lakeshore) to the temperature to the server and retrieves a response.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mystr : str</span>
+<span class="sd">            VISA string to send</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        word : str</span>
+<span class="sd">            Response from server (Lakeshore)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># s = MySocket(verb=self.verb)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">MySocket</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">addr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">mysend</span><span class="p">(</span><span class="n">mystr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf_8&#39;</span><span class="p">))</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">myreceive</span><span class="p">()</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf_8&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">word</span></div>
+<div class="viewcode-block" id="BFWrapper.write"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mystr</span><span class="p">):</span> <span class="c1">#All writes are queries.  If command does not contain a &#39;?&#39;, an empty string is returned.</span>
+        <span class="sd">&quot;&quot;&quot;Query function</span>
+
+<span class="sd">        Sends a VISA string (intended for the lakeshore) to the temperature to the server.  Sumbmitted as query</span>
+<span class="sd">        but any reply is discarded.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        mystr : str</span>
+<span class="sd">            VISA string to write</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span></div>
+    <span class="c1">#def reset(self): #I need a short pause after reset.  Otherwise the system may hang.  Not even &#39;*OPC?&#39; works</span>
+    <span class="c1">#    out = self.query(&#39;*RST&#39;)</span>
+    <span class="c1">#    time.sleep(0.1)</span>
+<div class="viewcode-block" id="BFWrapper.GetTemperature"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.GetTemperature">[docs]</a>    <span class="k">def</span> <span class="nf">GetTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get temperature from server</span>
+
+<span class="sd">        Retrieves the current temperature of the desired channel</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            Temperature channel to read</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Temperature of channel i</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">&gt;</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;GetTemperature: Invalid sensor&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span>
+        <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;RDGK? </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+<div class="viewcode-block" id="BFWrapper.SetAutorange"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetAutorange">[docs]</a>    <span class="k">def</span> <span class="nf">SetAutorange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set autorange</span>
+
+<span class="sd">        Enables or disables autorange on all channels</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        val : bool</span>
+<span class="sd">            True turns on autorange, False disables autoranging</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#Turning autorange on changes the setting for all channels.  I just use channel 1</span>
+        <span class="n">oldsetting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;RDGRNG? </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">newsetting</span> <span class="o">=</span> <span class="n">oldsetting</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">newsetting</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="c1">#I simply read the range settings from channel 1 and change the autorange element</span>
+        <span class="k">if</span> <span class="n">val</span><span class="p">:</span>
+            <span class="n">newsetting</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newsetting</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+        <span class="n">newsetting</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">newsetting</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;RDGRNG </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">newsetting</span><span class="p">))</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="BFWrapper.SetControl"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetControl">[docs]</a>    <span class="k">def</span> <span class="nf">SetControl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mode</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>  <span class="c1">#1 = Closed PID loop, 2 = Zone Tuning, 3 = Open Loop, 4 = off</span>
+        <span class="sd">&quot;&quot;&quot;Set Control mode</span>
+
+<span class="sd">        Sets the control mode for the temperature loop</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mode : int, optional</span>
+<span class="sd">            Integer that determines the desired control mode.</span>
+<span class="sd">            Possible values are:</span>
+
+<span class="sd">            - 1 - Closed PID loop</span>
+<span class="sd">            - 2 - Zone tuning</span>
+<span class="sd">            - 3 - Open loop</span>
+<span class="sd">            - 4 - Off</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;CMODE </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="BFWrapper.SetRamp"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetRamp">[docs]</a>    <span class="k">def</span> <span class="nf">SetRamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span> <span class="c1">#Set ramp mode and rate (in K/min).  If true, temperature set point will ramp to desired value.  If false, no ramping will be done.</span>
+        <span class="sd">&quot;&quot;&quot;Set Ramp mode</span>
+
+<span class="sd">        When ramp is set, the temperature PID set point will ramp up to the final value instead of immediately setting the final</span>
+<span class="sd">        desired PID value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mode : bool, optional</span>
+<span class="sd">            Set ramping to True or False</span>
+<span class="sd">        rate : flaot, optional</span>
+<span class="sd">            The desired ramp rate in K/min</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;RAMP 1,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;RAMP 0,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="p">))</span></div>
+<div class="viewcode-block" id="BFWrapper.SetHeaterValue"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetHeaterValue">[docs]</a>    <span class="k">def</span> <span class="nf">SetHeaterValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set Heater value</span>
+
+<span class="sd">        Manually set heater value when in open loop operation.  The value is given as percentage of</span>
+<span class="sd">        heater current range (not power).  This means that the applied power is quadratic with</span>
+<span class="sd">        this percentage</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : bool, optional</span>
+<span class="sd">            Percentage of current range to apply to heater</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;MOUT </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="BFWrapper.GetHeaterValue"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.GetHeaterValue">[docs]</a>    <span class="k">def</span> <span class="nf">GetHeaterValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get heater value</span>
+
+<span class="sd">        Gets the current heater value as percentage of the heater current range</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Percentage of current applied to heater</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;MOUT?&#39;</span><span class="p">))</span></div>
+<div class="viewcode-block" id="BFWrapper.SetHeaterRange"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetHeaterRange">[docs]</a>    <span class="k">def</span> <span class="nf">SetHeaterRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">range</span><span class="p">):</span> <span class="c1">#Specifies heater current range in mA. Will choose the minimum range to include the value given as &quot;range&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set heater current range</span>
+
+<span class="sd">        Sets the maximum heater current for open or closed loop operation.  Since this</span>
+<span class="sd">        range can only take discrete values (Off, 31.6 μA, 100 μA, 316 μA, 1.00 mA, 3.16 mA, 10.0 mA, and 31.6 mA)</span>
+<span class="sd">        this function selects the smallest value that allows the desired range to be applied (rounds up).  If the desired value is</span>
+<span class="sd">        above the maximum possible setting (31.6 mA), no range change will be done and a warning will be displayed (to avoid</span>
+<span class="sd">        accidentally setting the range to maximum).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        range : float</span>
+<span class="sd">            Maximum desired value of the heater current in mA.  Will be rounded up to the nearest available setting.</span>
+<span class="sd">            If range &gt; 31.6 mA, the range setting will not be applied and a warning will be shown.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">range</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">range</span><span class="p">)</span>
+        <span class="n">rngi</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">rr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">htr_ranges</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">range</span> <span class="o">&lt;=</span> <span class="n">rr</span><span class="p">:</span>
+                <span class="n">rngi</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">rngi</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SetHeaterRange: Error, range too high.  No range change done.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;HTRRNG </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rngi</span><span class="p">))</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="BFWrapper.GetHeaterRange"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.GetHeaterRange">[docs]</a>    <span class="k">def</span> <span class="nf">GetHeaterRange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get heater range</span>
+
+<span class="sd">        Gets the maximum current that can be applied with the current range setting</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Maximum current for current range setting in mA</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;HTRRNG?&#39;</span><span class="p">))</span>
+        <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">htr_ranges</span><span class="p">[</span><span class="n">rr</span><span class="p">])</span></div>
+<div class="viewcode-block" id="BFWrapper.SetPIDTemperature"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetPIDTemperature">[docs]</a>    <span class="k">def</span> <span class="nf">SetPIDTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set PID temperature set point</span>
+
+<span class="sd">        Changes the current set point for the closed loop PID</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : float</span>
+<span class="sd">            Desired temperature setpoint in K</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SETP </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span></div>
+<div class="viewcode-block" id="BFWrapper.GetSetPoint"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.GetSetPoint">[docs]</a>    <span class="k">def</span> <span class="nf">GetSetPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get PID set point</span>
+
+<span class="sd">        Gets the current temperature set point</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Current PID temperature set point in K</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;SETP?&#39;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+<div class="viewcode-block" id="BFWrapper.WaitForTStable"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.WaitForTStable">[docs]</a>    <span class="k">def</span> <span class="nf">WaitForTStable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">channel</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="mf">600.</span><span class="p">,</span><span class="n">tsettle</span><span class="o">=</span><span class="mf">40.</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Wait for stable temperature at PID temperature</span>
+<span class="sd">        </span>
+<span class="sd">        Method to delay execution until temperature of given channel is considered stable at the PID set point.</span>
+<span class="sd">        The method queries the temperature continuously until is within</span>
+<span class="sd">        a given tolerance of the set point.  Then a settling timer is started.  If the temperature leaves</span>
+<span class="sd">        tolerance before the settling timer is out, this timer is reset and restarted</span>
+<span class="sd">        when the temperature is again within tolerance.  When the settling timer runs down, the execution continues</span>
+<span class="sd">        There is also a global timeout to avoid possible infinite waiting times.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        channel : int, optional</span>
+<span class="sd">            Channel to monitor for stability. 6 by default (BF mixing chamber sensor)</span>
+<span class="sd">        tol : float, optional</span>
+<span class="sd">            Absolute temperature tolerance in K.  0.001 K by default</span>
+<span class="sd">        timeout : float</span>
+<span class="sd">            Global timeout.  The method will exit with a warning if this time is exceeded</span>
+<span class="sd">        tsettle : float</span>
+<span class="sd">            Settling time after reaching tolerance.  This timer is reset if the temperature</span>
+<span class="sd">            leaves the tolerance window and restarted when the temperature is again within</span>
+<span class="sd">            tolerance.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Stabilizing temperature...&#39;</span><span class="p">)</span>
+        <span class="n">Tset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetSetPoint</span><span class="p">()</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">tnow</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">tstablestart</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="n">tnow</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="n">tnow</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">TT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTemperature</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="c1">#Get current temperature</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">TT</span><span class="o">-</span><span class="n">Tset</span><span class="p">)</span><span class="o">&lt;</span><span class="n">tol</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tstablestart</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">tstablestart</span> <span class="o">=</span> <span class="n">tnow</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;T in tolerance.  Settling...&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">abs</span><span class="p">(</span><span class="n">TT</span><span class="o">-</span><span class="n">Tset</span><span class="p">)</span><span class="o">&gt;=</span><span class="n">tol</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tstablestart</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;T left tolerance&#39;</span><span class="p">)</span>
+                <span class="n">tstablestart</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">tnow</span><span class="o">-</span><span class="n">tstablestart</span> <span class="o">&gt;</span> <span class="n">tsettle</span><span class="p">:</span>
+                <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Channel &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; STABLE at &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Tset</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; K&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Channel &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; UNSTABLE for &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Tset</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; K&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">success</span></div>
+
+    <span class="k">def</span> <span class="nf">GetMetadataString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="BFWrapper.SetEnableTsensor"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.BFWrapper.BFWrapper.SetEnableTsensor">[docs]</a>    <span class="k">def</span> <span class="nf">SetEnableTsensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">state</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enable or disable temperature sensors</span>
+
+<span class="sd">        Method to enable or disable given temperature sensor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ii : int</span>
+<span class="sd">            Temperature channel to set</span>
+<span class="sd">        state : bool</span>
+<span class="sd">            True to enable channel, False to disable</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ii</span><span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SetEnableTsensor: Invalid sensor &#39;</span><span class="p">,</span><span class="n">ii</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span>
+        <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;SET:DEV:T</span><span class="si">%d</span><span class="s1">:TEMP:MEAS:ENAB:ON&#39;</span> <span class="o">%</span> <span class="n">ii</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">state</span><span class="p">:</span>
+            <span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;SET:DEV:T</span><span class="si">%d</span><span class="s1">:TEMP:MEAS:ENAB:OFF&#39;</span> <span class="o">%</span> <span class="n">ii</span>
+        <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

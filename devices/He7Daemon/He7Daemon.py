@@ -1,3 +1,22 @@
+"""He7 Daemon - He7 temperature server
+
+He7 Temperature server.  This script should be run on the He7 control computer to
+allow the measurement computer to retrieve the last logged temperature.  It listens for temperature 
+requests on port 8472 on any of the available network interfaces (this includes Zerotier addresses).
+It does not allow control of the Lakeshore directly.
+
+Run as::
+  
+  python He7Daemon.py
+
+The script will ask for the path to the log folder.  The path to be provided
+refers to the top level log folder (not the running log folder).  The script will
+look for the most recent log in that folder and get the temperature from there.  This means it will
+automatically switch to the latest log file.  The default log folder can be adjusted in the code,
+:code:`LOGFOLDER` variable at the top of the file.
+
+"""
+
 import socket
 from stlab.utils.MySocket import MySocket
 import datetime
@@ -5,12 +24,13 @@ import os.path
 import os
 import datetime
 import glob
+import sys
 
-#LOGFOLDER = 'C:\\Entropy\\logs\\'
-LOGFOLDER = 'C:\\Users\\user\\Desktop\\Entropy\\logs\\'
+#DEFAULT LOGFOLDER FOR MAJOR TOM
+LOGFOLDER = 'C:/Users/user/Desktop/Entropy/logs/'
 
-def GetCurrentLogFolder():
-    a = next(os.walk(LOGFOLDER))[1]
+def GetCurrentLogFolder(mylogfolder):
+    a = next(os.walk(mylogfolder))[1]
     a.sort()
     a = a[::-1]
     #print(a)
@@ -69,12 +89,13 @@ def tail( f, lines=20 ):
     all_read_text = ''.join(reversed(blocks))
     return '\n'.join(all_read_text.splitlines()[-total_lines_wanted:])
 
-def GetTemperature(sock):
+def GetTemperature(sock,mylogfolder):
     now = datetime.datetime.now()
-    foldername = GetCurrentLogFolder()
-    foldername = LOGFOLDER + foldername
+    foldername = GetCurrentLogFolder(mylogfolder)
+    foldername = mylogfolder + '/' + foldername
     foldername = os.path.normpath(foldername)
     path = foldername + '\\*3He Head.log'
+    path = os.path.normpath(path)
     path = glob.glob(path)
     filename = path[0]   
     myfile = open(filename,'rb')
@@ -91,27 +112,37 @@ def GetTemperature(sock):
     print("Temperature sent at %s, T = %f K" % (now.strftime('%y-%m-%d %H:%M:%S'),T))
     ss.sock.close()
 
-print("StLab Temperature server for He7.  Initializing...")
-# create an INET, STREAMing socket
-serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# bind the socket to a public host, and a well-known port
-#serversocket.bind((socket.gethostname(), 8001))
-addr = socket.gethostbyname(socket.gethostname())
-port = 8472
-serversocket.bind(('0.0.0.0', port))
-# become a server socket
-serversocket.listen(5)
-print("Ready.  Listening on port %d and address %s" % (port,addr))
 
+if __name__ == "__main__":
+    print("StLab Temperature server for He7.  Initializing...")
+    # create an INET, STREAMing socket
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # bind the socket to a public host, and a well-known port
+    #serversocket.bind((socket.gethostname(), 8001))
+    addr = socket.gethostbyname(socket.gethostname())
+    port = 8472
+    serversocket.bind(('0.0.0.0', port))
+    # become a server socket
+    serversocket.listen(5)
+    print("Ready.  Listening on port %d and address %s" % (port,addr))
 
+    #LOGFOLDER = 'C:\\Entropy\\logs\\'
+#    if len(sys.argv) > 1:
+#        LOGFOLDER = sys.argv[1]
+    logfolder = input('Enter He7 log folder location (default "{}"):\n'.format(LOGFOLDER))
+    if logfolder == '':
+        logfolder = LOGFOLDER
+    logfolder = os.path.normpath(logfolder)
+    print("Using: {}".format(logfolder))
+    
 
+    try:
+        while True:
+            # accept connections from outside
+            print("Listening on port %d and address %s" % (port,addr))
+            (clientsocket, address) = serversocket.accept()
+            GetTemperature(clientsocket,logfolder)
 
-try:
-    while True:
-        # accept connections from outside
-        (clientsocket, address) = serversocket.accept()
-        GetTemperature(clientsocket)
-
-except KeyboardInterrupt:
-    print('Shutting down temperature server')
-    serversocket.close()
+    except KeyboardInterrupt:
+        print('Shutting down temperature server')
+        serversocket.close()

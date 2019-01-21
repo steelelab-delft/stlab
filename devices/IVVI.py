@@ -12,6 +12,7 @@ class pol(Enum):
 
 # IVVI DACs basic driver.  The system only reads and writes short byte arrays.
 # DOES NOT INHERIT FROM THE "INSTRUMENT" CLASS
+
 class IVVI_DAC(base_instrument):
     # Constructor for IVVI Dac class.  Address is ASRLCOM1 if on COM1 serial port
     # The Serial parameters for this device are:

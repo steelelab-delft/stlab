@@ -1,13 +1,38 @@
+"""Basic socket implementation to communicate with temperature servers
+
+Simple implementation of a python TCP socket.  Basically copied from some
+example online and elaborated on.  Implements both the receiving and sending
+so both the server and client use the same class.  Is used by all temperature
+servers (Triton, BF, He7)
+
+"""
+
 import socket
 import time
 MSGLEN = 2048
 
 class MySocket:
-    """demonstration class only
-      - coded for clarity, not efficiency
+    """ Socket class
+
+        The original comment on the example this is base on was:
+        ``demonstration class only - coded for clarity, not efficiency``
     """
 
     def __init__(self, sock=None,verb=False,timeout=10):
+        """Init method for socket
+
+        Parameters
+        ----------
+        sock : socket.socket or None, optional
+            If a socket has already be created it may be passed here.  If None
+            then a new socket is created.
+        verb : bool, optional
+            Enables or disables priting of debugging strings
+        timeout : float, optional
+            Timeout for socket communication.  Used to avoid scripts hanging
+            indefinitely waiting for a response.
+
+        """
         self.verb = verb
         if sock is None:
             self.sock = socket.socket(
@@ -18,9 +43,32 @@ class MySocket:
         self.sock.settimeout(timeout)
 
     def connect(self, host, port):
+        """Connect to given host with given port
+
+        Connects the tcp socket to host ip address using given TCP port number
+        
+        Parameters
+        ----------
+        host : str
+            IP address of host
+        port : int
+            TCP port to use
+
+        """
         self.sock.connect((host, port))
 
     def mysend(self, msg):
+        """Send a message to the connected port
+
+        Sends given message to the connected port.  Sends '#EOT' to end transmission
+
+        Parameters
+        ----------
+        msg : str
+            Message to be sent
+    
+        """
+        
         totalsent = 0
         while totalsent < MSGLEN:
             #print('Sending...')
@@ -36,6 +84,17 @@ class MySocket:
             
 
     def myreceive(self):
+        """Receive a message from connected port
+
+        Receives a message from a previously connected port.  Will stop when timeout happens,
+        
+        Returns
+        -------
+        bytes or None
+            Bytes received from socket or None if nothing was received.
+
+        """
+
         chunks = []
         bytes_recd = 0
         try:

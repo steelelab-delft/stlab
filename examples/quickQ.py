@@ -12,7 +12,7 @@ import sys
 import re
 import os
 
-pna = stlab.adi(addr="TCPIP::192.168.1.229::INSTR",reset=False,verb=True) #Initialize device but do not reset.  Needs correct address
+pna = stlab.adi(addr="TCPIP::192.168.1.42::INSTR",reset=False,verb=True) #Initialize device but do not reset.  Needs correct address
 #'addr' is the VISA address string for the device
 #Since reset is set to False, this script assumes that the sweep settings are already set before starting
 #These could of course be set through member methods of the pna.  See driver for options.
@@ -55,11 +55,13 @@ plt.ylabel(sparam +' (dB)')
 newstr = ''
 for q in params:
     if params[q].name in ['Qint','Qext','f0','theta']:
-        newstr+="{} = {} +- {}\n".format(params[q].name,params[q].value,params[q].stderr)
+        newstr+="{} = {} \n     +- {}\n".format(params[q].name,params[q].value,params[q].stderr)
+Ql = 1/(1/params['Qint'].value+1/params['Qext'].value)
+newstr+='Qloaded = {}\n'.format(Ql)
 newstr+='RFpow = '+str(measpow)+' dBm'
+
 ax1 = plt.gca()
 plt.text(0.55,0.15,newstr,fontsize=7,transform=ax1.transAxes)
-plt.show()
 
 
 try:
@@ -74,6 +76,7 @@ myfile = stlab.newfile(prefix,idstring,data.keys(),usedate=True,usefolder=True,a
 outfilename = os.path.splitext(myfile.name)[0]
 stlab.saveframe(myfile,data)
 myfile.close()
+plt.show()
 
 #Save figure
 fig.savefig(outfilename + '.plot.png')

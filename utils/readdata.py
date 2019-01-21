@@ -8,6 +8,8 @@ import pandas as pd
 from stlab.utils.stlabdict import stlabdict
 
 def readdat(filename,delim=', ',nlines=None):
+    return readdat_pd(filename,delim,nlines)
+    '''
     with open(filename,'r') as f:
         variables = {}
         ivar = 0
@@ -27,6 +29,8 @@ def readdat(filename,delim=', ',nlines=None):
         nblocks = 0
             
         for point in f:
+            if point[0] == '#':
+                continue
             if point == '\n':
                 block = np.asarray(block)
                 block = block.T
@@ -55,6 +59,7 @@ def readdat(filename,delim=', ',nlines=None):
 #            arrayofframes.append(pd.DataFrame(newdict))
 #        return arrayofframes
         return arrayofdicts
+    '''
 
 def reads2p(filename):
     with open(filename,'r') as f:
@@ -71,7 +76,8 @@ def reads2p(filename):
         mydict=stlabdict()
         for name,data in zip(names,measurement):
             mydict[name]=data
-        return mydict
+        return pd.DataFrame(mydict)
+#        return mydict
 
 # Imports a QUCS formatted data file.  The data is returned as a dict 
 # containing np.array's for each variable with the QUCS variable name

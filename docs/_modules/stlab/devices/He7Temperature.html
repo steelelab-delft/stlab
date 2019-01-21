@@ -1,0 +1,169 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlab.devices.He7Temperature &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.devices.He7Temperature</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;He7Temperature - Driver to communicate with the custom He7 Temperature server</span>
+
+<span class="sd">This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the</span>
+<span class="sd">standard socket package.  The socket implementation is in stlab.utils.MySocket.</span>
+<span class="sd">The idea is that the server script is run on the He7 control computer </span>
+<span class="sd">while this driver is imported in the measurement script.  The server will, upon request, </span>
+<span class="sd">provide the last He3 head temperature from the running log to this driver.  This is because,</span>
+<span class="sd">typically, the BF and Entropy software blocks direct communication to the Lakeshore controller </span>
+<span class="sd">in order to keep the logs running.  Therefore, this driver can NOT do any write operations </span>
+<span class="sd">to the temperature controller or fridge.</span>
+
+<span class="sd">To do write operations (like temperature control, etc.) use the BFWrapper/BFDaemon</span>
+<span class="sd">driver/script which works for the old and new BF as well as the He7.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Basic interface to retrieve temperature measurement form BF computer</span>
+<span class="c1"># Server must be running on BF computer (The server just checks temperature log and returns last logged value)</span>
+<span class="kn">from</span> <span class="nn">stlab.utils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
+<span class="kn">from</span> <span class="nn">stlab.devices.base_instrument</span> <span class="k">import</span> <span class="n">base_instrument</span>
+
+<div class="viewcode-block" id="He7Temperature"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature">[docs]</a><span class="k">class</span> <span class="nc">He7Temperature</span><span class="p">(</span><span class="n">base_instrument</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to implement temperature readout from He7 server</span>
+
+<span class="sd">    A new socket is created and discarded every</span>
+<span class="sd">    time a temperature is received.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="He7Temperature.__init__"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">addr</span><span class="o">=</span><span class="s2">&quot;131.180.32.72&quot;</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="mi">8472</span><span class="p">,</span><span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;He7Temperature __init__ method.</span>
+
+<span class="sd">        Sets up the He7 temperature socket to read from the server.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        addr : str, optional</span>
+<span class="sd">            IP address of the server.  Has a default value</span>
+<span class="sd">        port : int, optional</span>
+<span class="sd">            TCP port of the server.  8472 by default</span>
+<span class="sd">        reset : bool, optional</span>
+<span class="sd">            Does nothing</span>
+<span class="sd">        verb : bool, optional</span>
+<span class="sd">            Enables or disables printing of status strings</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            No function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verb</span> <span class="o">=</span> <span class="n">verb</span>
+        <span class="k">if</span> <span class="n">reset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addr</span> <span class="o">=</span> <span class="n">addr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span></div>
+<div class="viewcode-block" id="He7Temperature.GetTemperature"><a class="viewcode-back" href="../../../drivers/temperature_servers.html#stlab.devices.He7Temperature.He7Temperature.GetTemperature">[docs]</a>    <span class="k">def</span> <span class="nf">GetTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets temperature from server</span>
+
+<span class="sd">        Get Temperature from He7 computer (last logged value).  Returns a float in K</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        temperature : float</span>
+<span class="sd">            The last logged He3 head temperature</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        create an INET, STREAMing socket</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>    
+            <span class="n">s</span> <span class="o">=</span> <span class="n">MySocket</span><span class="p">(</span><span class="n">verb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">addr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">myreceive</span><span class="p">()</span>
+            <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf_8&#39;</span><span class="p">)</span>
+            <span class="n">temperature</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;He7 Temperature received: </span><span class="si">%f</span><span class="s1"> K&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">temperature</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">temperature</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error when reading temperature&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">temperature</span></div>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">setverbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verb</span> <span class="o">=</span> <span class="n">verb</span>
+
+    <span class="k">def</span> <span class="nf">GetMetadataString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1">#Should return a string of metadata adequate to write to a file</span>
+        <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

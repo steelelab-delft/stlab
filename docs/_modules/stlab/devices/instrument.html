@@ -1,0 +1,288 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlab.devices.instrument &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.devices.instrument</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module implementing instrument class</span>
+
+<span class="sd">This module is at the center of the instrument control scheme.  Almost all</span>
+<span class="sd">instrument drivers inherit from this class.  It basically repackages the basic</span>
+<span class="sd">pyvisa write and query commands and handles the creation of the pyvisa</span>
+<span class="sd">resource manager.  It also adds some basic reset and id commands common to</span>
+<span class="sd">all devices that inherit from it</span>
+
+<span class="sd">The class can in principle be used directly in measurement scripts but</span>
+<span class="sd">you will be forced to explicitly write the VISA commands directly.  Most drivers</span>
+<span class="sd">already include a collection of commands and specific quality of life methods</span>
+<span class="sd">that allow you to already do basic functions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">visa</span>
+<span class="kn">from</span> <span class="nn">stlab.devices.base_instrument</span> <span class="k">import</span> <span class="n">base_instrument</span>
+
+<span class="c1">#Try to use NI-VISA</span>
+<span class="c1">#If this fails, revert to using pyvisa-py</span>
+<span class="k">def</span> <span class="nf">makeRM</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">global_rs</span> <span class="o">=</span> <span class="n">visa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">(</span><span class="s1">&#39;@ni&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Global NI ResourceManager created&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">global_rs</span><span class="p">,</span><span class="s1">&#39;@ni&#39;</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">makeRMpy</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">makeRMpy</span><span class="p">():</span>
+    <span class="n">global_rs</span> <span class="o">=</span> <span class="n">visa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">(</span><span class="s1">&#39;@py&#39;</span><span class="p">)</span> <span class="c1">#Create resource manager using NI backend</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Global pyvisa-py ResourceManager created&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">global_rs</span><span class="p">,</span><span class="s1">&#39;@py&#39;</span>
+    
+
+
+<div class="viewcode-block" id="instrument"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument">[docs]</a><span class="k">class</span> <span class="nc">instrument</span><span class="p">(</span><span class="n">base_instrument</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The main instrument class all visa instruments should inherit from</span>
+
+<span class="sd">    Implements basic read/write/query communication for visa instruments using</span>
+<span class="sd">    pyvisa and visa backend (usually NI-VISA).  Includes a few extra methods</span>
+<span class="sd">    that should be common for all instruments.  Keep in mind that these methods</span>
+<span class="sd">    can always be overridden by children of this class (for example if you always </span>
+<span class="sd">    need to include a wait time after querying or an ``&#39;*OPC?&#39;`` after writing).</span>
+
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    global_rs : pyvisa.highlevel.ResourceManager</span>
+<span class="sd">        Visa resource manager used to instantiate each visa instrument.</span>
+<span class="sd">        This member is static and shared by all instrument objects</span>
+<span class="sd">    rstype : str</span>
+<span class="sd">        String that stores the current backend the resource manager is</span>
+<span class="sd">        using.  Can be &#39;@ni&#39; or &#39;@py&#39; for NI-VISA or pyvisa-py backend.</span>
+<span class="sd">    dev : pyvisa.resources.Resource</span>
+<span class="sd">        pyvisa resource that points to the desired device.  Created</span>
+<span class="sd">        upon instantiation.</span>
+<span class="sd">        </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">global_rs</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#Static resource manager for all instruments.  rstype is &#39;@ni&#39; for NI backend and &#39;@py&#39; for pyvisa-py</span>
+    <span class="n">rstype</span> <span class="o">=</span> <span class="kc">None</span> 
+<div class="viewcode-block" id="instrument.__init__"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">addr</span><span class="p">,</span><span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Instrument __init__ method.</span>
+
+<span class="sd">        Sets up the instrument using pyvisa and instantiates the resource</span>
+<span class="sd">        manager if not done yet.  Upon first call it also instantiantes the</span>
+<span class="sd">        pyvisa ResourceManager for the whole session.  It is single static member</span>
+<span class="sd">        available to all instrument subclasses.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        addr : str</span>
+<span class="sd">            Address of the VISA instrument to be instantiated</span>
+<span class="sd">        reset : bool, optional</span>
+<span class="sd">            Will call :any:`reset` on instantiation to reset instrument to default settings</span>
+<span class="sd">        verb : bool, optional</span>
+<span class="sd">            Print strings written to the device on screen</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments to be passed to pyvisa&#39;s open_resource method.</span>
+<span class="sd">            See pyvisa documentation for details.  Examples could be baud_rate,</span>
+<span class="sd">            read_termination, etc...</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">instrument</span><span class="o">.</span><span class="n">global_rs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">instrument</span><span class="o">.</span><span class="n">rstype</span><span class="p">:</span>
+            <span class="n">instrument</span><span class="o">.</span><span class="n">global_rs</span><span class="p">,</span> <span class="n">instrument</span><span class="o">.</span><span class="n">rstype</span> <span class="o">=</span> <span class="n">makeRM</span><span class="p">()</span>
+<span class="c1">#        self.rs = visa.ResourceManager(&#39;@py&#39;)</span>
+<span class="c1">#        self.dev = self.rs.open_resource(addr)</span>
+
+        <span class="c1">#To correct serial resource naming depending on backend...  @py uses ASRLCOM1 and @ni uses ASRL1</span>
+        <span class="k">if</span> <span class="s1">&#39;ASRL&#39;</span> <span class="ow">in</span> <span class="n">addr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rstype</span> <span class="o">==</span> <span class="s1">&#39;@py&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;ASRLCOM&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">addr</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">addr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ASRL&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span>
+                    <span class="n">addr</span> <span class="o">=</span> <span class="n">addr</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;COM&#39;</span> <span class="o">+</span> <span class="n">addr</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rstype</span> <span class="o">==</span> <span class="s1">&#39;@ni&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;ASRLCOM&#39;</span> <span class="ow">in</span> <span class="n">addr</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">addr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ASRL&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span>
+                    <span class="n">addr</span> <span class="o">=</span> <span class="n">addr</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">addr</span><span class="p">[</span><span class="n">idx</span><span class="o">+</span><span class="mi">3</span><span class="p">:]</span>        
+
+        <span class="c1">#I have found that all our socket TCPIP devices need a \r\n line termination to work...  Add to kwargs it if not overridden</span>
+        <span class="n">read_termination</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s1">&#39;SOCKET&#39;</span> <span class="ow">in</span> <span class="n">addr</span><span class="p">:</span>
+            <span class="n">read_termination</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;read_termination&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;read_termination&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_termination</span>
+        <span class="c1">#Attempt to initialize instrument using current resource manager</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_rs</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1">#If NI visa fails, attempt to use pyvisa-py</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NI backend not working... Trying pyvisa-py&#39;</span><span class="p">)</span>
+            <span class="n">instrument</span><span class="o">.</span><span class="n">global_rs</span><span class="p">,</span> <span class="n">instrument</span><span class="o">.</span><span class="n">rstype</span> <span class="o">=</span> <span class="n">makeRMpy</span><span class="p">()</span>
+            <span class="c1">#To correct serial resource naming depending on backend...  @py uses ASRLCOM1 and @ni uses ASRL1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;ASRL&#39;</span> <span class="ow">in</span> <span class="n">addr</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;ASRLCOM&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">addr</span><span class="p">):</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">addr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ASRL&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span>
+                <span class="n">addr</span> <span class="o">=</span> <span class="n">addr</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;COM&#39;</span> <span class="o">+</span> <span class="n">addr</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_rs</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verb</span> <span class="o">=</span> <span class="n">verb</span>  <span class="c1">#Whether to print commands on screen</span>
+        <span class="k">if</span> <span class="n">reset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="instrument.write"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mystr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write string to instrument</span>
+
+<span class="sd">        Simply passes input string forward to the pyvisa resource write method</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mystr : str</span>
+<span class="sd">            The sring to write</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span></div>
+<div class="viewcode-block" id="instrument.query"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mystr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write a string to instrument and read the reply</span>
+
+<span class="sd">        Passes input string forward to the pyvisa resource query method and retrieves its reply</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mystr</span>
+<span class="sd">            The string to write</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        out : str</span>
+<span class="sd">            The instrument reply string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verb</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mystr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+<div class="viewcode-block" id="instrument.read"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read from the instrument</span>
+
+<span class="sd">        Performs a read using the pyvisa read method</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        out : str</span>
+<span class="sd">            The string read from the instrument</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+<div class="viewcode-block" id="instrument.id"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument.id">[docs]</a>    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Query the device id string</span>
+<span class="sd">        </span>
+<span class="sd">        Also printed on screen.  Passes ``&#39;*IDN?&#39;`` to the device and prints the response.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        out : str</span>
+<span class="sd">            The instrument id string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;*IDN?&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+<div class="viewcode-block" id="instrument.reset"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send a reset command to the instrument</span>
+
+<span class="sd">        Typically the reset command for VISA instruments is ``*RST``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;*RST&#39;</span><span class="p">)</span></div>
+<div class="viewcode-block" id="instrument.setverbose"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument.setverbose">[docs]</a>    <span class="k">def</span> <span class="nf">setverbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set whether the device will print the sent commands to screen (verbosity)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verb : bool</span>
+<span class="sd">            Set verbosity to on or off</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verb</span> <span class="o">=</span> <span class="n">verb</span></div>
+<div class="viewcode-block" id="instrument.close"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.instrument.instrument.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Closes the pyvisa resource</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">base_instrument</span><span class="o">.</span><span class="n">instrument_list</span><span class="p">:</span> <span class="n">base_instrument</span><span class="o">.</span><span class="n">instrument_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="c1">#Remove yourself from the instrument_list</span>
+        <span class="k">return</span></div></div>
+
+    
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

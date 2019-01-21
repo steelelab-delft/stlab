@@ -21,28 +21,66 @@ plt.close('all')
 # Define all the channels on AWG through AWG_station.
 # This then again uses the low level AWG driver to communicate with the AWG instrument
 # So one never uses the low level AWG driver directly but instead through an interface 
-AWG = AWG_station.AWG_Station()
-AWG.AWG = Tektronix_AWG520(name='AWG')
+devAWG = Tektronix_AWG520(name='AWG')
+print(devAWG.get_clock())
 
+AWG = AWG_station.AWG_Station(AWG=devAWG)
 
+print(AWG.clock)
 
-AWG.define_channels(id='ch1', name='RF1', type='analog',
-                              high=0.541, low=-0.541,
-                              offset=0., delay=0, active=True)
+AWG.define_channels(
+    id='ch1',
+    name='RF1',
+    type='analog',
+    high=0.541,
+    low=-0.541,
+    offset=0.,
+    delay=0,
+    active=True)
 
-AWG.define_channels(id='ch2', name='RF2', type='analog',
-                              high=0.541, low=-0.541,
-                              offset=0., delay=0, active=True)
+AWG.define_channels(
+    id='ch2',
+    name='RF2',
+    type='analog',
+    high=0.541,
+    low=-0.541,
+    offset=0.,
+    delay=0,
+    active=True)
 
-AWG.define_channels(id='ch1_marker1', name='MW_pulsemod', type='marker',
-                              high=1.0, low=0, offset=0.,
-                              delay=0, active=True)
+AWG.define_channels(
+    id='ch2_marker1',
+    name='MW_pulsemod',
+    type='marker',
+    high=1.0,
+    low=0,
+    offset=0.,
+    delay=0,
+    active=True)
 
-AWG.define_channels(id='ch2_marker1', name='trigger', type='marker',
-                              high=1, low=0,
-                              offset=0., delay=0, active=True)
+AWG.define_channels(
+    id='ch1_marker1',
+    name='readout_trigger',
+    type='marker',
+    high=1,
+    low=0,
+    offset=0.,
+    delay=0,
+    active=True)
 #-------------------------------------------------------
 
+
+sequence_name='blub'
+measurement_trigger_delay=2e-6
+SSB_modulation_frequency=-50e6
+measurement_pulse_length=5e-6
+cooling_pulse_length=20e-6
+cooling_measurement_delay=5e-6
+buffer_pulse_length = 2.e-6
+readout_trigger_length = 1.01e-6
+measurement_pulse_amp=0.5
+
+left_reference_pulse_name = 'pulsed spec'
 
 #-------------------------------------------------------
 # define some bogus pulses.
@@ -52,83 +90,114 @@ AWG.define_channels(id='ch2_marker1', name='trigger', type='marker',
 sin_pulse = pulse.CosPulse(channel='RF1', name='A sine pulse on RF')
 sin_pulse_2 = pulse.CosPulse(channel='RF2', name='A sine pulse on RF')
 
-SSB_pulse = pulse.MW_IQmod_pulse(I_channel ='RF2', Q_channel='RF1', name='SSB pulse')
+SSB_pulse = pulse.MW_IQmod_pulse(
+    I_channel='RF1', Q_channel='RF2', name='SSB pulse')
 
+pulsed_spec_pulse = pulse.SquarePulse(
+    channel='MW_pulsemod', name='A square pulse on MW pmod')
 
-# train = pulse.clock_train(channel='trigger', name='A sine pulse on RF')
+readout_trigger_pulse = pulse.SquarePulse(
+    channel='readout_trigger', name='A square pulse on MW pmod')
 
+readout_trigger_pulse = pulse.SquarePulse(
+    channel='readout_trigger', name='A square pulse on MW pmod')
 
+sq_pulse_ch1 = pulse.SquarePulse(
+    channel='RF1', name='A square pulse on MW pmod')
 
-sq_pulse = pulse.SquarePulse(channel='trigger',
-                             name='A square pulse on MW pmod')
+sq_pulse_ch2 = pulse.SquarePulse(
+    channel='RF2', name='A square pulse on MW pmod')
 
-sq_pulse_ch1 = pulse.SquarePulse(channel='RF1',
-                             name='A square pulse on MW pmod')
+test_element1 = element.Element(
+    (sequence_name + '_element1'),
+    pulsar=AWG)  #, ignore_offset_correction=True)
+test_element2 = element.Element(
+    (sequence_name + '_element2'),
+    pulsar=AWG)  #, ignore_offset_correction=True)
 
-sq_pulse_ch2 = pulse.SquarePulse(channel='RF2',
-                             name='A square pulse on MW pmod')
+test_element1.add(
+    pulse.cp(
+        readout_trigger_pulse, amplitude=1.,
+        length=readout_trigger_length),
+    start=0.1e-6,
+    name='readout trigger',
+    refpoint='start')
 
+test_element1.add(
+    pulse.cp(
+        SSB_pulse,
+        mod_frequency=SSB_modulation_frequency,
+        amplitude=measurement_pulse_amp,
+        length=measurement_pulse_length),
+    start=measurement_trigger_delay,
+    name='readout pulse',
+    refpulse='readout trigger',
+    refpoint='start')
 
+test_element1.add(
+    pulse.cp(pulsed_spec_pulse, amplitude=1., length=cooling_pulse_length),
+    start=-1 * cooling_measurement_delay - cooling_pulse_length,
+    name='pulsed spec',
+    refpulse='readout pulse',
+    refpoint='start')
 
-test_element1 = element.Element('blub_element1', pulsar = AWG)#, ignore_offset_correction=True)
-test_element2 = element.Element('blub_element2', pulsar = AWG)#, ignore_offset_correction=True)
+test_element1.add(
+    pulse.cp(
+        readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+    start=-1 * buffer_pulse_length,
+    name='buffer left',
+    refpulse=left_reference_pulse_name,
+    refpoint='start')
 
-# we copied the channel definition from out global pulsar
+test_element1.add(
+    pulse.cp(
+        readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+    start=0,
+    name='buffer right',
+    refpulse='readout pulse',
+    refpoint='end')
 
-# create a few of those
-test_element1.add(pulse.cp(sq_pulse_ch2, amplitude=0.0, length=0.5e-6), start = 0.2e-6,
-                 name='first pulse', refpoint='start')
+test_element2.add(
+    pulse.cp(
+        readout_trigger_pulse, amplitude=1.,
+        length=readout_trigger_length),
+    start=0.1e-6,
+    name='readout trigger',
+    refpoint='start')
 
-test_element1.add(pulse.cp(SSB_pulse, mod_frequency=-5e6, amplitude=0.5, length=2.0e-6),
-                 name='second pulse', refpulse='first pulse', refpoint='end')
+test_element2.add(
+    pulse.cp(
+        SSB_pulse,
+        mod_frequency=SSB_modulation_frequency,
+        amplitude=measurement_pulse_amp,
+        length=measurement_pulse_length),
+    start=measurement_trigger_delay,
+    name='readout pulse',
+    refpulse='readout trigger',
+    refpoint='start')
 
-test_element1.add(pulse.cp(sq_pulse, amplitude=1., length=0.5e-6), start = 0.2e-6,
-                 name='third pulse', refpulse='second pulse', refpoint='end')
+test_element2.add(
+    pulse.cp(pulsed_spec_pulse, amplitude=1., length=cooling_pulse_length),
+    start=-1 * cooling_measurement_delay - cooling_pulse_length,
+    name='pulsed spec',
+    refpulse='readout pulse',
+    refpoint='start')
 
-test_element1.add(pulse.cp(sq_pulse_ch1, amplitude=0.2, length=0.5e-6), start = 0.2e-6,
-                 name='fourth pulse', refpulse='third pulse', refpoint='end')
+test_element2.add(
+    pulse.cp(
+        readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+    start=-1 * buffer_pulse_length,
+    name='buffer left',
+    refpulse=left_reference_pulse_name,
+    refpoint='start')
 
-test_element1.add(pulse.cp(sq_pulse_ch2, amplitude=0.4, length=0.5e-6), start = 0.2e-6,
-                 name='fifth pulse', refpulse='fourth pulse', refpoint='end')
-
-test_element1.add(pulse.cp(sq_pulse_ch2, amplitude=0., length=0.2e-6), start = 0.5e-6,
-                 name='sixth pulse', refpulse='fifth pulse', refpoint='end')
-
-# test_element1.add(pulse.cp(SSB_pulse, frequency=25e6, amplitude=0.3, length=1e-6),
-#                  name='second pulse')
-
-# test_element1.add(pulse.cp(sin_pulse, frequency=25e6, amplitude=0.3, length=1e-6),
-#                  name='third pulse')
-
-
-# test_element2.add(pulse.cp(sin_pulse, channel='RF2', frequency=1e6, amplitude=0.4, length=300e-9), start = 200e-9,
-#                  name='first pulse')
-
-# test_element2.add(pulse.LinearPulse(channel='trigger', length=1e-6,end_value = 0.9), start = 200e-9,
-#                  name='second pulse')
-
-# test_element2.add(pulse.clock_train( channel='trigger', cycles = 10,nr_down_points = 50), start = 100e-9,
-#                  name='fourth pulse', refpulse='third pulse', refpoint='end',operation_type = 'RO')
-
-
-test_element2.add(pulse.cp(sq_pulse_ch2, amplitude=0.0, length=0.5e-6), start = 0.2e-6,
-                 name='first pulse', refpoint='start')
-
-test_element2.add(pulse.cp(SSB_pulse, mod_frequency=-5e6, amplitude=0.5, length=2.0e-6),
-                 name='second pulse', refpulse='first pulse', refpoint='end')
-
-test_element2.add(pulse.cp(sq_pulse, amplitude=1., length=0.5e-6), start = 0.2e-6,
-                 name='third pulse', refpulse='second pulse', refpoint='end')
-
-test_element2.add(pulse.cp(sq_pulse_ch1, amplitude=0.2, length=0.5e-6), start = 0.2e-6,
-                 name='fourth pulse', refpulse='third pulse', refpoint='end')
-
-test_element2.add(pulse.cp(sq_pulse_ch2, amplitude=0.4, length=0.5e-6), start = 0.2e-6,
-                 name='fifth pulse', refpulse='fourth pulse', refpoint='end')
-
-test_element2.add(pulse.cp(sq_pulse_ch2, amplitude=0., length=0.2e-6), start = 0.5e-6,
-                 name='sixth pulse', refpulse='fifth pulse', refpoint='end')
-
+test_element2.add(
+    pulse.cp(
+        readout_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+    start=0,
+    name='buffer right',
+    refpulse='readout pulse',
+    refpoint='end')
 
 
 print('Channel definitions: ')
@@ -139,7 +208,6 @@ test_element2.print_overview()
 
 
 #-------------------------continue-------------------------------
-
 # -------------------------------------------------------
 # # viewing of the sequence for second check of timing etc
 viewer.show_element_stlab(test_element1, delay = False, channels = 'all', ax = None)

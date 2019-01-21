@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Metagen – Spyview metafile generation &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="newfile – New measurement folder creation" href="newfile.html" />
+    <link rel="prev" title="Autoplot – Quick plots for measurement reference" href="autoplotter.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="newfile.html" title="newfile – New measurement folder creation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="autoplotter.html" title="Autoplot – Quick plots for measurement reference"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="autoplotter.html"
+                        title="previous chapter">Autoplot – Quick plots for measurement reference</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="newfile.html"
+                        title="next chapter">newfile – New measurement folder creation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/utils/metagen.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-stlab.utils.metagen">
+<span id="metagen-spyview-metafile-generation"></span><h1>Metagen – Spyview metafile generation<a class="headerlink" href="#module-stlab.utils.metagen" title="Permalink to this headline">¶</a></h1>
+<p>Module for generation of spyview metafiles</p>
+<p>Spyview typically requires an additional metafile to correctly label the axes and labels
+of a dataset.  The meta file structure is detailed at
+<a class="reference external" href="http://nsweb.tn.tudelft.nl/~gsteele/spyview/">Spyview</a>.</p>
+<p>Given a dataset, the metafile contains the x,y axis start, end and number of points as well
+as column titles.  This means that spyview can only handle uniformly spaced axes.
+It can also contain z axis start, stop and number of points for data cubes
+but this is rarely used so it is generally left with 1 point (single 2d plot).
+This z axis is NOT the data axis.</p>
+<p>The module provides a few different functions for generating the axes limits and metafile from your data.
+It is important to keep in mind that in general spyview does not treat any of the columns in the
+file as special in any way.  It only reads the requested column and tries to reshape it into a matrix
+to display in the final color plot.  The metafile tells spyview how this reshaping should be done, i.e,
+how many points are on x and y and how it should label the axis values and titles.  When importing without
+a metafile, spyview searches for blank lines to figure out when each line of the matrix ends.</p>
+<dl class="function">
+<dt id="stlab.utils.metagen.fromarrays">
+<code class="descclassname">stlab.utils.metagen.</code><code class="descname">fromarrays</code><span class="sig-paren">(</span><em>myfile</em>, <em>xarray</em>, <em>yarray</em>, <em>zarray=[]</em>, <em>xtitle=''</em>, <em>ytitle=''</em>, <em>ztitle=''</em>, <em>colnames=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/metagen.html#fromarrays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.metagen.fromarrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a metafile for a given file using axes arrays as input</p>
+<p>Generates a metafile for the given file taking the endponts of given arrays and their length.
+Column titles are added manually providing a list of titles or by autogenerating from the
+file title line.</p>
+<p>Internally, this function calls <a class="reference internal" href="#stlab.utils.metagen.fromlimits" title="stlab.utils.metagen.fromlimits"><code class="xref any py py-func docutils literal notranslate"><span class="pre">fromlimits</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>myfile</strong> (<em>file</em><em> or </em><em>string</em>) – Base file for metafile</li>
+<li><strong>xarray</strong> (<em>array of floats</em>) – Array for x axis limits and number of points</li>
+<li><strong>yarray</strong> (<em>array of floats</em>) – Array for y axis limits and number of points</li>
+<li><strong>zarray</strong> (<em>array of floats</em><em> or </em><em>empty list</em><em>, </em><em>optional</em>) – Array for z axis limits and number of points (for data cubes)</li>
+<li><strong>ytitle</strong><strong>, </strong><strong>ztitle</strong> (<em>xtitle</em><em>,</em>) – Title for x, y, z axis axis</li>
+<li><strong>colnames</strong> (<em>list of str</em><em>, </em><em>'auto'</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – List of column titles for the given file.  If None, no titles are written in metafile.  If auto
+function reads the first line of the file and uses the obtained titles in the metafile</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.metagen.fromlimits">
+<code class="descclassname">stlab.utils.metagen.</code><code class="descname">fromlimits</code><span class="sig-paren">(</span><em>myfile</em>, <em>Nx</em>, <em>xmin</em>, <em>xmax</em>, <em>Ny</em>, <em>ymin</em>, <em>ymax</em>, <em>Nz=None</em>, <em>zmin=None</em>, <em>zmax=None</em>, <em>xtitle=''</em>, <em>ytitle=''</em>, <em>ztitle=''</em>, <em>colnames=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/metagen.html#fromlimits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.metagen.fromlimits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a metafile for the given axis limits and point number</p>
+<p>Generates a metafile for the given file taking the endponts of given arrays and their length.
+Column titles are added manually providing a list of titles or by autogenerating from the
+file title line.</p>
+<p>Internally, this function is called by <a class="reference internal" href="#stlab.utils.metagen.fromarrays" title="stlab.utils.metagen.fromarrays"><code class="xref any py py-func docutils literal notranslate"><span class="pre">fromarrays</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>myfile</strong> (<em>file</em><em> or </em><em>string</em>) – Base file for metafile</li>
+<li><strong>Ny</strong> (<em>Nx</em><em>,</em>) – Number of points in x, y axis</li>
+<li><strong>Nz</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Number of points in z axis</li>
+<li><strong>ymin</strong> (<em>xmin</em><em>,</em>) – Minimum value for x and y axis</li>
+<li><strong>ymax</strong> (<em>xmax</em><em>,</em>) – Maximum value for x and y axis</li>
+<li><strong>zmax</strong> (<em>zmin</em><em>,</em>) – Maximum and minimum value for the z axis (for data cubes)</li>
+<li><strong>ytitle</strong><strong>, </strong><strong>ztitle</strong> (<em>xtitle</em><em>,</em>) – Title for x, y, z axis axis</li>
+<li><strong>colnames</strong> (<em>list of str</em><em>, </em><em>'auto'</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – List of column titles for the given file.  If None, no titles are written in metafile.  If auto
+function reads the first line of the file and uses the obtained titles in the metafile</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="newfile.html" title="newfile – New measurement folder creation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="autoplotter.html" title="Autoplot – Quick plots for measurement reference"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

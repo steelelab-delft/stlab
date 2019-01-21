@@ -1,0 +1,142 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>autodetect_instrument – Automatic instrument detection &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The instrument class" href="instrument.html" />
+    <link rel="prev" title="writematrix – Data file writing methods" href="../utils/writematrix.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="instrument.html" title="The instrument class"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../utils/writematrix.html" title="writematrix – Data file writing methods"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../utils/writematrix.html"
+                        title="previous chapter">writematrix – Data file writing methods</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="instrument.html"
+                        title="next chapter">The instrument class</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/drivers/autodetect_instrument.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-stlab.devices.autodetect_instrument">
+<span id="autodetect-instrument-automatic-instrument-detection"></span><h1>autodetect_instrument – Automatic instrument detection<a class="headerlink" href="#module-stlab.devices.autodetect_instrument" title="Permalink to this headline">¶</a></h1>
+<p>Module that handles autodetection of instruments</p>
+<dl class="exception">
+<dt id="stlab.devices.autodetect_instrument.DeviceNotFound">
+<em class="property">exception </em><code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">DeviceNotFound</code><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#DeviceNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.DeviceNotFound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="stlab.devices.autodetect_instrument.autodetect_instrument">
+<code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">autodetect_instrument</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#autodetect_instrument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.autodetect_instrument" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autodetect instrument function</p>
+<p>Attempts automatically detect the desired instrument at the given address and creates
+a new session with it using its corresponding driver.  It uses the response from <code class="code docutils literal notranslate"><span class="pre">*IDN?</span></code>
+to identify the correct driver to load from the <code class="code docutils literal notranslate"><span class="pre">dev_ids.txt</span></code> file.  This file contains
+model string and driver name pairs that this function searches in to find the correct driver.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Visa address string to autodetect</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True sends <code class="code docutils literal notranslate"><span class="pre">*RST</span></code> to the instrument after connecting to it</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, prints debugging messages and strings sent</li>
+<li><strong>kwargs</strong> – Additional parameters to be passed to the visa.open_instrument method (a common one is <code class="code docutils literal notranslate"><span class="pre">read_termination</span></code> for example)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="stlab.devices.autodetect_instrument.test_instrument">
+<em class="property">class </em><code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">test_instrument</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#test_instrument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.test_instrument" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="instrument.html" title="The instrument class"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../utils/writematrix.html" title="writematrix – Data file writing methods"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

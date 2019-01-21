@@ -1,0 +1,7 @@
+autodetect_instrument -- Automatic instrument detection
+=======================================================
+
+.. automodule:: stlab.devices.autodetect_instrument
+  :members:
+
+

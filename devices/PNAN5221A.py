@@ -15,8 +15,6 @@ class PNAN5221A(basepna):
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
-        if reset:
-            self.TwoPortSetup()
 
 ### OBLIGATORY METHODS TO BE IMPLEMENTED FROM ABCLASS
 
@@ -104,13 +102,18 @@ class PNAN5221A(basepna):
                 self.write('DISP:WIND%d OFF' % i)
 
     def AutoScaleAll(self):
-        self.write('DISP:WIND:TRAC:Y:COUP:METH WIND')
         windows = self.query('DISP:CAT?')
         windows = windows.strip('\n')
         if windows != '"EMPTY"':
             windows = [int(x) for x in windows.strip('"').split(',')]
             for i in windows:
-                self.write('DISP:WIND%d:TRAC:Y:AUTO' % i)
+                tnums = self.query('DISP:WIND{}:CAT?'.format(i))
+                if tnums != '"EMPTY"':
+                    tnums = tnums.strip().strip('"').split(',')
+                    self.write('DISP:WIND{}:TRAC{}:Y:COUP:METH WIND'.format(i,tnums[0]))
+                    #self.write('DISP:WIND{}:TRAC{}:Y:AUTO'.format(i,tnums[0]))
+                    self.write('DISP:WIND{}:Y:AUTO'.format(i))
+                    
 
     def AddTraces(
             self, trcs

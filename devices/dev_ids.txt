@@ -6,6 +6,7 @@ CS580, Stanford_CS580
 E5080A, Keysight_E5080A
 N5183B, Keysight_N5183B
 N9010B, Keysight_N9010B
+N9020B, Keysight_N9010B
 B2961A, Keysight_B2901A
 B2901A, Keysight_B2901A
 DP831A, instrument

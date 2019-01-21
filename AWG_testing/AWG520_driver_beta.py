@@ -42,7 +42,7 @@ class Tektronix_AWG520(instrument):
     3) Add docstrings
     '''
 
-    def __init__(self, name, addr='TCPIP::192.168.1.27::1234::SOCKET', reset=False, numpoints=1000,
+    def __init__(self, name, addr='TCPIP0::192.168.1.27::1234::SOCKET', reset=False, numpoints=1000,
                  awg_file_dir = "D:\\AWG_sequences\\", **kw):
         '''
         Initializes the AWG520.

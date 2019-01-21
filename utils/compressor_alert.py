@@ -13,7 +13,7 @@ from email.message import EmailMessage
 # lrralxerojjirmpq   (app pass)
 
 #LOGFOLDER = 'C:\\Entropy\\logs\\'
-LOGFOLDER = 'D:\\BF\\logs\\'
+LOGFOLDER = 'D:\\logs\\'
 
 def GetCurrentLogFolder():
     a = glob.glob(LOGFOLDER + '*-*-*/')
@@ -63,13 +63,18 @@ def GetCompStatus():
 
     return stat
 
+tmessage = 60
+t0 = time.time()
 
 while True:
     time.sleep(1)
     try:
         stat = GetCompStatus()
         if stat == 0:
-            # print('ok!')
+            tt = time.time()
+            if tt-t0 > tmessage:
+                print("(Compressor monitor): It's",datetime.datetime.now(),"and all is well!")
+                t0 = tt
             pass
         else:
             print('ALERT: COMPRESSOR ERROR! EMERGENCY! EMERGENCY!')
