@@ -101,6 +101,9 @@ class Keysight_N9010B(instrument):
         result = np.asarray(result)
         I = result[::2]
         Q = result[1::2]
+        print('result lenght',type(result),len(result))
+        print('I lenght',type(result),len(I))
+        print('Q lenght',type(result),len(Q))
         tend = self.GetIQSweepTime()
         t = np.linspace(0,tend,len(I)+1)
         t = t[1:]

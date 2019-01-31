@@ -38,6 +38,14 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The instrument class</a><ul>
+<li><a class="reference internal" href="#instrument-autodetection">Instrument autodetection</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="../utils/writematrix.html"
                         title="previous chapter">writematrix – Data file writing methods</a></p>
@@ -95,22 +103,46 @@ need to include a wait time after querying or an <code class="docutils literal n
 <dl class="attribute">
 <dt id="stlab.devices.instrument.instrument.global_rs">
 <code class="descname">global_rs</code><a class="headerlink" href="#stlab.devices.instrument.instrument.global_rs" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>pyvisa.highlevel.ResourceManager</em> – Visa resource manager used to instantiate each visa instrument.
+<dd><p>Visa resource manager used to instantiate each visa instrument.
 This member is static and shared by all instrument objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">pyvisa.highlevel.ResourceManager</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="stlab.devices.instrument.instrument.rstype">
 <code class="descname">rstype</code><a class="headerlink" href="#stlab.devices.instrument.instrument.rstype" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – String that stores the current backend the resource manager is
+<dd><p>String that stores the current backend the resource manager is
 using.  Can be <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">‘<span>&#64;</span>ni</a>’ or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">‘<span>&#64;</span>py</a>’ for NI-VISA or pyvisa-py backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="stlab.devices.instrument.instrument.dev">
 <code class="descname">dev</code><a class="headerlink" href="#stlab.devices.instrument.instrument.dev" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>pyvisa.resources.Resource</em> – pyvisa resource that points to the desired device.  Created
+<dd><p>pyvisa resource that points to the desired device.  Created
 upon instantiation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">pyvisa.resources.Resource</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -236,6 +268,34 @@ read_termination, etc…</li>
 
 </dd></dl>
 
+<div class="section" id="instrument-autodetection">
+<h2>Instrument autodetection<a class="headerlink" href="#instrument-autodetection" title="Permalink to this headline">¶</a></h2>
+<p>A function to autodetect instruments and load the correct driver is also provided</p>
+<dl class="function">
+<dt id="stlab.devices.autodetect_instrument.autodetect_instrument">
+<code class="descclassname">stlab.devices.autodetect_instrument.</code><code class="descname">autodetect_instrument</code><span class="sig-paren">(</span><em>addr</em>, <em>reset=False</em>, <em>verb=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/autodetect_instrument.html#autodetect_instrument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.autodetect_instrument.autodetect_instrument" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autodetect instrument function</p>
+<p>Attempts automatically detect the desired instrument at the given address and creates
+a new session with it using its corresponding driver.  It uses the response from <code class="code docutils literal notranslate"><span class="pre">*IDN?</span></code>
+to identify the correct driver to load from the <code class="code docutils literal notranslate"><span class="pre">dev_ids.txt</span></code> file.  This file contains
+model string and driver name pairs that this function searches in to find the correct driver.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Visa address string to autodetect</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True sends <code class="code docutils literal notranslate"><span class="pre">*RST</span></code> to the instrument after connecting to it</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, prints debugging messages and strings sent</li>
+<li><strong>kwargs</strong> – Additional parameters to be passed to the visa.open_instrument method (a common one is <code class="code docutils literal notranslate"><span class="pre">read_termination</span></code> for example)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -264,7 +324,7 @@ read_termination, etc…</li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

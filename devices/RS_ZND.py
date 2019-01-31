@@ -118,6 +118,10 @@ class RS_ZND(basepna):
             self.write('DISP:WIND'+wind+':TRAC1:FEED ' + name)
         self.twoportmode = True
         self.oneportmode = False
+    
+    def AutoScale(self):
+        self.write('DISP:WIND1:TRAC1:Y:AUTO ONCE')
+        return
 
     def Measure2ports(self,autoscale = True):
         if not self.twoportmode:
