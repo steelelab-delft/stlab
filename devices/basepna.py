@@ -10,7 +10,7 @@ def numtostr(mystr):
     return '%20.15e' % mystr
 
 
-class basepna(instrument,abc.ABC):
+class basepna(instrument, abc.ABC):
     def __init__(self, addr, reset=True, verb=True):
         super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
@@ -105,17 +105,17 @@ class basepna(instrument,abc.ABC):
         pp = int(pp)
         return pp
 
-    def Trigger(self,block=True):
+    def Trigger(self, block=True):
         if block:
             print((self.query('INIT;*OPC?')))
         else:
             self.write('INIT')
         return
-        
+
     def SetPowerOff(self):
         self.write("SOUR1:POW1:MODE OFF")
         return
-        
+
     def SetPowerOn(self):
         self.write("SOUR1:POW1:MODE ON")
         return
@@ -216,12 +216,12 @@ class basepna(instrument,abc.ABC):
         final.addparcolumn('Power (dBm)', self.GetPower())
         return final
 
-    def MeasureScreen(self, keep_uncal=True, N_averages = 1):
+    def MeasureScreen(self, keep_uncal=True, N_averages=1):
         self.SetContinuous(False)
-        if N_averages==1:
+        if N_averages == 1:
             self.Trigger()  #Trigger single sweep and wait for response
-        elif N_averages>1:
-            self.write('SENS:AVER:COUN %d'%N_averages)
+        elif N_averages > 1:
+            self.write('SENS:AVER:COUN %d' % N_averages)
             self.write('SENS:AVER ON')
             self.write('SENS:AVER:CLEAR')
             naver = int(self.query('SENS:AVER:COUN?'))
@@ -230,7 +230,6 @@ class basepna(instrument,abc.ABC):
                 self.AutoScaleAll()
             self.write('SENS:AVER OFF')
         return self.GetAllData(keep_uncal)
-
 
     def GetAllData_pd(self, keep_uncal=True):
         pars, parnames = self.GetTraceNames()
@@ -276,11 +275,11 @@ class basepna(instrument,abc.ABC):
         final['Power (dBm)'] = self.GetPower()
         return final
 
-
     def MeasureScreen_pd(self, keep_uncal=True):
         self.SetContinuous(False)
         print(self.Trigger())  #Trigger single sweep and wait for response
         return self.GetAllData_pd(keep_uncal)
+
     '''
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
         result = self.id().strip() + '\n'
@@ -293,14 +292,15 @@ class basepna(instrument,abc.ABC):
     '''
 
     def MetaGetters(self):
-        getters = [method_name for method_name in dir(self)
-                    if callable(getattr(self, method_name))
-                    if method_name.startswith('Get') ]
+        getters = [
+            method_name for method_name in dir(self)
+            if callable(getattr(self, method_name))
+            if method_name.startswith('Get')
+        ]
         getters.remove('GetAllData')
         getters.remove('GetAllData_pd')
         getters.remove('GetMetadataString')
         getters.remove('GetFrequency')
         getters.remove('GetTraceData')
-            
-        return getters
 
+        return getters

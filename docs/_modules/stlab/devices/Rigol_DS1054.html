@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>stlab.devices.Rigol_DS1054 &#8212; STLab  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.devices.Rigol_DS1054</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for instance of a Rigol oscilloscope</span>
+
+<span class="sd">This module contains the functions necessary to control and read data from </span>
+<span class="sd">a Rigol oscilloscope. The programming guide from Rigol can be found at</span>
+<span class="sd">http://int.rigol.com/File/TechDoc/20151218/MSO1000Z&amp;DS1000Z_ProgrammingGuide_EN.pdf</span>
+<span class="sd">The module has been tested with a DS1054Z, but should also work with the entire</span>
+<span class="sd">MSO1000Z/DS1000Z series.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">stlab.devices.instrument</span> <span class="k">import</span> <span class="n">instrument</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">numtostr</span><span class="p">(</span><span class="n">mystr</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%20.15e</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mystr</span>
+
+
+<span class="c1">#    return &#39;%20.10f&#39; % mystr</span>
+
+
+<div class="viewcode-block" id="Rigol_DS1054"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054">[docs]</a><span class="k">class</span> <span class="nc">Rigol_DS1054</span><span class="p">(</span><span class="n">instrument</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to read and control a Rigol DS1054 scope</span>
+
+<span class="sd">    Connection is done via Ethernet preferably.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    addr : str, optional</span>
+<span class="sd">        IP address of the device.  Has a default value</span>
+<span class="sd">    reset : bool, optional</span>
+<span class="sd">        Does nothing</span>
+<span class="sd">    verb : bool, optional</span>
+<span class="sd">        Enables or disables printing of status strings</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Rigol_DS1054.__init__"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">addr</span><span class="o">=</span><span class="s1">&#39;TCPIP::192.168.1.236::INSTR&#39;</span><span class="p">,</span>
+                 <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rigol_DS1054 __init__ method.</span>
+
+<span class="sd">        Sets up the connection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;timeout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10000</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">reset</span><span class="p">,</span> <span class="n">verb</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="c1">#self.write(&#39;STOP&#39;)</span>
+
+<div class="viewcode-block" id="Rigol_DS1054.AutoScale"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.AutoScale">[docs]</a>    <span class="k">def</span> <span class="nf">AutoScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enables Autoscale</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># autoscale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:AUT&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;*OPC?&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.SetVoltScale"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetVoltScale">[docs]</a>    <span class="k">def</span> <span class="nf">SetVoltScale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scal</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the Voltage scale for a channel</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scal : float</span>
+<span class="sd">            voltage scale</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Channel number, 1 (default), 2, 3 or 4</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;CHAN&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:SCAL &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scal</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.SetVoltRange"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetVoltRange">[docs]</a>    <span class="k">def</span> <span class="nf">SetVoltRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rang</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the Voltage range for a channel</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rang : float</span>
+<span class="sd">            voltage range</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Channel number, 1 (default), 2, 3 or 4</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;CHAN&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:RANG &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rang</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.SetTimeScale"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetTimeScale">[docs]</a>    <span class="k">def</span> <span class="nf">SetTimeScale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the time scale</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scal : float</span>
+<span class="sd">            time scale</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:TIM:SCAL &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scal</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.SetNumPoints"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetNumPoints">[docs]</a>    <span class="k">def</span> <span class="nf">SetNumPoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">npoints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the number of points</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        npoints : float</span>
+<span class="sd">            number of points</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:ACQ:MDEPT &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">npoints</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.GetSampleRate"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.GetSampleRate">[docs]</a>    <span class="k">def</span> <span class="nf">GetSampleRate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the sample rate</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;:ACQ:SRAT?&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.GetTimeScale"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.GetTimeScale">[docs]</a>    <span class="k">def</span> <span class="nf">GetTimeScale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the time scale</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;:TIM:SCAL?&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.SetMemoryDepth"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetMemoryDepth">[docs]</a>    <span class="k">def</span> <span class="nf">SetMemoryDepth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdep</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the memory depth</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mdep : float</span>
+<span class="sd">            Memory depth (6e3,6e4,6e5,6e6)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:ACQ:MDEP &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mdep</span><span class="p">))</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.GetMemoryDepth"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.GetMemoryDepth">[docs]</a>    <span class="k">def</span> <span class="nf">GetMemoryDepth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the memory depth</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;:ACQ:MDEP?&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Rigol_DS1054.GetTrace"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.GetTrace">[docs]</a>    <span class="k">def</span> <span class="nf">GetTrace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads what is on screen at low resolution</span>
+
+<span class="sd">        Given an input channel, this function reads the data back with a resolution</span>
+<span class="sd">        of 1200 points. Note that this is a fast operation, but you will lose quite</span>
+<span class="sd">        a significant amount of data because the precision is range/1200</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Channel to be read out</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        (numpy.ndarray, numpy.ndarray)</span>
+<span class="sd">            Numpy arrays of time and voltage values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tscale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetTimeScale</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">tscale</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:WAV:SOUR CHAN&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WAV:MODE NORM&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WAV:FORM BYTE&#39;</span><span class="p">)</span>
+
+        <span class="c1"># xinc = float(self.query(&#39;WAV:XINC?&#39;)) # unused variable</span>
+        <span class="n">yinc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;WAV:YINC?&#39;</span><span class="p">))</span>
+        <span class="n">yori</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;WAV:YOR?&#39;</span><span class="p">))</span>
+        <span class="n">yref</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;WAV:YREF?&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:WAV:DATA?&#39;</span><span class="p">)</span>  <span class="c1"># dat = unused variable</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">read_raw</span><span class="p">()</span>
+        <span class="n">npoints</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">npoints</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span> <span class="o">-</span> <span class="n">yori</span> <span class="o">-</span> <span class="n">yref</span><span class="p">)</span> <span class="o">*</span> <span class="n">yinc</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="mi">11</span><span class="p">:]]</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">output</span><span class="p">[:</span><span class="n">npoints</span><span class="p">])</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tscale</span> <span class="o">*</span> <span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">xs</span><span class="p">,</span> <span class="n">output</span></div>
+
+    <span class="k">def</span> <span class="nf">GetMetadataString</span><span class="p">(</span>
+            <span class="bp">self</span>
+    <span class="p">):</span>  <span class="c1">#Should return a string of metadata adequate to write to a file</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Rigol_DS1054.ReadWaveData"><a class="viewcode-back" href="../../../drivers/devices.html#stlab.devices.Rigol_DS1054.Rigol_DS1054.ReadWaveData">[docs]</a>    <span class="k">def</span> <span class="nf">ReadWaveData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mdep</span><span class="o">=</span><span class="mf">6e6</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads what is on screen at high resolution</span>
+
+<span class="sd">        Given an input channel, this function reads the data back with a resolution</span>
+<span class="sd">        limited by the memory depth and bandwidth limit. Note that this is a high</span>
+<span class="sd">        resolution but relatively slow measurement; per channel the data retrieving </span>
+<span class="sd">        takes about 31 seconds.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Channel to be read out</span>
+<span class="sd">        mdep : float</span>
+<span class="sd">            Memory depth [6e3|6e4|6e5|6e6]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Numpy of voltage values</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;STOP&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:WAV:SOUR CHAN&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;STOP&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nsamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;ACQ:MDEP?&#39;</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1">#nsamp = input(&quot;Enter memory depth: &quot;)</span>
+            <span class="c1">#nsamp = int(nsamp)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SetMemoryDepth</span><span class="p">(</span><span class="n">mdep</span><span class="p">)</span>
+            <span class="n">nsamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mdep</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WAV:MODE RAW&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WAV:FORM BYTE&#39;</span><span class="p">)</span>
+        <span class="n">nmax</span> <span class="o">=</span> <span class="mi">250000</span>  <span class="c1">#Max read points 250000 when bytes</span>
+        <span class="n">nreads</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">nsamp</span> <span class="o">/</span> <span class="n">nmax</span><span class="p">)</span>
+
+        <span class="c1"># to scale the data properly</span>
+        <span class="c1"># xinc = float(self.query(&#39;WAV:XINC?&#39;)) # unused variable</span>
+        <span class="n">yinc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;WAV:YINC?&#39;</span><span class="p">))</span>
+        <span class="n">yori</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;WAV:YOR?&#39;</span><span class="p">))</span>
+        <span class="n">yref</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;WAV:YREF?&#39;</span><span class="p">))</span>
+        <span class="c1"># srate = float(self.query(&#39;ACQuire:SRATe?&#39;)) # unused variable</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nreads</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WAV:STAR </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">nmax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">nreads</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WAV:STOP </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nsamp</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WAV:STOP </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">nmax</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WAV:DATA?&#39;</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="o">.</span><span class="n">read_raw</span><span class="p">()</span>
+            <span class="n">npoints</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">npoints</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span> <span class="o">-</span> <span class="n">yori</span> <span class="o">-</span> <span class="n">yref</span><span class="p">)</span> <span class="o">*</span> <span class="n">yinc</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="mi">11</span><span class="p">:]]</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="p">[:</span><span class="n">npoints</span><span class="p">]</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

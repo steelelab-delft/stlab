@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Overview of all electronic devices &#8212; STLab  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The instrument class" href="instrument.html" />
+    <link rel="prev" title="writematrix – Data file writing methods" href="../utils/writematrix.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="instrument.html" title="The instrument class"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../utils/writematrix.html" title="writematrix – Data file writing methods"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Overview of all electronic devices</a><ul>
+<li><a class="reference internal" href="#rigol-ds1054-py">Rigol_DS1054.py</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../utils/writematrix.html"
+                        title="previous chapter">writematrix &#8211; Data file writing methods</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="instrument.html"
+                        title="next chapter">The instrument class</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/drivers/devices.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="overview-of-all-electronic-devices">
+<h1>Overview of all electronic devices<a class="headerlink" href="#overview-of-all-electronic-devices" title="Permalink to this headline">¶</a></h1>
+<p>This is a list of all electronic devices for which we have drivers available.
+Most devices inherit from the <code class="code docutils literal"><span class="pre">instrument</span></code> class, while others do not.</p>
+<div class="section" id="rigol-ds1054-py">
+<h2>Rigol_DS1054.py<a class="headerlink" href="#rigol-ds1054-py" title="Permalink to this headline">¶</a></h2>
+<p>File location: <code class="code docutils literal"><span class="pre">stlab/devices/Rigol_DS1054.py</span></code>.</p>
+<p>Imported via <code class="code docutils literal"><span class="pre">autodetect</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stlab</span>
+<span class="n">dev</span> <span class="o">=</span> <span class="n">stlab</span><span class="o">.</span><span class="n">adi</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+</pre></div>
+</div>
+<span class="target" id="module-stlab.devices.Rigol_DS1054"></span><p>Module for instance of a Rigol oscilloscope</p>
+<p>This module contains the functions necessary to control and read data from
+a Rigol oscilloscope. The programming guide from Rigol can be found at
+<a class="reference external" href="http://int.rigol.com/File/TechDoc/20151218/MSO1000Z&amp;DS1000Z_ProgrammingGuide_EN.pdf">http://int.rigol.com/File/TechDoc/20151218/MSO1000Z&amp;DS1000Z_ProgrammingGuide_EN.pdf</a>
+The module has been tested with a DS1054Z, but should also work with the entire
+MSO1000Z/DS1000Z series.</p>
+<dl class="class">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054">
+<em class="property">class </em><code class="descclassname">stlab.devices.Rigol_DS1054.</code><code class="descname">Rigol_DS1054</code><span class="sig-paren">(</span><em>addr='TCPIP::192.168.1.236::INSTR'</em>, <em>reset=False</em>, <em>verb=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to read and control a Rigol DS1054 scope</p>
+<p>Connection is done via Ethernet preferably.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; IP address of the device.  Has a default value</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Does nothing</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Enables or disables printing of status strings</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.AutoScale">
+<code class="descname">AutoScale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.AutoScale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.AutoScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables Autoscale</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.GetMemoryDepth">
+<code class="descname">GetMemoryDepth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.GetMemoryDepth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.GetMemoryDepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the memory depth</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.GetSampleRate">
+<code class="descname">GetSampleRate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.GetSampleRate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.GetSampleRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the sample rate</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.GetTimeScale">
+<code class="descname">GetTimeScale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.GetTimeScale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.GetTimeScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the time scale</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.GetTrace">
+<code class="descname">GetTrace</code><span class="sig-paren">(</span><em>ch=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.GetTrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.GetTrace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads what is on screen at low resolution</p>
+<p>Given an input channel, this function reads the data back with a resolution
+of 1200 points. Note that this is a fast operation, but you will lose quite
+a significant amount of data because the precision is range/1200</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Channel to be read out</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Numpy arrays of time and voltage values.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(numpy.ndarray, numpy.ndarray)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.ReadWaveData">
+<code class="descname">ReadWaveData</code><span class="sig-paren">(</span><em>n=1</em>, <em>mdep=6000000.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.ReadWaveData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.ReadWaveData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads what is on screen at high resolution</p>
+<p>Given an input channel, this function reads the data back with a resolution
+limited by the memory depth and bandwidth limit. Note that this is a high
+resolution but relatively slow measurement; per channel the data retrieving
+takes about 31 seconds.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Channel to be read out</li>
+<li><strong>mdep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Memory depth [6e3|6e4|6e5|6e6]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Numpy of voltage values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.SetMemoryDepth">
+<code class="descname">SetMemoryDepth</code><span class="sig-paren">(</span><em>mdep</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.SetMemoryDepth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetMemoryDepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the memory depth</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mdep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Memory depth (6e3,6e4,6e5,6e6)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.SetNumPoints">
+<code class="descname">SetNumPoints</code><span class="sig-paren">(</span><em>npoints</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.SetNumPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetNumPoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the number of points</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>npoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; number of points</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.SetTimeScale">
+<code class="descname">SetTimeScale</code><span class="sig-paren">(</span><em>scal</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.SetTimeScale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetTimeScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the time scale</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>scal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; time scale</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.SetVoltRange">
+<code class="descname">SetVoltRange</code><span class="sig-paren">(</span><em>rang</em>, <em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.SetVoltRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetVoltRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the Voltage range for a channel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rang</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; voltage range</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Channel number, 1 (default), 2, 3 or 4</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.SetVoltScale">
+<code class="descname">SetVoltScale</code><span class="sig-paren">(</span><em>scal</em>, <em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.SetVoltScale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.SetVoltScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the Voltage scale for a channel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>scal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; voltage scale</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Channel number, 1 (default), 2, 3 or 4</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>addr='TCPIP::192.168.1.236::INSTR'</em>, <em>reset=False</em>, <em>verb=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rigol_DS1054 __init__ method.</p>
+<p>Sets up the connection</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="instrument.html" title="The instrument class"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../utils/writematrix.html" title="writematrix – Data file writing methods"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">STLab  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Mark Jenkins.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

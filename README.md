@@ -3,8 +3,17 @@ Environment for measurement and analysis scripts developed in the [SteeleLab at 
 
 The documentation can be found [here](http://nsweb.tn.tudelft.nl/~steelelab/stlab/)
 
-**Requirements:**
+## Requirements:
 - [Python3](https://www.python.org/downloads/)
 - [pyVISA](https://pypi.org/project/PyVISA-py/)
 - [SciPy](https://www.scipy.org/)
 - [lmfit](https://pypi.org/project/lmfit/)
+
+## Changelog
+All notable changes to this project will be documented below.
+
+### [Unreleased] - 2019-02-19
+#### Changed
+- Reformatting for better readability
+- Docstrings for every device
+- Major updates for Keithley DMM6500 to handle loops and capture traces

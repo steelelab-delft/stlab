@@ -1,22 +1,34 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Documentation for STLab &#8212; STLab  documentation</title>
+    
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="S11fit – Resonance fitting routines and utilities" href="utils/S11fit.html" /> 
-  </head><body>
+  </head>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -34,7 +46,7 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table of Contents</a></h3>
+  <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Documentation for STLab</a></li>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
@@ -43,7 +55,7 @@
 
   <h4>Next topic</h4>
   <p class="topless"><a href="utils/S11fit.html"
-                        title="next chapter">S11fit – Resonance fitting routines and utilities</a></p>
+                        title="next chapter">S11fit &#8211; Resonance fitting routines and utilities</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -53,14 +65,12 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -76,22 +86,26 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="utils/S11fit.html">S11fit – Resonance fitting routines and utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/TLmodel.html">TLmodel – Model for transmission line resonator</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="utils/S11fit.html">S11fit &#8211; Resonance fitting routines and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/TLmodel.html">TLmodel &#8211; Model for transmission line resonator</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="utils/TLmodel.html#functions">Functions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="utils/autoplotter.html">Autoplot – Quick plots for measurement reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/metagen.html">Metagen – Spyview metafile generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/newfile.html">newfile – New measurement folder creation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/stlabdict.html">stlabdict – Data structures and matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/writematrix.html">writematrix – Data file writing methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/autoplotter.html">Autoplot &#8211; Quick plots for measurement reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/metagen.html">Metagen &#8211; Spyview metafile generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/newfile.html">newfile &#8211; New measurement folder creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/stlabdict.html">stlabdict &#8211; Data structures and matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/writematrix.html">writematrix &#8211; Data file writing methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers/devices.html">Overview of all electronic devices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="drivers/devices.html#rigol-ds1054-py">Rigol_DS1054.py</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/instrument.html">The instrument class</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="drivers/instrument.html#instrument-autodetection">Instrument autodetection</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/temperature_servers.html">Temperature servers and Daemons for BlueFors and He7 fridges</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#mysocket-py-basic-tcp-socket">MySocket.py – Basic TCP socket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#mysocket-py-basic-tcp-socket">MySocket.py &#8211; Basic TCP socket</a></li>
 <li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#bfdaemon-py">BFDaemon.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#bfwrapper-py">BFWrapper.py</a></li>
 <li class="toctree-l2"><a class="reference internal" href="drivers/temperature_servers.html#he7daemon-py">He7Daemon.py</a></li>
@@ -110,8 +124,8 @@ automation.  For the most part it is built upon pyvisa and is inteded to avoid t
 of low level communication with measurement instruments without including an inconvenient level
 of additional complexity (see <a class="reference external" href="https://en.wikipedia.org/wiki/KISS_principle">KISS principle</a>).</p>
 <p>The instrument drivers should in general only contain basic commonly used commands and not
-sophisticated setup and measurement schemes.  While things like “Get power” or “Get Trace” are
-acceptable, methods like “Perform 2 tone measurement” should not be included in basic device drivers.
+sophisticated setup and measurement schemes.  While things like &#8220;Get power&#8221; or &#8220;Get Trace&#8221; are
+acceptable, methods like &#8220;Perform 2 tone measurement&#8221; should not be included in basic device drivers.
 The latter kind of method should reside on a higher level of abstration since its use is likely
 to be very specific and would only clutter the driver for others.</p>
 <p>The basic structure of the package is as follows:</p>
@@ -126,26 +140,26 @@ to be very specific and would only clutter the driver for others.</p>
 <div class="line">│   ├──</div>
 <div class="line">├── utils</div>
 <div class="line">│   ├──</div>
-<div class="line">│   └── …</div>
+<div class="line">│   └── ...</div>
 <div class="line">├── examples</div>
-<div class="line">│   ├── …</div>
-<div class="line">│   └── …</div>
+<div class="line">│   ├── ...</div>
+<div class="line">│   └── ...</div>
 <div class="line">├── docs</div>
-<div class="line">│   ├── …</div>
-<div class="line">│   └── …</div>
+<div class="line">│   ├── ...</div>
+<div class="line">│   └── ...</div>
 <div class="line">├── doc_gen</div>
-<div class="line">│   ├── …</div>
-<div class="line">│   └── …</div>
+<div class="line">│   ├── ...</div>
+<div class="line">│   └── ...</div>
 </div>
 <ul class="simple">
-<li>The “devices” folder contains all the implemented drivers as well as the basic instrument class.</li>
-<li>The “utils” folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.</li>
-<li>“examples” contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.</li>
-<li>“docs” contains this documentation and “doc_gen” contains the sphynx scripts for generating it.</li>
-<li>The __init__.py file contains the modules and names imported when running “import stlab”.  Note that some modules and functions are renamed for (in?)convenience.</li>
+<li>The &#8220;devices&#8221; folder contains all the implemented drivers as well as the basic instrument class.</li>
+<li>The &#8220;utils&#8221; folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.</li>
+<li>&#8220;examples&#8221; contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.</li>
+<li>&#8220;docs&#8221; contains this documentation and &#8220;doc_gen&#8221; contains the sphynx scripts for generating it.</li>
+<li>The __init__.py file contains the modules and names imported when running &#8220;import stlab&#8221;.  Note that some modules and functions are renamed for (in?)convenience.</li>
 </ul>
-<p>The imports done when doing <code class="code docutils literal notranslate"><span class="pre">import</span> <span class="pre">stlab</span></code> are:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Loads utils with shorter names</span>
+<p>The imports done when doing <code class="code docutils literal"><span class="pre">import</span> <span class="pre">stlab</span></code> are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1">#Loads utils with shorter names</span>
 <span class="kn">from</span> <span class="nn">stlab.utils.newfile</span> <span class="kn">import</span> <span class="n">newfile</span> <span class="c1">#Callable as stlab.newfile(...)</span>
 <span class="kn">import</span> <span class="nn">stlab.utils.metagen</span> <span class="kn">as</span> <span class="nn">metagen</span> <span class="c1">#Callable as stlab.metagen.fromlimits(...)</span>
 <span class="kn">import</span> <span class="nn">stlab.utils.readdata</span> <span class="kn">as</span> <span class="nn">readdata</span> <span class="c1">#Callable as stlab.readdata.readQUCS(...)</span>
@@ -223,7 +237,7 @@ to be very specific and would only clutter the driver for others.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
     </div>
   </body>
 </html>

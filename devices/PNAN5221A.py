@@ -1,3 +1,9 @@
+"""Module for instance of a Keysight N5221A PNA
+
+This module contains the functions necessary to control and read data from 
+a Keysight N5221A PNA. It inherits from basepna class.
+
+"""
 import numpy as np
 from stlab.devices.basepna import basepna
 
@@ -28,7 +34,7 @@ class PNAN5221A(basepna):
         pars = pars.strip('\n').strip('"').split(',')
         parnames = pars[1::2]
         pars = pars[::2]
-        return pars,parnames
+        return pars, parnames
 
     def SetActiveTrace(self, mystr, ch=1):
         self.write('CALC{}:PAR:SEL "{}"'.format(ch, mystr))
@@ -110,10 +116,10 @@ class PNAN5221A(basepna):
                 tnums = self.query('DISP:WIND{}:CAT?'.format(i))
                 if tnums != '"EMPTY"':
                     tnums = tnums.strip().strip('"').split(',')
-                    self.write('DISP:WIND{}:TRAC{}:Y:COUP:METH WIND'.format(i,tnums[0]))
+                    self.write('DISP:WIND{}:TRAC{}:Y:COUP:METH WIND'.format(
+                        i, tnums[0]))
                     #self.write('DISP:WIND{}:TRAC{}:Y:AUTO'.format(i,tnums[0]))
                     self.write('DISP:WIND{}:Y:AUTO'.format(i))
-                    
 
     def AddTraces(
             self, trcs
@@ -136,15 +142,18 @@ class PNAN5221A(basepna):
 
 
 # For Segment sweeps
+
     def DelAllSegm(self):
         self.write('SENS:SEGM:DEL:ALL')
         return
 
-    def AddSegm(self,snum=1):
+    def AddSegm(self, snum=1):
         self.write('SENS:SEGM{}:ADD'.format(snum))
         return
-        
-    def SetSweepType(self, mystr):  #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
+
+    def SetSweepType(
+            self, mystr
+    ):  #Possible values: LINear | LOGarithmic | POWer | CW | SEGMent | PHASe  (Default value is LINear)
         self.write('SENS:SWE:TYPE %s' % mystr)
 
     def SetCWfrequency(self, xx):
@@ -170,17 +179,17 @@ class PNAN5221A(basepna):
         mystr = numtostr(x)
         mystr = 'SENS:SEGM:FREQ:STOP ' + mystr
         self.write(mystr)
-    
+
     def SetSegmPoints(self, x, snum=1):
         mystr = '%d' % x
-        mystr = 'SENS:SEGM{}:SWE:POIN {}'.format(snum,mystr)
+        mystr = 'SENS:SEGM{}:SWE:POIN {}'.format(snum, mystr)
         self.write(mystr)
-        
+
     def SetSegmRange(self, start, end):
         self.SetSegmStart(start)
         self.SetSegmEnd(end)
 
-    def SetSegmState(self, state='ON'): #'ON' or 'OFF'
+    def SetSegmState(self, state='ON'):  #'ON' or 'OFF'
         self.write('SENS:SEGM {}'.format(state))
         return
 

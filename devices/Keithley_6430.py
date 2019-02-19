@@ -1,10 +1,5 @@
-import visa
-import numpy as np
 from stlab.devices.instrument import instrument
-import time
-
-    
-
+ 
 class keithley6430(instrument):
     def __init__(self,addr = "TCPIP::192.168.1.212::1470::SOCKET", reset = True, verb=True, read_termination='\r\n'):
         #Needs \r\n line termination
