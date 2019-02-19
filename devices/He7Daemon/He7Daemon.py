@@ -27,7 +27,8 @@ import glob
 import sys
 
 #DEFAULT LOGFOLDER FOR MAJOR TOM
-LOGFOLDER = 'C:/Users/user/Desktop/Entropy/logs/'
+#LOGFOLDER = 'C:/Users/user/Desktop/Entropy/logs/' # this was while logging was disabled...
+LOGFOLDER = 'C:/Entropy/logs/'
 
 def GetCurrentLogFolder(mylogfolder):
     a = next(os.walk(mylogfolder))[1]
