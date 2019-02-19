@@ -1,4 +1,10 @@
-#New base instrument class to keep track of all instantiated instruments (whether or not they inherit from instrument) for metafile generation.
+"""Base instrument class to keep track of all instantiated instruments
+
+Base instrument class to keep track of all instantiated instruments
+(whether or not they inherit from instrument) for metafile generation.
+It is currently suppressed since nobody uses it or cares.
+
+"""
 import abc
 import os
 import datetime

@@ -1,6 +1,6 @@
 """Module for fitting resonance line shapes to different circuit models
 
-This module contains the functions necessary to fit some general lorentizian to
+This module contains the functions necessary to fit some general Lorentzian to
 simulations or measurements.  The main function is "fit" and is imported with
 stlab as "stlab.S11fit".  All other functions in this module are there to
 supplement this fitting function or are not generally used.

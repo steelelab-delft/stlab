@@ -1,3 +1,13 @@
+"""Module for instance of a Rigol oscilloscope
+
+This module contains the functions necessary to fit control and read data from 
+a Rigol oscilloscope. The programming guide from Rigol can be found at
+http://int.rigol.com/File/TechDoc/20151218/MSO1000Z&DS1000Z_ProgrammingGuide_EN.pdf
+The module has been tested with a DS1054Z, but should also work with the entire
+MSO1000Z/DS1000Z series.
+
+"""
+
 import numpy as np
 from stlab.devices.instrument import instrument
 import math
@@ -13,7 +23,6 @@ class Rigol_DS1054(instrument):
         kwargs['timeout'] = 10000
         super().__init__(addr,reset,verb,**kwargs)
         #self.write('STOP')
-
 
     def AutoScale(self):
         # autoscale
@@ -52,6 +61,23 @@ class Rigol_DS1054(instrument):
         return self.query(':ACQ:MDEP?')
 
     def GetTrace(self,ch=1):
+        """Reads what is on screen at low resolution
+
+        Given an input channel, this function reads the data back with a resolution
+        of 1200 points. Note that this is a fast operation, but you will lose quite
+        a significant amount of data because the precision is range/1200
+
+        Parameters
+        ----------
+        n : int
+            Channel to be read out
+
+        Returns
+        -------
+        (numpy.ndarray, numpy.ndarray)
+            Numpy arrays of time and voltage values.
+
+        """
         time.sleep(1)
         tscale = self.GetTimeScale()
         time.sleep(tscale*12)
@@ -59,12 +85,12 @@ class Rigol_DS1054(instrument):
         self.write('WAV:MODE NORM')
         self.write('WAV:FORM BYTE')
 
-        xinc = float(self.query('WAV:XINC?'))
+        # xinc = float(self.query('WAV:XINC?')) # unused variable
         yinc = float(self.query('WAV:YINC?'))
         yori = float(self.query('WAV:YOR?'))
         yref = float(self.query('WAV:YREF?'))
         
-        dat = self.write(':WAV:DATA?')
+        self.write(':WAV:DATA?') # dat = unused variable
         output = self.dev.read_raw()
         npoints = int(output[2:11].decode('ascii'))
         print(npoints)
@@ -76,8 +102,27 @@ class Rigol_DS1054(instrument):
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
         pass
 
-    '''
-    def ReadWaveData(self,n=1,mdep=3e6):
+    def ReadWaveData(self,n=1,mdep=6e6):
+        """Reads what is on screen at high resolution
+
+        Given an input channel, this function reads the data back with a resolution
+        limited by the memory depth and bandwidth limit. Note that this is a high
+        resolution but relatively slow measurement; per channel the data retrieving 
+        takes about 31 seconds.
+
+        Parameters
+        ----------
+        n : int
+            Channel to be read out
+        mdep : float
+            Memory depth [6e3|6e4|6e5|6e6]
+
+        Returns
+        -------
+        numpy.ndarray
+            Numpy of voltage values
+
+        """
         self.write('STOP')
         self.write(':WAV:SOUR CHAN'+str(n))
         self.write('STOP')
@@ -94,11 +139,11 @@ class Rigol_DS1054(instrument):
         nreads = math.ceil(nsamp/nmax)
 
         # to scale the data properly
-        xinc = float(self.query('WAV:XINC?'))
+        # xinc = float(self.query('WAV:XINC?')) # unused variable
         yinc = float(self.query('WAV:YINC?'))
         yori = float(self.query('WAV:YOR?'))
         yref = float(self.query('WAV:YREF?'))
-        srate = float(self.query('ACQuire:SRATe?'))
+        # srate = float(self.query('ACQuire:SRATe?')) # unused variable
 
         data = []
         for i in range(nreads):
@@ -116,7 +161,6 @@ class Rigol_DS1054(instrument):
             data.append(output)
         data = np.asarray(data).flatten()
         return data
-    '''
 
 
 
