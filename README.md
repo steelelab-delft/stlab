@@ -12,7 +12,7 @@ The documentation can be found [here](http://nsweb.tn.tudelft.nl/~steelelab/stla
 ## Changelog
 All notable changes to this project will be documented below.
 
-### [Unreleased] - 2019-02-19
+### [`0393898`](https://github.com/steelelabgit/stlab/commit/0393898cfe9d575ff1bf3abcbba1579c4094abd7) - 2019-02-19
 #### Changed
 - Reformatting for better readability
 - Docstrings for every device
