@@ -1,4 +1,0 @@
-{
-    "python.formatting.provider": "yapf",
-    "restructuredtext.confPath": "${workspaceFolder}/doc_gen"
-}
