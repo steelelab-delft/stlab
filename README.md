@@ -26,7 +26,7 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 
 All notable changes to this project will be documented below.
 
-### ['5ab0df2'](https://github.com/steelelabgit/stlab/commit/5ab0df2c88997ca4a513349b36b68e76b1dda514) - 2019-02-24
+### [`5ab0df2`](https://github.com/steelelabgit/stlab/commit/5ab0df2c88997ca4a513349b36b68e76b1dda514) - 2019-02-24
 
 #### Changed
 
