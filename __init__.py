@@ -1,4 +1,4 @@
-#Loads utils with shorter names
+# Loads utils with shorter names
 from stlab.utils.newfile import newfile #Callable as stlab.newfile(...)
 import stlab.utils.metagen as metagen #Callable as stlab.metagen.fromlimits(...)
 import stlab.utils.readdata as readdata #Callable as stlab.readdata.readQUCS(...)
@@ -14,30 +14,17 @@ from stlab.utils.writematrix import writeframearray as saveframearray
 from stlab.utils.stlabdict import stlabdict
 from stlab.utils.stlabdict import stlabmtx
 from stlab.utils.stlabdict import framearr_to_mtx
-from stlab.utils.S11fit import fit as S11fit #Callable as stlab.S11fit(...)
-from stlab.utils.S11fit import S11full as S11func #Callable as stlab.S11fit(...)
-from stlab.utils.S11fit import backmodel as S11back #Callable as stlab.S11fit(...)
-from stlab.utils.S11fit import S11theo as S11theo #Callable as stlab.S11fit(...)
-#from stlab.devices.base_instrument import SaveInstrumentMetadata #Callable as stlab.SaveInstrumentMetadata(...)
-from stlab.devices.autodetect_instrument import autodetect_instrument as adi #Callable as stlab.devices.adi(...)
-from stlab.utils.autoplotter import autoplot #Call as stlab.autoplot(...)
-
-'''
-try:
+try: # some users might not need S11fit
+    from stlab.utils.S11fit import fit as S11fit #Callable as stlab.S11fit(...)
+    from stlab.utils.S11fit import S11full as S11func #Callable as stlab.S11fit(...)
+    from stlab.utils.S11fit import backmodel as S11back #Callable as stlab.S11fit(...)
+    from stlab.utils.S11fit import S11theo as S11theo #Callable as stlab.S11fit(...)
 except ImportError:
-    print('Fitting routines not imported.  Missing dependencies')
-'''
-'''
-import importlib.util
-lmfit_spec = importlib.util.find_spec("lmfit")
-found = lmfit_spec is not None
-sigspec = importlib.util.find_spec("scipy.signal")
-foundsig = sigspec is not None
-if foundsig:
-    import scipy.signal
-    foundsig=False
-    if 'savgol_filter' in dir(scipy.signal):
-        foundsig=True
-if found and foundsig:
+    print('Warning: Missing dependencies for S11fit! Fitting routines not imported.')
+try: # some users might not need to do measurements
+    #from stlab.devices.base_instrument import SaveInstrumentMetadata #Callable as stlab.SaveInstrumentMetadata(...)
+    from stlab.devices.autodetect_instrument import autodetect_instrument as adi #Callable as stlab.devices.adi(...)
+except ImportError:
+    print('Warning: Missing dependencies for autodetect_instrument! Autodetect routines not imported.')
 
-'''
+from stlab.utils.autoplotter import autoplot #Call as stlab.autoplot(...)

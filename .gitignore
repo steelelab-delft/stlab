@@ -2,6 +2,7 @@
 *~
 *.wfm
 *.seq
+*.vscode
 
 utils/MySocket.py.orig
 devices/BFDaemon/BFDaemon_REMOTE_9904.py

@@ -26,7 +26,7 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 
 All notable changes to this project will be documented below.
 
-### [Unreleased] - 2019-02-19
+### [`0393898`](https://github.com/steelelabgit/stlab/commit/0393898cfe9d575ff1bf3abcbba1579c4094abd7) - 2019-02-19
 
 #### Changed
 
