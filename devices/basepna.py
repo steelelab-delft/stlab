@@ -163,7 +163,7 @@ class basepna(instrument, abc.ABC):
         return bool(int(self.query('SENS:CORR?')))
 
 
-##### FULLY IMPLEMENTED METHODS THAN DO NOT NEED TO BE REIMPLEMENTED (BUT CAN BE IF NECESSARY) #####################
+##### FULLY IMPLEMENTED METHODS THAT DO NOT NEED TO BE REIMPLEMENTED (BUT CAN BE IF NECESSARY) #####################
 
     def SetRange(self, start, end):
         self.SetStart(start)
@@ -225,9 +225,9 @@ class basepna(instrument, abc.ABC):
             self.write('SENS:AVER ON')
             self.write('SENS:AVER:CLEAR')
             naver = int(self.query('SENS:AVER:COUN?'))
-            for j in range(naver):
+            for _ in range(naver):
                 self.Trigger()
-                self.AutoScaleAll()
+                # self.AutoScaleAll()
             self.write('SENS:AVER OFF')
         return self.GetAllData(keep_uncal)
 

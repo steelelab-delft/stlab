@@ -20,35 +20,35 @@ class RS_SMB100A(instrument):
         super().__init__(addr, reset, verb)
         self.id()
 
-    def setCWfrequency(self, frec):
+    def SetFrequency(self, frec):
         mystr = numtostr(frec)
         mystr = 'FREQ:CW ' + mystr
         self.write(mystr)
 
-    def getCWfrequency(self):
+    def GetFrequency(self):
         mystr = 'FREQ:CW?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
 
-    def setCWpower(self, x):
+    def SetPower(self, x):
         mystr = numtostr(x)
         mystr = 'SOUR:POW:POW ' + mystr
         self.write(mystr)
 
-    def getCWpower(self):
+    def GetPower(self):
         mystr = 'SOUR:POW:POW?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
 
-    def RFon(self):
+    def SetPowerOn(self):
         self.write('OUTP ON')
 
-    def RFoff(self):
+    def SetPowerOff(self):
         self.write('OUTP OFF')
 
     def GetMetadataString(
             self
-    ):  #Should return a string of metadata adequate to write to a file
+    ):  # Should return a string of metadata adequate to write to a file
         pass

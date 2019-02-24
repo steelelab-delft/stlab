@@ -122,7 +122,6 @@ class Keysight_N9010B(instrument):
         output['I (V)'] = I
         output['Q (V)'] = Q
         output['Digital IFBW (Hz)'] = self.GetDigitalIFBW()
-
         return output
 
     def MeasureScreen(self):

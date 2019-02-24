@@ -197,7 +197,7 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
 
     """
     #Build initial matrix.  Appends each data column as line in zz    
-    zz = [];
+    zz = []
     for line in data:
         zz.append(line[key])
     #convert to np matrix
@@ -936,7 +936,7 @@ def framearr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, x
     """
 
     #Build initial matrix.  Appends each data column as line in zz    
-    zz = [];
+    zz = []
     for line in data:
         zz.append(line[key])
     #convert to np matrix

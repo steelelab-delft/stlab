@@ -208,5 +208,5 @@ class Keysight_MXA_N9020B(instrument):
 
     def GetMetadataString(
             self
-    ):  #Should return a string of metadata adequate to write to a file
+    ):  # Should return a string of metadata adequate to write to a file
         pass
