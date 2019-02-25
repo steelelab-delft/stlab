@@ -19,6 +19,7 @@ class Rigol_DG1022(instrument):
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb, query_delay=100e-3)
+        self.write('SYST:REM') # unlock local button
         #self.id()
 
 
@@ -48,9 +49,11 @@ class Rigol_DG1022(instrument):
     def GetVpp(self, ch=1):
         if ch == 1:
             self.write('VOLT:UNIT VPP')  #{VPP|VRMS|DBM}
+            time.sleep(0.1)
             result = self.query('VOLT?')
         else:
             self.write('VOLT:CH{}:UNIT VPP'.format(ch))  #{VPP|VRMS|DBM}
+            time.sleep(0.1)
             result = self.query('VOLT:CH{}?'.format(ch))
         return float(result)
 
@@ -85,6 +88,12 @@ class Rigol_DG1022(instrument):
             self.write('OUTP OFF')
         else:
             self.write('OUTP:CH{} OFF'.format(ch))
+
+    # def SetReference(self, ref='INT'):
+    #     # INT, EXT
+    #     self.write('SYST:CLKSRC ' + ref)
+    # Note: SetReference disables the Rigol for some reason. 
+    # TODO: find out why
 
     def GetMetadataString(
             self

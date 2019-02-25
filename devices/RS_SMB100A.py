@@ -48,6 +48,10 @@ class RS_SMB100A(instrument):
     def SetPowerOff(self):
         self.write('OUTP OFF')
 
+    def SetReference(self, ref='INT'):
+        # INT, EXT, ELO
+        self.write('ROSC:SOUR ' + ref)
+
     def GetMetadataString(
             self
     ):  # Should return a string of metadata adequate to write to a file

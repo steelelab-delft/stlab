@@ -10,6 +10,7 @@ from stlab.devices.instrument import instrument
 from stlab.utils.stlabdict import stlabdict as stlabdict
 import numpy as np
 import pandas as pd
+import time
 
 
 def num2str(num):
@@ -69,6 +70,13 @@ class RS_FSV(instrument):
         return float(x)
     """
 
+    def SetSweepTime(self,tt):
+        self.write('SWE:TIME {}'.format(tt))
+
+    def GetSweepTime(self):
+        tt = self.query('SWE:TIME?')
+        return float(tt)
+
     def SetSampleRate(self, x):
         mystr = 'WAV:SRAT {}'.format(x)
         self.write(mystr)
@@ -80,26 +88,26 @@ class RS_FSV(instrument):
 
     def SetPoints(self, npoints):
         self.write('SWE:POIN {}'.format(npoints))
+    
+    def GetPoints(self):
+        npts = self.query('SWE:POIN?')
+        return float(npts)
 
     def SetAveragesType(self, avgtype):
         # VIDeo, LINear, POWer
         self.write('AVER:TYPE ' + avgtype)
 
+    def GetAveragesType(self):
+        avgtype = self.query('AVER:TYPE?')
+        return avgtype
+
     def SetAverages(self, navg):
         self.write('AVER:COUNT {}'.format(navg))
-        if navg > 1:
-            self.write(':TRAC:TYPE AVER')
-        else:
-            self.write(':TRAC:TYPE WRITE')
 
     def GetAverages(self):
-        tracetype = self.query(':TRAC:TYPE?')
-        if tracetype == 'AVER\n':
-            navg = self.query('AVER:COUNT?')
-            return float(navg)
-        else:
-            return 1
-
+        navg = self.query('AVER:COUNT?')
+        return float(navg)
+        
     def SetContinuous(self, state=True):
         if state:
             self.write('INIT:CONT ON')
@@ -122,18 +130,19 @@ class RS_FSV(instrument):
         return
 
     def MeasureScreen(self, ch=1):
-        # TODO
         self.SetContinuous(False)
-        result = self.query('TRAC? TRACE{}'.format(ch))
-        # TODO: What format does the data come in?
-        result = result.split(',')
-        result = [float(x) for x in result]
-        result = np.asarray(result)
-        xx = result[::2]
-        yy = result[1::2]
+        self.write('INIT')
+        # sleep for averaging time, otherwise timeout
+        navg = self.GetAverages()
+        tt = self.GetSweepTime()
+        time.sleep(navg*tt)
+        xvals = self.query('TRAC:DATA:X? TRACE{}'.format(ch))
+        yvals = self.query('TRAC? TRACE{}'.format(ch))
+        xvals = np.array([float (x) for x in xvals.split(',')])
+        yvals = np.array([float (x) for x in yvals.split(',')])
         output = pd.DataFrame()
-        output['Frequency (Hz)'] = xx
-        output['PSD (dBm)'] = yy
+        output['Frequency (Hz)'] = xvals
+        output['PSD (dBm)'] = yvals
         output['Res BW (Hz)'] = self.GetResolutionBW()
         return output
 
