@@ -25,6 +25,13 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 ## Changelog
 
 All notable changes to this project will be documented below.
+### [`a0b2d17`](https://github.com/steelelabgit/stlab/commit/a0b2d175df05ee5ab460816a65d8a8ee445e4e82) - 2019-02-25
+
+#### Changes
+
+- FSV ready for frequency sweeps, syntax modernized
+- Reference for SMB enabled
+- Reference for Rigol AWG disabled because it breaks the system. Why?
 
 ### [`5ab0df2`](https://github.com/steelelabgit/stlab/commit/5ab0df2c88997ca4a513349b36b68e76b1dda514) - 2019-02-24
 
