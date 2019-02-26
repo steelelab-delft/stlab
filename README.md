@@ -25,6 +25,14 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 ## Changelog
 
 All notable changes to this project will be documented below.
+
+### [`e05e9fb`](https://github.com/steelelabgit/stlab/commit/e05e9fb8d633c56612809d57e663505cb9e11c47) - 2019-02-26
+
+#### Changes
+
+- added `**kwargs` to Keithley DMM6500
+- added `SetSweepTime` to PNA5221A 
+
 ### [`a0b2d17`](https://github.com/steelelabgit/stlab/commit/a0b2d175df05ee5ab460816a65d8a8ee445e4e82) - 2019-02-25
 
 #### Changes

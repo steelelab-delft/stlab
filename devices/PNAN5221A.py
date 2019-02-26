@@ -197,6 +197,10 @@ class PNAN5221A(basepna):
         result = self.query('SENSe:SWEep:TIME?')
         return float(result)
 
+    def SetSweepTime(self,tt):
+        self.write('SENSe:SWEep:TIME {}'.format(tt))
+        return
+
     #Not currently working for segments
     '''
     def SetSegmIFBW(self,x):

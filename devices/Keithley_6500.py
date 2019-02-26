@@ -17,8 +17,9 @@ class Keithley_6500(Keithley_2100):
     def __init__(self,
                  addr='TCPIP::192.168.1.161::INSTR',
                  reset=True,
-                 verb=True):
-        super().__init__(addr, reset, verb)
+                 verb=True,
+                 **kwargs):
+        super().__init__(addr, reset, verb, **kwargs)
 
     def ResetTrig(self):  # reset trigger model
         self.write('TRIG:LOAD "Empty"')
