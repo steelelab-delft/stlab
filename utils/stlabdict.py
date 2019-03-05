@@ -371,7 +371,7 @@ class stlabmtx():
         """
         self.pmtx = np.abs(self.pmtx)
         self.processlist.append('abs')
-    def crop(data,left=None,right=None,up=None,low=None):
+    def crop(self,left=None,right=None,up=None,low=None):
         """Crop filter
 
         Crops data matrix to the given extents.  Process string :code:`crop left,right,up,low`
@@ -397,11 +397,11 @@ class stlabmtx():
                 valdict[key] = None
             else:
                 valdict[key] = int(val)
-        data.pmtx = data.pmtx.iloc[valdict['left']:valdict['right'],valdict['up']:valdict['low']]
+        self.pmtx = self.pmtx.iloc[valdict['left']:valdict['right'],valdict['up']:valdict['low']]
         for key,val in valdict.items():
             if val==None:
                 valdict[key] = 0
-        data.processlist.append('crop {},{},{},{}'.format(valdict['left'],valdict['right'],valdict['up'],valdict['low']))
+        self.processlist.append('crop {},{},{},{}'.format(valdict['left'],valdict['right'],valdict['up'],valdict['low']))
     def flip(self,x=False,y=False):
         """Flip filter
 

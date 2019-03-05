@@ -84,7 +84,6 @@ while True:
             server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             server.login(gmail_user, "SteeleLab_18")
             sent_from = 'Steelelab compressor alert service'
-            # to = ['m.d.jenkinssanchez@tudelft.nl']
             to = ['steelelab-tnw@tudelft.nl']
             subject = 'EMERGENCY! COMPRESSOR ERROR!'
             body = 'EMERGENCY! EMERGENCY! THERE IS AN EMERGENCY GOING ON!\n\nIT\'S STILL GOING ON!\n\nLooking forward to hearing from you,\n\nBest regards,\n\nSteelelab Compressor Alert Service'

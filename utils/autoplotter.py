@@ -38,8 +38,9 @@ def autoplot(
         show=False,
         dpi=400,
         pl=None,
-        cmap='bwr',
+        cmap='RdBu_r',
         wbval=(0.1, 0.1),  #percent
+        figdir=None,
         **kwargs):
     """Autoplot function
 
@@ -72,7 +73,10 @@ def autoplot(
         If provided, is an stlabmtx process list (in case processing is required on a 2d color plot).
         See :class:`stlabmtx <stlab.utils.stlabdict.stlabmtx>` for details
     cmap : str
-        Matplotlib colormap string for 2D plots. By defulat 'bwr'
+        Matplotlib colormap string for 2D plots. By default 'RdBu_r'.
+        See https://matplotlib.org/tutorials/colors/colormaps.html for details
+    figdir : str
+        Figure directory for the final plot
     **kwargs
         Other arguments to be passed to plotting function (plt.plot or plt.imshow)
 
@@ -128,16 +132,19 @@ def autoplot(
         wrap=True,
         horizontalalignment='center',
         fontsize=10)
-    if os.path.isfile(basename + '.png'):
-        i = 0
-        while True:
-            if os.path.isfile(basename + str(i) + '.png'):
-                i = i + 1
-                continue
-            else:
-                basename = basename + str(i)
-                break
-    plt.savefig(basename + '.png', dpi=dpi)
+    if figdir:
+        plt.savefig(figdir + basename + '.png', dpi=dpi)
+    else:
+        if os.path.isfile(basename + '.png'):
+            i = 0
+            while True:
+                if os.path.isfile(basename + str(i) + '.png'):
+                    i = i + 1
+                    continue
+                else:
+                    basename = basename + str(i)
+                    break
+        plt.savefig(basename + '.png', dpi=dpi)
     if show:
         plt.show()
     return fig

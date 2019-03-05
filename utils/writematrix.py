@@ -11,7 +11,8 @@ old style format strings as well as redundant methods no longer required.
 import numpy as np
 import os
 
-def writematrix(myfile,mat,f='%.10e',delim=', ',blocksep='\n'):
+
+def writematrix(myfile, mat, f='%.10e', delim=', ', blocksep='\n'):
     """Write a matrix to a given file
 
     Writes a matrix to a file with a given format specifier and a delimiter.  Adds a block
@@ -38,10 +39,11 @@ def writematrix(myfile,mat,f='%.10e',delim=', ',blocksep='\n'):
     for line in mat:
         line = ['%.10e' % x for x in line]
         line = delim.join(line)
-        myfile.write(line+'\n')
+        myfile.write(line + '\n')
     myfile.write(blocksep)
-    
-def writedict(myfile,mydict,f='%.10e',delim=', ',blocksep='\n'):
+
+
+def writedict(myfile, mydict, f='%.10e', delim=', ', blocksep='\n'):
     """Write a data dictionary to a file as a matrix block
 
     Writes a given dictionary where each element is a list of numbers, i.e., each element in
@@ -70,15 +72,16 @@ def writedict(myfile,mydict,f='%.10e',delim=', ',blocksep='\n'):
 
     """
     vv = list(mydict.keys())
-    writetitle(myfile,vv,delim)
+    writetitle(myfile, vv, delim)
     mat = []
     for nn in mydict.keys():
         mat.append(mydict[nn])
     mat = np.asarray(mat)
     mat = mat.T
-    writematrix(myfile,mat,f,delim,blocksep)
+    writematrix(myfile, mat, f, delim, blocksep)
 
-def writeparnames(myfile,params,delim=', '):
+
+def writeparnames(myfile, params, delim=', '):
     """Writes fit parameter names to file
 
     Intended for writing fit parameter names given a lmfit.Parameters object to a file.
@@ -96,7 +99,8 @@ def writeparnames(myfile,params,delim=', '):
     myfile.write('#' + delim.join(params.keys()) + '\n')
     return
 
-def writeparams(myfile,params,f='%.10e',delim=', '):
+
+def writeparams(myfile, params, f='%.10e', delim=', '):
     """Writes fit parameter values to file
 
     Intended for writing fit parameter values given a lmfit.Parameters object to a file.
@@ -111,10 +115,11 @@ def writeparams(myfile,params,f='%.10e',delim=', '):
         Field delimiter (separation character)
 
     """
-    myfile.write(params_to_str(params,f,delim) + '\n')
+    myfile.write(params_to_str(params, f, delim) + '\n')
     return
 
-def params_to_str(params,f='%.10e',delim=', '):
+
+def params_to_str(params, f='%.10e', delim=', '):
     """Converts fit parameter values to a single line string
 
     Takes a lmfit.Parameters object and converts its parameter values to a single line string.
@@ -134,10 +139,11 @@ def params_to_str(params,f='%.10e',delim=', '):
         Joined string will all parameters
 
     """
-    line = [f % x for x in [params[label].value for label in params.keys()] ]
+    line = [f % x for x in [params[label].value for label in params.keys()]]
     return delim.join(line)
 
-def writedictarray(myfile,mydictarray,f='%.10e',delim=', ',blocksep='\n'):
+
+def writedictarray(myfile, mydictarray, f='%.10e', delim=', ', blocksep='\n'):
     """Writes an array of data dictionaries to a file
 
     Intended for writing a list of dictionaries containing the data columns as elements to a file.
@@ -160,13 +166,14 @@ def writedictarray(myfile,mydictarray,f='%.10e',delim=', ',blocksep='\n'):
 
     """
     vv = list(mydictarray[0].keys())
-    writetitle(myfile,vv,delim)
+    writetitle(myfile, vv, delim)
     for block in mydictarray:
-        writedict(myfile,block,f,delim,blocksep)
+        writedict(myfile, block, f, delim, blocksep)
     return
 
+
 #???
-def writeline(myfile,line,f='.10e',delim=', '):
+def writeline(myfile, line, f='.10e', delim=', '):
     """Writes a list of numbers as a single line to a file
 
     Parameters
@@ -182,13 +189,16 @@ def writeline(myfile,line,f='.10e',delim=', '):
 
     """
     for x in line[:-1]:
-        myfile.write("{:{form}}".format(x,form = f) + delim)
-    myfile.write("{:{form}}\n".format(line[-1],form = f))
+        myfile.write("{:{form}}".format(x, form=f) + delim)
+    myfile.write("{:{form}}\n".format(line[-1], form=f))
     myfile.flush()
     return
+
+
 #???
 
-def writeframe(myfile,myframe,f='%.10e',delim=', ',blocksep='\n'):
+
+def writeframe(myfile, myframe, f='%.10e', delim=', ', blocksep='\n'):
     """Write a pandas Dataframe to a file as a matrix block
 
     Writes a given pandas.DataFrame to a file.  Is analogous to :any:`writedict`
@@ -215,11 +225,13 @@ def writeframe(myfile,myframe,f='%.10e',delim=', ',blocksep='\n'):
 
     """
     vv = list(myframe)
-    writetitle(myfile,vv,delim)
+    writetitle(myfile, vv, delim)
     mat = myframe.values
-    writematrix(myfile,mat,f,delim,blocksep)
+    writematrix(myfile, mat, f, delim, blocksep)
 
-def writeframearray(myfile,myframearray,f='%.10e',delim=', ',blocksep='\n'):
+
+def writeframearray(myfile, myframearray, f='%.10e', delim=', ',
+                    blocksep='\n'):
     """Writes an array of pandas DataFrame to a file
 
     Analogous to :any:`writedictarray` but using pd.Dataframe instead of dicts.  Expects a list of
@@ -242,12 +254,13 @@ def writeframearray(myfile,myframearray,f='%.10e',delim=', ',blocksep='\n'):
 
     """
     vv = list(myframearray[0])
-    writetitle(myfile,vv,delim)
+    writetitle(myfile, vv, delim)
     for block in myframearray:
-        writeframe(myfile,block,f,delim,blocksep)
+        writeframe(myfile, block, f, delim, blocksep)
     return
 
-def writetitle(myfile,vv,delim):
+
+def writetitle(myfile, vv, delim):
     """Given a list of strings writes the file title line
 
     Does not do anything if the file already has contents.  Includes a '#' as first character for
@@ -264,6 +277,7 @@ def writetitle(myfile,vv,delim):
 
     """
     #myfile.flush()
-    if myfile.tell() == 0: #Is the file new?  If so, write title line from provided data
+    if myfile.tell(
+    ) == 0:  #Is the file new?  If so, write title line from provided data
         varline = '#' + delim.join(vv) + '\n'
         myfile.write(varline)
