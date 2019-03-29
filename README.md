@@ -26,32 +26,19 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 
 All notable changes to this project will be documented below.
 
-### [`e05e9fb`](https://github.com/steelelabgit/stlab/commit/e05e9fb8d633c56612809d57e663505cb9e11c47) - 2019-02-26
-
-#### Changes
-
-- added `**kwargs` to Keithley DMM6500
-- added `SetSweepTime` to PNA5221A 
-
-### [`a0b2d17`](https://github.com/steelelabgit/stlab/commit/a0b2d175df05ee5ab460816a65d8a8ee445e4e82) - 2019-02-25
-
-#### Changes
-
-- FSV ready for frequency sweeps, syntax modernized
-- Reference for SMB enabled
-- Reference for Rigol AWG disabled because it breaks the system. Why?
-
-### [`5ab0df2`](https://github.com/steelelabgit/stlab/commit/5ab0df2c88997ca4a513349b36b68e76b1dda514) - 2019-02-24
-
-#### Changed
-
-- added capabilities for FSV signal analyzer
-- massive cleanup of old unused code and docstrings
-
-### [`0393898`](https://github.com/steelelabgit/stlab/commit/0393898cfe9d575ff1bf3abcbba1579c4094abd7) - 2019-02-19
-
-#### Changed
-
-- Reformatting for better readability
-- Docstrings for every device
-- Major updates for Keithley DMM6500 to handle loops and capture traces
+- [`d963325`](https://github.com/steelelabgit/stlab/commit/d963325aa98c72f713589200506a5edb609c3c8c) - 2019-03-29
+  - enabled reverse sweeps for PNA5221A
+- [`e05e9fb`](https://github.com/steelelabgit/stlab/commit/e05e9fb8d633c56612809d57e663505cb9e11c47) - 2019-02-26
+  - added `**kwargs` to Keithley DMM6500
+  - added `SetSweepTime` to PNA5221A
+- [`a0b2d17`](https://github.com/steelelabgit/stlab/commit/a0b2d175df05ee5ab460816a65d8a8ee445e4e82) - 2019-02-25
+  - FSV ready for frequency sweeps, syntax modernized
+  - Reference for SMB enabled
+  - Reference for Rigol AWG disabled because it breaks the system. Why?
+- [`5ab0df2`](https://github.com/steelelabgit/stlab/commit/5ab0df2c88997ca4a513349b36b68e76b1dda514) - 2019-02-24
+  - added capabilities for FSV signal analyzer
+  - massive cleanup of old unused code and docstrings
+- [`0393898`](https://github.com/steelelabgit/stlab/commit/0393898cfe9d575ff1bf3abcbba1579c4094abd7) - 2019-02-19
+  - Reformatting for better readability
+  - Docstrings for every device
+  - Major updates for Keithley DMM6500 to handle loops and capture traces
