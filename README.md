@@ -13,15 +13,6 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 - [lmfit](https://pypi.org/project/lmfit/) (for fitting routines)
 - [pyVISA](https://pypi.org/project/PyVISA-py/) (for measurements)
 
-## TODO
-
-- `base` classes for
-  - signal analyzer
-  - Keithley DMM
-- docstrings for all devices
-- file with overview on all devices
-- update example files
-
 ## Changelog
 
 All notable changes to this project will be documented below.
