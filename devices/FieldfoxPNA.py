@@ -11,7 +11,7 @@ def numtostr(mystr):
 
 class FieldfoxPNA(basepna):
     def __init__(self,
-                 addr='TCPIP::192.168.1.151::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True,
                  mode='NA'):

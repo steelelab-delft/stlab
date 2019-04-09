@@ -6,14 +6,9 @@ to all VNAs
 """
 
 import stlab
-from stlab.devices.PNAN5221A import PNAN5221A as pnaclass
-#from stlab.devices.PNAN5222A import PNAN5222A as pnaclass
-#from stlab.devices.RS_ZND import RS_ZND_pna as pnaclass
-#from stlab.devices.FieldfoxPNA import FieldfoxPNA as pnaclass
+import matplotlib.pyplot as plt
 
-from matplotlib import pyplot as plt
-
-pna = pnaclass(addr='TCPIP::192.168.1.105::INSTR', reset=False, verb=True)
+pna = stlab.adi(addr='TCPIP::192.168.1.105::INSTR')
 
 pna.SetRange(4e9, 8e9)
 pna.SetIFBW(1000.)
@@ -42,3 +37,4 @@ for i in range(0, int((len(keys) - 1) / 3)):
     y = data[keys[3 * (i + 1)]]
     plt.plot(x, y)
 plt.show()
+plt.close()

@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Autoplot – Quick plots for measurement reference &#8212; STLab  documentation</title>
-    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -29,7 +26,7 @@
     <link rel="next" title="Metagen – Spyview metafile generation" href="metagen.html" />
     <link rel="prev" title="TLmodel – Model for transmission line resonator" href="TLmodel.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -52,10 +49,10 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="TLmodel.html"
-                        title="previous chapter">TLmodel &#8211; Model for transmission line resonator</a></p>
+                        title="previous chapter">TLmodel – Model for transmission line resonator</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="metagen.html"
-                        title="next chapter">Metagen &#8211; Spyview metafile generation</a></p>
+                        title="next chapter">Metagen – Spyview metafile generation</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -82,7 +79,7 @@
           <div class="body" role="main">
             
   <div class="section" id="module-stlab.utils.autoplotter">
-<span id="autoplot-quick-plots-for-measurement-reference"></span><h1>Autoplot &#8211; Quick plots for measurement reference<a class="headerlink" href="#module-stlab.utils.autoplotter" title="Permalink to this headline">¶</a></h1>
+<span id="autoplot-quick-plots-for-measurement-reference"></span><h1>Autoplot – Quick plots for measurement reference<a class="headerlink" href="#module-stlab.utils.autoplotter" title="Permalink to this headline">¶</a></h1>
 <p>Autoplotting measurements</p>
 <p>Function definition for simple plotting routine to be run at end of mesurement</p>
 <dl class="function">
@@ -92,30 +89,30 @@
 <p>Takes a data file handle (still open or recently closed) or a filename and plots the requested
 columns).  Saves figure as a png alongside the original data file with the same name.
 As a precaution, if an exception is raised during the execution of this function, it will be caught internally
-so as not to interrupt the caller.  It now doesn&#8217;t overwrite any previous figure.  If a figure file already exists,
+so as not to interrupt the caller.  It now doesn’t overwrite any previous figure.  If a figure file already exists,
 it creates a new file with an index.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>datafile</strong> (<em>_io.TextIOWrapper</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Data file handle (can be open or closed) or data file name for reading</li>
-<li><strong>xlab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Label for x axis data</li>
-<li><strong>ylab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Label for y axis data</li>
-<li><strong>zlab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) &#8211; Label for z axis data.  If set to none, a line plot is returned.  If set to str
+<li><strong>datafile</strong> (<em>_io.TextIOWrapper</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Data file handle (can be open or closed) or data file name for reading</li>
+<li><strong>xlab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Label for x axis data</li>
+<li><strong>ylab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Label for y axis data</li>
+<li><strong>zlab</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – Label for z axis data.  If set to none, a line plot is returned.  If set to str
 a color plot is returned</li>
-<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Text label to be included in the title</li>
-<li><strong>caption</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Comment included below figure</li>
-<li><strong>show</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Show the plot on screen (blocks execution until closed)</li>
-<li><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; dpi for matplotlib savefig function</li>
-<li><strong>pl</strong> (<em>list of str</em><em>, </em><em>optional</em>) &#8211; If provided, is an stlabmtx process list (in case processing is required on a 2d color plot).
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Text label to be included in the title</li>
+<li><strong>caption</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Comment included below figure</li>
+<li><strong>show</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Show the plot on screen (blocks execution until closed)</li>
+<li><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – dpi for matplotlib savefig function</li>
+<li><strong>pl</strong> (<em>list of str</em><em>, </em><em>optional</em>) – If provided, is an stlabmtx process list (in case processing is required on a 2d color plot).
 See <a class="reference internal" href="stlabdict.html#stlab.utils.stlabdict.stlabmtx" title="stlab.utils.stlabdict.stlabmtx"><code class="xref py py-class docutils literal"><span class="pre">stlabmtx</span></code></a> for details</li>
-<li><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Matplotlib colormap string for 2D plots. By defulat &#8216;bwr&#8217;</li>
-<li><strong>**kwargs</strong> &#8211; Other arguments to be passed to plotting function (plt.plot or plt.imshow)</li>
+<li><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Matplotlib colormap string for 2D plots. By defulat ‘bwr’</li>
+<li><strong>**kwargs</strong> – Other arguments to be passed to plotting function (plt.plot or plt.imshow)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> &#8211; Final figure that has been saved to file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> – Final figure that has been saved to file</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">matplotlib.figure.Figure</p>
@@ -152,8 +149,8 @@ See <a class="reference internal" href="stlabdict.html#stlab.utils.stlabdict.stl
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

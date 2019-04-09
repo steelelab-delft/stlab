@@ -12,7 +12,7 @@ import pandas as pd
 
 class Keysight_N9010B(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.228::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)

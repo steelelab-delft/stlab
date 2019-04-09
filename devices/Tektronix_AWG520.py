@@ -46,7 +46,7 @@ class Tektronix_AWG520(instrument):
     def __init__(self,
                  name,
                  addr='TCPIP::192.168.1.27::1234::SOCKET',
-                 reset=False,
+                 reset=True,
                  numpoints=1000,
                  awg_file_dir="D:\\AWG_sequences\\",
                  **kw):

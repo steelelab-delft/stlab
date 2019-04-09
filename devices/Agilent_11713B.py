@@ -3,8 +3,8 @@ from stlab.devices.instrument import instrument
 
 class Agilent_11713B(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.113::INSTR',
-                 reset=False,
+                 addr='TCPIP::192.168.1.216::INSTR',
+                 reset=True,
                  verb=True,
                  **kwargs):
         super().__init__(addr, reset, verb, **kwargs)

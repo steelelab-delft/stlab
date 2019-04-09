@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>S11fit – Resonance fitting routines and utilities &#8212; STLab  documentation</title>
-    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -29,7 +26,7 @@
     <link rel="next" title="TLmodel – Model for transmission line resonator" href="TLmodel.html" />
     <link rel="prev" title="Documentation for STLab" href="../index.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -55,7 +52,7 @@
                         title="previous chapter">Documentation for STLab</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="TLmodel.html"
-                        title="next chapter">TLmodel &#8211; Model for transmission line resonator</a></p>
+                        title="next chapter">TLmodel – Model for transmission line resonator</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -82,11 +79,11 @@
           <div class="body" role="main">
             
   <div class="section" id="module-stlab.utils.S11fit">
-<span id="s11fit-resonance-fitting-routines-and-utilities"></span><h1>S11fit &#8211; Resonance fitting routines and utilities<a class="headerlink" href="#module-stlab.utils.S11fit" title="Permalink to this headline">¶</a></h1>
+<span id="s11fit-resonance-fitting-routines-and-utilities"></span><h1>S11fit – Resonance fitting routines and utilities<a class="headerlink" href="#module-stlab.utils.S11fit" title="Permalink to this headline">¶</a></h1>
 <p>Module for fitting resonance line shapes to different circuit models</p>
 <p>This module contains the functions necessary to fit some general Lorentzian to
-simulations or measurements.  The main function is &#8220;fit&#8221; and is imported with
-stlab as &#8220;stlab.S11fit&#8221;.  All other functions in this module are there to
+simulations or measurements.  The main function is “fit” and is imported with
+stlab as “stlab.S11fit”.  All other functions in this module are there to
 supplement this fitting function or are not generally used.</p>
 <dl class="function">
 <dt id="stlab.utils.S11fit.S11full">
@@ -105,18 +102,18 @@ parameters for different cavity models.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>frec</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of float</em>) &#8211; Frequency values to calculate the response function at</li>
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) &#8211; Parameter values for calculation</li>
-<li><strong>ftype</strong> (<em>{'A'</em><em>,</em><em>'-A'</em><em>,</em><em>'B'</em><em>,</em><em>'-B'</em><em>,</em><em>'X'}</em><em>, </em><em>optional</em>) &#8211; <p>Model for response function selection.  These are described in Daniel&#8217;s
+<li><strong>frec</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of float</em>) – Frequency values to calculate the response function at</li>
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameter values for calculation</li>
+<li><strong>ftype</strong> (<em>{'A'</em><em>,</em><em>'-A'</em><em>,</em><em>'B'</em><em>,</em><em>'-B'</em><em>,</em><em>'X'}</em><em>, </em><em>optional</em>) – <p>Model for response function selection.  These are described in Daniel’s
 response function document.  The desired model should be found there and
 selected with this parameter.</p>
-<p>The possible models are (CHECK DANIEL&#8217;S RESPONSE FUNCTION DOCUMENT):</p>
+<p>The possible models are (CHECK DANIEL’S RESPONSE FUNCTION DOCUMENT):</p>
 <ul>
-<li>&#8216;A&#8217;: Reflection cavity with short circuit boundary condition at input port (default selection)</li>
-<li>&#8216;-A&#8217;: Reflection cavity with open circuit boundary condition at input port (= model A with a minus sign)</li>
-<li>&#8216;B&#8217;: Transmission through a side coupled geometry</li>
-<li>&#8216;-B&#8217;: Same as model B but with a minux sign</li>
-<li>&#8216;X&#8217;: Non-standard model (used in a magnetic field sweep)</li>
+<li>’A’: Reflection cavity with short circuit boundary condition at input port (default selection)</li>
+<li>’-A’: Reflection cavity with open circuit boundary condition at input port (= model A with a minus sign)</li>
+<li>’B’: Transmission through a side coupled geometry</li>
+<li>’-B’: Same as model B but with a minux sign</li>
+<li>’X’: Non-standard model (used in a magnetic field sweep)</li>
 </ul>
 </li>
 </ul>
@@ -140,16 +137,16 @@ selected with this parameter.</p>
 frequency values.  Uses parameter object from lmfit.  The background model
 is given by</p>
 <div class="math">
-<p><img src="../_images/math/c639e5e17e9a48b5204dc8f47baeabe49e436a9a.png" alt="f_b(\omega)=(a+b\omega+c\omega^2)
-\exp(j(a'+b'\omega)),"/></p>
-</div><p>where <img class="math" src="../_images/math/60461f27124855ba1fd2e055d21cfd14470bb2d8.png" alt="a,b,c,a',b'"/> are real parameters.</p>
+<p><span class="math">f_b(\omega)=(a+b\omega+c\omega^2)
+\exp(j(a'+b'\omega)),</span></p>
+</div><p>where <span class="math">a,b,c,a',b'</span> are real parameters.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of float</em>) &#8211; Frequency values to evaluate the model at</li>
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) &#8211; Parameters set with which to generate the background</li>
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of float</em>) – Frequency values to evaluate the model at</li>
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters set with which to generate the background</li>
 </ul>
 </td>
 </tr>
@@ -172,32 +169,32 @@ It fits the data in three steps.  Firstly it fits the background signal removing
 Then it fits the model times the background to the full data set keeping the background parameters fixed at the fitted values.  Finally it refits all background and
 model parameters once more starting from the previously fitted values.  The fit model is:</p>
 <div class="math">
-<p><img src="../_images/math/392f5bc65c91806badd0d46cbce87e0a10fe32f5.png" alt="\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
-\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),"/></p>
+<p><span class="math">\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
+\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),</span></p>
 </div><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>frec</strong> (<em>array_like</em>) &#8211; Array of X values (typically frequency)</li>
-<li><strong>S11</strong> (<em>array_like</em>) &#8211; Complex array of Z values (typically S11 data)</li>
-<li><strong>ftype</strong> (<em>{'A'</em><em>,</em><em>'B'</em><em>,</em><em>'-A'</em><em>,</em><em>'-B'</em><em>, </em><em>'X'}</em><em>, </em><em>optional</em>) &#8211; Fit model function (A,B,-A,-B, see S11theo for formulas)</li>
-<li><strong>fitbackground</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If &#8220;True&#8221; will attempt to fit and remove background.  If &#8220;False&#8221;, will use a constant background equal to 1 and fit only model function to data.</li>
-<li><strong>trimwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Number of linewidths around resonance (estimated pre-fit) to remove for background only fit.</li>
-<li><strong>doplots</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If &#8220;True&#8221;, shows debugging and intermediate plots</li>
-<li><strong>margin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Smoothing window to apply to signal for initial guess procedures (the fit uses unsmoothed data)</li>
-<li><strong>oldpars</strong> (<em>lmfit.Parameters</em><em>, </em><em>optional</em>) &#8211; Parameter data from previous fit (expects lmfit Parameter object). Used when &#8220;refitback&#8221; is &#8220;False&#8221; or &#8220;reusefitpars&#8221; is &#8220;True&#8221;.</li>
-<li><strong>refitback</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If set to False, does not fit the background but uses parameters provided in &#8220;oldpars&#8221;.  If set to &#8220;True&#8221;, fits background normally</li>
-<li><strong>reusefitpars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; If set to True, uses parameters provided in &#8220;oldpars&#8221; as initial guess for fit parameters in main model fit (ignored by background fit)</li>
-<li><strong>fitwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit</li>
+<li><strong>frec</strong> (<em>array_like</em>) – Array of X values (typically frequency)</li>
+<li><strong>S11</strong> (<em>array_like</em>) – Complex array of Z values (typically S11 data)</li>
+<li><strong>ftype</strong> (<em>{'A'</em><em>,</em><em>'B'</em><em>,</em><em>'-A'</em><em>,</em><em>'-B'</em><em>, </em><em>'X'}</em><em>, </em><em>optional</em>) – Fit model function (A,B,-A,-B, see S11theo for formulas)</li>
+<li><strong>fitbackground</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If “True” will attempt to fit and remove background.  If “False”, will use a constant background equal to 1 and fit only model function to data.</li>
+<li><strong>trimwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Number of linewidths around resonance (estimated pre-fit) to remove for background only fit.</li>
+<li><strong>doplots</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If “True”, shows debugging and intermediate plots</li>
+<li><strong>margin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Smoothing window to apply to signal for initial guess procedures (the fit uses unsmoothed data)</li>
+<li><strong>oldpars</strong> (<em>lmfit.Parameters</em><em>, </em><em>optional</em>) – Parameter data from previous fit (expects lmfit Parameter object). Used when “refitback” is “False” or “reusefitpars” is “True”.</li>
+<li><strong>refitback</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to False, does not fit the background but uses parameters provided in “oldpars”.  If set to “True”, fits background normally</li>
+<li><strong>reusefitpars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to True, uses parameters provided in “oldpars” as initial guess for fit parameters in main model fit (ignored by background fit)</li>
+<li><strong>fitwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) &#8211; Fitted parameter values</li>
-<li><strong>freq</strong> (<em>numpy.ndarray</em>) &#8211; Array of frequency values within the fitted range</li>
-<li><strong>S11</strong> (<em>numpy.ndarray</em>) &#8211; Array of complex signal values within the fitted range</li>
-<li><strong>finalresult</strong> (<em>lmfit.MinimizerResult</em>) &#8211; The full minimizer result object (see lmfit documentation for details)</li>
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Fitted parameter values</li>
+<li><strong>freq</strong> (<em>numpy.ndarray</em>) – Array of frequency values within the fitted range</li>
+<li><strong>S11</strong> (<em>numpy.ndarray</em>) – Array of complex signal values within the fitted range</li>
+<li><strong>finalresult</strong> (<em>lmfit.MinimizerResult</em>) – The full minimizer result object (see lmfit documentation for details)</li>
 </ul>
 </p>
 </td>
@@ -210,7 +207,7 @@ model parameters once more starting from the previously fitted values.  The fit 
 <dt id="stlab.utils.S11fit.getwidth_phase">
 <code class="descclassname">stlab.utils.S11fit.</code><code class="descname">getwidth_phase</code><span class="sig-paren">(</span><em>i0</em>, <em>vec</em>, <em>margin</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#getwidth_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.getwidth_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds indices for peak width around given maximum position</p>
-<p>Auxiliary function for fit.  Given the complex array &#8220;vec&#8221; assuming &#8220;i0&#8221;
+<p>Auxiliary function for fit.  Given the complex array “vec” assuming “i0”
 is the resonance index, this function finds resonance peak width from the
 phase derivative of the signal.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -218,9 +215,9 @@ phase derivative of the signal.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>i0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Array index of resonance</li>
-<li><strong>vec</strong> (<em>array_like of complex</em>) &#8211; Complex array with resonance data</li>
-<li><strong>margin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Smoothing margin used on data.  Needed to remove spureous increases in
+<li><strong>i0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Array index of resonance</li>
+<li><strong>vec</strong> (<em>array_like of complex</em>) – Complex array with resonance data</li>
+<li><strong>margin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Smoothing margin used on data.  Needed to remove spureous increases in
 the phase array that occur at the head and tail of vec after smoothing.
 Should be an odd number</li>
 </ul>
@@ -243,27 +240,27 @@ Should be an odd number</li>
 <p>A new lmfit.Parameters object is created using the given values.  Default
 values are filled in for ommited parameters.  The fit model is:</p>
 <div class="math">
-<p><img src="../_images/math/392f5bc65c91806badd0d46cbce87e0a10fe32f5.png" alt="\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
-\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),"/></p>
+<p><span class="math">\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
+\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),</span></p>
 </div><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Resonance frequency</li>
-<li><strong>Qint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Internal quality factor</li>
-<li><strong>Qext</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; External quality factor</li>
-<li><strong>theta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Rotation angle to compensate additive background effects.  Should be
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Resonance frequency</li>
+<li><strong>Qint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Internal quality factor</li>
+<li><strong>Qext</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – External quality factor</li>
+<li><strong>theta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Rotation angle to compensate additive background effects.  Should be
 close to 0 for good fits.</li>
-<li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Background magnitude offset</li>
-<li><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Background magnitude linear slope</li>
-<li><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Background magnitude quadratic term</li>
-<li><strong>ap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Background phase offset</li>
-<li><strong>bp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Background phase slope</li>
+<li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background magnitude offset</li>
+<li><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background magnitude linear slope</li>
+<li><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background magnitude quadratic term</li>
+<li><strong>ap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background phase offset</li>
+<li><strong>bp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background phase slope</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>params</strong> &#8211; lmfit fit object containing the provided parameters</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>params</strong> – lmfit fit object containing the provided parameters</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">lmfit.Parameters</p>
@@ -283,7 +280,7 @@ slope of the phase (desloped phase).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of complex</em>) &#8211; 1-D array of complex numbers</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of complex</em>) – 1-D array of complex numbers</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Same array as original but with phase slope removed (0 average phase
 slope)</td>
@@ -300,13 +297,13 @@ slope)</td>
 <dd><p>Makes alternating real and imaginary part array from complex array</p>
 <p>Takes an array-like object of complex number elements and generates a
 1-D array aleternating the real and imaginary part of each element of the
-original array.  If array = (z1,z2,...,zn), then this function returns
-(x1,y1,x2,y2,...,xn,yn) where xi = np.real(zi) and yi=np.imag(zi).</p>
+original array.  If array = (z1,z2,…,zn), then this function returns
+(x1,y1,x2,y2,…,xn,yn) where xi = np.real(zi) and yi=np.imag(zi).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of complex</em>) &#8211; 1-D array of complex numbers</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of complex</em>) – 1-D array of complex numbers</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">New array of alternating real and imag parts of each element of
 original array</td>
@@ -329,8 +326,8 @@ arrays</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>y</strong> (<em>x</em><em>,</em>) &#8211; Arrays to be trimmed</li>
-<li><strong>imax</strong> (<em>imin</em><em>,</em>) &#8211; Lower and upper edge of range to be removed (trimmed) from x,y</li>
+<li><strong>y</strong> (<em>x</em><em>,</em>) – Arrays to be trimmed</li>
+<li><strong>imax</strong> (<em>imin</em><em>,</em>) – Lower and upper edge of range to be removed (trimmed) from x,y</li>
 </ul>
 </td>
 </tr>
@@ -353,7 +350,7 @@ arrays</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of float</em>) &#8211; 1-D array of real numbers.  Should have an even number of elements.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of float</em>) – 1-D array of real numbers.  Should have an even number of elements.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">1-D array of complex numbers built by taking every two elements of
 original array as the real and imaginary parts</td>
@@ -391,8 +388,8 @@ original array as the real and imaginary parts</td>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

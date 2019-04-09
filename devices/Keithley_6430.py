@@ -1,7 +1,11 @@
 from stlab.devices.instrument import instrument
  
-class keithley6430(instrument):
-    def __init__(self,addr = "TCPIP::192.168.1.212::1470::SOCKET", reset = True, verb=True, read_termination='\r\n'):
+class Keithley6430(instrument):
+    def __init__(self,
+                addr='TCPIP::192.168.1.216::INSTR',
+                reset=True,
+                verb=True,
+                read_termination='\r\n'):
         #Needs \r\n line termination
         super().__init__(addr,reset,verb,read_termination = read_termination)
         self.id()

@@ -16,18 +16,16 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-
 # -- Project information -----------------------------------------------------
 
 project = 'STLab'
-copyright = '2018, Mark Jenkins'
-author = 'Mark Jenkins'
+copyright = '2019, GPL3'
+author = 'Mark Jenkins, Felix Schmidt, Mario Gely'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
 release = ''
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -44,9 +42,9 @@ extensions = [
     'sphinx.ext.imgmath',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-#    'numpydoc',
+    #    'numpydoc',
     'sphinx.ext.napoleon',
-#    'sphinx.ext.autosectionlabel',
+    #    'sphinx.ext.autosectionlabel',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -76,13 +74,12 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinxdoc' # 'sphinxdoc', 'classic'
+html_theme = 'sphinxdoc'  # 'sphinxdoc', 'classic'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -105,12 +102,10 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 
-
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Testdoc'
-
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -136,20 +131,14 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Test.tex', 'Test Documentation',
-     'Mark', 'manual'),
+    (master_doc, 'Test.tex', 'Test Documentation', 'Authors', 'manual'),
 ]
-
 
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'test', 'Test Documentation',
-     [author], 1)
-]
-
+man_pages = [(master_doc, 'test', 'Test Documentation', [author], 1)]
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -157,11 +146,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Test', 'Test Documentation',
-     author, 'Test', 'One line description of project.',
-     'Miscellaneous'),
+    (master_doc, 'Test', 'Test Documentation', author, 'Test',
+     'One line description of project.', 'Miscellaneous'),
 ]
-
 
 # -- Extension configuration -------------------------------------------------
 

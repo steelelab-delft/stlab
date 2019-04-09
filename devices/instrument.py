@@ -13,6 +13,7 @@ that allow you to already do basic functions.
 """
 import visa
 from stlab.devices.base_instrument import base_instrument
+from stlab.utils.reset_popup_warning import popup_warning
 
 
 #Try to use NI-VISA
@@ -61,7 +62,7 @@ class instrument(base_instrument):
     global_rs = None  #Static resource manager for all instruments.  rstype is '@ni' for NI backend and '@py' for pyvisa-py
     rstype = None
 
-    def __init__(self, addr, reset=False, verb=True, **kwargs):
+    def __init__(self, addr, reset=True, verb=True, **kwargs):
         """Instrument __init__ method.
 
         Sets up the instrument using pyvisa and instantiates the resource
@@ -74,7 +75,9 @@ class instrument(base_instrument):
         addr : str
             Address of the VISA instrument to be instantiated
         reset : bool, optional
-            Will call :any:`reset` on instantiation to reset instrument to default settings
+            Will call :any:`reset` on instantiation to reset instrument to default settings.
+            If set to False, the user will have to manually confirm three times that the reset is not wanted.
+            This will happen once more if the device was instantiated using :code:`stlab.adi`
         verb : bool, optional
             Print strings written to the device on screen
         **kwargs
@@ -120,7 +123,13 @@ class instrument(base_instrument):
                 addr = addr[:idx] + 'COM' + addr[idx:]
             self.dev = self.global_rs.open_resource(addr, **kwargs)
         self.verb = verb  #Whether to print commands on screen
-        if reset:
+        if not reset:
+            popup = popup_warning(self.id())
+            result = popup.run()
+            if result:
+                reset = True
+                self.reset()
+        else:
             self.reset()
         super().__init__()
 

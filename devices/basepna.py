@@ -11,7 +11,7 @@ def numtostr(mystr):
 
 
 class basepna(instrument, abc.ABC):
-    def __init__(self, addr, reset=True, verb=True):
+    def __init__(self, addr, reset, verb):
         super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None

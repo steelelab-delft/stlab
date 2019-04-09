@@ -35,7 +35,7 @@ class test_instrument(
         return self.id()
 
 
-def autodetect_instrument(addr, reset=False, verb=True, **kwargs):
+def autodetect_instrument(addr, reset=True, verb=True, **kwargs):
     """Autodetect instrument function
 
     Attempts automatically detect the desired instrument at the given address and creates

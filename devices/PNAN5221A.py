@@ -17,7 +17,7 @@ def numtostr(mystr):
 
 class PNAN5221A(basepna):
     def __init__(self,
-                 addr='TCPIP::192.168.1.105::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)

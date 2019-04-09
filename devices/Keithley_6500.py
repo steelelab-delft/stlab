@@ -15,7 +15,7 @@ def numtostr(mystr):
 
 class Keithley_6500(Keithley_2100):
     def __init__(self,
-                 addr='TCPIP::192.168.1.161::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True,
                  **kwargs):
