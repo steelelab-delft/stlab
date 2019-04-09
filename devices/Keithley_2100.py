@@ -9,7 +9,7 @@ from stlab.devices.instrument import instrument
 
 class Keithley_2100(instrument):
     def __init__(self,
-                 addr='USB0::0x05E6::0x2100::1310646::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True,
                  **kwargs):

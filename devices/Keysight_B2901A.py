@@ -9,7 +9,7 @@ def numtostr(mystr):
 
 class Keysight_B2901A(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.55::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)

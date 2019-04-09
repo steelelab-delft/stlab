@@ -39,7 +39,7 @@ class Rigol_DS1054(instrument):
 
     def __init__(self,
                  addr='TCPIP::192.168.1.236::INSTR',
-                 reset=False,
+                 reset=True,
                  verb=True):
         """Rigol_DS1054 __init__ method.
 

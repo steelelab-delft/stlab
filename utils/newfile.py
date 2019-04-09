@@ -9,6 +9,7 @@ import datetime
 import os
 import shutil
 import re
+from stlab.utils import getgitid
 
 # Creates new measurement folder using prefix + datetime + idstring.
 # If colnames (array of column names) is included, the title line is written
@@ -22,7 +23,8 @@ def newfile(prefix,
             usedate=True,
             usefolder=True,
             autoindex=False,
-            return_folder_name=False):
+            return_folder_name=False,
+            git_id=True):
     """Creates a new file for storing data.
 
     By default will create a folder (at the location of the running script) with a new file open for writing
@@ -53,6 +55,8 @@ def newfile(prefix,
         This will be incremented by 1 for each new file with the same prefix.  If no files are found with the same prefix, it creates the
         first file name <prefix>1_yy_mm_dd_HH.MM.SS_<idstring>.  Successive files will be named <prefix><idx>_yy_mm_dd_HH.MM.SS_<idstring>.
         Is False by default.
+    git_id : bool, optional
+        Boolean to query and save the git id of stlab
 
     Returns
     -------
@@ -130,6 +134,8 @@ def newfile(prefix,
     if colnames is not None:
         varline = '#' + ', '.join(colnames) + '\n'
         myfile.write(varline)
+    if git_id:
+        getgitid.get_gitid(myfile)
     if return_folder_name:
         return myfile, fullfoldername
     else:

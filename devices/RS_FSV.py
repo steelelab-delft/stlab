@@ -20,8 +20,8 @@ def num2str(num):
 # Potential issues: some of the frequency commands require units, so 'Hz' might need to be added in some places
 class RS_FSV(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.105::INSTR',
-                 reset=False,
+                 addr='TCPIP::192.168.1.216::INSTR',
+                 reset=True,
                  verb=True):
         super(RS_FSV, self).__init__(addr, reset, verb)
 
@@ -70,7 +70,7 @@ class RS_FSV(instrument):
         return float(x)
     """
 
-    def SetSweepTime(self,tt):
+    def SetSweepTime(self, tt):
         self.write('SWE:TIME {}'.format(tt))
 
     def GetSweepTime(self):
@@ -88,10 +88,29 @@ class RS_FSV(instrument):
 
     def SetPoints(self, npoints):
         self.write('SWE:POIN {}'.format(npoints))
-    
+
     def GetPoints(self):
         npts = self.query('SWE:POIN?')
         return float(npts)
+
+    def SetInputAtt(self, att=10):
+        self.write('INP:ATT {} dB'.format(att))
+
+    def GetInputAtt(self):
+        inputatt = self.query('INP:ATT?')
+        return float(inputatt)
+
+    def SetTraceAverageOn(self, ch=1):
+        self.write('DISP:TRAC{}:MODE AVER'.format(ch))
+
+    def SetTraceAverageOff(self, ch=1):
+        self.write('DISP:TRAC{}:MODE WRIT'.format(ch))
+
+    def SetTraceOn(self, ch=1):
+        self.write('DISP:TRAC{} ON'.format(ch))
+
+    def SetTraceOff(self, ch=1):
+        self.write('DISP:TRAC{} OFF'.format(ch))
 
     def SetAveragesType(self, avgtype):
         # VIDeo, LINear, POWer
@@ -107,7 +126,7 @@ class RS_FSV(instrument):
     def GetAverages(self):
         navg = self.query('AVER:COUNT?')
         return float(navg)
-        
+
     def SetContinuous(self, state=True):
         if state:
             self.write('INIT:CONT ON')
@@ -120,31 +139,87 @@ class RS_FSV(instrument):
         change the instrument mode to one of the following:
         SAN (signal analyzer), IQ, ADEMOD (amplitude demodulation), NOIS (noise), PNO (phase noise)
         """
-
         self.write('INST:SEL ' + mode)
         return
+
+    def GetMode(self):
+        aw = self.query('INST:SEL?')
+        return aw.strip('\n')
 
     def SetReference(self, ref='INT'):
         # INT, EXT, EAUT
         self.write('ROSC:SOUR ' + ref)
         return
 
+    def GetUnit(self):
+        self.units = {
+            'DBM': 'dBm',
+            'V': 'V',
+            'A': 'A',
+            'W': 'W',
+            'DBPW': 'dBpW',
+            'WATT': 'W',
+            'DBUV': 'dBuV',
+            'DBMV': 'dBmV',
+            'VOLT': 'V',
+            'DBUA': 'dBuA',
+            'AMP': 'A'
+        }
+        aw = self.query('CALC:UNIT:POW?')
+        aw = aw.strip('\n')
+        return self.units[aw]
+
     def MeasureScreen(self, ch=1):
-        self.SetContinuous(False)
-        self.write('INIT')
-        # sleep for averaging time, otherwise timeout
-        navg = self.GetAverages()
-        tt = self.GetSweepTime()
-        time.sleep(navg*tt)
-        xvals = self.query('TRAC:DATA:X? TRACE{}'.format(ch))
-        yvals = self.query('TRAC? TRACE{}'.format(ch))
-        xvals = np.array([float (x) for x in xvals.split(',')])
-        yvals = np.array([float (x) for x in yvals.split(',')])
-        output = pd.DataFrame()
-        output['Frequency (Hz)'] = xvals
-        output['PSD (dBm)'] = yvals
-        output['Res BW (Hz)'] = self.GetResolutionBW()
-        return output
+        measmode = self.GetMode()
+        yunit = self.GetUnit()
+        if measmode == 'SAN':
+            self.SetContinuous(False)
+            self.write('INIT')
+            # sleep for averaging time, otherwise timeout
+            navg = self.GetAverages()
+            tt = self.GetSweepTime()
+            time.sleep(navg * tt)
+            xvals = self.query('TRAC:DATA:X? TRACE{}'.format(ch))
+            yvals = self.query('TRAC? TRACE{}'.format(ch))
+            xvals = np.array([float(x) for x in xvals.split(',')])
+            yvals = np.array([float(x) for x in yvals.split(',')])
+            output = pd.DataFrame()
+            output['Frequency (Hz)'] = xvals
+            output['Spectrum (' + yunit + ')'] = yvals
+            return output
+        else:
+            return KeyError('Instrument mode unknown!')
+
+    def MarkerOff(self, mk='all'):
+        if mk == 'all':
+            self.write('CALC:MARK:AOFF')
+        else:
+            for m in mk:
+                self.write('CALC:MARK{} OFF'.format(m))
+
+    def MarkerOn(self, mk):
+        for m in mk:
+            self.write('CALC:MARK{} ON'.format(m))
+
+    def SetMarkerFreq(self, mk, freq):
+        for m, f in zip(mk, freq):
+            self.write('CALC:MARK{}:X {}Hz'.format(m, f))
+
+    def GetMarkerAmpt(self, mk):
+        aw = float(self.query('CALC:MARK{}:Y?'.format(mk)))
+        return aw
+
+    def GetMarkerNoise(self, mk):
+        self.write('CALC:MARK{}:FUNC:NOIS ON'.format(mk))
+        aw = float(self.query('CALC:MARK{}:FUNC:NOIS:RES?'.format(mk)))
+        return aw
+
+    def GetMarkerBandPowerDensity(self, mk, bw):
+        self.write('CALC:MARK{}:FUNC:BPOW:STAT ON'.format(mk))
+        self.write('CALC:MARK{}:FUNC:BPOW:MODE DENS'.format(mk))
+        self.write('CALC:MARK{}:FUNC:BPOW:SPAN {}Hz'.format(mk, bw))
+        aw = float(self.query('CALC:MARK{}:FUNC:BPOW:RES?').format(mk))
+        return aw
 
     def DisplayOn(self):
         self.write('SYST:DISP:UPD ON')

@@ -15,7 +15,7 @@ def numtostr(mystr):
 
 class Rigol_DG1022(instrument):
     def __init__(self,
-                 addr='USB0::0x1AB1::0x0588::DG1D124204588::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb, query_delay=100e-3)
