@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>stlab.utils.S11fit &#8212; STLab  documentation</title>
-    
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
@@ -27,7 +24,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -684,7 +681,7 @@
 
 <span class="c1">#calculate final background and remove background from original data</span>
     <span class="n">complexresidual</span> <span class="o">=</span> <span class="n">un_realimag</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">residual</span><span class="p">)</span>
-    <span class="n">backgroundfit</span> <span class="o">=</span> <span class="n">backsig</span> <span class="o">+</span> <span class="n">complexresidual</span>
+    <span class="c1"># backgroundfit = backsig + complexresidual</span>
     <span class="n">fullbackground</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">backmodel</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">frec</span><span class="p">])</span>
     <span class="n">S11corr</span> <span class="o">=</span> <span class="o">-</span><span class="n">S11</span> <span class="o">/</span> <span class="n">fullbackground</span>
     <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-A&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-B&#39;</span><span class="p">:</span>
@@ -818,7 +815,7 @@
 <span class="c1">#calculate final result and background</span>
     <span class="n">complexresidual</span> <span class="o">=</span> <span class="n">un_realimag</span><span class="p">(</span><span class="n">finalresult</span><span class="o">.</span><span class="n">residual</span><span class="p">)</span>
     <span class="n">finalfit</span> <span class="o">=</span> <span class="n">S11</span> <span class="o">+</span> <span class="n">complexresidual</span>
-    <span class="n">newbackground</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">backmodel</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">finalresult</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">frec</span><span class="p">])</span>
+    <span class="c1"># newbackground = np.array([backmodel(xx,finalresult.params) for xx in frec])</span>
 
     <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Final signal and fit (Re,Im)&#39;</span><span class="p">)</span>
@@ -839,7 +836,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">finalfit</span><span class="p">))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-    <span class="n">chi2</span> <span class="o">=</span> <span class="n">finalresult</span><span class="o">.</span><span class="n">chisqr</span>
+    <span class="c1"># chi2 = finalresult.chisqr</span>
 
 
     <span class="k">return</span> <span class="n">params</span><span class="p">,</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="p">,</span><span class="n">finalresult</span></div>
@@ -952,8 +949,8 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

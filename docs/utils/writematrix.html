@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>writematrix – Data file writing methods &#8212; STLab  documentation</title>
-    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -29,7 +26,7 @@
     <link rel="next" title="Overview of all electronic devices" href="../drivers/devices.html" />
     <link rel="prev" title="stlabdict – Data structures and matrices" href="stlabdict.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -52,7 +49,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="stlabdict.html"
-                        title="previous chapter">stlabdict &#8211; Data structures and matrices</a></p>
+                        title="previous chapter">stlabdict – Data structures and matrices</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../drivers/devices.html"
                         title="next chapter">Overview of all electronic devices</a></p>
@@ -82,12 +79,12 @@
           <div class="body" role="main">
             
   <div class="section" id="module-stlab.utils.writematrix">
-<span id="writematrix-data-file-writing-methods"></span><h1>writematrix &#8211; Data file writing methods<a class="headerlink" href="#module-stlab.utils.writematrix" title="Permalink to this headline">¶</a></h1>
+<span id="writematrix-data-file-writing-methods"></span><h1>writematrix – Data file writing methods<a class="headerlink" href="#module-stlab.utils.writematrix" title="Permalink to this headline">¶</a></h1>
 <p>Module with data writing function definitions</p>
 <p>This module includes several functions used in writing data to files in a
 well defined way.  While you are free to write data to a file in any way you want,
 it is preferable to try to keep a lab wide standard by using these methods.</p>
-<p>The module was written early on and could probably do with some cleanup...  Specifically
+<p>The module was written early on and could probably do with some cleanup…  Specifically
 old style format strings as well as redundant methods no longer required.</p>
 <dl class="function">
 <dt id="stlab.utils.writematrix.params_to_str">
@@ -99,9 +96,9 @@ old style format strings as well as redundant methods no longer required.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) &#8211; Parameters object input from fit</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
 </ul>
 </td>
 </tr>
@@ -131,11 +128,11 @@ to the file.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>mydict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) &#8211; Dict containing the data.  Each element should be a data column.</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Characters to write at the end of the matrix.  This is generally a single newline to
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>mydict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dict containing the data.  Each element should be a data column.</li>
+<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
 separate blocks of data.</li>
 </ul>
 </td>
@@ -156,11 +153,11 @@ title line (derived from the first dictionarly key values) if the file is new.</
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>mydictarray</strong> (<em>list of dict</em>) &#8211; List containing the Dicts to be written.</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Characters to write at the end of the matrix.  This is generally a single newline to
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>mydictarray</strong> (<em>list of dict</em>) – List containing the Dicts to be written.</li>
+<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
 separate blocks of data.</li>
 </ul>
 </td>
@@ -183,11 +180,11 @@ dataframe column indexes to write the title line.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>mydict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) &#8211; Dict containing the data.  Each element should be a data column.</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Characters to write at the end of the matrix.  This is generally a single newline to
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>mydict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dict containing the data.  Each element should be a data column.</li>
+<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
 separate blocks of data.</li>
 </ul>
 </td>
@@ -208,11 +205,11 @@ new.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>mydictarray</strong> (<em>list of dict</em>) &#8211; List containing the Dicts to be written.</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Characters to write at the end of the matrix.  This is generally a single newline to
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>mydictarray</strong> (<em>list of dict</em>) – List containing the Dicts to be written.</li>
+<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
 separate blocks of data.</li>
 </ul>
 </td>
@@ -230,10 +227,10 @@ separate blocks of data.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>line</strong> (<em>list of float</em>) &#8211; List containing the numbers to be written</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Format specifier for the data (new style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>line</strong> (<em>list of float</em>) – List containing the numbers to be written</li>
+<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (new style).</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
 </ul>
 </td>
 </tr>
@@ -254,11 +251,11 @@ np.savetxt requires the file to be open in binary write mode.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>mat</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><em>np.array</em>) &#8211; List containing the lines of data to be written as lists (a matrix or list of lists).</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Characters to write at the end of the matrix.  This is generally a single newline to
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>mat</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><em>np.array</em>) – List containing the lines of data to be written as lists (a matrix or list of lists).</li>
+<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
 separate blocks of data.</li>
 </ul>
 </td>
@@ -277,9 +274,9 @@ separate blocks of data.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) &#8211; Parameters object input from fit</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
 </ul>
 </td>
 </tr>
@@ -297,9 +294,9 @@ separate blocks of data.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) &#8211; Parameters object input from fit</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
 </ul>
 </td>
 </tr>
@@ -311,16 +308,16 @@ separate blocks of data.</li>
 <dt id="stlab.utils.writematrix.writetitle">
 <code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writetitle</code><span class="sig-paren">(</span><em>myfile</em>, <em>vv</em>, <em>delim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writetitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writetitle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of strings writes the file title line</p>
-<p>Does not do anything if the file already has contents.  Includes a &#8216;#&#8217; as first character for
+<p>Does not do anything if the file already has contents.  Includes a ‘#’ as first character for
 gnuplot.  Is used by <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a> and <a class="reference internal" href="#stlab.utils.writematrix.writeframe" title="stlab.utils.writematrix.writeframe"><code class="xref any py py-func docutils literal"><span class="pre">writeframe</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) &#8211; Open file handle for writing</li>
-<li><strong>vv</strong> (<em>list of str</em>) &#8211; List of column titles</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Field delimiter (separation character)</li>
+<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
+<li><strong>vv</strong> (<em>list of str</em>) – List of column titles</li>
+<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
 </ul>
 </td>
 </tr>
@@ -355,8 +352,8 @@ gnuplot.  Is used by <a class="reference internal" href="#stlab.utils.writematri
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

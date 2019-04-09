@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Temperature servers and Daemons for BlueFors and He7 fridges &#8212; STLab  documentation</title>
-    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -28,7 +25,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="The instrument class" href="instrument.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -49,7 +46,7 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Temperature servers and Daemons for BlueFors and He7 fridges</a><ul>
-<li><a class="reference internal" href="#mysocket-py-basic-tcp-socket">MySocket.py &#8211; Basic TCP socket</a></li>
+<li><a class="reference internal" href="#mysocket-py-basic-tcp-socket">MySocket.py – Basic TCP socket</a></li>
 <li><a class="reference internal" href="#bfdaemon-py">BFDaemon.py</a></li>
 <li><a class="reference internal" href="#bfwrapper-py">BFWrapper.py</a></li>
 <li><a class="reference internal" href="#he7daemon-py">He7Daemon.py</a></li>
@@ -106,7 +103,7 @@ have to be halted when these scripts are running.</p>
 communication with the controller.  This has the advantage of being able to keep the standard logging provided running while
 still being able to access the temperatures.  However, no temperature control is available.</p>
 <div class="section" id="mysocket-py-basic-tcp-socket">
-<h2>MySocket.py &#8211; Basic TCP socket<a class="headerlink" href="#mysocket-py-basic-tcp-socket" title="Permalink to this headline">¶</a></h2>
+<h2>MySocket.py – Basic TCP socket<a class="headerlink" href="#mysocket-py-basic-tcp-socket" title="Permalink to this headline">¶</a></h2>
 <p>This is the basic TCP socket used for the implementation of the temperature servers</p>
 <span class="target" id="module-stlab.utils.MySocket"></span><p>Basic socket implementation to communicate with temperature servers</p>
 <p>Simple implementation of a python TCP socket.  Basically copied from some
@@ -128,10 +125,10 @@ servers (Triton, BF, He7)</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>sock</strong> (<a class="reference external" href="https://docs.python.org/3/library/socket.html#socket.socket" title="(in Python v3.7)"><em>socket.socket</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) &#8211; If a socket has already be created it may be passed here.  If None
+<li><strong>sock</strong> (<a class="reference external" href="https://docs.python.org/3/library/socket.html#socket.socket" title="(in Python v3.7)"><em>socket.socket</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><em>optional</em>) – If a socket has already be created it may be passed here.  If None
 then a new socket is created.</li>
-<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Enables or disables priting of debugging strings</li>
-<li><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Timeout for socket communication.  Used to avoid scripts hanging
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Enables or disables priting of debugging strings</li>
+<li><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Timeout for socket communication.  Used to avoid scripts hanging
 indefinitely waiting for a response.</li>
 </ul>
 </td>
@@ -150,8 +147,8 @@ indefinitely waiting for a response.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; IP address of host</li>
-<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; TCP port to use</li>
+<li><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – IP address of host</li>
+<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – TCP port to use</li>
 </ul>
 </td>
 </tr>
@@ -180,12 +177,12 @@ indefinitely waiting for a response.</li>
 <dt id="stlab.utils.MySocket.MySocket.mysend">
 <code class="descname">mysend</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.mysend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.mysend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a message to the connected port</p>
-<p>Sends given message to the connected port.  Sends &#8216;#EOT&#8217; to end transmission</p>
+<p>Sends given message to the connected port.  Sends ‘#EOT’ to end transmission</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Message to be sent</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Message to be sent</td>
 </tr>
 </tbody>
 </table>
@@ -297,7 +294,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Temperature channel to read</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Temperature channel to read</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Temperature of channel i</td>
 </tr>
@@ -316,7 +313,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; True turns on autorange, False disables autoranging</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – True turns on autorange, False disables autoranging</td>
 </tr>
 </tbody>
 </table>
@@ -331,7 +328,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; <p>Integer that determines the desired control mode.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – <p>Integer that determines the desired control mode.
 Possible values are:</p>
 <ul class="simple">
 <li>1 - Closed PID loop</li>
@@ -355,8 +352,8 @@ Possible values are:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Temperature channel to set</li>
-<li><strong>state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; True to enable channel, False to disable</li>
+<li><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Temperature channel to set</li>
+<li><strong>state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – True to enable channel, False to disable</li>
 </ul>
 </td>
 </tr>
@@ -377,7 +374,7 @@ accidentally setting the range to maximum).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Maximum desired value of the heater current in mA.  Will be rounded up to the nearest available setting.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Maximum desired value of the heater current in mA.  Will be rounded up to the nearest available setting.
 If range &gt; 31.6 mA, the range setting will not be applied and a warning will be shown.</td>
 </tr>
 </tbody>
@@ -395,7 +392,7 @@ this percentage</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Percentage of current range to apply to heater</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Percentage of current range to apply to heater</td>
 </tr>
 </tbody>
 </table>
@@ -410,7 +407,7 @@ this percentage</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Desired temperature setpoint in K</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired temperature setpoint in K</td>
 </tr>
 </tbody>
 </table>
@@ -427,8 +424,8 @@ desired PID value.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Set ramping to True or False</li>
-<li><strong>rate</strong> (<em>flaot</em><em>, </em><em>optional</em>) &#8211; The desired ramp rate in K/min</li>
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Set ramping to True or False</li>
+<li><strong>rate</strong> (<em>flaot</em><em>, </em><em>optional</em>) – The desired ramp rate in K/min</li>
 </ul>
 </td>
 </tr>
@@ -451,10 +448,10 @@ There is also a global timeout to avoid possible infinite waiting times.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Channel to monitor for stability. 6 by default (BF mixing chamber sensor)</li>
-<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Absolute temperature tolerance in K.  0.001 K by default</li>
-<li><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Global timeout.  The method will exit with a warning if this time is exceeded</li>
-<li><strong>tsettle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Settling time after reaching tolerance.  This timer is reset if the temperature
+<li><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Channel to monitor for stability. 6 by default (BF mixing chamber sensor)</li>
+<li><strong>tol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Absolute temperature tolerance in K.  0.001 K by default</li>
+<li><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Global timeout.  The method will exit with a warning if this time is exceeded</li>
+<li><strong>tsettle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Settling time after reaching tolerance.  This timer is reset if the temperature
 leaves the tolerance window and restarted when the temperature is again within
 tolerance.</li>
 </ul>
@@ -474,11 +471,11 @@ tolerance.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; IP address of the server.  Has a default value</li>
-<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; TCP port of the server.  8472 by default</li>
-<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Does nothing</li>
-<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Enables or disables printing of status strings</li>
-<li><strong>**kwargs</strong> &#8211; No function</li>
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – IP address of the server.  Has a default value</li>
+<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – TCP port of the server.  8472 by default</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Does nothing</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Enables or disables printing of status strings</li>
+<li><strong>**kwargs</strong> – No function</li>
 </ul>
 </td>
 </tr>
@@ -495,9 +492,9 @@ tolerance.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; VISA string to send</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – VISA string to send</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> &#8211; Response from server (Lakeshore)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> – Response from server (Lakeshore)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
 </tr>
@@ -515,7 +512,7 @@ but any reply is discarded.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; VISA string to write</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – VISA string to write</td>
 </tr>
 </tbody>
 </table>
@@ -576,7 +573,7 @@ time a temperature is received.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>temperature</strong> &#8211; The last logged He3 head temperature</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>temperature</strong> – The last logged He3 head temperature</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
 </tr>
@@ -594,11 +591,11 @@ time a temperature is received.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; IP address of the server.  Has a default value</li>
-<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; TCP port of the server.  8472 by default</li>
-<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Does nothing</li>
-<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Enables or disables printing of status strings</li>
-<li><strong>**kwargs</strong> &#8211; No function</li>
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – IP address of the server.  Has a default value</li>
+<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – TCP port of the server.  8472 by default</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Does nothing</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Enables or disables printing of status strings</li>
+<li><strong>**kwargs</strong> – No function</li>
 </ul>
 </td>
 </tr>
@@ -614,7 +611,7 @@ time a temperature is received.</p>
 <p>File location: <code class="code docutils literal"><span class="pre">stlab/devices/TritonDaemon/TritonDaemon.py</span></code></p>
 <span class="target" id="module-stlab.devices.TritonDaemon.TritonDaemon"></span><p>Triton Daemon - Communication server for Oxford Triton system</p>
 <p>The Triton fridge already has communication capacity to directly control and read both the temperatures and other elements
-of the fridge (pressure sensors, valves, compressor, ...).  However, the Triton logging uses binary format files that can
+of the fridge (pressure sensors, valves, compressor, …).  However, the Triton logging uses binary format files that can
 only be opened in their (very flaky) propriety program.  This Daemon acts as an intermediary between the Triton system and
 the measurement computer, allowing the measurement computer to send commands to the system while it maintains an ASCII log
 of the system parameters.  These logfiles can then be opened using cryoLogger.  Note that the binary logs are still
@@ -655,12 +652,12 @@ only the query method is used.</p>
 <dt id="stlab.devices.TritonWrapper.TritonWrapper.GetPTC">
 <code class="descname">GetPTC</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.GetPTC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.GetPTC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get compressor status string</p>
-<p>Returns compressor values in order WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS (whatever the abbreviations mean...)</p>
+<p>Returns compressor values in order WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS (whatever the abbreviations mean…)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> &#8211; Array containing current values of compressor and pulse tube parameters [WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS]</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> – Array containing current values of compressor and pulse tube parameters [WIN, WOT, OILT, HT, HLP, HHP, MCUR, HRS]</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of float</td>
 </tr>
@@ -677,7 +674,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Index of the requested pressure sensor</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of the requested pressure sensor</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Pressure in mbar.  -1 if invalid sensor specified.  <code class="code docutils literal"><span class="pre">getpressure</span></code> also works</td>
 </tr>
@@ -696,7 +693,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Index of the requested pressure sensor</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of the requested pressure sensor</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Temperature in K.  -1 if invalid sensor specified</td>
 </tr>
@@ -710,12 +707,12 @@ only the query method is used.</p>
 <dt id="stlab.devices.TritonWrapper.TritonWrapper.GetTurbo">
 <code class="descname">GetTurbo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/TritonWrapper.html#TritonWrapper.GetTurbo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.TritonWrapper.TritonWrapper.GetTurbo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get turbo status string</p>
-<p>Returns turbo values in order Power, Speed, PST, MT, BT, PBT, ET (temperatures... whatever they mean...)</p>
+<p>Returns turbo values in order Power, Speed, PST, MT, BT, PBT, ET (temperatures… whatever they mean…)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> &#8211; Array containing current values of Turbo parameters [Power, Speed, PST, MT, BT, PBT, ET]</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> – Array containing current values of Turbo parameters [Power, Speed, PST, MT, BT, PBT, ET]</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of float</td>
 </tr>
@@ -733,8 +730,8 @@ only the query method is used.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Index of temperature sensor</li>
-<li><strong>state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; True enables the sensor and False disables it</li>
+<li><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of temperature sensor</li>
+<li><strong>state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – True enables the sensor and False disables it</li>
 </ul>
 </td>
 </tr>
@@ -751,7 +748,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Desired range value (in mA).</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired range value (in mA).</td>
 </tr>
 </tbody>
 </table>
@@ -766,7 +763,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Desired heater power</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired heater power</td>
 </tr>
 </tbody>
 </table>
@@ -780,7 +777,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; True enables the PID loop, False disables it</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – True enables the PID loop, False disables it</td>
 </tr>
 </tbody>
 </table>
@@ -795,7 +792,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; New temperature setpoint</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – New temperature setpoint</td>
 </tr>
 </tbody>
 </table>
@@ -824,7 +821,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Desired heater power</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired heater power</td>
 </tr>
 </tbody>
 </table>
@@ -839,7 +836,7 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; True enables debugging strings, False disables them.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – True enables debugging strings, False disables them.</td>
 </tr>
 </tbody>
 </table>
@@ -855,11 +852,11 @@ only the query method is used.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; IP address of the system running the Daemon (192.168.1.178) by default</li>
-<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; TCP port the server is listening on (8472 by default)</li>
-<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; No function</li>
-<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Print debugging strings</li>
-<li><strong>**kwargs</strong> &#8211; No function</li>
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – IP address of the system running the Daemon (192.168.1.178) by default</li>
+<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – TCP port the server is listening on (8472 by default)</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – No function</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Print debugging strings</li>
+<li><strong>**kwargs</strong> – No function</li>
 </ul>
 </td>
 </tr>
@@ -876,9 +873,9 @@ only the query method is used.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; VISA string to send</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mystr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – VISA string to send</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> &#8211; Response from server (Triton)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> – Response from server (Triton)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
 </tr>
@@ -897,7 +894,7 @@ in fact submitted as queries and the reply simply discarded.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> &#8211; Response from server (Triton)</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>word</strong> – Response from server (Triton)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></td>
 </tr>
@@ -932,8 +929,8 @@ in fact submitted as queries and the reply simply discarded.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

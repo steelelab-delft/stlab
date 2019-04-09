@@ -1,16 +1,13 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Overview of all electronic devices &#8212; STLab  documentation</title>
-    
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -29,7 +26,7 @@
     <link rel="next" title="The instrument class" href="instrument.html" />
     <link rel="prev" title="writematrix – Data file writing methods" href="../utils/writematrix.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -60,7 +57,7 @@
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="../utils/writematrix.html"
-                        title="previous chapter">writematrix &#8211; Data file writing methods</a></p>
+                        title="previous chapter">writematrix – Data file writing methods</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="instrument.html"
                         title="next chapter">The instrument class</a></p>
@@ -109,7 +106,7 @@ The module has been tested with a DS1054Z, but should also work with the entire
 MSO1000Z/DS1000Z series.</p>
 <dl class="class">
 <dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054">
-<em class="property">class </em><code class="descclassname">stlab.devices.Rigol_DS1054.</code><code class="descname">Rigol_DS1054</code><span class="sig-paren">(</span><em>addr='TCPIP::192.168.1.236::INSTR'</em>, <em>reset=False</em>, <em>verb=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">stlab.devices.Rigol_DS1054.</code><code class="descname">Rigol_DS1054</code><span class="sig-paren">(</span><em>addr='TCPIP::192.168.1.236::INSTR'</em>, <em>reset=True</em>, <em>verb=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to read and control a Rigol DS1054 scope</p>
 <p>Connection is done via Ethernet preferably.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -117,9 +114,9 @@ MSO1000Z/DS1000Z series.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; IP address of the device.  Has a default value</li>
-<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Does nothing</li>
-<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Enables or disables printing of status strings</li>
+<li><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – IP address of the device.  Has a default value</li>
+<li><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Does nothing</li>
+<li><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Enables or disables printing of status strings</li>
 </ul>
 </td>
 </tr>
@@ -160,7 +157,7 @@ a significant amount of data because the precision is range/1200</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Channel to be read out</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Channel to be read out</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Numpy arrays of time and voltage values.</td>
 </tr>
@@ -183,8 +180,8 @@ takes about 31 seconds.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Channel to be read out</li>
-<li><strong>mdep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Memory depth [6e3|6e4|6e5|6e6]</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Channel to be read out</li>
+<li><strong>mdep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Memory depth [6e3|6e4|6e5|6e6]</li>
 </ul>
 </td>
 </tr>
@@ -206,7 +203,7 @@ takes about 31 seconds.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mdep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Memory depth (6e3,6e4,6e5,6e6)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mdep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Memory depth (6e3,6e4,6e5,6e6)</td>
 </tr>
 </tbody>
 </table>
@@ -220,7 +217,7 @@ takes about 31 seconds.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>npoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; number of points</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>npoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – number of points</td>
 </tr>
 </tbody>
 </table>
@@ -234,7 +231,7 @@ takes about 31 seconds.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>scal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; time scale</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>scal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – time scale</td>
 </tr>
 </tbody>
 </table>
@@ -249,8 +246,8 @@ takes about 31 seconds.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>rang</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; voltage range</li>
-<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Channel number, 1 (default), 2, 3 or 4</li>
+<li><strong>rang</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – voltage range</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Channel number, 1 (default), 2, 3 or 4</li>
 </ul>
 </td>
 </tr>
@@ -267,8 +264,8 @@ takes about 31 seconds.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>scal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; voltage scale</li>
-<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Channel number, 1 (default), 2, 3 or 4</li>
+<li><strong>scal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – voltage scale</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Channel number, 1 (default), 2, 3 or 4</li>
 </ul>
 </td>
 </tr>
@@ -278,7 +275,7 @@ takes about 31 seconds.</p>
 
 <dl class="method">
 <dt id="stlab.devices.Rigol_DS1054.Rigol_DS1054.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>addr='TCPIP::192.168.1.236::INSTR'</em>, <em>reset=False</em>, <em>verb=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>addr='TCPIP::192.168.1.236::INSTR'</em>, <em>reset=True</em>, <em>verb=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/devices/Rigol_DS1054.html#Rigol_DS1054.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.devices.Rigol_DS1054.Rigol_DS1054.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rigol_DS1054 __init__ method.</p>
 <p>Sets up the connection</p>
 </dd></dl>
@@ -313,8 +310,8 @@ takes about 31 seconds.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
