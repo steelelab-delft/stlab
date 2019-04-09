@@ -4,7 +4,7 @@ Environment for measurement and analysis scripts developed in the [SteeleLab at 
 
 The documentation can be found [here](http://nsweb.tn.tudelft.nl/~steelelab/stlab/).
 
-Due to regular changes of the code (`stlab` is work in progress), it is recommended to `git clone` this repository to your local working directory and add a link to the `PYTHONPATH` instead of directly placing it in `/site-packages`.
+Due to regular changes of the code (`stlab` is work in progress), it is recommended to `git clone` this repository to your local working directory (preferably `C:\libs\stlab` on windows) and add a link to the `PYTHONPATH` instead of directly placing it in `/site-packages`.
 
 ## Requirements
 
@@ -17,7 +17,7 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 
 All notable changes to this project will be documented below.
 
- - [`74891f7`](https://github.com/steelelabgit/stlab/commit/74891f7e12057a18cd64b9e88492cf197438cc45) - 2019-04-09
+- [`74891f7`](https://github.com/steelelabgit/stlab/commit/74891f7e12057a18cd64b9e88492cf197438cc45) - 2019-04-09
   - pop-up windows when not resetting instrument
   - automatic recording of stlab git version
 - [`d963325`](https://github.com/steelelabgit/stlab/commit/d963325aa98c72f713589200506a5edb609c3c8c) - 2019-03-29
