@@ -17,6 +17,9 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 
 All notable changes to this project will be documented below.
 
+ - [`74891f7`](https://github.com/steelelabgit/stlab/commit/74891f7e12057a18cd64b9e88492cf197438cc45) - 2019-04-09
+  - pop-up windows when not resetting instrument
+  - automatic recording of stlab git version
 - [`d963325`](https://github.com/steelelabgit/stlab/commit/d963325aa98c72f713589200506a5edb609c3c8c) - 2019-03-29
   - enabled reverse sweeps for PNA5221A
 - [`e05e9fb`](https://github.com/steelelabgit/stlab/commit/e05e9fb8d633c56612809d57e663505cb9e11c47) - 2019-02-26
