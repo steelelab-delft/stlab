@@ -56,3 +56,5 @@ class Keysight_N5183B(instrument):
 
     def getReferenceOscillator(self):
         return rf_source.query('ROSC:SOUR?')
+        
+    
