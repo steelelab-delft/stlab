@@ -1,7 +1,7 @@
 """Module for generation of spyview metafiles
 
 Spyview typically requires an additional metafile to correctly label the axes and labels
-of a dataset.  The meta file structure is detailed at 
+of a dataset.  The meta file structure is detailed at
 `Spyview <http://nsweb.tn.tudelft.nl/~gsteele/spyview/>`_.
 
 Given a dataset, the metafile contains the x,y axis start, end and number of points as well
