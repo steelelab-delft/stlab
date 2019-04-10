@@ -9,7 +9,6 @@ import time
 from email.message import EmailMessage
 
 
-
 # lrralxerojjirmpq   (app pass)
 
 #LOGFOLDER = 'C:\\Entropy\\logs\\'
