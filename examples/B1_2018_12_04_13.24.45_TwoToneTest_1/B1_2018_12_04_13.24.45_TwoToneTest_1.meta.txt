@@ -1,0 +1,27 @@
+#Inner loop, X
+201
+5100000000.0
+5300000000.0
+Frequency (Hz)
+#Outer loop, Y
+1
+1
+0
+Nothing
+#No loop, Z
+1
+0
+1
+Nothing
+#Column labels
+1
+Frequency (Hz)
+2
+CH2_S21_S1re ()
+3
+CH2_S21_S1im ()
+4
+CH2_S21_S1dB (dB)
+5
+CH2_S21_S1Ph (rad)
+
