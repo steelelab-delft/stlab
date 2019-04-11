@@ -7,7 +7,7 @@ from stlab.devices.instrument import instrument
 from stlab.utils.stlabdict import stlabdict as stlabdict
 import numpy as np
 import pandas as pd
-
+import time
 import abc
 
 
@@ -15,7 +15,7 @@ def numtostr(mystr):
     return '%20.15e' % mystr
 
 
-class basesaa(instrument, abc.ABC):
+class basesa(instrument, abc.ABC):
     def __init__(self, addr, reset, verb):
         super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
@@ -41,6 +41,22 @@ class basesaa(instrument, abc.ABC):
     def SetSpan(self, x):
         mystr = 'FREQ:SPAN {}'.format(x)
         self.write(mystr)
+
+    def GetStart(self):
+        aw = self.query('FREQ:STAR?')
+        return aw.strip('\n')
+
+    def GetStop(self):
+        aw = self.query('FREQ:STOP?')
+        return aw.strip('\n')
+
+    def GetCenter(self):
+        aw = float(self.query('FREQ:CENT?'))
+        return aw
+
+    def GetSpan(self):
+        aw = self.query('FREQ:SPAN?')
+        return aw.strip('\n')
 
     def SetResolutionBW(self, x):
         mystr = 'BAND:RES {}'.format(x)
@@ -97,8 +113,8 @@ class basesaa(instrument, abc.ABC):
             navg = self.query('AVER:COUNT?')
             return float(navg)
         else:
-            return 1
-    
+            return 1.
+
     def GetAveragesType(self):
         avgtype = self.query('AVER:TYPE?')
         return avgtype
@@ -106,12 +122,11 @@ class basesaa(instrument, abc.ABC):
     def GetMode(self):
         aw = self.query('INST:SEL?')
         return aw.strip('\n')
-    
+
     def SetReference(self, ref='INT'):
         # INT, EXT, EAUT
         self.write('ROSC:SOUR ' + ref)
-        return
-    
+
     def GetReference(self):
         aw = self.query('ROSC:SOUR?')
         return aw.strip('\n')
@@ -119,13 +134,30 @@ class basesaa(instrument, abc.ABC):
     def GetMetadataString(self):
         # Should return a string of metadata adequate to write to a file
         pass
-    
-    def GetSweepTime(self):
-        sweeptime = self.query('SWE:TIME?')
-        return float(sweeptime)
-    
 
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
+
+    @abc.abstractmethod
+    def MeasureScreen(self, ch=1):
+        measmode = self.GetMode()
+        yunit = self.GetUnit()
+        if measmode == 'SAN':
+            self.SetContinuous(False)
+            self.write('INIT')
+            # sleep for averaging time, otherwise timeout
+            navg = self.GetAverages()
+            tt = self.GetSweepTime()
+            time.sleep(navg * tt)
+            xvals = self.query('TRAC:DATA:X? TRACE{}'.format(ch))
+            yvals = self.query('TRAC? TRACE{}'.format(ch))
+            xvals = np.array([float(x) for x in xvals.split(',')])
+            yvals = np.array([float(x) for x in yvals.split(',')])
+            output = pd.DataFrame()
+            output['Frequency (Hz)'] = xvals
+            output['Spectrum (' + yunit + ')'] = yvals
+            return output
+        else:
+            return KeyError('Instrument mode unknown!')
 
     @abc.abstractmethod
     def SetInputAtt(self, att=10):
@@ -158,11 +190,6 @@ class basesaa(instrument, abc.ABC):
         self.write('AVER:TYPE ' + avgtype)
 
     @abc.abstractmethod
-    def GetAveragesType(self):
-        avgtype = self.query('AVER:TYPE?')
-        return avgtype
-
-    @abc.abstractmethod
     def SetDigitalIFBW(self, x):
         mystr = 'WAV:DIF:BAND {}'.format(x)
         self.write(mystr)
@@ -170,17 +197,6 @@ class basesaa(instrument, abc.ABC):
     @abc.abstractmethod
     def GetDigitalIFBW(self):
         mystr = 'WAV:DIF:BAND?'
-        x = self.query(mystr)
-        return float(x)
-
-    @abc.abstractmethod
-    def SetSampleRate(self, x):
-        mystr = 'WAV:SRAT {}'.format(x)
-        self.write(mystr)
-
-    @abc.abstractmethod
-    def GetSampleRate(self):
-        mystr = 'WAV:SRAT?'
         x = self.query(mystr)
         return float(x)
 
@@ -194,12 +210,7 @@ class basesaa(instrument, abc.ABC):
         mystr = 'WAVeform:SWEep:TIME?'
         x = self.query(mystr)
         return float(x)
-    
-    @abc.abstractmethod
-    def SetAveragesType(self, avgtype):
-        # VIDeo, LINear, POWer
-        self.write('AVER:TYPE ' + avgtype)
-    
+
     @abc.abstractmethod
     def SetContinuous(self, state=True):
         if state:
@@ -207,7 +218,7 @@ class basesaa(instrument, abc.ABC):
         else:
             self.write('INIT:CONT OFF')
         return
-    
+
     @abc.abstractmethod
     def SetMode(self, mode='SAN'):
         """
@@ -216,7 +227,7 @@ class basesaa(instrument, abc.ABC):
         """
         self.write('INST:SEL ' + mode)
         return
-    
+
     @abc.abstractmethod
     def MarkerOff(self, mk='all'):
         if mk == 'all':
@@ -262,134 +273,36 @@ class basesaa(instrument, abc.ABC):
     def DisplayOff(self):
         self.write('SYST:DISP:UPD OFF')
 
+    @abc.abstractmethod
+    def GetUnit(self):
+        self.units = {
+            'DBM': 'dBm',
+            'DBMV': 'dBmV',
+            'DBMA': 'dBmA',
+            'V': 'V',
+            'W': 'W',
+            'A': 'A',
+            'DBUV': 'dBuV',
+            'DBUA': 'dBuA',
+            'DBPW': 'dBpW',
+            'DBUVM': 'dBuV/m',
+            'DBUAM': 'dBuA/m',
+            'DBPT': 'dBpT',
+            'DBG': 'dBG'
+        }
+        aw = self.query(':UNIT:POW?')
+        aw = aw.strip('\n')
+        return self.units[aw]
+
+    @abc.abstractmethod
+    def SetUnit(self, unit):
+        if unit.isupper():
+            self.write(':UNIT:POW ' + unit)
+        else:
+            raise KeyError('Unknown unit!')
+
 
 ##### FULLY IMPLEMENTED METHODS THAT DO NOT NEED TO BE REIMPLEMENTED (BUT CAN BE IF NECESSARY) #####################
-
-    def SetRange(self, start, end):
-        self.SetStart(start)
-        self.SetEnd(end)
-
-    def SetCenterSpan(self, center, span):
-        self.SetCenter(center)
-        self.SetSpan(span)
-
-    def GetAllData(self, keep_uncal=True):
-        pars, parnames = self.GetTraceNames()
-        self.SetActiveTrace(pars[0])
-        names = ['Frequency (Hz)']
-        alltrc = [self.GetFrequency()]
-        for pp in parnames:
-            names.append('%sre ()' % pp)
-            names.append('%sim ()' % pp)
-            names.append('%sdB (dB)' % pp)
-            names.append('%sPh (rad)' % pp)
-        for par in pars:
-            self.SetActiveTrace(par)
-            yyre, yyim = self.GetTraceData()
-            alltrc.append(yyre)
-            alltrc.append(yyim)
-            yydb = 20. * np.log10(np.abs(yyre + 1j * yyim))
-            yyph = np.unwrap(np.angle(yyre + 1j * yyim))
-            alltrc.append(yydb)
-            alltrc.append(yyph)
-        Cal = self.GetCal()
-        if Cal and keep_uncal:
-            for pp in parnames:
-                names.append('%sre unc ()' % pp)
-                names.append('%sim unc ()' % pp)
-                names.append('%sdB unc (dB)' % pp)
-                names.append('%sPh unc (rad)' % pp)
-            self.CalOff()
-            for par in pars:
-                self.SetActiveTrace(par)
-                yyre, yyim = self.GetTraceData()
-                alltrc.append(yyre)
-                alltrc.append(yyim)
-                yydb = 20. * np.log10(np.abs(yyre + 1j * yyim))
-                yyph = np.unwrap(np.angle(yyre + 1j * yyim))
-                alltrc.append(yydb)
-                alltrc.append(yyph)
-            self.CalOn()
-        final = stlabdict()
-        for name, data in zip(names, alltrc):
-            final[name] = data
-        final.addparcolumn('Power (dBm)', self.GetPower())
-        return final
-
-    def MeasureScreen(self, keep_uncal=True, N_averages=1):
-        self.SetContinuous(False)
-        if N_averages == 1:
-            self.Trigger()  #Trigger single sweep and wait for response
-        elif N_averages > 1:
-            self.write('SENS:AVER:COUN %d' % N_averages)
-            self.write('SENS:AVER ON')
-            self.write('SENS:AVER:CLEAR')
-            naver = int(self.query('SENS:AVER:COUN?'))
-            for _ in range(naver):
-                self.Trigger()
-                # self.AutoScaleAll()
-            self.write('SENS:AVER OFF')
-        return self.GetAllData(keep_uncal)
-
-    def GetAllData_pd(self, keep_uncal=True):
-        pars, parnames = self.GetTraceNames()
-        self.SetActiveTrace(pars[0])
-        names = ['Frequency (Hz)']
-        alltrc = [self.GetFrequency()]
-        for pp in parnames:
-            names.append('%sre ()' % pp)
-            names.append('%sim ()' % pp)
-            names.append('%sdB (dB)' % pp)
-            names.append('%sPh (rad)' % pp)
-        for par in pars:
-            self.SetActiveTrace(par)
-            yyre, yyim = self.GetTraceData()
-            alltrc.append(yyre)
-            alltrc.append(yyim)
-            yydb = 20. * np.log10(np.abs(yyre + 1j * yyim))
-            yyph = np.unwrap(np.angle(yyre + 1j * yyim))
-            alltrc.append(yydb)
-            alltrc.append(yyph)
-        Cal = self.GetCal()
-        if Cal and keep_uncal:
-            for pp in parnames:
-                names.append('%sre unc ()' % pp)
-                names.append('%sim unc ()' % pp)
-                names.append('%sdB unc (dB)' % pp)
-                names.append('%sPh unc (rad)' % pp)
-            self.CalOff()
-            for par in pars:
-                self.SetActiveTrace(par)
-                yyre, yyim = self.GetTraceData()
-                alltrc.append(yyre)
-                alltrc.append(yyim)
-                yydb = 20. * np.log10(np.abs(yyre + 1j * yyim))
-                yyph = np.unwrap(np.angle(yyre + 1j * yyim))
-                alltrc.append(yydb)
-                alltrc.append(yyph)
-            self.CalOn()
-
-        final = pd.DataFrame()
-        for name, data in zip(names, alltrc):
-            final[name] = data
-        final['Power (dBm)'] = self.GetPower()
-        return final
-
-    def MeasureScreen_pd(self, keep_uncal=True):
-        self.SetContinuous(False)
-        print(self.Trigger())  #Trigger single sweep and wait for response
-        return self.GetAllData_pd(keep_uncal)
-
-    '''
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
-        result = self.id().strip() + '\n'
-        result += 'Range = [{}, {}] Hz'.format(self.GetStart(),self.GetEnd()) + '\n'
-        result += 'IFBW = {} Hz'.format(self.GetIFBW()) + '\n'
-        result += 'Power = {} dBm'.format(self.GetPower()) + '\n'
-        result += 'Npoints = {}'.format(self.GetPoints()) + '\n'
-        result += 'Traces = {}'.format(self.GetTraceNames()[1]) + '\n'
-        return result
-    '''
 
     def MetaGetters(self):
         getters = [

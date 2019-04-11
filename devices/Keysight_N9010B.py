@@ -1,16 +1,16 @@
 """Module for instance of a Keysight N9010B EXA signal analyzer
 
 This module contains the functions necessary to control and read data from 
-a Keysight N9010B EXA signal analyzer. It inherits from instrument class.
-
+a Keysight N9010B EXA signal analyzer. It inherits from basesa class.
 """
-from stlab.devices.instrument import instrument
-from stlab.utils.stlabdict import stlabdict
+
+from stlab.devices.basesa import basesa
 import numpy as np
 import pandas as pd
+import time
 
 
-class Keysight_N9010B(instrument):
+class Keysight_N9010B(basesa):
     def __init__(self,
                  addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
@@ -26,6 +26,49 @@ class Keysight_N9010B(instrument):
         mystr = 'WAV:DIF:BAND?'
         x = self.query(mystr)
         return float(x)
+
+    def SetTraceAverageOn(self, ch=1):
+        self.write(':TRAC{}:TYPE AVER'.format(ch))
+
+    def SetTraceAverageOff(self, ch=1):
+        self.write(':TRAC{}:TYPE WRIT'.format(ch))
+
+    def SetAveragesType(self, avgtype):
+        # Log-Pwr (Video), Pwr (RMS), Voltage
+        self.write('AVER:TYPE ' + avgtype)
+
+    def SetContinuous(self, state=True):
+        if state:
+            self.write('INIT:CONT 1')
+        else:
+            self.write('INIT:CONT 0')
+        return
+
+    def GetUnit(self):
+        self.units = {
+            'DBM': 'dBm',
+            'DBMV': 'dBmV',
+            'DBMA': 'dBmA',
+            'V': 'V',
+            'W': 'W',
+            'A': 'A',
+            'DBUV': 'dBuV',
+            'DBUA': 'dBuA',
+            'DBPW': 'dBpW',
+            'DBUVM': 'dBuV/m',
+            'DBUAM': 'dBuA/m',
+            'DBPT': 'dBpT',
+            'DBG': 'dBG'
+        }
+        aw = self.query(':UNIT:POW?')
+        aw = aw.strip('\n')
+        return self.units[aw]
+
+    def SetUnit(self, unit):
+        if unit.isupper():
+            self.write(':UNIT:POW ' + unit)
+        else:
+            raise KeyError('Unknown unit!')
 
     def SetSampleRate(self, x):
         mystr = 'WAV:SRAT {}'.format(x)
@@ -45,12 +88,13 @@ class Keysight_N9010B(instrument):
         x = self.query(mystr)
         return float(x)
 
-    def SetContinuous(self, state=True):
-        if state:
-            self.write('INIT:CONT 1')
-        else:
-            self.write('INIT:CONT 0')
-        return
+    def DisplayOn(self):
+        mystr = ':DISP:ENAB ON'
+        self.write(mystr)
+
+    def DisplayOff(self):
+        mystr = ':DISP:ENAB OFF'
+        self.write(mystr)
 
     def MeasureIQ(self):
         self.SetContinuous(False)
@@ -60,9 +104,9 @@ class Keysight_N9010B(instrument):
         result = np.asarray(result)
         I = result[::2]
         Q = result[1::2]
-        print('result lenght', type(result), len(result))
-        print('I lenght', type(result), len(I))
-        print('Q lenght', type(result), len(Q))
+        print('result length', type(result), len(result))
+        print('I length', type(result), len(I))
+        print('Q length', type(result), len(Q))
         tend = self.GetIQSweepTime()
         t = np.linspace(0, tend, len(I) + 1)
         t = t[1:]
@@ -77,16 +121,22 @@ class Keysight_N9010B(instrument):
         return output
 
     def MeasureScreen(self):
-        self.SetContinuous(False)
-        result = self.query('READ:SAN?')
-        result = result.split(',')
-        result = [float(x) for x in result]
-        result = np.asarray(result)
-        xx = result[::2]
-        yy = result[1::2]
-        #output = stlabdict()
-        output = pd.DataFrame()
-        output['Frequency (Hz)'] = xx
-        output['PSD (dBm)'] = yy
-        output['Res BW (Hz)'] = self.GetResolutionBW()
-        return output
+        measmode = self.GetMode()
+        yunit = self.GetUnit()
+        if measmode == 'SA':
+            self.SetContinuous(False)
+            self.write('INIT')
+            # sleep for averaging time, otherwise timeout
+            navg = self.GetAverages()
+            tt = self.GetSweepTime()
+            time.sleep(navg * tt)
+            result = self.query('READ:SAN?')
+            result = result.split(',')
+            result = [float(x) for x in result]
+            result = np.asarray(result)
+            xvals = result[::2]
+            yvals = result[1::2]
+            output = pd.DataFrame()
+            output['Frequency (Hz)'] = xvals
+            output['Spectrum (' + yunit + ')'] = yvals
+            return output
