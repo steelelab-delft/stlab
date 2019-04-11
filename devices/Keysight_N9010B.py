@@ -18,6 +18,32 @@ class Keysight_N9010B(basesa):
         super().__init__(addr, reset, verb)
         self.dev.timeout = None
 
+    def GetUnit(self):
+        self.units = {
+            'DBM': 'dBm',
+            'DBMV': 'dBmV',
+            'DBMA': 'dBmA',
+            'V': 'V',
+            'W': 'W',
+            'A': 'A',
+            'DBUV': 'dBuV',
+            'DBUA': 'dBuA',
+            'DBPW': 'dBpW',
+            'DBUVM': 'dBuV/m',
+            'DBUAM': 'dBuA/m',
+            'DBPT': 'dBpT',
+            'DBG': 'dBG'
+        }
+        aw = self.query(':UNIT:POW?')
+        aw = aw.strip('\n')
+        return self.units[aw]
+
+    def SetUnit(self, unit):
+        if unit.isupper():
+            self.write(':UNIT:POW ' + unit)
+        else:
+            raise KeyError('Unknown unit!')
+
     def SetDigitalIFBW(self, x):
         mystr = 'WAV:DIF:BAND {}'.format(x)
         self.write(mystr)
