@@ -120,6 +120,10 @@ class basesaa(instrument, abc.ABC):
         # Should return a string of metadata adequate to write to a file
         pass
     
+    def GetSweepTime(self):
+        sweeptime = self.query('SWE:TIME?')
+        return float(sweeptime)
+    
 
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 

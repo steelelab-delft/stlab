@@ -52,10 +52,6 @@ class Keysight_N9010B(instrument):
             self.write('INIT:CONT 0')
         return
 
-    def GetSweepTime(self):
-        sweeptime = self.query('SWE:TIME?')
-        return float(sweeptime)
-
     def MeasureIQ(self):
         self.SetContinuous(False)
         result = self.query(':READ:WAVeform0?')
