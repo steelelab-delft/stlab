@@ -107,14 +107,6 @@ class basesa(instrument, abc.ABC):
         else:
             self.write(':TRAC:TYPE WRITE')
 
-    def GetAverages(self):
-        tracetype = self.query(':TRAC:TYPE?')
-        if tracetype == 'AVER\n':
-            navg = self.query('AVER:COUNT?')
-            return float(navg)
-        else:
-            return 1.
-
     def GetAveragesType(self):
         avgtype = self.query('AVER:TYPE?')
         return avgtype
@@ -138,6 +130,15 @@ class basesa(instrument, abc.ABC):
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
     @abc.abstractmethod
+    def GetAverages(self):
+        tracetype = self.query(':TRAC:TYPE?')
+        if tracetype == 'AVER\n':
+            navg = self.query('AVER:COUNT?')
+            return float(navg)
+        else:
+            return 1.
+
+    @abc.abstractmethod
     def MeasureScreen(self, ch=1):
         measmode = self.GetMode()
         yunit = self.GetUnit()
@@ -147,7 +148,9 @@ class basesa(instrument, abc.ABC):
             # sleep for averaging time, otherwise timeout
             navg = self.GetAverages()
             tt = self.GetSweepTime()
-            time.sleep(navg * tt)
+            sleeptime = navg * tt
+            print('Measurement in progress. Waiting for {}s'.format(sleeptime))
+            time.sleep(sleeptime)
             xvals = self.query('TRAC:DATA:X? TRACE{}'.format(ch))
             yvals = self.query('TRAC? TRACE{}'.format(ch))
             xvals = np.array([float(x) for x in xvals.split(',')])
@@ -201,17 +204,6 @@ class basesa(instrument, abc.ABC):
         return float(x)
 
     @abc.abstractmethod
-    def SetIQSweepTime(self, x):
-        mystr = 'WAVeform:SWEep:TIME {}'.format(x)
-        self.write(mystr)
-
-    @abc.abstractmethod
-    def GetIQSweepTime(self):
-        mystr = 'WAVeform:SWEep:TIME?'
-        x = self.query(mystr)
-        return float(x)
-
-    @abc.abstractmethod
     def SetContinuous(self, state=True):
         if state:
             self.write('INIT:CONT ON')
@@ -227,43 +219,6 @@ class basesa(instrument, abc.ABC):
         """
         self.write('INST:SEL ' + mode)
         return
-
-    @abc.abstractmethod
-    def MarkerOff(self, mk='all'):
-        if mk == 'all':
-            self.write('CALC:MARK:AOFF')
-        else:
-            for m in mk:
-                self.write('CALC:MARK{} OFF'.format(m))
-
-    @abc.abstractmethod
-    def MarkerOn(self, mk):
-        for m in mk:
-            self.write('CALC:MARK{} ON'.format(m))
-
-    @abc.abstractmethod
-    def SetMarkerFreq(self, mk, freq):
-        for m, f in zip(mk, freq):
-            self.write('CALC:MARK{}:X {}Hz'.format(m, f))
-
-    @abc.abstractmethod
-    def GetMarkerAmpt(self, mk):
-        aw = float(self.query('CALC:MARK{}:Y?'.format(mk)))
-        return aw
-
-    @abc.abstractmethod
-    def GetMarkerNoise(self, mk):
-        self.write('CALC:MARK{}:FUNC:NOIS ON'.format(mk))
-        aw = float(self.query('CALC:MARK{}:FUNC:NOIS:RES?'.format(mk)))
-        return aw
-
-    @abc.abstractmethod
-    def GetMarkerBandPowerDensity(self, mk, bw):
-        self.write('CALC:MARK{}:FUNC:BPOW:STAT ON'.format(mk))
-        self.write('CALC:MARK{}:FUNC:BPOW:MODE DENS'.format(mk))
-        self.write('CALC:MARK{}:FUNC:BPOW:SPAN {}Hz'.format(mk, bw))
-        aw = float(self.query('CALC:MARK{}:FUNC:BPOW:RES?').format(mk))
-        return aw
 
     @abc.abstractmethod
     def DisplayOn(self):

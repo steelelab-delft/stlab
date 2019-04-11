@@ -23,17 +23,6 @@ class RS_FSV(basesa):
         super().__init__(addr, reset, verb)
         self.dev.timeout = None
 
-    """
-    def SetDigitalIFBW(self, x):
-        mystr = 'WAV:DIF:BAND {}'.format(x)
-        self.write(mystr)
-
-    def GetDigitalIFBW(self):
-        mystr = 'WAV:DIF:BAND?'
-        x = self.query(mystr)
-        return float(x)
-    """
-
     def SetInputAtt(self, att=10):
         self.write('INP:ATT {} dB'.format(att))
 
@@ -41,17 +30,17 @@ class RS_FSV(basesa):
         inputatt = self.query('INP:ATT?')
         return float(inputatt)
 
-    def SetTraceAverageOn(self, ch=1):
-        self.write('DISP:TRAC{}:MODE AVER'.format(ch))
-
-    def SetTraceAverageOff(self, ch=1):
-        self.write('DISP:TRAC{}:MODE WRIT'.format(ch))
-
     def SetTraceOn(self, ch=1):
         self.write('DISP:TRAC{} ON'.format(ch))
 
     def SetTraceOff(self, ch=1):
         self.write('DISP:TRAC{} OFF'.format(ch))
+
+    def SetTraceAverageOn(self, ch=1):
+        self.write('DISP:TRAC{}:MODE AVER'.format(ch))
+
+    def SetTraceAverageOff(self, ch=1):
+        self.write('DISP:TRAC{}:MODE WRIT'.format(ch))
 
     def SetAveragesType(self, avgtype):
         # VIDeo, LINear, POWer
@@ -133,6 +122,10 @@ class RS_FSV(basesa):
     def DisplayOff(self):
         self.write('SYST:DISP:UPD OFF')
 
+    def GetAverages(self):
+        count = float(self.query(':SWE:COUN?'))
+        return count
+
     def MeasureScreen(self, ch=1):
         measmode = self.GetMode()
         yunit = self.GetUnit()
@@ -142,7 +135,9 @@ class RS_FSV(basesa):
             # sleep for averaging time, otherwise timeout
             navg = self.GetAverages()
             tt = self.GetSweepTime()
-            time.sleep(navg * tt)
+            sleeptime = navg * tt
+            print('Measurement in progress. Waiting for {}s'.format(sleeptime))
+            time.sleep(sleeptime)
             xvals = self.query('TRAC:DATA:X? TRACE{}'.format(ch))
             yvals = self.query('TRAC? TRACE{}'.format(ch))
             xvals = np.array([float(x) for x in xvals.split(',')])
@@ -153,6 +148,17 @@ class RS_FSV(basesa):
             return output
         else:
             return KeyError('Instrument mode unknown!')
+
+    ############################## For IQ measurements
+
+    def SetDigitalIFBW(self, x):
+        mystr = 'WAV:DIF:BAND {}'.format(x)
+        self.write(mystr)
+
+    def GetDigitalIFBW(self):
+        mystr = 'WAV:DIF:BAND?'
+        x = self.query(mystr)
+        return float(x)
 
     ############################## Functions below are old and deprecated
     def prepare_CW(self, CWsource_addr):

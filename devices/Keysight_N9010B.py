@@ -18,40 +18,20 @@ class Keysight_N9010B(basesa):
         super().__init__(addr, reset, verb)
         self.dev.timeout = None
 
-    def GetUnit(self):
-        self.units = {
-            'DBM': 'dBm',
-            'DBMV': 'dBmV',
-            'DBMA': 'dBmA',
-            'V': 'V',
-            'W': 'W',
-            'A': 'A',
-            'DBUV': 'dBuV',
-            'DBUA': 'dBuA',
-            'DBPW': 'dBpW',
-            'DBUVM': 'dBuV/m',
-            'DBUAM': 'dBuA/m',
-            'DBPT': 'dBpT',
-            'DBG': 'dBG'
-        }
-        aw = self.query(':UNIT:POW?')
-        aw = aw.strip('\n')
-        return self.units[aw]
+    def SetInputAtt(self, att=10):
+        self.write(':POW:ATT {} dB'.format(att))
 
-    def SetUnit(self, unit):
-        if unit.isupper():
-            self.write(':UNIT:POW ' + unit)
-        else:
-            raise KeyError('Unknown unit!')
+    def GetInputAtt(self):
+        inputatt = self.query(':POW:ATT?')
+        return float(inputatt)
 
-    def SetDigitalIFBW(self, x):
-        mystr = 'WAV:DIF:BAND {}'.format(x)
-        self.write(mystr)
+    def SetTraceOn(self, ch=1):
+        self.write(':TRAC{}:ACP:UPD ON'.format(ch))
+        self.write(':TRAC{}:ACP:DISP ON'.format(ch))
 
-    def GetDigitalIFBW(self):
-        mystr = 'WAV:DIF:BAND?'
-        x = self.query(mystr)
-        return float(x)
+    def SetTraceOff(self, ch=1):
+        self.write(':TRAC{}:ACP:UPD OFF'.format(ch))
+        self.write(':TRAC{}:ACP:DISP OFF'.format(ch))
 
     def SetTraceAverageOn(self, ch=1):
         self.write(':TRAC{}:TYPE AVER'.format(ch))
@@ -68,6 +48,16 @@ class Keysight_N9010B(basesa):
             self.write('INIT:CONT 1')
         else:
             self.write('INIT:CONT 0')
+        return
+
+    def SetMode(self, mode='SA'):
+        """
+        change the instrument mode to one of the following:
+        SA (signal analyzer), BASIC (IQ), PNOISE (phase noise), NFIGURE (noise figure), ADEMOD (analog demod), 
+        RTSA (real time spectrum analyzer), EDGEGSM (?), EMI (?), WCDMA (?), WIMAXOFDMA (?), 
+        and many more
+        """
+        self.write('INST:SEL ' + mode)
         return
 
     def GetUnit(self):
@@ -96,6 +86,47 @@ class Keysight_N9010B(basesa):
         else:
             raise KeyError('Unknown unit!')
 
+    def DisplayOn(self):
+        self.write(':DISP:ENAB ON')
+
+    def DisplayOff(self):
+        self.write(':DISP:ENAB OFF')
+
+    def GetAverages(self):
+        tracetype = self.query(':TRAC:TYPE?')
+        if tracetype == 'AVER\n':
+            navg = self.query('AVER:COUNT?')
+            return float(navg)
+        else:
+            return 1.
+
+    def MeasureScreen(self):
+        measmode = self.GetMode()
+        yunit = self.GetUnit()
+        if measmode == 'SA':
+            self.SetContinuous(False)
+            self.write('INIT')
+            # sleep for averaging time, otherwise timeout
+            navg = self.GetAverages()
+            tt = self.GetSweepTime()
+            sleeptime = navg * tt
+            print('Measurement in progress. Waiting for {}s'.format(sleeptime))
+            time.sleep(sleeptime)
+            result = self.query('READ:SAN?')
+            result = result.split(',')
+            result = [float(x) for x in result]
+            result = np.asarray(result)
+            xvals = result[::2]
+            yvals = result[1::2]
+            output = pd.DataFrame()
+            output['Frequency (Hz)'] = xvals
+            output['Spectrum (' + yunit + ')'] = yvals
+            return output
+        else:
+            return KeyError('Instrument mode unknown!')
+
+    ############################## For IQ measurements
+
     def SetSampleRate(self, x):
         mystr = 'WAV:SRAT {}'.format(x)
         self.write(mystr)
@@ -104,23 +135,6 @@ class Keysight_N9010B(basesa):
         mystr = 'WAV:SRAT?'
         x = self.query(mystr)
         return float(x)
-
-    def SetIQSweepTime(self, x):
-        mystr = 'WAVeform:SWEep:TIME {}'.format(x)
-        self.write(mystr)
-
-    def GetIQSweepTime(self):
-        mystr = 'WAVeform:SWEep:TIME?'
-        x = self.query(mystr)
-        return float(x)
-
-    def DisplayOn(self):
-        mystr = ':DISP:ENAB ON'
-        self.write(mystr)
-
-    def DisplayOff(self):
-        mystr = ':DISP:ENAB OFF'
-        self.write(mystr)
 
     def MeasureIQ(self):
         self.SetContinuous(False)
@@ -146,23 +160,20 @@ class Keysight_N9010B(basesa):
         output['Digital IFBW (Hz)'] = self.GetDigitalIFBW()
         return output
 
-    def MeasureScreen(self):
-        measmode = self.GetMode()
-        yunit = self.GetUnit()
-        if measmode == 'SA':
-            self.SetContinuous(False)
-            self.write('INIT')
-            # sleep for averaging time, otherwise timeout
-            navg = self.GetAverages()
-            tt = self.GetSweepTime()
-            time.sleep(navg * tt)
-            result = self.query('READ:SAN?')
-            result = result.split(',')
-            result = [float(x) for x in result]
-            result = np.asarray(result)
-            xvals = result[::2]
-            yvals = result[1::2]
-            output = pd.DataFrame()
-            output['Frequency (Hz)'] = xvals
-            output['Spectrum (' + yunit + ')'] = yvals
-            return output
+    def SetDigitalIFBW(self, x):
+        mystr = 'WAV:DIF:BAND {}'.format(x)
+        self.write(mystr)
+
+    def GetDigitalIFBW(self):
+        mystr = 'WAV:DIF:BAND?'
+        x = self.query(mystr)
+        return float(x)
+
+    def SetIQSweepTime(self, x):
+        mystr = 'WAVeform:SWEep:TIME {}'.format(x)
+        self.write(mystr)
+
+    def GetIQSweepTime(self):
+        mystr = 'WAVeform:SWEep:TIME?'
+        x = self.query(mystr)
+        return float(x)
