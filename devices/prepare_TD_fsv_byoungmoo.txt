@@ -1,0 +1,22 @@
+    def prepare_TD(self, LOsource_addr=None):
+        """
+        Prepare FSV for time domain measurement.
+        Set external trigger.
+        Use IQ aquisition mode
+        """
+        
+        # self._LOsource_addr = LOsource_addr
+        self.write("TRAC:IQ ON")
+        # self.write('ROSC:SOUR EXT')                         # sync FSV with generator
+        # self.write('SYST:COMM:RDEV:GEN1:TYPE \'SMB100A12\'') # generator type
+        # self.write('SYST:COMM:RDEV:GEN1:INT TCP')            # connection type
+        # self.write('SYST:COMM:TCP:RDEV:GEN1:ADDR ' + self._LOsource_addr)    # IP adress of generator
+        # self.write('SOUR:EXT1:ROSC INT')                      # specify oscillator for generator
+        
+        #COnfiguring IQ mode
+        # Select VSA mode, extraction of IQ
+        self.write('TRIG:SOUR EXT')                           # Set trigger to external AWG
+        # self.write('TRIG: POS')                               # will trigger on positive slope to start 
+                                                              # measurement
+        # self.write('INP:SEL RF')                                                     
+        self.write('INP:GAIN:STAT ON')
