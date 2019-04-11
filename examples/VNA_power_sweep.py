@@ -7,18 +7,18 @@ Example script to perform a series of frequency traces on a PNA as a function of
 import stlab
 import numpy as np
 
-prefix = 'M' #prefix for measurement folder name.  Can be anything or empty
-idstring = 'Dev1_powersweep' #Additional info included in measurement folder name.  Can be anything or empty
+prefix = 'B' #prefix for measurement folder name.  Can be anything or empty
+idstring = 'LT130W2_6I_b_powersweep' #Additional info included in measurement folder name.  Can be anything or empty
 
-pna = stlab.adi(addr='TCPIP::192.168.1.42::INSTR',reset=False,verb=True) #Initialize device communication and reset
+pna = stlab.adi(addr='TCPIP::192.168.1.221::INSTR',reset=False,verb=True) #Initialize device communication and reset
 
-pna.SetRange(4e9,8e9) #Set frequency range in Hz
-pna.SetIFBW(300.) #Set IF bandwidth in Hz
+pna.SetRange(5.5e9,6.5e9) #Set frequency range in Hz
+pna.SetIFBW(10.) #Set IF bandwidth in Hz
 pna.SetPoints(1001) #Set number of frequency points
 
-powstart = -45.
-powstop = -0.
-steps = 5
+powstart = -30.
+powstop = 30.
+steps = 61
 powers = np.linspace(powstart,powstop,steps) #generate power sweep steps
 
 myfile = stlab.newfile(prefix,idstring,autoindex=True)
