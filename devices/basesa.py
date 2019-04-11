@@ -120,11 +120,7 @@ class basesaa(instrument, abc.ABC):
         # Should return a string of metadata adequate to write to a file
         pass
     
-    def GetSweepTime(self):
-        sweeptime = self.query('SWE:TIME?')
-        return float(sweeptime)
     
-
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
     @abc.abstractmethod
@@ -174,17 +170,6 @@ class basesaa(instrument, abc.ABC):
         return float(x)
 
     @abc.abstractmethod
-    def SetSampleRate(self, x):
-        mystr = 'WAV:SRAT {}'.format(x)
-        self.write(mystr)
-
-    @abc.abstractmethod
-    def GetSampleRate(self):
-        mystr = 'WAV:SRAT?'
-        x = self.query(mystr)
-        return float(x)
-
-    @abc.abstractmethod
     def SetIQSweepTime(self, x):
         mystr = 'WAVeform:SWEep:TIME {}'.format(x)
         self.write(mystr)
@@ -194,11 +179,6 @@ class basesaa(instrument, abc.ABC):
         mystr = 'WAVeform:SWEep:TIME?'
         x = self.query(mystr)
         return float(x)
-    
-    @abc.abstractmethod
-    def SetAveragesType(self, avgtype):
-        # VIDeo, LINear, POWer
-        self.write('AVER:TYPE ' + avgtype)
     
     @abc.abstractmethod
     def SetContinuous(self, state=True):
