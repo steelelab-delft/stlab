@@ -25,40 +25,6 @@ class RS_FSV(instrument):
                  verb=True):
         super(RS_FSV, self).__init__(addr, reset, verb)
 
-    def SetStart(self, x):
-        mystr = 'FREQ:STAR {}'.format(x)
-        self.write(mystr)
-
-    def SetStop(self, x):
-        mystr = 'FREQ:STOP {}'.format(x)
-        self.write(mystr)
-
-    def SetCenter(self, x):
-        mystr = 'FREQ:CENT {}'.format(x)
-        self.write(mystr)
-
-    def SetSpan(self, x):
-        mystr = 'FREQ:SPAN {}'.format(x)
-        self.write(mystr)
-
-    def SetResolutionBW(self, x):
-        mystr = 'BAND:RES {}'.format(x)
-        self.write(mystr)
-
-    def GetResolutionBW(self):
-        mystr = 'BAND:RES?'
-        x = self.query(mystr)
-        return float(x)
-
-    def SetVideoBW(self, x):
-        mystr = 'BAND:VID {}'.format(x)
-        self.write(mystr)
-
-    def GetVideoBW(self):
-        mystr = 'BAND:VID?'
-        x = self.query(mystr)
-        return float(x)
-
     """
     def SetDigitalIFBW(self, x):
         mystr = 'WAV:DIF:BAND {}'.format(x)
@@ -69,29 +35,6 @@ class RS_FSV(instrument):
         x = self.query(mystr)
         return float(x)
     """
-
-    def SetSweepTime(self, tt):
-        self.write('SWE:TIME {}'.format(tt))
-
-    def GetSweepTime(self):
-        tt = self.query('SWE:TIME?')
-        return float(tt)
-
-    def SetSampleRate(self, x):
-        mystr = 'WAV:SRAT {}'.format(x)
-        self.write(mystr)
-
-    def GetSampleRate(self):
-        mystr = 'WAV:SRAT?'
-        x = self.query(mystr)
-        return float(x)
-
-    def SetPoints(self, npoints):
-        self.write('SWE:POIN {}'.format(npoints))
-
-    def GetPoints(self):
-        npts = self.query('SWE:POIN?')
-        return float(npts)
 
     def SetInputAtt(self, att=10):
         self.write('INP:ATT {} dB'.format(att))
@@ -116,17 +59,6 @@ class RS_FSV(instrument):
         # VIDeo, LINear, POWer
         self.write('AVER:TYPE ' + avgtype)
 
-    def GetAveragesType(self):
-        avgtype = self.query('AVER:TYPE?')
-        return avgtype
-
-    def SetAverages(self, navg):
-        self.write('AVER:COUNT {}'.format(navg))
-
-    def GetAverages(self):
-        navg = self.query('AVER:COUNT?')
-        return float(navg)
-
     def SetContinuous(self, state=True):
         if state:
             self.write('INIT:CONT ON')
@@ -140,15 +72,6 @@ class RS_FSV(instrument):
         SAN (signal analyzer), IQ, ADEMOD (amplitude demodulation), NOIS (noise), PNO (phase noise)
         """
         self.write('INST:SEL ' + mode)
-        return
-
-    def GetMode(self):
-        aw = self.query('INST:SEL?')
-        return aw.strip('\n')
-
-    def SetReference(self, ref='INT'):
-        # INT, EXT, EAUT
-        self.write('ROSC:SOUR ' + ref)
         return
 
     def GetUnit(self):
@@ -227,7 +150,7 @@ class RS_FSV(instrument):
     def DisplayOff(self):
         self.write('SYST:DISP:UPD OFF')
 
-    ### Functions below are old and deprecated
+    ############################## Functions below are old and deprecated
     def prepare_CW(self, CWsource_addr):
         """
         Initializing FSV with SMB100A for a CW measurement: VNA mode;
@@ -315,8 +238,3 @@ class RS_FSV(instrument):
     def set_LO_frequency(self, freq):
         self._LO_frequency = num2str(freq)
         self.write('FREQ:CENT ' + self._LO_frequency + ' Hz')
-
-    def GetMetadataString(
-            self
-    ):  # Should return a string of metadata adequate to write to a file
-        pass

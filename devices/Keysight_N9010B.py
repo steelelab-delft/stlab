@@ -18,31 +18,6 @@ class Keysight_N9010B(instrument):
         super().__init__(addr, reset, verb)
         self.dev.timeout = None
 
-    def SetStart(self, x):
-        mystr = 'FREQ:STAR {}'.format(x)
-        self.write(mystr)
-
-    def SetStop(self, x):
-        mystr = 'FREQ:STOP {}'.format(x)
-        self.write(mystr)
-
-    def SetCenter(self, x):
-        mystr = 'FREQ:CENT {}'.format(x)
-        self.write(mystr)
-
-    def SetSpan(self, x):
-        mystr = 'FREQ:SPAN {}'.format(x)
-        self.write(mystr)
-
-    def SetResolutionBW(self, x):
-        mystr = 'BAND:RES {}'.format(x)
-        self.write(mystr)
-
-    def GetResolutionBW(self):
-        mystr = 'BAND:RES?'
-        x = self.query(mystr)
-        return float(x)
-
     def SetDigitalIFBW(self, x):
         mystr = 'WAV:DIF:BAND {}'.format(x)
         self.write(mystr)
@@ -69,25 +44,6 @@ class Keysight_N9010B(instrument):
         mystr = 'WAVeform:SWEep:TIME?'
         x = self.query(mystr)
         return float(x)
-
-    def SetPoints(self, x):
-        self.write('SWE:POIN {}'.format(x))
-
-    def SetAverages(self, navg):
-        #self.write('AVER:TYPE RMS')   # Power averaging
-        self.write('AVER:COUNT {}'.format(navg))
-        if navg > 1:
-            self.write(':TRAC:TYPE AVER')
-        else:
-            self.write(':TRAC:TYPE WRITE')
-
-    def GetAverages(self):
-        tracetype = self.query(':TRAC:TYPE?')
-        if tracetype == 'AVER\n':
-            navg = self.query('AVER:COUNT?')
-            return float(navg)
-        else:
-            return 1
 
     def SetContinuous(self, state=True):
         if state:
@@ -138,8 +94,3 @@ class Keysight_N9010B(instrument):
         output['PSD (dBm)'] = yy
         output['Res BW (Hz)'] = self.GetResolutionBW()
         return output
-
-    def GetMetadataString(
-            self
-    ):  #Should return a string of metadata adequate to write to a file
-        pass
