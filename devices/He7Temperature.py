@@ -19,6 +19,7 @@ driver/script which works for the old and new BF as well as the He7.
 from stlab.utils.MySocket import MySocket
 from stlab.devices.base_instrument import base_instrument
 
+
 class He7Temperature(base_instrument):
     """Class to implement temperature readout from He7 server
 
@@ -26,7 +27,13 @@ class He7Temperature(base_instrument):
     time a temperature is received.
 
     """
-    def __init__(self,addr="131.180.32.72",port=8472,reset=True,verb=True,**kwargs):
+
+    def __init__(self,
+                 addr="131.180.32.72",
+                 port=8472,
+                 reset=True,
+                 verb=True,
+                 **kwargs):
         """He7Temperature __init__ method.
 
         Sets up the He7 temperature socket to read from the server.
@@ -50,6 +57,7 @@ class He7Temperature(base_instrument):
             self.reset()
         self.addr = addr
         self.port = port
+
     def GetTemperature(self):
         """Gets temperature from server
 
@@ -61,11 +69,10 @@ class He7Temperature(base_instrument):
             The last logged He3 head temperature
 
         """
-
         '''
         create an INET, STREAMing socket
         '''
-        try:    
+        try:
             s = MySocket(verb=self.verb)
             s.sock.connect((self.addr, self.port))
             word = s.myreceive()
@@ -80,10 +87,14 @@ class He7Temperature(base_instrument):
             temperature = -1
             print('Error when reading temperature')
         return temperature
+
     def reset(self):
         pass
-    def setverbose(self,verb=True):
+
+    def setverbose(self, verb=True):
         self.verb = verb
 
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+    def GetMetadataString(
+            self
+    ):  #Should return a string of metadata adequate to write to a file
         pass

@@ -4,12 +4,20 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>stlabdict – Data structures and matrices &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -17,7 +25,8 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="writematrix – Data file writing methods" href="writematrix.html" />
     <link rel="prev" title="newfile – New measurement folder creation" href="newfile.html" /> 
-  </head><body>
+  </head>
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -53,14 +62,12 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -131,7 +138,7 @@ on the axes.  These ranges will be saved along with the data (can be unevenly sp
 <code class="descclassname">stlab.utils.stlabdict.</code><code class="descname">framearr_to_mtx</code><span class="sig-paren">(</span><em>data</em>, <em>key</em>, <em>rangex=None</em>, <em>rangey=None</em>, <em>xkey=None</em>, <em>ykey=None</em>, <em>xtitle=None</em>, <em>ytitle=None</em>, <em>ztitle=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#framearr_to_mtx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.framearr_to_mtx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts an array of pandas DataFrame to an stlabmtx object</p>
 <p>Takes an array of pandas.DataFrame, typically from a measurement file, and selects the appropriate columns for
-conversion into an stlabmtx that allows spyview like operations and processing.  Is essentially the same as <a class="reference internal" href="#stlab.utils.stlabdict.dictarr_to_mtx" title="stlab.utils.stlabdict.dictarr_to_mtx"><code class="xref any py py-func docutils literal notranslate"><span class="pre">dictarr_to_mtx</span></code></a>
+conversion into an stlabmtx that allows spyview like operations and processing.  Is essentially the same as <a class="reference internal" href="#stlab.utils.stlabdict.dictarr_to_mtx" title="stlab.utils.stlabdict.dictarr_to_mtx"><code class="xref any py py-func docutils literal"><span class="pre">dictarr_to_mtx</span></code></a>
 but adapted for pandas DataFrame.</p>
 <p>If neither ranges or titles are given, some defaults are filled in.  The chosen data column from each data array element will be placed
 as a line in the final matrix sequentially.</p>
@@ -234,7 +241,7 @@ pulling out the desired line.</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>ret</strong> – New stlabdict with only the desired line (each element is labelled by the same column
 name as before but only contains a single float in each).</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#stlab.utils.stlabdict.stlabdict" title="stlab.utils.stlabdict.stlabdict">stlabdict</a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#module-stlab.utils.stlabdict" title="stlab.utils.stlabdict">stlabdict</a></td>
 </tr>
 </tbody>
 </table>
@@ -351,7 +358,7 @@ the x and y ranges on the final matrix</p>
 <dt id="stlab.utils.stlabdict.stlabmtx.absolute">
 <code class="descname">absolute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.absolute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.absolute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Absolute value filter</p>
-<p>Applies np.abs to all elements of the matrix.</p>
+<p>Applies np.abs to all elements of the matrix.  Process string <code class="code docutils literal"><span class="pre">abs</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -401,9 +408,9 @@ the x and y ranges on the final matrix</p>
 
 <dl class="method">
 <dt id="stlab.utils.stlabdict.stlabmtx.crop">
-<code class="descname">crop</code><span class="sig-paren">(</span><em>left=None</em>, <em>right=None</em>, <em>up=None</em>, <em>low=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.crop" title="Permalink to this definition">¶</a></dt>
+<code class="descname">crop</code><span class="sig-paren">(</span><em>data</em>, <em>left=None</em>, <em>right=None</em>, <em>up=None</em>, <em>low=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.crop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Crop filter</p>
-<p>Crops data matrix to the given extents</p>
+<p>Crops data matrix to the given extents.  Process string <code class="code docutils literal"><span class="pre">crop</span> <span class="pre">left,right,up,low</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -440,7 +447,7 @@ When given a value, the actual index specified is not included in the crop</li>
 <dt id="stlab.utils.stlabdict.stlabmtx.flip">
 <code class="descname">flip</code><span class="sig-paren">(</span><em>x=False</em>, <em>y=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.flip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.flip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flip filter</p>
-<p>Reverses x and/or y axis</p>
+<p>Reverses x and/or y axis.  Process string <code class="code docutils literal"><span class="pre">flip</span> <span class="pre">x,y</span></code> (0 is false, 1 is true).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -496,7 +503,7 @@ typically to correctly scale the axes when plotting with matplotlib.pyplot.imsho
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) – Name of the mtx file to open</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) – Name of the mtx file to open</td>
 </tr>
 </tbody>
 </table>
@@ -506,14 +513,15 @@ typically to correctly scale the axes when plotting with matplotlib.pyplot.imsho
 <dt id="stlab.utils.stlabdict.stlabmtx.log10">
 <code class="descname">log10</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.log10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.log10" title="Permalink to this definition">¶</a></dt>
 <dd><p>Log10 filter</p>
-<p>Applies np.log10 to all elements in the matrix</p>
+<p>Applies np.log10 to all elements in the matrix.  Process string <code class="code docutils literal"><span class="pre">log10</span></code></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="stlab.utils.stlabdict.stlabmtx.lowpass">
 <code class="descname">lowpass</code><span class="sig-paren">(</span><em>x=0</em>, <em>y=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.lowpass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.lowpass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Low Pass filter</p>
-<p>Applies a gaussian filter to the data with given pixel widths.  Other filters are yet to be implemented.</p>
+<p>Applies a gaussian filter to the data with given pixel widths.  Other filters are yet to be implemented.
+Process string <code class="code docutils literal"><span class="pre">lowpass</span> <span class="pre">x,y</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -528,14 +536,14 @@ typically to correctly scale the axes when plotting with matplotlib.pyplot.imsho
 <dt id="stlab.utils.stlabdict.stlabmtx.neg">
 <code class="descname">neg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.neg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.neg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Negative filter</p>
-<p>Multiplies matrix by -1</p>
+<p>Multiplies matrix by -1.  Process string <code class="code docutils literal"><span class="pre">neg</span></code></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="stlab.utils.stlabdict.stlabmtx.offset">
 <code class="descname">offset</code><span class="sig-paren">(</span><em>x=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.offset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.offset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Offset filter</p>
-<p>Offsets data values by adding given value</p>
+<p>Offsets data values by adding given value.  Process string <code class="code docutils literal"><span class="pre">offset</span> <span class="pre">x</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -550,7 +558,7 @@ typically to correctly scale the axes when plotting with matplotlib.pyplot.imsho
 <dt id="stlab.utils.stlabdict.stlabmtx.offset_axes">
 <code class="descname">offset_axes</code><span class="sig-paren">(</span><em>x=0</em>, <em>y=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.offset_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.offset_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Axes offset filter</p>
-<p>Offset axis values</p>
+<p>Offset axis values.  Process string <code class="code docutils literal"><span class="pre">offset_axes</span> <span class="pre">x,y</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -565,7 +573,7 @@ typically to correctly scale the axes when plotting with matplotlib.pyplot.imsho
 <dt id="stlab.utils.stlabdict.stlabmtx.outlier">
 <code class="descname">outlier</code><span class="sig-paren">(</span><em>line</em>, <em>vertical=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.outlier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.outlier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Outlier filter</p>
-<p>Drop a line or column from the data</p>
+<p>Drop a line or column from the data.  Process string <code class="code docutils literal"><span class="pre">outlier</span> <span class="pre">line,vertical</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -584,7 +592,7 @@ typically to correctly scale the axes when plotting with matplotlib.pyplot.imsho
 <dt id="stlab.utils.stlabdict.stlabmtx.pixel_avg">
 <code class="descname">pixel_avg</code><span class="sig-paren">(</span><em>nx=0</em>, <em>ny=0</em>, <em>center=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.pixel_avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.pixel_avg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pixel average filter</p>
-<p>Performs pixel averaging on matrix</p>
+<p>Performs pixel averaging on matrix.  Process string <code class="code docutils literal"><span class="pre">pixel_avg</span> <span class="pre">nx,ny,center</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -611,14 +619,14 @@ Looks like it omits the center point of each averaging window from the average?<
 <dt id="stlab.utils.stlabdict.stlabmtx.rotate_ccw">
 <code class="descname">rotate_ccw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.rotate_ccw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.rotate_ccw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotate counter-clockwise filter</p>
-<p>Rotates matrix and axes counter-clockwise</p>
+<p>Rotates matrix and axes counter-clockwise.  Process string <code class="code docutils literal"><span class="pre">rotate_ccw</span></code></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="stlab.utils.stlabdict.stlabmtx.rotate_cw">
 <code class="descname">rotate_cw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.rotate_cw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.rotate_cw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotate clockwise filter</p>
-<p>Rotates matrix and axes clockwise</p>
+<p>Rotates matrix and axes clockwise.  Process string <code class="code docutils literal"><span class="pre">rotate_cw</span></code></p>
 </dd></dl>
 
 <dl class="method">
@@ -670,7 +678,7 @@ Looks like it omits the center point of each averaging window from the average?<
 <dt id="stlab.utils.stlabdict.stlabmtx.scale_data">
 <code class="descname">scale_data</code><span class="sig-paren">(</span><em>factor=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.scale_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.scale_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scale filter</p>
-<p>Scales all data by given factor</p>
+<p>Scales all data by given factor.  Process string <code class="code docutils literal"><span class="pre">scale</span> <span class="pre">x</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -685,7 +693,7 @@ Looks like it omits the center point of each averaging window from the average?<
 <dt id="stlab.utils.stlabdict.stlabmtx.sub_cbc">
 <code class="descname">sub_cbc</code><span class="sig-paren">(</span><em>lowp=40</em>, <em>highp=40</em>, <em>low_limit=-1e+99</em>, <em>high_limit=1e+99</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.sub_cbc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.sub_cbc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subtract column by column filter</p>
-<p>Same as <a class="reference internal" href="#stlab.utils.stlabdict.stlabmtx.sub_lbl" title="stlab.utils.stlabdict.stlabmtx.sub_lbl"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">sub_lbl</span></code></a> but done on a column by column basis.</p>
+<p>Same as <a class="reference internal" href="#stlab.utils.stlabdict.stlabmtx.sub_lbl" title="stlab.utils.stlabdict.stlabmtx.sub_lbl"><code class="xref any py py-meth docutils literal"><span class="pre">sub_lbl</span></code></a> but done on a column by column basis.  Process string <code class="code docutils literal"><span class="pre">sub_cbc</span> <span class="pre">lowp,highp,low_limit,high_limit</span></code></p>
 </dd></dl>
 
 <dl class="method">
@@ -695,7 +703,7 @@ Looks like it omits the center point of each averaging window from the average?<
 <p>The average value of each line is substracted from the data.  Parts of each line cut can be
 excluded using the high and low percentile options.  The idea is that all points are sorted in
 increasing order and a percentage from the back and front of the list is rejected for the average
-calculation.</p>
+calculation.  Process string <code class="code docutils literal"><span class="pre">sub_lbl</span> <span class="pre">lowp,highp,low_limit,high_limit</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -716,7 +724,8 @@ calculation.</p>
 <dt id="stlab.utils.stlabdict.stlabmtx.sub_linecut">
 <code class="descname">sub_linecut</code><span class="sig-paren">(</span><em>pos</em>, <em>horizontal=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.sub_linecut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.sub_linecut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subtract lincut filter</p>
-<p>Selects a line or column and subtracts it from all othe lines or columns in the matrix</p>
+<p>Selects a line or column and subtracts it from all othe lines or columns in the matrix.
+Process string <code class="code docutils literal"><span class="pre">sub_linecut</span> <span class="pre">pos,horizontal</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -735,7 +744,7 @@ calculation.</p>
 <dt id="stlab.utils.stlabdict.stlabmtx.transpose">
 <code class="descname">transpose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.transpose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transpose filter</p>
-<p>Transposes the data matrix (and axes)</p>
+<p>Transposes the data matrix (and axes).  Process string <code class="code docutils literal"><span class="pre">transpose</span></code></p>
 </dd></dl>
 
 <dl class="method">
@@ -747,6 +756,7 @@ this filter replaces the voltage data with the corresponding current data and th
 Since the axes are expected to be ordered, this is not an immediate operation and may not be possible in many cases (repeated data values?).</p>
 <p>If one desires to do this with the x axis instead of the y, the matrix must first be transposed.  After the filter is applied the transpose
 can be undone.</p>
+<p>Process string <code class="code docutils literal"><span class="pre">vi_to_iv</span> <span class="pre">vmin,vmax,nbins</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -766,7 +776,7 @@ can be undone.</p>
 <dt id="stlab.utils.stlabdict.stlabmtx.xderiv">
 <code class="descname">xderiv</code><span class="sig-paren">(</span><em>direction=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.xderiv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.xderiv" title="Permalink to this definition">¶</a></dt>
 <dd><p>X derivative filter</p>
-<p>Apply a derivative along the lines of the matrix.</p>
+<p>Apply a derivative along the lines of the matrix.  Process string <code class="code docutils literal"><span class="pre">xderiv</span> <span class="pre">direction</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -781,7 +791,7 @@ can be undone.</p>
 <dt id="stlab.utils.stlabdict.stlabmtx.yderiv">
 <code class="descname">yderiv</code><span class="sig-paren">(</span><em>direction=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/stlabdict.html#stlabmtx.yderiv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx.yderiv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Y derivative filter</p>
-<p>Apply a derivative along the columns of the matrix.</p>
+<p>Apply a derivative along the columns of the matrix.  Process string <code class="code docutils literal"><span class="pre">yderiv</span> <span class="pre">direction</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -797,7 +807,7 @@ can be undone.</p>
 <dl class="attribute">
 <dt id="stlab.utils.stlabdict.stlabmtx_pd">
 <code class="descclassname">stlab.utils.stlabdict.</code><code class="descname">stlabmtx_pd</code><a class="headerlink" href="#stlab.utils.stlabdict.stlabmtx_pd" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#stlab.utils.stlabdict.stlabmtx" title="stlab.utils.stlabdict.stlabmtx"><code class="xref py py-class docutils literal notranslate"><span class="pre">stlab.utils.stlabdict.stlabmtx</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#stlab.utils.stlabdict.stlabmtx" title="stlab.utils.stlabdict.stlabmtx"><code class="xref py py-class docutils literal"><span class="pre">stlabmtx</span></code></a></p>
 </dd></dl>
 
 </div>
@@ -827,8 +837,8 @@ can be undone.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

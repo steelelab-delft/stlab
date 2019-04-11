@@ -116,7 +116,7 @@ def fromlimits(myfile,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xtit
         filename = myfile
     else:
         filename = os.path.realpath(myfile.name)
-    base, ext = os.path.splitext(filename)
+    base, _ = os.path.splitext(filename)
     metaname = base + '.meta.txt'
     f = open(metaname,'w')
 

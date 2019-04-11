@@ -1,32 +1,56 @@
-#Skeleton Lakeshore driver.  Daemon should be used as this driver only implements basic query/write
+"""Module for instance of a Lakeshore 370 resistance bridge
+
+This module contains the functions necessary to control and read data from 
+a Lakeshore 370 resistance bridge. It inherits from instrument class.
+Daemon should be used as this driver only implements basic query/write
+
+"""
 
 import visa
 import numpy as np
 import time
 from stlab.devices.instrument import instrument
 
+
 class Lakeshore_370(instrument):
-    def __init__(self,addr = 'ASRLCOM1::INSTR', reset=True, verb=True, baud_rate = 9600):
+    def __init__(self,
+                 addr='ASRLCOM1::INSTR',
+                 reset=True,
+                 verb=True,
+                 baud_rate=9600):
         #Custom reset function... There is a short dead time after reset
         # values for He7: baud_rate=57600, addr='ASRLCOM7::INSTR'
-        super().__init__(addr,reset=False,verb=verb, read_termination = '\r\n', parity = visa.constants.Parity.odd, baud_rate = baud_rate, data_bits = 7 )
+        super().__init__(
+            addr,
+            reset=False,
+            verb=verb,
+            read_termination='\r\n',
+            parity=visa.constants.Parity.odd,
+            baud_rate=baud_rate,
+            data_bits=7)
         if reset:
             self.reset()
         self.id()
-    def reset(self): #I need a short pause after reset.  Otherwise the system may hang.  Not even '*OPC?' works
+
+    def reset(
+            self
+    ):  #I need a short pause after reset.  Otherwise the system may hang.  Not even '*OPC?' works
         out = self.write('*RST')
         time.sleep(0.1)
-    def GetTemperature(self,i):
+
+    def GetTemperature(self, i):
         result = float(self.query('RDGK? {}'.format(i)))
         return result
-    def GetResistance(self,i):
+
+    def GetResistance(self, i):
         result = float(self.query('RDGR? {}'.format(i)))
         return result
 
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+    def GetMetadataString(
+            self
+    ):  #Should return a string of metadata adequate to write to a file
         pass
 
-    
     '''
     def write(self,mystr): #REQUIRES SPECIAL WRITE WITH OPC CHECK...
         self.query(mystr + ';*OPC?')
@@ -107,6 +131,3 @@ class Lakeshore_370(instrument):
             print("Channel " + channel + " UNSTABLE for " + str(Tset) + ' K')
         return success
 '''
-
-
-

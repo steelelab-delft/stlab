@@ -1,6 +1,7 @@
 import socket
 MSGLEN = 2048
 
+
 class MySocket:
     """demonstration class only
       - coded for clarity, not efficiency
@@ -8,8 +9,7 @@ class MySocket:
 
     def __init__(self, sock=None):
         if sock is None:
-            self.sock = socket.socket(
-                            socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         else:
             self.sock = sock
 
@@ -22,7 +22,7 @@ class MySocket:
             sent = self.sock.send(msg[totalsent:])
             if sent == 0:
                 print("Socket send: Message finished")
-#                raise RuntimeError("socket connection broken")
+                #                raise RuntimeError("socket connection broken")
                 return
             totalsent = totalsent + sent
 
@@ -33,7 +33,7 @@ class MySocket:
             chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
             if chunk == b'':
                 print("Socket receive: Message finished")
-#                raise RuntimeError("socket connection broken")
+                #                raise RuntimeError("socket connection broken")
                 return b''.join(chunks)
             chunks.append(chunk)
             bytes_recd = bytes_recd + len(chunk)

@@ -27,7 +27,9 @@ import glob
 import sys
 
 #DEFAULT LOGFOLDER FOR MAJOR TOM
-LOGFOLDER = 'C:/Users/user/Desktop/Entropy/logs/'
+#LOGFOLDER = 'C:/Users/user/Desktop/Entropy/logs/' # this was while logging was disabled...
+LOGFOLDER = 'C:/Entropy/logs/'
+
 
 def GetCurrentLogFolder(mylogfolder):
     a = next(os.walk(mylogfolder))[1]
@@ -43,17 +45,18 @@ def GetCurrentLogFolder(mylogfolder):
                 print(ssa)
                 dd = ss[0].split('-')
                 tt = ss[1]
-                din = [dd[0],dd[1],dd[2],tt[:2],tt[2:4],tt[4:6] ]
-                din = [ int(b) for b in din]
-                folderdate = datetime.datetime(*din)
-                #print(folderdate)
+                din = [dd[0], dd[1], dd[2], tt[:2], tt[2:4], tt[4:6]]
+                din = [int(b) for b in din]
+                # folderdate = datetime.datetime(*din)
+                # print(folderdate)
                 break
             except TypeError:
                 continue
             except ValueError:
                 continue
-    return ssa        
-        
+    return ssa
+
+
 def is_number(s):
     try:
         float(s)
@@ -61,7 +64,8 @@ def is_number(s):
     except ValueError:
         return False
 
-def tail( f, lines=20 ):
+
+def tail(f, lines=20):
     total_lines_wanted = lines
 
     BLOCK_SIZE = 1024
@@ -69,37 +73,39 @@ def tail( f, lines=20 ):
     block_end_byte = f.tell()
     lines_to_go = total_lines_wanted
     block_number = -1
-    blocks = [] # blocks of size BLOCK_SIZE, in reverse order starting
-                # from the end of the file
+    blocks = []  # blocks of size BLOCK_SIZE, in reverse order starting
+    # from the end of the file
     while lines_to_go > 0 and block_end_byte > 0:
         if (block_end_byte - BLOCK_SIZE > 0):
             # read the last block we haven't yet read
-            f.seek(block_number*BLOCK_SIZE, 2)
+            f.seek(block_number * BLOCK_SIZE, 2)
             blocks.append(f.read(BLOCK_SIZE))
         else:
             # file too small, start from begining
-            f.seek(0,0)
+            f.seek(0, 0)
             # only read what was not read
             blocks.append(f.read(block_end_byte))
         lines_found = blocks[-1].count('\n'.encode())
         lines_to_go -= lines_found
         block_end_byte -= BLOCK_SIZE
         block_number -= 1
-    blocks = [ x.decode() for x in blocks]
+    blocks = [x.decode() for x in blocks]
     all_read_text = ''.join(reversed(blocks))
     return '\n'.join(all_read_text.splitlines()[-total_lines_wanted:])
 
-def GetTemperature(sock,mylogfolder):
+
+def GetTemperature(sock, mylogfolder):
     now = datetime.datetime.now()
     foldername = GetCurrentLogFolder(mylogfolder)
-    foldername = mylogfolder + foldername
+    foldername = mylogfolder + '/' + foldername
     foldername = os.path.normpath(foldername)
     path = foldername + '\\*3He Head.log'
+    path = os.path.normpath(path)
     path = glob.glob(path)
-    filename = path[0]   
-    myfile = open(filename,'rb')
+    filename = path[0]
+    myfile = open(filename, 'rb')
     ss = MySocket(sock)
-    word = tail(myfile,2)
+    word = tail(myfile, 2)
     word = word.split('\t')[1]
     ss.mysend(word.encode('utf_8'))
     now = datetime.datetime.today()
@@ -108,7 +114,8 @@ def GetTemperature(sock,mylogfolder):
     except ValueError as err:
         print(err)
         T = -1.
-    print("Temperature sent at %s, T = %f K" % (now.strftime('%y-%m-%d %H:%M:%S'),T))
+    print("Temperature sent at %s, T = %f K" %
+          (now.strftime('%y-%m-%d %H:%M:%S'), T))
     ss.sock.close()
 
 
@@ -123,23 +130,24 @@ if __name__ == "__main__":
     serversocket.bind(('0.0.0.0', port))
     # become a server socket
     serversocket.listen(5)
-    print("Ready.  Listening on port %d and address %s" % (port,addr))
+    print("Ready.  Listening on port %d and address %s" % (port, addr))
 
     #LOGFOLDER = 'C:\\Entropy\\logs\\'
-#    if len(sys.argv) > 1:
-#        LOGFOLDER = sys.argv[1]
-    logfolder = input('Enter He7 log folder location (default "{}"):\n'.format(LOGFOLDER))
+    #    if len(sys.argv) > 1:
+    #        LOGFOLDER = sys.argv[1]
+    logfolder = input(
+        'Enter He7 log folder location (default "{}"):\n'.format(LOGFOLDER))
     if logfolder == '':
         logfolder = LOGFOLDER
     logfolder = os.path.normpath(logfolder)
-    
+    print("Using: {}".format(logfolder))
 
     try:
         while True:
             # accept connections from outside
+            print("Listening on port %d and address %s" % (port, addr))
             (clientsocket, address) = serversocket.accept()
-            GetTemperature(clientsocket,logfolder)
-            print("Listening on port %d and address %s" % (port,addr))
+            GetTemperature(clientsocket, logfolder)
 
     except KeyboardInterrupt:
         print('Shutting down temperature server')

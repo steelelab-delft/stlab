@@ -11,6 +11,7 @@ import socket
 import time
 MSGLEN = 2048
 
+
 class MySocket:
     """ Socket class
 
@@ -18,7 +19,7 @@ class MySocket:
         ``demonstration class only - coded for clarity, not efficiency``
     """
 
-    def __init__(self, sock=None,verb=False,timeout=10):
+    def __init__(self, sock=None, verb=False, timeout=10):
         """Init method for socket
 
         Parameters
@@ -35,8 +36,7 @@ class MySocket:
         """
         self.verb = verb
         if sock is None:
-            self.sock = socket.socket(
-                            socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         else:
             self.sock = sock
 
@@ -68,7 +68,7 @@ class MySocket:
             Message to be sent
     
         """
-        
+
         totalsent = 0
         while totalsent < MSGLEN:
             #print('Sending...')
@@ -77,11 +77,12 @@ class MySocket:
                 self.sock.send(b'#EOT')
                 if self.verb:
                     print("Socket send: Message finished")
+
+
 #                raise RuntimeError("socket connection broken")
                 return
             totalsent = totalsent + sent
             time.sleep(0.1)
-            
 
     def myreceive(self):
         """Receive a message from connected port
@@ -105,12 +106,13 @@ class MySocket:
                 if chunk == b'#EOT':
                     if self.verb:
                         print("Socket receive: Message finished")
+
     #                raise RuntimeError("socket connection broken")
                     return b''.join(chunks)
                 elif chunk == b'':
                     print("Socket receive: Message broken?")
                     raise RuntimeError("socket connection broken")
-                    return b''.join(chunks)
+                    # return b''.join(chunks)
                 chunks.append(chunk)
                 bytes_recd = bytes_recd + len(chunk)
             return b''.join(chunks)
@@ -119,6 +121,5 @@ class MySocket:
             print('Connection reset, returned "None"')
             return None
         except socket.timeout as err:
-            print('Receive timed out: ',err)
+            print('Receive timed out: ', err)
             return None
-

@@ -1,0 +1,177 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>stlab.devices.autodetect_instrument &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlab.devices.autodetect_instrument</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module that handles autodetection of instruments</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">stlab.devices.instrument</span> <span class="k">import</span> <span class="n">instrument</span>
+<span class="kn">from</span> <span class="nn">pydoc</span> <span class="k">import</span> <span class="n">locate</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+
+
+<span class="k">class</span> <span class="nc">DeviceNotFound</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">get_instr_definitions</span><span class="p">():</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;dev_ids.txt&#39;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="n">devdict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ff</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+            <span class="n">devdict</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">devdict</span>
+
+
+<span class="n">devdict</span> <span class="o">=</span> <span class="n">get_instr_definitions</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">test_instrument</span><span class="p">(</span>
+        <span class="n">instrument</span>
+<span class="p">):</span>  <span class="c1">#instrument is abstract and can&#39;t be instantiated... I use this placeholder instrument</span>
+    <span class="k">def</span> <span class="nf">GetMetadataString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="autodetect_instrument"><a class="viewcode-back" href="../../../drivers/instrument.html#stlab.devices.autodetect_instrument.autodetect_instrument">[docs]</a><span class="k">def</span> <span class="nf">autodetect_instrument</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Autodetect instrument function</span>
+
+<span class="sd">    Attempts automatically detect the desired instrument at the given address and creates</span>
+<span class="sd">    a new session with it using its corresponding driver.  It uses the response from :code:`*IDN?`</span>
+<span class="sd">    to identify the correct driver to load from the :code:`dev_ids.txt` file.  This file contains</span>
+<span class="sd">    model string and driver name pairs that this function searches in to find the correct driver.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    addr : str</span>
+<span class="sd">        Visa address string to autodetect</span>
+<span class="sd">    reset : bool, optional</span>
+<span class="sd">        If True sends :code:`*RST` to the instrument after connecting to it</span>
+<span class="sd">    verb : bool, optional</span>
+<span class="sd">        If True, prints debugging messages and strings sent</span>
+<span class="sd">    kwargs</span>
+<span class="sd">        Additional parameters to be passed to the visa.open_instrument method (a common one is :code:`read_termination` for example)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">test_instrument</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">reset</span><span class="p">,</span> <span class="n">verb</span><span class="p">,</span> <span class="n">query_delay</span><span class="o">=</span><span class="mf">100e-3</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">idstr</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">id</span><span class="p">()</span>
+
+    <span class="n">dev</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">idtag</span> <span class="ow">in</span> <span class="n">devdict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="n">idtag</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="ow">in</span> <span class="n">idstr</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="n">idtag</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="ow">in</span> <span class="n">idstr</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="n">idtag</span> <span class="o">+</span> <span class="s1">&#39; ,&#39;</span> <span class="ow">in</span> <span class="n">idstr</span><span class="p">):</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">devstr</span> <span class="o">=</span> <span class="n">devdict</span><span class="p">[</span><span class="n">idtag</span><span class="p">]</span>
+            <span class="n">devclass</span> <span class="o">=</span> <span class="s1">&#39;stlab.devices.&#39;</span> <span class="o">+</span> <span class="n">devstr</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">devstr</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Device found at address </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">devstr</span><span class="p">))</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">found</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">DeviceNotFound</span><span class="p">(</span>
+            <span class="s1">&#39;Id string retrieved (&quot;</span><span class="si">{}</span><span class="s1">&quot;), but not among known devices&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">idstr</span><span class="p">))</span>
+
+    <span class="n">devclass</span> <span class="o">=</span> <span class="n">locate</span><span class="p">(</span><span class="n">devclass</span><span class="p">)</span>
+
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">devclass</span><span class="p">(</span>
+        <span class="n">addr</span><span class="p">,</span> <span class="n">reset</span><span class="p">,</span> <span class="n">verb</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1">#Instantiate with the proper instrument and device</span>
+    <span class="k">return</span> <span class="n">dev</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">addr</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Enter VISA string:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="n">autodetect_instrument</span><span class="p">(</span><span class="s1">&#39;TCPIP::192.168.1.23::INSTR&#39;</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">id</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;suCCess!&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>

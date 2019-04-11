@@ -4,20 +4,29 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>writematrix – Data file writing methods &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="The instrument class" href="../drivers/instrument.html" />
+    <link rel="next" title="Overview of all electronic devices" href="../drivers/devices.html" />
     <link rel="prev" title="stlabdict – Data structures and matrices" href="stlabdict.html" /> 
-  </head><body>
+  </head>
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -28,7 +37,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../drivers/instrument.html" title="The instrument class"
+          <a href="../drivers/devices.html" title="Overview of all electronic devices"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="stlabdict.html" title="stlabdict – Data structures and matrices"
@@ -42,8 +51,8 @@
   <p class="topless"><a href="stlabdict.html"
                         title="previous chapter">stlabdict – Data structures and matrices</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../drivers/instrument.html"
-                        title="next chapter">The instrument class</a></p>
+  <p class="topless"><a href="../drivers/devices.html"
+                        title="next chapter">Overview of all electronic devices</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -53,14 +62,12 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -113,9 +120,9 @@ old style format strings as well as redundant methods no longer required.</p>
 the dict is though of as a column.  Expects all columns to be the same length.
 Also, if the file is empty (no writes have been yet performed on it), it will use the
 dictionary keys to write the title line.</p>
-<p>Internally this function converts the dict to a matrix and uses <a class="reference internal" href="#stlab.utils.writematrix.writematrix" title="stlab.utils.writematrix.writematrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">stlab.utils.writematrix.writematrix()</span></code></a> to save
+<p>Internally this function converts the dict to a matrix and uses <a class="reference internal" href="#stlab.utils.writematrix.writematrix" title="stlab.utils.writematrix.writematrix"><code class="xref py py-func docutils literal"><span class="pre">stlab.utils.writematrix.writematrix()</span></code></a> to save
 to the file.</p>
-<p>The main stlab import renames this function to <code class="code docutils literal notranslate"><span class="pre">stlab.savedict</span></code></p>
+<p>The main stlab import renames this function to <code class="code docutils literal"><span class="pre">stlab.savedict</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -139,7 +146,7 @@ separate blocks of data.</li>
 <code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writedictarray</code><span class="sig-paren">(</span><em>myfile</em>, <em>mydictarray</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em>, <em>blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writedictarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writedictarray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes an array of data dictionaries to a file</p>
 <p>Intended for writing a list of dictionaries containing the data columns as elements to a file.
-Essentially just repeats <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal notranslate"><span class="pre">writedict</span></code></a> on every element of the list making sure to include the
+Essentially just repeats <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a> on every element of the list making sure to include the
 title line (derived from the first dictionarly key values) if the file is new.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -163,11 +170,11 @@ separate blocks of data.</li>
 <dt id="stlab.utils.writematrix.writeframe">
 <code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writeframe</code><span class="sig-paren">(</span><em>myfile</em>, <em>myframe</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em>, <em>blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writeframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writeframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a pandas Dataframe to a file as a matrix block</p>
-<p>Writes a given pandas.DataFrame to a file.  Is analogous to <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal notranslate"><span class="pre">writedict</span></code></a>
+<p>Writes a given pandas.DataFrame to a file.  Is analogous to <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a>
 Also, if the file is empty (no writes have been yet performed on it), it will use the
 dataframe column indexes to write the title line.</p>
-<p>Internally this function converts just writes the matrix using <a class="reference internal" href="#stlab.utils.writematrix.writematrix" title="stlab.utils.writematrix.writematrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">stlab.utils.writematrix.writematrix()</span></code></a></p>
-<p>The main stlab import renames this function to <code class="code docutils literal notranslate"><span class="pre">stlab.saveframe</span></code></p>
+<p>Internally this function converts just writes the matrix using <a class="reference internal" href="#stlab.utils.writematrix.writematrix" title="stlab.utils.writematrix.writematrix"><code class="xref py py-func docutils literal"><span class="pre">stlab.utils.writematrix.writematrix()</span></code></a></p>
+<p>The main stlab import renames this function to <code class="code docutils literal"><span class="pre">stlab.saveframe</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -190,7 +197,7 @@ separate blocks of data.</li>
 <dt id="stlab.utils.writematrix.writeframearray">
 <code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writeframearray</code><span class="sig-paren">(</span><em>myfile</em>, <em>myframearray</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em>, <em>blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writeframearray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writeframearray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes an array of pandas DataFrame to a file</p>
-<p>Analogous to <a class="reference internal" href="#stlab.utils.writematrix.writedictarray" title="stlab.utils.writematrix.writedictarray"><code class="xref any py py-func docutils literal notranslate"><span class="pre">writedictarray</span></code></a> but using pd.Dataframe instead of dicts.  Expects a list of
+<p>Analogous to <a class="reference internal" href="#stlab.utils.writematrix.writedictarray" title="stlab.utils.writematrix.writedictarray"><code class="xref any py py-func docutils literal"><span class="pre">writedictarray</span></code></a> but using pd.Dataframe instead of dicts.  Expects a list of
 pd.DataFrames to be written to the file.  Also handles writing the title line if the file is
 new.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -238,7 +245,7 @@ separate blocks of data.</li>
 <p>Writes a matrix to a file with a given format specifier and a delimiter.  Adds a block
 separator at the end.  This is very similar to np.savetxt.  However, since python3
 np.savetxt requires the file to be open in binary write mode.</p>
-<p>This function is used internally by both <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal notranslate"><span class="pre">writedict</span></code></a> and <a class="reference internal" href="#stlab.utils.writematrix.writeframe" title="stlab.utils.writematrix.writeframe"><code class="xref any py py-func docutils literal notranslate"><span class="pre">writeframe</span></code></a></p>
+<p>This function is used internally by both <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a> and <a class="reference internal" href="#stlab.utils.writematrix.writeframe" title="stlab.utils.writematrix.writeframe"><code class="xref any py py-func docutils literal"><span class="pre">writeframe</span></code></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -302,7 +309,7 @@ separate blocks of data.</li>
 <code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writetitle</code><span class="sig-paren">(</span><em>myfile</em>, <em>vv</em>, <em>delim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writetitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writetitle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of strings writes the file title line</p>
 <p>Does not do anything if the file already has contents.  Includes a ‘#’ as first character for
-gnuplot.  Is used by <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal notranslate"><span class="pre">writedict</span></code></a> and <a class="reference internal" href="#stlab.utils.writematrix.writeframe" title="stlab.utils.writematrix.writeframe"><code class="xref any py py-func docutils literal notranslate"><span class="pre">writeframe</span></code></a>.</p>
+gnuplot.  Is used by <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a> and <a class="reference internal" href="#stlab.utils.writematrix.writeframe" title="stlab.utils.writematrix.writeframe"><code class="xref any py py-func docutils literal"><span class="pre">writeframe</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -336,7 +343,7 @@ gnuplot.  Is used by <a class="reference internal" href="#stlab.utils.writematri
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../drivers/instrument.html" title="The instrument class"
+          <a href="../drivers/devices.html" title="Overview of all electronic devices"
              >next</a> |</li>
         <li class="right" >
           <a href="stlabdict.html" title="stlabdict – Data structures and matrices"
@@ -345,8 +352,8 @@ gnuplot.  Is used by <a class="reference internal" href="#stlab.utils.writematri
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

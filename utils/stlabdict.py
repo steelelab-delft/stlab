@@ -197,7 +197,7 @@ def dictarr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, xt
 
     """
     #Build initial matrix.  Appends each data column as line in zz    
-    zz = [];
+    zz = []
     for line in data:
         zz.append(line[key])
     #convert to np matrix
@@ -366,15 +366,15 @@ class stlabmtx():
     def absolute(self):
         """Absolute value filter
 
-        Applies np.abs to all elements of the matrix.
+        Applies np.abs to all elements of the matrix.  Process string :code:`abs`.
 
         """
         self.pmtx = np.abs(self.pmtx)
         self.processlist.append('abs')
-    def crop(data,left=None,right=None,up=None,low=None):
+    def crop(self,left=None,right=None,up=None,low=None):
         """Crop filter
 
-        Crops data matrix to the given extents
+        Crops data matrix to the given extents.  Process string :code:`crop left,right,up,low`
 
         Parameters
         ----------
@@ -397,15 +397,15 @@ class stlabmtx():
                 valdict[key] = None
             else:
                 valdict[key] = int(val)
-        data.pmtx = data.pmtx.iloc[valdict['left']:valdict['right'],valdict['up']:valdict['low']]
+        self.pmtx = self.pmtx.iloc[valdict['left']:valdict['right'],valdict['up']:valdict['low']]
         for key,val in valdict.items():
             if val==None:
                 valdict[key] = 0
-        data.processlist.append('crop {},{},{},{}'.format(valdict['left'],valdict['right'],valdict['up'],valdict['low']))
+        self.processlist.append('crop {},{},{},{}'.format(valdict['left'],valdict['right'],valdict['up'],valdict['low']))
     def flip(self,x=False,y=False):
         """Flip filter
 
-        Reverses x and/or y axis
+        Reverses x and/or y axis.  Process string :code:`flip x,y` (0 is false, 1 is true).
 
         Parameters
         ----------
@@ -424,7 +424,7 @@ class stlabmtx():
     def log10(self):
         """Log10 filter
 
-        Applies np.log10 to all elements in the matrix
+        Applies np.log10 to all elements in the matrix.  Process string :code:`log10`
 
         """
         self.pmtx = np.log10(self.pmtx)
@@ -433,6 +433,7 @@ class stlabmtx():
         """Low Pass filter
 
         Applies a gaussian filter to the data with given pixel widths.  Other filters are yet to be implemented.
+        Process string :code:`lowpass x,y`
 
         Parameters
         ----------
@@ -446,7 +447,7 @@ class stlabmtx():
     def neg(self):
         """Negative filter
 
-        Multiplies matrix by -1
+        Multiplies matrix by -1.  Process string :code:`neg`
 
         """
         self.pmtx = -self.pmtx
@@ -454,7 +455,7 @@ class stlabmtx():
     def offset(self,x=0):
         """Offset filter
 
-        Offsets data values by adding given value
+        Offsets data values by adding given value.  Process string :code:`offset x`
 
         Parameters
         ----------
@@ -467,7 +468,7 @@ class stlabmtx():
     def offset_axes(self,x=0,y=0):
         """Axes offset filter
 
-        Offset axis values
+        Offset axis values.  Process string :code:`offset_axes x,y`
 
         Parameters
         ----------
@@ -481,7 +482,7 @@ class stlabmtx():
     def outlier(self,line,vertical=1):
         """Outlier filter
         
-        Drop a line or column from the data
+        Drop a line or column from the data.  Process string :code:`outlier line,vertical`
 
         Parameters
         ----------
@@ -497,7 +498,7 @@ class stlabmtx():
     def pixel_avg(self,nx=0,ny=0,center=0):
         """Pixel average filter
         
-        Performs pixel averaging on matrix
+        Performs pixel averaging on matrix.  Process string :code:`pixel_avg nx,ny,center`
 
         Parameters
         ----------
@@ -519,7 +520,7 @@ class stlabmtx():
     def rotate_ccw(self):
         """Rotate counter-clockwise filter
 
-        Rotates matrix and axes counter-clockwise
+        Rotates matrix and axes counter-clockwise.  Process string :code:`rotate_ccw`
 
         """
         self.ytitle, self.xtitle = self.xtitle, self.ytitle
@@ -529,7 +530,7 @@ class stlabmtx():
     def rotate_cw(self):
         """Rotate clockwise filter
 
-        Rotates matrix and axes clockwise
+        Rotates matrix and axes clockwise.  Process string :code:`rotate_cw`
 
         """
         self.ytitle, self.xtitle = self.xtitle, self.ytitle
@@ -539,7 +540,7 @@ class stlabmtx():
     def scale_data(self,factor=1.):
         """Scale filter
 
-        Scales all data by given factor
+        Scales all data by given factor.  Process string :code:`scale x`
 
         Parameters
         ----------
@@ -555,7 +556,7 @@ class stlabmtx():
         The average value of each line is substracted from the data.  Parts of each line cut can be
         excluded using the high and low percentile options.  The idea is that all points are sorted in
         increasing order and a percentage from the back and front of the list is rejected for the average
-        calculation.
+        calculation.  Process string :code:`sub_lbl lowp,highp,low_limit,high_limit`
 
         Parameters
         ----------
@@ -574,7 +575,7 @@ class stlabmtx():
     def sub_cbc(self,lowp=40, highp=40, low_limit=-1e99, high_limit=1e99):
         """ Subtract column by column filter
     
-        Same as :any:`sub_lbl` but done on a column by column basis.
+        Same as :any:`sub_lbl` but done on a column by column basis.  Process string :code:`sub_cbc lowp,highp,low_limit,high_limit`
 
         """
         self.pmtx.loc[:,:] = sub_lbl(self.pmtx.values.T,lowp,highp,low_limit,high_limit).T
@@ -582,7 +583,8 @@ class stlabmtx():
     def sub_linecut(self, pos, horizontal=1):
         """Subtract lincut filter
 
-        Selects a line or column and subtracts it from all othe lines or columns in the matrix
+        Selects a line or column and subtracts it from all othe lines or columns in the matrix.
+        Process string :code:`sub_linecut pos,horizontal`
 
         Parameters
         ----------
@@ -610,6 +612,8 @@ class stlabmtx():
         If one desires to do this with the x axis instead of the y, the matrix must first be transposed.  After the filter is applied the transpose
         can be undone.
 
+        Process string :code:`vi_to_iv vmin,vmax,nbins`
+
         Parameters
         ----------
         vmin : float
@@ -628,7 +632,7 @@ class stlabmtx():
     def xderiv(self,direction=1):
         """X derivative filter
 
-        Apply a derivative along the lines of the matrix.
+        Apply a derivative along the lines of the matrix.  Process string :code:`xderiv direction`
 
         Parameters
         ----------
@@ -641,7 +645,7 @@ class stlabmtx():
     def yderiv(self,direction=1):
         """Y derivative filter
 
-        Apply a derivative along the columns of the matrix.
+        Apply a derivative along the columns of the matrix.  Process string :code:`yderiv direction`
 
         Parameters
         ----------
@@ -654,7 +658,7 @@ class stlabmtx():
     def transpose(self):
         """Transpose filter
 
-        Transposes the data matrix (and axes)
+        Transposes the data matrix (and axes).  Process string :code:`transpose`
         """
         self.ytitle, self.xtitle = self.xtitle, self.ytitle
         self.pmtx = self.pmtx.transpose()
@@ -932,7 +936,7 @@ def framearr_to_mtx(data, key, rangex=None, rangey=None, xkey=None, ykey=None, x
     """
 
     #Build initial matrix.  Appends each data column as line in zz    
-    zz = [];
+    zz = []
     for line in data:
         zz.append(line[key])
     #convert to np matrix

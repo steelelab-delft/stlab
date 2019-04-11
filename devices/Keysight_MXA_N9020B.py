@@ -1,12 +1,12 @@
 from stlab.devices.instrument import instrument
-from stlab.utils.stlabdict import stlabdict
+# from stlab.utils.stlabdict import stlabdict
 import logging
 import numpy as np
 
 
 class Keysight_MXA_N9020B(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.164::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
@@ -25,7 +25,6 @@ class Keysight_MXA_N9020B(instrument):
         logging.debug(__name__ + ' : Center frequency set to %d Hz' % f_center)
         return self.dev.write(':SENSe:FREQuency:CENTer %d' % f_center)
 
-
     def get_demodulation_frequency(self):
         '''
         sets center frequency for the demodulation (in Hz)
@@ -33,14 +32,13 @@ class Keysight_MXA_N9020B(instrument):
         freq = self.dev.query(':SENSe:FREQuency:CENTer?')
         return float(freq)
 
-
     def set_digital_IF_BW(self, IFBW=160e6):
         '''
         digital IF bandwidth (160 MHz is maximum)
         '''
         if IFBW <= 160e6:
-            logging.debug(
-                __name__ + ' : Digital IF bandwidth set to %d Hz ' % IFBW)
+            logging.debug(__name__ +
+                          ' : Digital IF bandwidth set to %d Hz ' % IFBW)
             return self.dev.write(
                 ':SENSe:WAVEform:BANDwidth:RESolution %d' % IFBW)
         else:
@@ -50,8 +48,7 @@ class Keysight_MXA_N9020B(instrument):
         '''
         time resolution of points
         '''
-        return self.dev.write(
-                ':SENSe:WAVeform:SRATe %d' % srate)
+        return self.dev.write(':SENSe:WAVeform:SRATe %d' % srate)
 
     def set_continuous_OFF(self):
         '''
@@ -97,7 +94,6 @@ class Keysight_MXA_N9020B(instrument):
         sets hardware averages
         '''
         return self.dev.write(':SENSe:WAVeform:AVERage:TACount %d' % navg)
-
 
     def set_IQ_voltage_range_auto(self):
         '''
@@ -165,7 +161,6 @@ class Keysight_MXA_N9020B(instrument):
         data = np.fromstring(data_string, dtype=float, sep=',')
         return np.average(data[i_start:i_finish])
 
-
     def measure_time_trace(self):
         data_string = self.dev.query(':READ:WAV2?')
         powers = np.fromstring(data_string, dtype=float, sep=',')
@@ -175,7 +170,6 @@ class Keysight_MXA_N9020B(instrument):
         timestep = settings[0]
         n_samples = settings[3]
         times = np.arange(0, n_samples) * timestep
-
 
         # names = ['time (s)', 'power (dB)']
         # final = stlabdict()
@@ -212,5 +206,7 @@ class Keysight_MXA_N9020B(instrument):
     def set_waveform_mode(self):
         return self.dev.write(':CONFigure:WAVeform:NDEFault')
 
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+    def GetMetadataString(
+            self
+    ):  # Should return a string of metadata adequate to write to a file
         pass

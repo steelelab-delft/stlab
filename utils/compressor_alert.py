@@ -8,11 +8,11 @@ import sys
 import time
 from email.message import EmailMessage
 
-
 # lrralxerojjirmpq   (app pass)
 
 #LOGFOLDER = 'C:\\Entropy\\logs\\'
 LOGFOLDER = 'D:\\logs\\'
+
 
 def GetCurrentLogFolder():
     a = glob.glob(LOGFOLDER + '*-*-*/')
@@ -21,7 +21,8 @@ def GetCurrentLogFolder():
     #print(a)
     ssa = a[-1]
     return ssa
-        
+
+
 def is_number(s):
     try:
         float(s)
@@ -29,11 +30,12 @@ def is_number(s):
     except ValueError:
         return False
 
+
 def GetCompStatus():
     ll = GetCurrentLogFolder()
     logfilename = glob.glob(ll + 'Status*')[0]
 
-    with open(logfilename,'r') as f:
+    with open(logfilename, 'r') as f:
         lines = f.read().splitlines()
         last_line = lines[-2:]
 
@@ -46,7 +48,7 @@ def GetCompStatus():
             idx = ss.index('cpaerr')
         except ValueError:
             continue
-        stat = int(float(ss[idx+1]))
+        stat = int(float(ss[idx + 1]))
         timestr = ' '.join(ss[:2])
         #timestr = '12-07-18 17:56:00'
         readdate = datetime.datetime.strptime(timestr, '%d-%m-%y %H:%M:%S')
@@ -59,8 +61,8 @@ def GetCompStatus():
     if stat == -99:
         raise RuntimeError('No compressor data in logfile!')
 
-
     return stat
+
 
 tmessage = 60
 t0 = time.time()
@@ -71,8 +73,9 @@ while True:
         stat = GetCompStatus()
         if stat == 0:
             tt = time.time()
-            if tt-t0 > tmessage:
-                print("(Compressor monitor): It's",datetime.datetime.now(),"and all is well!")
+            if tt - t0 > tmessage:
+                print("(Compressor monitor): It's", datetime.datetime.now(),
+                      "and all is well!")
                 t0 = tt
             pass
         else:
@@ -80,10 +83,9 @@ while True:
             gmail_user = 'steelelab.tudelft'
             server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             server.login(gmail_user, "SteeleLab_18")
-            sent_from = 'Steelelab compressor alert service'  
-            # to = ['m.d.jenkinssanchez@tudelft.nl']  
+            sent_from = 'Steelelab compressor alert service'
             to = ['steelelab-tnw@tudelft.nl']
-            subject = 'EMERGENCY! COMPRESSOR ERROR!'  
+            subject = 'EMERGENCY! COMPRESSOR ERROR!'
             body = 'EMERGENCY! EMERGENCY! THERE IS AN EMERGENCY GOING ON!\n\nIT\'S STILL GOING ON!\n\nLooking forward to hearing from you,\n\nBest regards,\n\nSteelelab Compressor Alert Service'
             msg = EmailMessage()
             msg.set_content(body)
@@ -95,7 +97,5 @@ while True:
             break
     except RuntimeError as err:
         now = datetime.datetime.now()
-        print(now.strftime('%d-%m-%y %H:%M:%S') + ': ',err)
+        print(now.strftime('%d-%m-%y %H:%M:%S') + ': ', err)
         continue
-
-
