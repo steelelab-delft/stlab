@@ -19,7 +19,7 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 
 ## Changelog
 
-All notable changes to this project will be documented below.
+All notable changes to the master branch of this project will be documented below.
 
 - [`74891f7`](https://github.com/steelelabgit/stlab/commit/74891f7e12057a18cd64b9e88492cf197438cc45) - 2019-04-09
   - pop-up windows when not resetting instrument
