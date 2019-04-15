@@ -1,15 +1,15 @@
-"""Module for instance of a Keithley 2100
+"""Module for instance of a Keithley 2000
 
 This module contains the functions necessary to control and read data from 
-a Keithley 2100 multimeter. It inherits from basekeithley.
+a Keithley 2000 multimeter. It inherits from basekeithley.
 
 """
 from stlab.devices.basekeithley import basekeithley
 
 
-class Keithley_2100(basekeithley):
+class Keithley_2000(basekeithley):
     def __init__(self,
-                 addr='USB0::0x05E6::0x2100::1310646::INSTR',
+                 addr='TCPIP::192.168.1.13::1470::SOCKET',
                  reset=True,
                  verb=True,
                  **kwargs):
@@ -20,5 +20,4 @@ class Keithley_2100(basekeithley):
         self.SetRange(10)
         self.SetNPLC(1)
         self.write('TRIG:SOUR IMM')
-        self.write('SENS:GAIN:AUTO OFF')
         self.write('SENS:ZERO:AUTO OFF')
