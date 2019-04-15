@@ -17,7 +17,6 @@ def numtostr(mystr):
 
 
 class basesa(instrument, abc.ABC):
-
     def __init__(self, addr, reset, verb):
         super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
@@ -59,7 +58,7 @@ class basesa(instrument, abc.ABC):
     def GetSpan(self):
         aw = self.query('FREQ:SPAN?')
         return aw.strip('\n')
-      
+
     def SetResolutionBW(self, x):
         mystr = 'BAND:RES {}'.format(x)
         self.write(mystr)
@@ -120,10 +119,13 @@ class basesa(instrument, abc.ABC):
     def SetReference(self, ref='INT'):
         # INT, EXT, EAUT
         self.write('ROSC:SOUR ' + ref)
-        
+
     def GetReference(self):
         aw = self.query('ROSC:SOUR?')
         return aw.strip('\n')
+
+    def SetReferenceLevel(self, ampt, unit='DBM'):
+        self.write('DISP:WIND:TRAC:Y:RLEV {}{}'.format(ampt, unit))
 
     def GetMetadataString(self):
         # Should return a string of metadata adequate to write to a file
@@ -257,6 +259,7 @@ class basesa(instrument, abc.ABC):
             self.write(':UNIT:POW ' + unit)
         else:
             raise KeyError('Unknown unit!')
+
 
 ##### FULLY IMPLEMENTED METHODS THAT DO NOT NEED TO BE REIMPLEMENTED (BUT CAN BE IF NECESSARY) #####################
 

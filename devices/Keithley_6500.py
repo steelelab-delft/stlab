@@ -1,25 +1,26 @@
 """Module for instance of a Keithley DMM6500
 
 This module contains the functions necessary to control and read data from 
-a Keithley DMM6500. It inherits from the Keithley 2100.
+a Keithley DMM6500. It inherits from basekeithley.
+Remember read_termination = '\n'
 
 """
 
-from stlab.devices.Keithley_2100 import Keithley_2100
+from stlab.devices.basekeithley import basekeithley
 
 
-def numtostr(mystr):
-    # return '%20.10f' % mystr
-    return '%20.15e' % mystr
-
-
-class Keithley_6500(Keithley_2100):
+class Keithley_6500(basekeithley):
     def __init__(self,
                  addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True,
-                 **kwargs):
+                 **kwargs):  # Remember read_termination = '\n'
         super().__init__(addr, reset, verb, **kwargs)
+
+    def FastMeasurementSetup(self):  # standard settings
+        self.SetRangeAuto(False)
+        self.SetRange(10)
+        self.SetNPLC(1)
 
     def ResetTrig(self):  # reset trigger model
         self.write('TRIG:LOAD "Empty"')
