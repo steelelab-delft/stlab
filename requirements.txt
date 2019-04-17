@@ -1,4 +1,4 @@
--e git://github.com/steelelab-delft/stlabutils.git
+git+git://github.com/steelelab-delft/stlabutils.git#egg=stlabutils
 scipy>=1.2.1
 lmfit>=0.9.13
 PyVISA-py>=0.3.1
