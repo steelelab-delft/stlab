@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="S11fit – Resonance fitting routines and utilities" href="utils/S11fit.html" /> 
+    <link rel="next" title="compressor_alert – Compressor alert method" href="utils/compressor_alert.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -36,7 +36,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="utils/S11fit.html" title="S11fit – Resonance fitting routines and utilities"
+          <a href="utils/compressor_alert.html" title="compressor_alert – Compressor alert method"
              accesskey="N">next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">STLab  documentation</a> &#187;</li> 
       </ul>
@@ -52,8 +52,8 @@
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="utils/S11fit.html"
-                        title="next chapter">S11fit – Resonance fitting routines and utilities</a></p>
+  <p class="topless"><a href="utils/compressor_alert.html"
+                        title="next chapter">compressor_alert – Compressor alert method</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -79,21 +79,16 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="documentation-for-stlab">
+  <a class="reference external image-reference" href="https://github.com/steelelab-delft/stlab"><img alt="https://img.shields.io/badge/source-github-ff69b4.svg" src="https://img.shields.io/badge/source-github-ff69b4.svg" /></a>
+<a class="reference external image-reference" href="https://www.gnu.org/licenses/gpl-3.0"><img alt="https://img.shields.io/badge/License-GPLv3-blue.svg" src="https://img.shields.io/badge/License-GPLv3-blue.svg" /></a>
+<a class="reference external image-reference" href="https://doi.org/10.5281/zenodo.1299278"><img alt="https://zenodo.org/badge/DOI/10.5281/zenodo.1299278.svg" src="https://zenodo.org/badge/DOI/10.5281/zenodo.1299278.svg" /></a>
+<div class="section" id="documentation-for-stlab">
 <h1>Documentation for STLab<a class="headerlink" href="#documentation-for-stlab" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="utils/S11fit.html">S11fit – Resonance fitting routines and utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/TLmodel.html">TLmodel – Model for transmission line resonator</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils/TLmodel.html#functions">Functions</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="utils/autoplotter.html">Autoplot – Quick plots for measurement reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/metagen.html">Metagen – Spyview metafile generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/newfile.html">newfile – New measurement folder creation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/stlabdict.html">stlabdict – Data structures and matrices</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/writematrix.html">writematrix – Data file writing methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/compressor_alert.html">compressor_alert – Compressor alert method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/reset_popup_warning.html">reset_popup_warning – Popup warning for omitted instrument resets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="drivers/devices.html">Overview of all electronic devices</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="drivers/devices.html#rigol-ds1054-py">Rigol_DS1054.py</a></li>
 </ul>
@@ -121,6 +116,7 @@
 automation.  For the most part it is built upon pyvisa and is inteded to avoid the complications
 of low level communication with measurement instruments without including an inconvenient level
 of additional complexity (see <a class="reference external" href="https://en.wikipedia.org/wiki/KISS_principle">KISS principle</a>).</p>
+<p>STLab needs <a class="reference external" href="https://github.com/steelelab-delft/stlabutils">stlabutils</a> for saving measurements, but can be used alone for only communication.</p>
 <p>The instrument drivers should in general only contain basic commonly used commands and not
 sophisticated setup and measurement schemes.  While things like “Get power” or “Get Trace” are
 acceptable, methods like “Perform 2 tone measurement” should not be included in basic device drivers.
@@ -151,42 +147,41 @@ to be very specific and would only clutter the driver for others.</p>
 </div>
 <ul class="simple">
 <li>The “devices” folder contains all the implemented drivers as well as the basic instrument class.</li>
-<li>The “utils” folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.</li>
+<li>The “utils” folder contains modules for running in the background. All old modules that was not directly related to instrument communication has been moved to <a class="reference external" href="https://github.com/steelelab-delft/stlabutils">stlabutils</a>.</li>
 <li>“examples” contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.</li>
 <li>“docs” contains this documentation and “doc_gen” contains the sphynx scripts for generating it.</li>
 <li>The __init__.py file contains the modules and names imported when running “import stlab”.  Note that some modules and functions are renamed for (in?)convenience.</li>
 </ul>
 <p>The imports done when doing <code class="code docutils literal"><span class="pre">import</span> <span class="pre">stlab</span></code> are:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Loads utils with shorter names</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.newfile</span> <span class="kn">import</span> <span class="n">newfile</span> <span class="c1">#Callable as stlab.newfile(...)</span>
-<span class="kn">import</span> <span class="nn">stlab.utils.metagen</span> <span class="kn">as</span> <span class="nn">metagen</span> <span class="c1">#Callable as stlab.metagen.fromlimits(...)</span>
-<span class="kn">import</span> <span class="nn">stlab.utils.readdata</span> <span class="kn">as</span> <span class="nn">readdata</span> <span class="c1">#Callable as stlab.readdata.readQUCS(...)</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writematrix</span> <span class="k">as</span> <span class="n">savetxt</span> <span class="c1">#Callable as stlab.savetxt(...)</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writedict</span> <span class="k">as</span> <span class="n">savedict</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writedictarray</span> <span class="k">as</span> <span class="n">savedictarray</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeparams</span> <span class="k">as</span> <span class="n">writeparams</span> <span class="c1">#Callable as stlab.savetxt(...)</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeparnames</span> <span class="k">as</span> <span class="n">writeparnames</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">params_to_str</span> <span class="k">as</span> <span class="n">params_to_str</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeline</span> <span class="k">as</span> <span class="n">writeline</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeframe</span> <span class="k">as</span> <span class="n">saveframe</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeframearray</span> <span class="k">as</span> <span class="n">saveframearray</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">stlabdict</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">stlabmtx</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">framearr_to_mtx</span>
-<span class="k">try</span><span class="p">:</span> <span class="c1"># some users might not need S11fit</span>
-    <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">fit</span> <span class="k">as</span> <span class="n">S11fit</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
-    <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">S11full</span> <span class="k">as</span> <span class="n">S11func</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
-    <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">backmodel</span> <span class="k">as</span> <span class="n">S11back</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
-    <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">S11theo</span> <span class="k">as</span> <span class="n">S11theo</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Warning: Missing dependencies for S11fit! Fitting routines not imported.&#39;</span><span class="p">)</span>
-<span class="k">try</span><span class="p">:</span> <span class="c1"># some users might not need to do measurements</span>
-    <span class="c1">#from stlab.devices.base_instrument import SaveInstrumentMetadata #Callable as stlab.SaveInstrumentMetadata(...)</span>
-    <span class="kn">from</span> <span class="nn">stlab.devices.autodetect_instrument</span> <span class="kn">import</span> <span class="n">autodetect_instrument</span> <span class="k">as</span> <span class="n">adi</span> <span class="c1">#Callable as stlab.devices.adi(...)</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Warning: Missing dependencies for autodetect_instrument! Autodetect routines not imported.&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># # Loads utils with shorter names</span>
+<span class="c1"># from stlab.utils.newfile import newfile #Callable as stlab.newfile(...)</span>
+<span class="c1"># import stlab.utils.metagen as metagen #Callable as stlab.metagen.fromlimits(...)</span>
+<span class="c1"># import stlab.utils.readdata as readdata #Callable as stlab.readdata.readQUCS(...)</span>
+<span class="c1"># from stlab.utils.writematrix import writematrix as savetxt #Callable as stlab.savetxt(...)</span>
+<span class="c1"># from stlab.utils.writematrix import writedict as savedict</span>
+<span class="c1"># from stlab.utils.writematrix import writedictarray as savedictarray</span>
+<span class="c1"># from stlab.utils.writematrix import writeparams as writeparams #Callable as stlab.savetxt(...)</span>
+<span class="c1"># from stlab.utils.writematrix import writeparnames as writeparnames</span>
+<span class="c1"># from stlab.utils.writematrix import params_to_str as params_to_str</span>
+<span class="c1"># from stlab.utils.writematrix import writeline as writeline</span>
+<span class="c1"># from stlab.utils.writematrix import writeframe as saveframe</span>
+<span class="c1"># from stlab.utils.writematrix import writeframearray as saveframearray</span>
+<span class="c1"># from stlab.utils.stlabdict import stlabdict</span>
+<span class="c1"># from stlab.utils.stlabdict import stlabmtx</span>
+<span class="c1"># from stlab.utils.stlabdict import framearr_to_mtx</span>
+<span class="c1"># try: # some users might not need S11fit</span>
+<span class="c1">#     from stlab.utils.S11fit import fit as S11fit #Callable as stlab.S11fit(...)</span>
+<span class="c1">#     from stlab.utils.S11fit import S11full as S11func #Callable as stlab.S11fit(...)</span>
+<span class="c1">#     from stlab.utils.S11fit import backmodel as S11back #Callable as stlab.S11fit(...)</span>
+<span class="c1">#     from stlab.utils.S11fit import S11theo as S11theo #Callable as stlab.S11fit(...)</span>
+<span class="c1"># except ImportError:</span>
+<span class="c1">#     print(&#39;Warning: Missing dependencies for S11fit! Fitting routines not imported.&#39;)</span>
+<span class="c1"># from stlab.devices.base_instrument import SaveInstrumentMetadata #Callable as stlab.SaveInstrumentMetadata(...)</span>
+<span class="kn">from</span> <span class="nn">stlab.devices.autodetect_instrument</span> <span class="kn">import</span> <span class="n">autodetect_instrument</span> <span class="k">as</span> <span class="n">adi</span>  <span class="c1">#Callable as stlab.devices.adi(...)</span>
+<span class="c1"># except ImportError:</span>
+<span class="c1">#     print(&#39;Warning: Missing dependencies for autodetect_instrument! Autodetect routines not imported.&#39;)</span>
 
-<span class="kn">from</span> <span class="nn">stlab.utils.autoplotter</span> <span class="kn">import</span> <span class="n">autoplot</span> <span class="c1">#Call as stlab.autoplot(...)</span>
+<span class="c1"># from stlab.utils.autoplotter import autoplot #Call as stlab.autoplot(...)</span>
 </pre></div>
 </div>
 </div>
@@ -219,7 +214,7 @@ to be very specific and would only clutter the driver for others.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="utils/S11fit.html" title="S11fit – Resonance fitting routines and utilities"
+          <a href="utils/compressor_alert.html" title="compressor_alert – Compressor alert method"
              >next</a> |</li>
         <li class="nav-item nav-item-0"><a href="#">STLab  documentation</a> &#187;</li> 
       </ul>

@@ -1,5 +1,5 @@
 from stlab.devices.instrument import instrument
-# from stlab.utils.stlabdict import stlabdict
+# from stlabutils.utils.stlabdict import stlabdict
 import logging
 import numpy as np
 
