@@ -4,18 +4,27 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>stlab.utils.S11fit &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head><body>
+  </head>
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -33,14 +42,12 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -54,7 +61,7 @@
   <h1>Source code for stlab.utils.S11fit</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module for fitting resonance line shapes to different circuit models</span>
 
-<span class="sd">This module contains the functions necessary to fit some general lorentizian to</span>
+<span class="sd">This module contains the functions necessary to fit some general Lorentzian to</span>
 <span class="sd">simulations or measurements.  The main function is &quot;fit&quot; and is imported with</span>
 <span class="sd">stlab as &quot;stlab.S11fit&quot;.  All other functions in this module are there to</span>
 <span class="sd">supplement this fitting function or are not generally used.</span>
@@ -674,7 +681,7 @@
 
 <span class="c1">#calculate final background and remove background from original data</span>
     <span class="n">complexresidual</span> <span class="o">=</span> <span class="n">un_realimag</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">residual</span><span class="p">)</span>
-    <span class="n">backgroundfit</span> <span class="o">=</span> <span class="n">backsig</span> <span class="o">+</span> <span class="n">complexresidual</span>
+    <span class="c1"># backgroundfit = backsig + complexresidual</span>
     <span class="n">fullbackground</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">backmodel</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">result</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">frec</span><span class="p">])</span>
     <span class="n">S11corr</span> <span class="o">=</span> <span class="o">-</span><span class="n">S11</span> <span class="o">/</span> <span class="n">fullbackground</span>
     <span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-A&#39;</span> <span class="ow">or</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;-B&#39;</span><span class="p">:</span>
@@ -808,7 +815,7 @@
 <span class="c1">#calculate final result and background</span>
     <span class="n">complexresidual</span> <span class="o">=</span> <span class="n">un_realimag</span><span class="p">(</span><span class="n">finalresult</span><span class="o">.</span><span class="n">residual</span><span class="p">)</span>
     <span class="n">finalfit</span> <span class="o">=</span> <span class="n">S11</span> <span class="o">+</span> <span class="n">complexresidual</span>
-    <span class="n">newbackground</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">backmodel</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">finalresult</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">frec</span><span class="p">])</span>
+    <span class="c1"># newbackground = np.array([backmodel(xx,finalresult.params) for xx in frec])</span>
 
     <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Final signal and fit (Re,Im)&#39;</span><span class="p">)</span>
@@ -829,7 +836,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frec</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">finalfit</span><span class="p">))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-    <span class="n">chi2</span> <span class="o">=</span> <span class="n">finalresult</span><span class="o">.</span><span class="n">chisqr</span>
+    <span class="c1"># chi2 = finalresult.chisqr</span>
 
 
     <span class="k">return</span> <span class="n">params</span><span class="p">,</span><span class="n">frec</span><span class="p">,</span><span class="n">S11</span><span class="p">,</span><span class="n">finalresult</span></div>
@@ -942,8 +949,8 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

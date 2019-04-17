@@ -1,6 +1,6 @@
 """Module for fitting resonance line shapes to different circuit models
 
-This module contains the functions necessary to fit some general lorentizian to
+This module contains the functions necessary to fit some general Lorentzian to
 simulations or measurements.  The main function is "fit" and is imported with
 stlab as "stlab.S11fit".  All other functions in this module are there to
 supplement this fitting function or are not generally used.
@@ -620,7 +620,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 
 #calculate final background and remove background from original data
     complexresidual = un_realimag(result.residual)
-    backgroundfit = backsig + complexresidual
+    # backgroundfit = backsig + complexresidual
     fullbackground = np.array([backmodel(xx,result.params) for xx in frec])
     S11corr = -S11 / fullbackground
     if ftype == '-A' or ftype == '-B':
@@ -754,7 +754,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
 #calculate final result and background
     complexresidual = un_realimag(finalresult.residual)
     finalfit = S11 + complexresidual
-    newbackground = np.array([backmodel(xx,finalresult.params) for xx in frec])
+    # newbackground = np.array([backmodel(xx,finalresult.params) for xx in frec])
 
     if doplots:
         plt.title('Final signal and fit (Re,Im)')
@@ -775,7 +775,7 @@ def fit(frec,S11,ftype='A',fitbackground=True,trimwidth=5.,doplots=False,margin 
         plt.plot(frec,np.abs(finalfit))
         plt.show()
 
-    chi2 = finalresult.chisqr
+    # chi2 = finalresult.chisqr
 
 
     return params,frec,S11,finalresult

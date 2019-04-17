@@ -4,18 +4,27 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>stlab.utils.TLmodel &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head><body>
+  </head>
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -33,14 +42,12 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -91,7 +98,8 @@
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">brentq</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<div class="viewcode-block" id="S11theo"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.S11theo">[docs]</a><span class="k">def</span> <span class="nf">S11theo</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">f0</span><span class="p">,</span><span class="n">kint</span><span class="p">,</span><span class="n">kext</span><span class="p">):</span>
+
+<div class="viewcode-block" id="S11theo"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.S11theo">[docs]</a><span class="k">def</span> <span class="nf">S11theo</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">f0</span><span class="p">,</span> <span class="n">kint</span><span class="p">,</span> <span class="n">kext</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Lorentzian absortion function</span>
 
 <span class="sd">    Approximate formula for a Series RLC circuit capacitively</span>
@@ -116,10 +124,11 @@
 <span class="sd">        Values of S11 for the given input parameters</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">f</span><span class="o">-</span><span class="n">f0</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span><span class="o">+</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">kext</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">kext</span><span class="o">+</span><span class="n">kint</span><span class="o">+</span><span class="mi">2</span><span class="n">j</span><span class="o">*</span><span class="n">df</span><span class="p">)</span></div>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">f</span> <span class="o">-</span> <span class="n">f0</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">+</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">kext</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">kext</span> <span class="o">+</span> <span class="n">kint</span> <span class="o">+</span> <span class="mi">2</span><span class="n">j</span> <span class="o">*</span> <span class="n">df</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="S11"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.S11">[docs]</a><span class="k">def</span> <span class="nf">S11</span><span class="p">(</span><span class="n">Zin</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="S11"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.S11">[docs]</a><span class="k">def</span> <span class="nf">S11</span><span class="p">(</span><span class="n">Zin</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Exact expression of S11 for a given input impedance and parameters</span>
 
 <span class="sd">    Parameters</span>
@@ -136,10 +145,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Z0p</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Z0p&#39;</span><span class="p">]</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">Zin</span><span class="o">-</span><span class="n">Z0p</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Zin</span><span class="o">+</span><span class="n">Z0p</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">Zin</span> <span class="o">-</span> <span class="n">Z0p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Zin</span> <span class="o">+</span> <span class="n">Z0p</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="Zincircuit"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zincircuit">[docs]</a><span class="k">def</span> <span class="nf">Zincircuit</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Zincircuit"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zincircuit">[docs]</a><span class="k">def</span> <span class="nf">Zincircuit</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Analytical dalculation of input impedance of a TL resonator with a shunt capacitor</span>
 
 <span class="sd">    Is only valid for a shunt coupler and depends on the definition of :func:`Zload`.</span>
@@ -163,18 +173,18 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">]</span>
     <span class="n">Z0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Z0&#39;</span><span class="p">]</span>
-    <span class="n">vph</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
-    <span class="n">beta</span> <span class="o">=</span> <span class="n">omega</span><span class="o">/</span><span class="n">vph</span>
-    <span class="n">al</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">gamma</span> <span class="o">=</span> <span class="n">al</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">beta</span>
-    <span class="n">Zin</span> <span class="o">=</span> <span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">Zin</span> <span class="o">=</span> <span class="n">ZTL</span><span class="p">(</span><span class="n">Z0</span><span class="p">,</span><span class="n">Zin</span><span class="p">,</span><span class="n">gamma</span><span class="o">*</span><span class="n">l</span><span class="p">)</span>
-    <span class="n">Zc</span> <span class="o">=</span> <span class="n">Zcoup</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">Zin</span> <span class="o">=</span> <span class="n">Zparallel</span><span class="p">(</span><span class="n">Zin</span><span class="p">,</span><span class="n">Zc</span><span class="p">)</span>
+    <span class="n">vph</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span> <span class="o">/</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="n">vph</span>
+    <span class="n">al</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">al</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">beta</span>
+    <span class="n">Zin</span> <span class="o">=</span> <span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">Zin</span> <span class="o">=</span> <span class="n">ZTL</span><span class="p">(</span><span class="n">Z0</span><span class="p">,</span> <span class="n">Zin</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">l</span><span class="p">)</span>
+    <span class="n">Zc</span> <span class="o">=</span> <span class="n">Zcoup</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">Zin</span> <span class="o">=</span> <span class="n">Zparallel</span><span class="p">(</span><span class="n">Zin</span><span class="p">,</span> <span class="n">Zc</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Zin</span></div>
 
 
-<div class="viewcode-block" id="Zincircuit_approx"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zincircuit_approx">[docs]</a><span class="k">def</span> <span class="nf">Zincircuit_approx</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Zincircuit_approx"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zincircuit_approx">[docs]</a><span class="k">def</span> <span class="nf">Zincircuit_approx</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Lumped equivalent calculation of input impedance of a TL resonator with a shunt capacitor</span>
 
 <span class="sd">    Is only valid for a shunt coupler and assumes the load impedance is :code:`params[&#39;Lg&#39;]`.</span>
@@ -196,28 +206,30 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">]</span>
     <span class="n">Z0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Z0&#39;</span><span class="p">]</span>
-    <span class="n">al</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">Zc</span> <span class="o">=</span> <span class="n">Zcoup</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">vph</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+    <span class="n">al</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">Zc</span> <span class="o">=</span> <span class="n">Zcoup</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">vph</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span> <span class="o">/</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;lambda/2&#39;</span><span class="p">:</span>
-        <span class="n">lj</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Lg&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">Z0</span><span class="o">/</span><span class="n">vph</span><span class="p">)</span>
-        <span class="n">w0u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">vph</span><span class="o">/</span><span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">lj</span><span class="p">)</span>
-        <span class="n">Ll</span> <span class="o">=</span> <span class="n">Z0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">w0u</span>
-        <span class="n">Cl</span> <span class="o">=</span> <span class="mi">2</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">Z0</span><span class="o">/</span><span class="n">w0u</span>
+        <span class="n">lj</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Lg&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">Z0</span> <span class="o">/</span> <span class="n">vph</span><span class="p">)</span>
+        <span class="n">w0u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">vph</span> <span class="o">/</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">lj</span><span class="p">)</span>
+        <span class="n">Ll</span> <span class="o">=</span> <span class="n">Z0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">w0u</span>
+        <span class="n">Cl</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">Z0</span> <span class="o">/</span> <span class="n">w0u</span>
     <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;lambda/4&#39;</span><span class="p">:</span>
         <span class="n">lj</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">w0u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">vph</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">lj</span><span class="p">)</span>
-        <span class="n">Ll</span> <span class="o">=</span> <span class="n">Z0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span><span class="n">w0u</span>
-        <span class="n">Cl</span> <span class="o">=</span> <span class="mi">4</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">Z0</span><span class="o">/</span><span class="n">w0u</span>
+        <span class="n">w0u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">vph</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">lj</span><span class="p">)</span>
+        <span class="n">Ll</span> <span class="o">=</span> <span class="n">Z0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">/</span> <span class="n">w0u</span>
+        <span class="n">Cl</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">Z0</span> <span class="o">/</span> <span class="n">w0u</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid boundary condition. Must be lambda/2 or lambda/4.&#39;</span><span class="p">)</span>
-    <span class="n">Rl</span> <span class="o">=</span> <span class="n">Z0</span><span class="o">*</span><span class="n">al</span><span class="o">*</span><span class="n">l</span>
-    <span class="n">Zin</span> <span class="o">=</span> <span class="n">Rl</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="n">Ll</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="n">Cl</span><span class="p">)</span>
-    <span class="n">Zc</span> <span class="o">=</span> <span class="n">Zcoup</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">Zin</span> <span class="o">=</span> <span class="n">Zparallel</span><span class="p">(</span><span class="n">Zin</span><span class="p">,</span><span class="n">Zc</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Invalid boundary condition. Must be lambda/2 or lambda/4.&#39;</span><span class="p">)</span>
+    <span class="n">Rl</span> <span class="o">=</span> <span class="n">Z0</span> <span class="o">*</span> <span class="n">al</span> <span class="o">*</span> <span class="n">l</span>
+    <span class="n">Zin</span> <span class="o">=</span> <span class="n">Rl</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">Ll</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">Cl</span><span class="p">)</span>
+    <span class="n">Zc</span> <span class="o">=</span> <span class="n">Zcoup</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">Zin</span> <span class="o">=</span> <span class="n">Zparallel</span><span class="p">(</span><span class="n">Zin</span><span class="p">,</span> <span class="n">Zc</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Zin</span></div>
 
-<div class="viewcode-block" id="ZTL"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.ZTL">[docs]</a><span class="k">def</span> <span class="nf">ZTL</span><span class="p">(</span><span class="n">Z0</span><span class="p">,</span><span class="n">Zl</span><span class="p">,</span><span class="n">gammal</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ZTL"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.ZTL">[docs]</a><span class="k">def</span> <span class="nf">ZTL</span><span class="p">(</span><span class="n">Z0</span><span class="p">,</span> <span class="n">Zl</span><span class="p">,</span> <span class="n">gammal</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Impedance of a general terminated transmission line</span>
 
 <span class="sd">    Calculates the input impedance of a termniated transmission line with a given load impedance</span>
@@ -240,10 +252,11 @@
 <span class="sd">        Impedance of the terminated TL</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">Z0</span><span class="o">*</span><span class="p">(</span><span class="n">Zl</span><span class="o">+</span><span class="n">Z0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">gammal</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">Z0</span><span class="o">+</span><span class="n">Zl</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">gammal</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Z0</span> <span class="o">*</span> <span class="p">(</span><span class="n">Zl</span> <span class="o">+</span> <span class="n">Z0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">gammal</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">Z0</span> <span class="o">+</span> <span class="n">Zl</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">gammal</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="Zcoup"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zcoup">[docs]</a><span class="k">def</span> <span class="nf">Zcoup</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Zcoup"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zcoup">[docs]</a><span class="k">def</span> <span class="nf">Zcoup</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Impedance of a general capacitor</span>
 
 <span class="sd">    Here used for the shunt capacitor (coupler) at the start of the TL</span>
@@ -262,10 +275,10 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">C</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Cs&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="n">C</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">C</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Zload"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zload">[docs]</a><span class="k">def</span> <span class="nf">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Zload"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zload">[docs]</a><span class="k">def</span> <span class="nf">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Impedance of a load at the far end of the TL resonator</span>
 
 <span class="sd">    Currently includes the possiblitity for an RCSJ and a capacitor as load</span>
@@ -284,18 +297,20 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">L</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Lg&#39;</span><span class="p">]</span>
-    <span class="n">Z</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="n">L</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">L</span>
     <span class="k">if</span> <span class="s1">&#39;Lj&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
         <span class="n">Lj</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Lj&#39;</span><span class="p">]</span>
         <span class="n">Cj</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Cj&#39;</span><span class="p">]</span>
         <span class="n">Rj</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Rj&#39;</span><span class="p">]</span>
-        <span class="n">Zj</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">Lj</span><span class="o">*</span><span class="n">Rj</span><span class="o">*</span><span class="n">omega</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Rj</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">Lj</span><span class="o">*</span><span class="n">omega</span> <span class="o">-</span> <span class="n">Cj</span><span class="o">*</span><span class="n">Lj</span><span class="o">*</span><span class="n">Rj</span><span class="o">*</span><span class="n">omega</span><span class="o">**</span><span class="mf">2.</span><span class="p">)</span>
+        <span class="n">Zj</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Lj</span> <span class="o">*</span> <span class="n">Rj</span> <span class="o">*</span> <span class="n">omega</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">Rj</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Lj</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">-</span> <span class="n">Cj</span> <span class="o">*</span> <span class="n">Lj</span> <span class="o">*</span> <span class="n">Rj</span> <span class="o">*</span> <span class="n">omega</span><span class="o">**</span><span class="mf">2.</span><span class="p">)</span>
         <span class="n">Z</span> <span class="o">+=</span> <span class="n">Zj</span>
     <span class="k">if</span> <span class="s1">&#39;Cg&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
         <span class="n">Cg</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Cg&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">Cg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">Z</span> <span class="o">=</span> <span class="n">Zparallel</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="n">Cg</span><span class="p">))</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">Zparallel</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">Cg</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">Z</span></div>
+
 
 <div class="viewcode-block" id="Zparallel"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zparallel">[docs]</a><span class="k">def</span> <span class="nf">Zparallel</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parallel impedance of a collection of impedances</span>
@@ -313,11 +328,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">/</span><span class="n">z</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">result</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">z</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">result</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="Vin"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Vin">[docs]</a><span class="k">def</span> <span class="nf">Vin</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Vin"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Vin">[docs]</a><span class="k">def</span> <span class="nf">Vin</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Voltage phasor at the input</span>
 
 <span class="sd">    If Pin is in params, it is used to calculate the actual amplitudes.</span>
@@ -337,13 +353,14 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s1">&#39;Pin&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-        <span class="n">V0</span> <span class="o">=</span> <span class="n">PintoV0</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="c1">#V0 is the incoming wave amplitude</span>
+        <span class="n">V0</span> <span class="o">=</span> <span class="n">PintoV0</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>  <span class="c1">#V0 is the incoming wave amplitude</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">V0</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">V0</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">S11</span><span class="p">(</span><span class="n">Zincircuit</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">),</span><span class="n">params</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">V0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">S11</span><span class="p">(</span><span class="n">Zincircuit</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">),</span> <span class="n">params</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="Vx"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Vx">[docs]</a><span class="k">def</span> <span class="nf">Vx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Vx"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Vx">[docs]</a><span class="k">def</span> <span class="nf">Vx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Voltage phasor at a given distance along the TL</span>
 
 <span class="sd">    Distance x counts from the load (at 0) to l (at input)</span>
@@ -365,15 +382,18 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">]</span>
     <span class="n">Z0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Z0&#39;</span><span class="p">]</span>
-    <span class="n">vph</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
-    <span class="n">beta</span> <span class="o">=</span> <span class="n">omega</span><span class="o">/</span><span class="n">vph</span>
-    <span class="n">al</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">gamma</span> <span class="o">=</span> <span class="n">al</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">beta</span>
-    <span class="n">GammaL</span> <span class="o">=</span> <span class="p">(</span><span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span><span class="o">-</span><span class="n">Z0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span><span class="o">+</span><span class="n">Z0</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">Vin</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">gamma</span><span class="o">*</span><span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">GammaL</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gamma</span><span class="o">*</span><span class="n">l</span><span class="p">)</span> <span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">gamma</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">GammaL</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gamma</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">vph</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span> <span class="o">/</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="n">vph</span>
+    <span class="n">al</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">al</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">beta</span>
+    <span class="n">GammaL</span> <span class="o">=</span> <span class="p">(</span><span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">-</span> <span class="n">Z0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">Z0</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Vin</span><span class="p">(</span>
+        <span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">GammaL</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">l</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">GammaL</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="omega0"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.omega0">[docs]</a><span class="k">def</span> <span class="nf">omega0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">wws</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> <span class="c1">#Range wws in rad/sec</span>
+
+<div class="viewcode-block" id="omega0"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.omega0">[docs]</a><span class="k">def</span> <span class="nf">omega0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wws</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1">#Range wws in rad/sec</span>
     <span class="sd">&quot;&quot;&quot;Finds the approximate angular resonance frequency from a generic circuit impedance</span>
 
 <span class="sd">    This is an approximation which can then be used to a fitting function as starting value</span>
@@ -391,14 +411,15 @@
 <span class="sd">        Approximate angular resonance frequency</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">wws</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#Default to 2Ghz to 10Ghz search range</span>
-        <span class="n">ffs</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">5001</span><span class="p">)</span><span class="o">*</span><span class="mf">1e9</span>
-        <span class="n">wws</span><span class="o">=</span> <span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">ffs</span>
+    <span class="k">if</span> <span class="n">wws</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1">#Default to 2Ghz to 10Ghz search range</span>
+        <span class="n">ffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5001</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e9</span>
+        <span class="n">wws</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ffs</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ffs</span> <span class="o">=</span> <span class="n">wws</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">ffs</span> <span class="o">=</span> <span class="n">wws</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 
-    <span class="n">i0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">Zincircuit</span><span class="p">(</span><span class="n">wws</span><span class="p">,</span><span class="n">params</span><span class="p">))),</span><span class="mf">2.</span><span class="p">))</span> <span class="c1">#find derivative maximum</span>
-    <span class="n">fres</span> <span class="o">=</span> <span class="n">ffs</span><span class="p">[</span><span class="n">i0</span><span class="p">]</span>
+    <span class="n">i0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">Zincircuit</span><span class="p">(</span><span class="n">wws</span><span class="p">,</span> <span class="n">params</span><span class="p">))),</span>
+                            <span class="mf">2.</span><span class="p">))</span>  <span class="c1">#find derivative maximum</span>
+    <span class="c1"># fres = ffs[i0]</span>
     <span class="n">wres</span> <span class="o">=</span> <span class="n">wws</span><span class="p">[</span><span class="n">i0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">wres</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -417,7 +438,8 @@
 <span class="sd">    return wres</span>
 <span class="sd">    &#39;&#39;&#39;</span></div>
 
-<div class="viewcode-block" id="f0"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.f0">[docs]</a><span class="k">def</span> <span class="nf">f0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">ffs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> <span class="c1">#Range ffs in Hz</span>
+
+<div class="viewcode-block" id="f0"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.f0">[docs]</a><span class="k">def</span> <span class="nf">f0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">ffs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1">#Range ffs in Hz</span>
     <span class="sd">&quot;&quot;&quot;Finds the approximate resonance frequency in Hz from a generic circuit impedance</span>
 
 <span class="sd">    This is an approximation which can then be used to a fitting function as starting value</span>
@@ -435,14 +457,15 @@
 <span class="sd">        Approximate resonance frequency in Hz</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">ffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#Default to 2Ghz to 10Ghz search range</span>
-        <span class="n">ffs</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">5001</span><span class="p">)</span><span class="o">*</span><span class="mf">1e9</span>
-        <span class="n">wws</span><span class="o">=</span> <span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">ffs</span>
+    <span class="k">if</span> <span class="n">ffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1">#Default to 2Ghz to 10Ghz search range</span>
+        <span class="n">ffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5001</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e9</span>
+        <span class="n">wws</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ffs</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">wws</span> <span class="o">=</span> <span class="n">ffs</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
-    <span class="k">return</span> <span class="n">omega0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">wws</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span></div>
+        <span class="n">wws</span> <span class="o">=</span> <span class="n">ffs</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+    <span class="k">return</span> <span class="n">omega0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wws</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span></div>
 
-<div class="viewcode-block" id="Zx"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zx">[docs]</a><span class="k">def</span> <span class="nf">Zx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Zx"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Zx">[docs]</a><span class="k">def</span> <span class="nf">Zx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Impedance at a given distance along the TL</span>
 
 <span class="sd">    Distance x counts from the load (at 0) to l (at input)</span>
@@ -462,15 +485,17 @@
 <span class="sd">        Impedance at a given distance along the TL</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">l</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">]</span>
+    <span class="c1"># l = params[&#39;l&#39;]</span>
     <span class="n">Z0</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Z0&#39;</span><span class="p">]</span>
-    <span class="n">vph</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
-    <span class="n">beta</span> <span class="o">=</span> <span class="n">omega</span><span class="o">/</span><span class="n">vph</span>
-    <span class="n">al</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">gamma</span> <span class="o">=</span> <span class="n">al</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">beta</span>
-    <span class="n">Zl</span> <span class="o">=</span> <span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">Z0</span><span class="o">*</span><span class="p">(</span><span class="n">Zl</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">Z0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">gamma</span><span class="o">*</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">Z0</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">Zl</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">gamma</span><span class="o">*</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">vph</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span> <span class="o">/</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">/</span> <span class="n">vph</span>
+    <span class="n">al</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">al</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">beta</span>
+    <span class="n">Zl</span> <span class="o">=</span> <span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Z0</span> <span class="o">*</span> <span class="p">(</span><span class="n">Zl</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Z0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">Z0</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Zl</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">result</span></div>
+
 
 <div class="viewcode-block" id="PintoV0"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.PintoV0">[docs]</a><span class="k">def</span> <span class="nf">PintoV0</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Conversion from power to voltage</span>
@@ -486,10 +511,11 @@
 <span class="sd">        Incoming voltage amplitude for a given power</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Plin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Pin&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span><span class="o">*</span><span class="mf">1e-3</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Z0p&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">Plin</span><span class="p">)</span></div>
+    <span class="n">Plin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Pin&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-3</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Z0p&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">Plin</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ix"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Ix">[docs]</a><span class="k">def</span> <span class="nf">Ix</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Ix"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Ix">[docs]</a><span class="k">def</span> <span class="nf">Ix</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Current phasor at a given distance along the TL</span>
 
 <span class="sd">    Distance x counts from the load (at 0) to l (at input)</span>
@@ -509,9 +535,10 @@
 <span class="sd">        Current phasor at a given distance along the TL</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">Vx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span><span class="o">/</span><span class="n">Zx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">Vx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">/</span> <span class="n">Zx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Vj"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Vj">[docs]</a><span class="k">def</span> <span class="nf">Vj</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Vj"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Vj">[docs]</a><span class="k">def</span> <span class="nf">Vj</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Voltage at the far end of the TL across a Josephson junction (RCSJ)</span>
 <span class="sd">    </span>
 <span class="sd">    If there is a Lj and Cg in params, returns the voltage accross the junction (complex).  Else, just the load voltage</span>
@@ -529,20 +556,22 @@
 <span class="sd">        Voltage phasor at the far end of the TL</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Vl</span> <span class="o">=</span> <span class="n">Vx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">Vl</span> <span class="o">=</span> <span class="n">Vx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;Lj&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-        <span class="n">Zl</span> <span class="o">=</span> <span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">Zl</span> <span class="o">=</span> <span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;Cg&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-            <span class="n">Zl0</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Cg&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">Zl</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Cg&#39;</span><span class="p">])</span><span class="o">-</span><span class="n">Zl</span><span class="p">)</span>
-            <span class="n">Ij</span> <span class="o">=</span> <span class="n">Vl</span><span class="o">/</span><span class="n">Zl0</span>
+            <span class="n">Zl0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Cg&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">Zl</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Cg&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="n">Zl</span><span class="p">)</span>
+            <span class="n">Ij</span> <span class="o">=</span> <span class="n">Vl</span> <span class="o">/</span> <span class="n">Zl0</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">Ij</span> <span class="o">=</span> <span class="n">Vl</span><span class="o">/</span><span class="n">Zl</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">Vl</span><span class="o">-</span><span class="n">Ij</span><span class="o">*</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Lg&#39;</span><span class="p">]</span>
+            <span class="n">Ij</span> <span class="o">=</span> <span class="n">Vl</span> <span class="o">/</span> <span class="n">Zl</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Vl</span> <span class="o">-</span> <span class="n">Ij</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Lg&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">result</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Vl</span></div>
 
-<div class="viewcode-block" id="Ij"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Ij">[docs]</a><span class="k">def</span> <span class="nf">Ij</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Ij"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.Ij">[docs]</a><span class="k">def</span> <span class="nf">Ij</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Total current going out the far end of the TL</span>
 
 <span class="sd">    Parameters</span>
@@ -558,12 +587,13 @@
 <span class="sd">        Current phasor through the load</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Vl</span> <span class="o">=</span> <span class="n">Vx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">Zl</span> <span class="o">=</span> <span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">Il</span> <span class="o">=</span> <span class="n">Vl</span><span class="o">/</span><span class="n">Zl</span>
+    <span class="n">Vl</span> <span class="o">=</span> <span class="n">Vx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">Zl</span> <span class="o">=</span> <span class="n">Zload</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">Il</span> <span class="o">=</span> <span class="n">Vl</span> <span class="o">/</span> <span class="n">Zl</span>
     <span class="k">return</span> <span class="n">Il</span></div>
 
-<div class="viewcode-block" id="alpha"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.alpha">[docs]</a><span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="alpha"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.alpha">[docs]</a><span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Attenuation constant of a TL</span>
 
 <span class="sd">    Parameters</span>
@@ -581,7 +611,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="FindParFromRes"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.FindParFromRes">[docs]</a><span class="k">def</span> <span class="nf">FindParFromRes</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">w0</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="s1">&#39;Lj&#39;</span><span class="p">,</span><span class="n">wws</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FindParFromRes"><a class="viewcode-back" href="../../../utils/TLmodel.html#stlab.utils.TLmodel.FindParFromRes">[docs]</a><span class="k">def</span> <span class="nf">FindParFromRes</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="s1">&#39;Lj&#39;</span><span class="p">,</span> <span class="n">wws</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function to find value of a parameter to match a given resonance frequency</span>
 
 <span class="sd">    Finds approximate value of par to have an angular resonance frequency of w0.</span>
@@ -615,10 +646,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">newparams</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">myfunc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">w0</span><span class="p">,</span><span class="n">par</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">wws</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">myfunc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">wws</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">newparams</span><span class="p">[</span><span class="n">par</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">omega0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">wws</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">omega0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wws</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span> <span class="o">-</span> <span class="n">w0</span>
+
+
 <span class="c1">#    from matplotlib import pyplot as plt</span>
 <span class="c1">#    wws = np.linspace(2.,10.,5001)*1e9*2*np.pi</span>
 <span class="c1">#    newparams[par] = a</span>
@@ -628,34 +662,34 @@
 <span class="c1">#    plt.show()</span>
 <span class="c1">#    print(myfunc(a,w0,par,newparams,wws))</span>
 <span class="c1">#    print(myfunc(b,w0,par,newparams,wws))</span>
-    <span class="n">par0</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="n">myfunc</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span><span class="n">par</span><span class="p">,</span><span class="n">newparams</span><span class="p">,</span><span class="n">wws</span><span class="p">))</span> <span class="c1">#Find root</span>
+
+    <span class="n">par0</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="n">myfunc</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">newparams</span><span class="p">,</span> <span class="n">wws</span><span class="p">))</span>  <span class="c1">#Find root</span>
     <span class="k">return</span> <span class="n">par0</span></div>
-    
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 
-
     <span class="c1">#Readjusted values</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Z0&#39;</span><span class="p">:</span> <span class="mf">64.611</span><span class="p">,</span> <span class="s1">&#39;Cj&#39;</span><span class="p">:</span> <span class="mf">1.77e-15</span><span class="p">,</span> <span class="s1">&#39;Z0p&#39;</span><span class="p">:</span> <span class="mf">79.400384766937506</span><span class="p">,</span> <span class="s1">&#39;Lg&#39;</span><span class="p">:</span> <span class="mf">1.0432952403781536e-10</span><span class="p">,</span> <span class="s1">&#39;Rj&#39;</span><span class="p">:</span> <span class="mf">1027.6618763504205</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mf">2.876042565429968</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;lambda/2&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.0060728306929787035</span><span class="p">,</span> <span class="s1">&#39;Lj&#39;</span><span class="p">:</span> <span class="mf">2.0916766016363636e-10</span><span class="p">,</span> <span class="s1">&#39;Pin&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">122</span><span class="p">,</span> <span class="s1">&#39;Cs&#39;</span><span class="p">:</span> <span class="mf">2.657e-11</span><span class="p">,</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="mf">0.006119</span><span class="p">}</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Z0&#39;</span><span class="p">:</span> <span class="mf">64.611</span><span class="p">,</span>
+        <span class="s1">&#39;Cj&#39;</span><span class="p">:</span> <span class="mf">1.77e-15</span><span class="p">,</span>
+        <span class="s1">&#39;Z0p&#39;</span><span class="p">:</span> <span class="mf">79.400384766937506</span><span class="p">,</span>
+        <span class="s1">&#39;Lg&#39;</span><span class="p">:</span> <span class="mf">1.0432952403781536e-10</span><span class="p">,</span>
+        <span class="s1">&#39;Rj&#39;</span><span class="p">:</span> <span class="mf">1027.6618763504205</span><span class="p">,</span>
+        <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mf">2.876042565429968</span><span class="p">,</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;lambda/2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.0060728306929787035</span><span class="p">,</span>
+        <span class="s1">&#39;Lj&#39;</span><span class="p">:</span> <span class="mf">2.0916766016363636e-10</span><span class="p">,</span>
+        <span class="s1">&#39;Pin&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">122</span><span class="p">,</span>
+        <span class="s1">&#39;Cs&#39;</span><span class="p">:</span> <span class="mf">2.657e-11</span><span class="p">,</span>
+        <span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="mf">0.006119</span>
+    <span class="p">}</span>
     <span class="n">wres</span> <span class="o">=</span> <span class="mf">49685604684.2</span>
 
-    <span class="n">a</span><span class="o">=</span><span class="mi">0</span>
-    <span class="n">b</span><span class="o">=</span><span class="mf">1e-9</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mf">1e-9</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">FindParFromRes</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">wres</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="s1">&#39;Lj&#39;</span><span class="p">,</span><span class="n">wws</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">FindParFromRes</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wres</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="s1">&#39;Lj&#39;</span><span class="p">,</span> <span class="n">wws</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-
-
-
-
-
-
-
-
-
-
-
-
 </pre></div>
 
           </div>
@@ -677,8 +711,8 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

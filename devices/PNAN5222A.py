@@ -33,7 +33,10 @@ class PNA_rfsource(object):
 
 
 class PNAN5222A(PNAN5221A):
-    def __init__(self,addr='TCPIP::192.168.1.42::INSTR',reset=True,verb=True):
+    def __init__(self,
+                 addr='TCPIP::192.168.1.216::INSTR',
+                 reset=True,
+                 verb=True):
         super().__init__(addr,reset,verb)
 
 

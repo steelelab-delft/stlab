@@ -70,7 +70,7 @@ class JJ_solver:
         def Ifunc(t,Idict):
             return Idict['I0']
         Ins = Ivals/self.Ic
-        Is = []
+        # Is = []
         Vs = []
         Ijs = []
         fullset = None
@@ -98,7 +98,7 @@ class JJ_solver:
                 #print(tscale)
                 tscale *= 100
             ts = np.linspace(0,tscale,20001)
-            sols = self.solve(ts,init0=[phi00,dphi0],Idict=Idict,Ifunc=Ifunc) #solve for given time values
+            _ = self.solve(ts,init0=[phi00,dphi0],Idict=Idict,Ifunc=Ifunc) #solve for given time values
             if doplots:            
                 plt.clf()
                 plt.plot(ts/self.Trc(0),self.Vj)

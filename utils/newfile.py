@@ -9,12 +9,22 @@ import datetime
 import os
 import shutil
 import re
+from stlab.utils import getgitid
 
 # Creates new measurement folder using prefix + datetime + idstring.
 # If colnames (array of column names) is included, the title line is written
 # Also copies main script file to measurement folder
 
-def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=True, autoindex = False,return_folder_name=False):
+
+def newfile(prefix,
+            idstring,
+            colnames=None,
+            mypath='./',
+            usedate=True,
+            usefolder=True,
+            autoindex=False,
+            return_folder_name=False,
+            git_id=True):
     """Creates a new file for storing data.
 
     By default will create a folder (at the location of the running script) with a new file open for writing
@@ -45,6 +55,8 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
         This will be incremented by 1 for each new file with the same prefix.  If no files are found with the same prefix, it creates the
         first file name <prefix>1_yy_mm_dd_HH.MM.SS_<idstring>.  Successive files will be named <prefix><idx>_yy_mm_dd_HH.MM.SS_<idstring>.
         Is False by default.
+    git_id : bool, optional
+        Boolean to query and save the git id of stlab
 
     Returns
     -------
@@ -59,8 +71,10 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
         mainfile = None
     print(mainfile)
     mytime = datetime.datetime.now()
-    datecode = '%s' % mytime.year + '_' + ('%s' % mytime.month).zfill(2) + '_' +('%s' % mytime.day).zfill(2)
-    timecode = ('%s' % mytime.hour).zfill(2) +'.' + ('%s' % mytime.minute).zfill(2) +'.' + ('%s' % mytime.second).zfill(2)
+    datecode = '%s' % mytime.year + '_' + (
+        '%s' % mytime.month).zfill(2) + '_' + ('%s' % mytime.day).zfill(2)
+    timecode = ('%s' % mytime.hour).zfill(2) + '.' + (
+        '%s' % mytime.minute).zfill(2) + '.' + ('%s' % mytime.second).zfill(2)
 
     # Autoindexing...  Prefix is followed by an incremental index.
     # Looks for already present files/folders with the same prefix and indexes and creates the next index.
@@ -80,29 +94,30 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
                 nn = int(name[len(prefix):])
                 idxs.append(nn)
         if idxs:
-            prefix = prefix + str(max(idxs)+1)
+            prefix = prefix + str(max(idxs) + 1)
         else:
             prefix = prefix + '1'
 
     if usedate:
-        foldername = prefix + '_' + datecode+'_'+timecode+'_'+idstring
+        foldername = prefix + '_' + datecode + '_' + timecode + '_' + idstring
     else:
-        foldername = prefix + '_' +idstring
+        foldername = prefix + '_' + idstring
 
     #Check if prefix or idstring are blank and remove unnecessary underscores
     if (idstring == '' or idstring == None):
         foldername = foldername[:-1]
     if (prefix == '' or prefix == None):
         foldername = foldername[1:]
-    if len(foldername)==0:
-        raise ValueError('No name given... Add at least a prefix or idstring or date')
+    if len(foldername) == 0:
+        raise ValueError(
+            'No name given... Add at least a prefix or idstring or date')
 
-    filename = foldername+'.dat'
-
+    filename = foldername + '.dat'
 
     if usefolder:
         fullfoldername = os.path.normpath(mypath + '/' + foldername)
-        fullfilename = os.path.normpath(mypath + '/' + foldername + '/' + filename)
+        fullfilename = os.path.normpath(mypath + '/' + foldername + '/' +
+                                        filename)
     else:
         fullfoldername = os.path.normpath(mypath + '/')
         fullfilename = os.path.normpath(mypath + '/' + filename)
@@ -111,16 +126,17 @@ def newfile(prefix,idstring,colnames=None,mypath = './',usedate=True,usefolder=T
     if not os.path.exists(fullfoldername):
         os.makedirs(fullfoldername)
     print('Measurement Name: ', foldername)
-    if mainfile !=None and usefolder:
+    if mainfile != None and usefolder:
         scriptname = os.path.basename(mainfile)
-        shutil.copyfile(mainfile,os.path.normpath(fullfoldername + '/' + scriptname))
+        shutil.copyfile(mainfile,
+                        os.path.normpath(fullfoldername + '/' + scriptname))
     myfile = open(fullfilename, 'w')
     if colnames is not None:
         varline = '#' + ', '.join(colnames) + '\n'
         myfile.write(varline)
+    if git_id:
+        getgitid.get_gitid(myfile)
     if return_folder_name:
-        return myfile,fullfoldername
+        return myfile, fullfoldername
     else:
         return myfile
-
-

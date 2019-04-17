@@ -4,12 +4,20 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>TLmodel – Model for transmission line resonator &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -17,7 +25,8 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Autoplot – Quick plots for measurement reference" href="autoplotter.html" />
     <link rel="prev" title="S11fit – Resonance fitting routines and utilities" href="S11fit.html" /> 
-  </head><body>
+  </head>
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -38,7 +47,7 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table of Contents</a></h3>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">TLmodel – Model for transmission line resonator</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
@@ -61,14 +70,12 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -83,7 +90,7 @@
 <span id="tlmodel-model-for-transmission-line-resonator"></span><h1>TLmodel – Model for transmission line resonator<a class="headerlink" href="#module-stlab.utils.TLmodel" title="Permalink to this headline">¶</a></h1>
 <p>Module for the calculation of transmission line impedances</p>
 <p>Most functions require a dictionary with specific elements regarding circuit parameters in it.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;Z0&#39;</span><span class="p">:</span> <span class="mf">64.611</span><span class="p">,</span> <span class="c1"># characteristic impedance of TL resonator (e.g. geometric and kinetic), in Ohm</span>
     <span class="s1">&#39;Cj&#39;</span><span class="p">:</span> <span class="mf">1.77e-15</span><span class="p">,</span> <span class="c1"># Capacitance of the junction (RCSJ model) loading the TL resonator, in F</span>
     <span class="s1">&#39;Z0p&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="c1"># reference impedance of the input line, in Ohm</span>
@@ -103,7 +110,7 @@
 At the far end, the TL resonator can be loaded by a RCSJ-type junction with an extra series inductor Lg and parallel capacitance Cg.</p>
 <div class="figure align-center" id="id1">
 <img alt="../_images/TLmodel.jpg" src="../_images/TLmodel.jpg" />
-<p class="caption"><span class="caption-text">Circuit model used for <code class="code docutils literal notranslate"><span class="pre">TLmodel.py</span></code>.</span></p>
+<p class="caption"><span class="caption-text">Circuit model used for <code class="code docutils literal"><span class="pre">TLmodel.py</span></code>.</span></p>
 </div>
 <p>For more details see <a class="reference external" href="https://www.nature.com/articles/s41467-018-06595-2/">A ballistic graphene superconducting microwave circuit</a></p>
 <div class="section" id="functions">
@@ -128,8 +135,8 @@ the final fit such that the resonance frequency will start close to this value
 <li><strong>w0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired angular resonance frequency</li>
 <li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Bottom of bracketing interval for the parameter</li>
 <li><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Top of bracketing interval for the parameter</li>
-<li><strong>par</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Key of the parameter in <code class="code docutils literal notranslate"><span class="pre">params</span></code> to be swept</li>
-<li><strong>wws</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><em>array</em><em>, </em><em>optional</em>) – Angular frequency range to evaluate the circuit impedance at.</li>
+<li><strong>par</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Key of the parameter in <code class="code docutils literal"><span class="pre">params</span></code> to be swept</li>
+<li><strong>wws</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a><em>, </em><em>optional</em>) – Angular frequency range to evaluate the circuit impedance at.</li>
 </ul>
 </td>
 </tr>
@@ -348,7 +355,7 @@ If not, we assume an amplitude of 1V for the incoming wave.</p>
 <dd><p>Impedance of a general terminated transmission line</p>
 <p>Calculates the input impedance of a termniated transmission line with a given load impedance</p>
 <div class="math">
-<p><img src="../_images/math/3fe6804a3fb74d75faef066d1629396229a8d257.png" alt="\gamma_l = \alpha + i\beta = \alpha+i\frac{\omega}{v_{\rm ph}}"/></p>
+<p><span class="math">\gamma_l = \alpha + i\beta = \alpha+i\frac{\omega}{v_{\rm ph}}</span></p>
 </div><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -399,8 +406,8 @@ If not, we assume an amplitude of 1V for the incoming wave.</p>
 <dt id="stlab.utils.TLmodel.Zincircuit">
 <code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zincircuit</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zincircuit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zincircuit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Analytical dalculation of input impedance of a TL resonator with a shunt capacitor</p>
-<p>Is only valid for a shunt coupler and depends on the definition of <a class="reference internal" href="#stlab.utils.TLmodel.Zload" title="stlab.utils.TLmodel.Zload"><code class="xref py py-func docutils literal notranslate"><span class="pre">Zload()</span></code></a>.
-<a class="reference internal" href="#stlab.utils.TLmodel.Zload" title="stlab.utils.TLmodel.Zload"><code class="xref py py-func docutils literal notranslate"><span class="pre">Zload()</span></code></a> is the impedance of the load on the far end of the TL resonator (opposite the coupler).
+<p>Is only valid for a shunt coupler and depends on the definition of <a class="reference internal" href="#stlab.utils.TLmodel.Zload" title="stlab.utils.TLmodel.Zload"><code class="xref py py-func docutils literal"><span class="pre">Zload()</span></code></a>.
+<a class="reference internal" href="#stlab.utils.TLmodel.Zload" title="stlab.utils.TLmodel.Zload"><code class="xref py py-func docutils literal"><span class="pre">Zload()</span></code></a> is the impedance of the load on the far end of the TL resonator (opposite the coupler).
 Examples can be an open/short/junction end of the transmission line resonator.
 This is an analytical calculation using transmission line formulas (from Pozar).
 There are no lumped element approximations or equivalents involved.</p>
@@ -428,7 +435,7 @@ There are no lumped element approximations or equivalents involved.</p>
 <dt id="stlab.utils.TLmodel.Zincircuit_approx">
 <code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zincircuit_approx</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zincircuit_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zincircuit_approx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lumped equivalent calculation of input impedance of a TL resonator with a shunt capacitor</p>
-<p>Is only valid for a shunt coupler and assumes the load impedance is <code class="code docutils literal notranslate"><span class="pre">params['Lg']</span></code>.
+<p>Is only valid for a shunt coupler and assumes the load impedance is <code class="code docutils literal"><span class="pre">params['Lg']</span></code>.
 This is a lumped equivalent calculation of the TL resonator with either an open or a short end.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -554,7 +561,7 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
-<li><strong>ffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><em>array</em><em>, </em><em>optional</em>) – Frequency range in Hz to evaluate the circuit impedance at. By default 2-10 GHz</li>
+<li><strong>ffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a><em>, </em><em>optional</em>) – Frequency range in Hz to evaluate the circuit impedance at. By default 2-10 GHz</li>
 </ul>
 </td>
 </tr>
@@ -579,7 +586,7 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
-<li><strong>wws</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><em>array</em><em>, </em><em>optional</em>) – Angular frequency range to evaluate the circuit impedance at. By default 2-10 GHz * 2pi</li>
+<li><strong>wws</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a><em>, </em><em>optional</em>) – Angular frequency range to evaluate the circuit impedance at. By default 2-10 GHz * 2pi</li>
 </ul>
 </td>
 </tr>
@@ -621,8 +628,8 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

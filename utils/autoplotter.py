@@ -13,30 +13,35 @@ from functools import wraps
 import numpy as np
 
 
-def catchexception(func):#Decorator function
-    @wraps(func) #So that docstrings of the original function are conserved and sphynx works properly
-    def overfunc(*args,**kwargs):
+def catchexception(func):  #Decorator function
+    @wraps(
+        func
+    )  #So that docstrings of the original function are conserved and sphynx works properly
+    def overfunc(*args, **kwargs):
         try:
-            func(*args,**kwargs)
+            func(*args, **kwargs)
         except Exception as e:
             logging.error(traceback.format_exc())
             print('Continuing...')
+
     return overfunc
 
-@catchexception
-def autoplot(datafile,
-            xlab,
-            ylab,
-            zlab=None,
-            title='YOU SHOULD ADD A TITLE',
-            caption='YOU SHOULD ADD A COMMENT',
-            show=False,
-            dpi=400,
-            pl=None,
-            cmap='bwr',
-            wbval = (0.1,0.1), #percent
-            **kwargs):
 
+@catchexception
+def autoplot(
+        datafile,
+        xlab,
+        ylab,
+        zlab=None,
+        title='YOU SHOULD ADD A TITLE',
+        caption='YOU SHOULD ADD A COMMENT',
+        show=False,
+        dpi=400,
+        pl=None,
+        cmap='RdBu_r',
+        wbval=(0.1, 0.1),  #percent
+        figdir=None,
+        **kwargs):
     """Autoplot function
 
     Takes a data file handle (still open or recently closed) or a filename and plots the requested
@@ -68,7 +73,10 @@ def autoplot(datafile,
         If provided, is an stlabmtx process list (in case processing is required on a 2d color plot).
         See :class:`stlabmtx <stlab.utils.stlabdict.stlabmtx>` for details
     cmap : str
-        Matplotlib colormap string for 2D plots. By defulat 'bwr'
+        Matplotlib colormap string for 2D plots. By default 'RdBu_r'.
+        See https://matplotlib.org/tutorials/colors/colormaps.html for details
+    figdir : str
+        Figure directory for the final plot
     **kwargs
         Other arguments to be passed to plotting function (plt.plot or plt.imshow)
 
@@ -89,41 +97,54 @@ def autoplot(datafile,
     data = stlab.readdata.readdat_pd(fname)
     basename = os.path.splitext(fname)[0]
 
-    fig = plt.figure(figsize=(10,8))
-    ax1 = fig.add_axes((0.2, 0.2, 0.75, 0.75))
+    fig = plt.figure(figsize=(10, 8))
+    _ = fig.add_axes((0.2, 0.2, 0.75, 0.75))
 
     if zlab is None:
         for line in data:
-            plt.plot(line[xlab],line[ylab],**kwargs)
+            plt.plot(line[xlab], line[ylab], **kwargs)
     else:
         mymtx = stlab.framearr_to_mtx(data, zlab, xkey=xlab, ykey=ylab)
         if pl is not None:
             mymtx.applyprocesslist(pl)
             zlab = zlab + '    (' + ', '.join(pl) + ')'
-        lims = np.percentile(mymtx.pmtx.values, (wbval[0],100-wbval[1]) )
+        lims = np.percentile(mymtx.pmtx.values, (wbval[0], 100 - wbval[1]))
         vmin = lims[0]
         vmax = lims[1]
 
-        plt.imshow(mymtx.pmtx, aspect='auto', cmap=cmap, extent=mymtx.getextents(), vmin=vmin, vmax=vmax, **kwargs)
+        plt.imshow(
+            mymtx.pmtx,
+            aspect='auto',
+            cmap=cmap,
+            extent=mymtx.getextents(),
+            vmin=vmin,
+            vmax=vmax,
+            **kwargs)
         cbar = plt.colorbar()
         cbar.set_label(zlab)
-    plt.title(os.path.basename(fname) + '\n' + title,fontsize = 10)
+    plt.title(os.path.basename(fname) + '\n' + title, fontsize=10)
     plt.xlabel(xlab)
     plt.ylabel(ylab)
-    plt.figtext(0.5, 0.05, caption, wrap=True, horizontalalignment='center', fontsize=10)
-    if os.path.isfile(basename+'.png'):
-        i=0
-        while True:
-            if os.path.isfile(basename + str(i) + '.png'):
-                i=i+1
-                continue
-            else:
-                basename = basename + str(i)
-                break
-    plt.savefig(basename+'.png',dpi=dpi)
+    plt.figtext(
+        0.5,
+        0.05,
+        caption,
+        wrap=True,
+        horizontalalignment='center',
+        fontsize=10)
+    if figdir:
+        plt.savefig(figdir + basename + '.png', dpi=dpi)
+    else:
+        if os.path.isfile(basename + '.png'):
+            i = 0
+            while True:
+                if os.path.isfile(basename + str(i) + '.png'):
+                    i = i + 1
+                    continue
+                else:
+                    basename = basename + str(i)
+                    break
+        plt.savefig(basename + '.png', dpi=dpi)
     if show:
         plt.show()
     return fig
-
-
-

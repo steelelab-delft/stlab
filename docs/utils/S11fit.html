@@ -4,20 +4,29 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>S11fit – Resonance fitting routines and utilities &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Autoplot – Quick plots for measurement reference" href="autoplotter.html" />
+    <link rel="next" title="TLmodel – Model for transmission line resonator" href="TLmodel.html" />
     <link rel="prev" title="Documentation for STLab" href="../index.html" /> 
-  </head><body>
+  </head>
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -28,7 +37,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="autoplotter.html" title="Autoplot – Quick plots for measurement reference"
+          <a href="TLmodel.html" title="TLmodel – Model for transmission line resonator"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="Documentation for STLab"
@@ -42,8 +51,8 @@
   <p class="topless"><a href="../index.html"
                         title="previous chapter">Documentation for STLab</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="autoplotter.html"
-                        title="next chapter">Autoplot – Quick plots for measurement reference</a></p>
+  <p class="topless"><a href="TLmodel.html"
+                        title="next chapter">TLmodel – Model for transmission line resonator</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -53,14 +62,12 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -74,7 +81,7 @@
   <div class="section" id="module-stlab.utils.S11fit">
 <span id="s11fit-resonance-fitting-routines-and-utilities"></span><h1>S11fit – Resonance fitting routines and utilities<a class="headerlink" href="#module-stlab.utils.S11fit" title="Permalink to this headline">¶</a></h1>
 <p>Module for fitting resonance line shapes to different circuit models</p>
-<p>This module contains the functions necessary to fit some general lorentizian to
+<p>This module contains the functions necessary to fit some general Lorentzian to
 simulations or measurements.  The main function is “fit” and is imported with
 stlab as “stlab.S11fit”.  All other functions in this module are there to
 supplement this fitting function or are not generally used.</p>
@@ -130,9 +137,9 @@ selected with this parameter.</p>
 frequency values.  Uses parameter object from lmfit.  The background model
 is given by</p>
 <div class="math">
-<p><img src="../_images/math/c639e5e17e9a48b5204dc8f47baeabe49e436a9a.png" alt="f_b(\omega)=(a+b\omega+c\omega^2)
-\exp(j(a'+b'\omega)),"/></p>
-</div><p>where <img class="math" src="../_images/math/60461f27124855ba1fd2e055d21cfd14470bb2d8.png" alt="a,b,c,a',b'"/> are real parameters.</p>
+<p><span class="math">f_b(\omega)=(a+b\omega+c\omega^2)
+\exp(j(a'+b'\omega)),</span></p>
+</div><p>where <span class="math">a,b,c,a',b'</span> are real parameters.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -162,8 +169,8 @@ It fits the data in three steps.  Firstly it fits the background signal removing
 Then it fits the model times the background to the full data set keeping the background parameters fixed at the fitted values.  Finally it refits all background and
 model parameters once more starting from the previously fitted values.  The fit model is:</p>
 <div class="math">
-<p><img src="../_images/math/392f5bc65c91806badd0d46cbce87e0a10fe32f5.png" alt="\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
-\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),"/></p>
+<p><span class="math">\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
+\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),</span></p>
 </div><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -233,8 +240,8 @@ Should be an odd number</li>
 <p>A new lmfit.Parameters object is created using the given values.  Default
 values are filled in for ommited parameters.  The fit model is:</p>
 <div class="math">
-<p><img src="../_images/math/392f5bc65c91806badd0d46cbce87e0a10fe32f5.png" alt="\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
-\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),"/></p>
+<p><span class="math">\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
+\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),</span></p>
 </div><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -372,7 +379,7 @@ original array as the real and imaginary parts</td>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="autoplotter.html" title="Autoplot – Quick plots for measurement reference"
+          <a href="TLmodel.html" title="TLmodel – Model for transmission line resonator"
              >next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="Documentation for STLab"
@@ -381,8 +388,8 @@ original array as the real and imaginary parts</td>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
