@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.com/steelelab-delft/stlab.svg?branch=ci)](https://travis-ci.com/steelelab-delft/stlab)
 [![GitHub Issues](https://img.shields.io/github/issues/steelelab-delft/stlab.svg)](https://github.com/steelelab-delft/stlab/issues)
 [![DOCS](https://img.shields.io/badge/read%20-thedocs-ff66b4.svg)](https://steelelab-delft.github.io/stlab/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
