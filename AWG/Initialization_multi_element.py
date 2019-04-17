@@ -53,12 +53,12 @@ from pycqed.measurement.pulse_sequences import single_qubit_tek_seq_elts as sq
 from qcodes.instrument_drivers.rohde_schwarz import SGS100A as rs
 
 from qcodes.instrument_drivers.Keysight import N51x1 as ks
+from qcodes.instrument_drivers.Keysight import Keysight_E8267D as ks2
 
 # import qcodes.instrument_drivers.QuTech.IVVI as iv
 # from qcodes.instrument_drivers.agilent.E8527D import Agilent_E8527D
 
-from qcodes.instrument_drivers.tektronix import AWG520 as tk520
-
+# from qcodes.instrument_drivers.tektronix import AWG520 as tk520
 
 
 import pycqed.instrument_drivers.meta_instrument.qubit_objects.Tektronix_driven_transmon as qbt
@@ -71,7 +71,7 @@ import pycqed.instrument_drivers.meta_instrument.CBox_LookuptableManager as lm
 # import for ATS
 import qcodes.instrument.parameter as parameter
 import qcodes.instrument_drivers.AlazarTech.ATS9870 as ATSdriver
-import qcodes.instrument_drivers.AlazarTech.ATS_acquisition_controllers as ats_contr
+import qcodes.instrument_drivers.AlazarTech.ATS_acquisition_controllers_m as ats_contr
 
 
 
@@ -82,13 +82,16 @@ import qcodes.instrument_drivers.AlazarTech.ATS_acquisition_controllers as ats_c
 station = qc.Station()
 
 # Fridge_mon = fm.Fridge_Monitor('Fridge monitor', 'LaMaserati')
-# station.add_component(Fridge_mon)
+# station.add_component(Fridge_mon)  
 
 ###########
 # Sources #
 ###########
 RFLO = ks.N51x1(name='RFLO', address='TCPIP0::192.168.1.91::inst0::INSTR', server_name=None)  #
 station.add_component(RFLO)
+
+# RFLO2 = ks2.Keysight_E8267D(name='RFLO2', address='TCPIP0::192.168.1.66::inst0::INSTR', server_name=None)  #
+
 
 SPEC = rs.RohdeSchwarz_SGS100A(name='SPEC', address='TCPIP0::192.168.1.37::inst0::INSTR', server_name=None)  #
 station.add_component(SPEC)
@@ -98,9 +101,13 @@ station.add_component(SPEC)
 # station.add_component(UHFQC_1)
 
 #initializing AWG
-AWG = tk520.Tektronix_AWG520(name='AWG', timeout=1, terminator='\n',
+AWG_OLD = tk520.Tektronix_AWG520(name='AWG', timeout=1, terminator='\n',
                             address='TCPIP0::192.168.1.27::1234::SOCKET', server_name=None)
 station.add_component(AWG)
+
+# AWGB = tk520.Tektronix_AWG520(name='AWGB', timeout=1, terminator='\n',
+#                             address='TCPIP0::192.168.1.28::4000::SOCKET', server_name=None)
+# station.add_component(AWGB)
 
 #Initializaing ATS,
 ATSdriver.AlazarTech_ATS.find_boards()
@@ -173,28 +180,29 @@ station.MC = MC
 station.add_component(MC)
 
 # The AWG sequencer
-station.pulsar = ps.Pulsar()
-station.pulsar.AWG = station.components['AWG']
-for i in range(2):
-    # Note that these are default parameters and should be kept so.
-    # the channel offset is set in the AWG itself. For now the amplitude is
-    # hardcoded. You can set it by hand but this will make the value in the
-    # sequencer different.
-    station.pulsar.define_channel(id='ch{}'.format(i+1),
-                                  name='ch{}'.format(i+1), type='analog',
-                                  # max safe IQ voltage
-                                  high=1., low=-1.,
-                                  offset=0.0, delay=0, active=True)
-    station.pulsar.define_channel(id='ch{}_marker1'.format(i+1),
-                                  name='ch{}_marker1'.format(i+1),
-                                  type='marker',
-                                  high=2.0, low=0, offset=0.,
-                                  delay=0, active=True)
-    station.pulsar.define_channel(id='ch{}_marker2'.format(i+1),
-                                  name='ch{}_marker2'.format(i+1),
-                                  type='marker',
-                                  high=2.0, low=0, offset=0.,
-                                  delay=0, active=True)
+# station.pulsar = ps.Pulsar()
+# station.pulsar.AWG  = station.components['AWG']
+# for i in range(2):
+#     # Note that these are default parameters and should be kept so.
+#     # the channel offset is set in the AWG itself. For now the amplitude is
+#     # hardcoded. You can set it by hand but this will make the value in the
+#     # sequencer different.
+#     station.pulsar.define_channel(id='ch{}'.format(i+1),
+#                                   name='ch{}'.format(i+1), type='analog',
+#                                   # max safe IQ voltage
+#                                   high=1., low=-1.,
+#                                   offset=0.0, delay=0, active=True, AWG='AWG')
+#     station.pulsar.define_channel(id='ch{}_marker1'.format(i+1),
+#                                   name='ch{}_marker1'.format(i+1),
+#                                   type='marker',
+#                                   high=2.0, low=0, offset=0.,
+#                                   delay=0, active=True, AWG='AWG')
+#     station.pulsar.define_channel(id='ch{}_marker2'.format(i+1),
+#                                   name='ch{}_marker2'.format(i+1),
+#                                   type='marker',
+#                                   high=2.0, low=0, offset=0.,
+#                                   delay=0, active=True, AWG='AWG')
+
 # to make the pulsar available to the standard awg seqs
 st_seqs.station = station
 sq.station = station

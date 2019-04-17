@@ -1,5 +1,6 @@
 # author: Wolfgang Pfaff
 # modified by: Sarwan Peiter
+# Modified by: Byoung-moo Ann
 """
 So I have already written the driver for the AWG.
 Now the next step is to write an interface to communicates with driver.
@@ -42,11 +43,12 @@ class AWG_Station():
 
 	AWG_sequence_cfg = {}
 
-	def __init__(self, AWG=None):
+	def __init__(self, AWG=None, ftpip = '192.168.1.51'):
 
 		self.channels = {}
 		self.AWG = AWG
 		self.filename = None
+		self.ftpip = ftpip
 		print('init halfway')
 		
 		if self.AWG is not None:
@@ -376,12 +378,12 @@ class AWG_Station():
 
 		folder_path = os.getcwd()
 
-		dirpath = self.AWG.awg_file_dir
+		dirpath = self.AWG.dir
 
 		os.chdir(dirpath)
 
 		f = open('ftp.txt','w')
-		f.write('open 192.168.1.51\n')
+		f.write('open {}\n'.format(self.ftpip))
 		f.write('\n')
 		f.write('\n')
 		f.write('binary\n')

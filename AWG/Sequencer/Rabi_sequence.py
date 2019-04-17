@@ -11,7 +11,7 @@ from AWG520_driver_beta import Tektronix_AWG520
 from matplotlib import pyplot as plt
 
 imp.reload(pulse)
-imp.reload(element)
+imp.reload(element)  
 imp.reload(AWG_station)
 imp.reload(viewer)
 
@@ -21,15 +21,14 @@ plt.close('all')
 # Define all the channels on AWG through AWG_station.
 # This then again uses the low level AWG driver to communicate with the AWG instrument
 # So one never uses the low level AWG driver directly but instead through an interface 
-devAWG = Tektronix_AWG520(name='AWG')
+devAWG = Tektronix_AWG520(name='AWG',addr='TCPIP0::192.168.1.27::1234::SOCKET')
 print(devAWG.get_clock())
 
-AWG = AWG_station.AWG_Station(AWG=devAWG)
-
+AWG = AWG_station.AWG_Station(AWG=devAWG,ftpip='192.168.1.51')
 print(AWG.clock)
 
 AWG.define_channels(
-    id='ch1',
+    id='ch1',  
     name='RF1',
     type='analog',
     high=0.541,
@@ -72,23 +71,26 @@ AWG.define_channels(
 
 sequence_name='rabi_sequence'
 measurement_trigger_delay=500e-9
-SSB_modulation_frequency=-50e6
-measurement_pulse_length=500e-9
-pump_pulse_length=50e-9
-pump_pulse_measurement_delay=30e-9
+SSB_modulation_frequency=50e6
+measurement_pulse_length=1000e-9
+pulse_sigma=15e-9
+pulse_measurement_delay=-400e-9
 buffer_pulse_length = 1.e-6
 readout_trigger_length = 500e-9
-spec_pulse_amp=0.3
+pulse_amp=0.5
 
-left_reference_pulse_name = 'pulsed spec'
+# left_reference_pulse_name = 'pulsed spec'
 
 #--------------------------------------------------------
 
-sin_pulse = pulse.CosPulse(channel='RF1', name='A sine pulse on RF')
-sin_pulse_2 = pulse.CosPulse(channel='RF2', name='A sine pulse on RF')
+# sin_pulse = pulse.CosPulse(channel='RF1', name='A sine pulse on RF')
+# sin_pulse_2 = pulse.CosPulse(channel='  RF2', name='A sine pulse on RF')
 
-qubit_spec_SSB_pulse = pulse.MW_IQmod_pulse(
-    I_channel='RF1', Q_channel='RF2', name='SSB pulse')
+# qubit_spec_SSB_pulse = pulse.MW_IQmod_pulse(
+#     I_channel='RF1', Q_channel='RF2', name='SSB pulse')
+
+gaussian_SSB_pulse = pulse.SSB_DRAG_pulse(
+    I_channel='RF1', Q_channel='RF2', name='SSB DRAG pulse')
 
 readout_switch_marker = pulse.SquarePulse(
     channel='MW_pulsemod', name='A square pulse on MW pmod')
@@ -119,22 +121,23 @@ test_element1.add(
 
 test_element1.add(
     pulse.cp(
-        qubit_spec_SSB_pulse,
+        gaussian_SSB_pulse,
         mod_frequency=SSB_modulation_frequency,
-        amplitude=spec_pulse_amp,
-        length=spec_pulse_length),
-    start=-spec_pulse_measurement_delay - spec_pulse_length,
-    name='qubit spec SSB pulse',
-    refpulse='readout switch marker',
+        amplitude=pulse_amp,
+        sigma=pulse_sigma,
+        nr_sigma=4,
+        motzoi=0),
+    start=-pulse_measurement_delay - pulse_sigma,
+    name='qubit drive pulse',
+    refpulse='readout trigger',
     refpoint='start')
-
 
 test_element1.add(
     pulse.cp(
         ATS_trigger_pulse, amplitude=0., length=buffer_pulse_length),
     start=-1 * buffer_pulse_length,
     name='buffer left',
-    refpulse='qubit spec SSB pulse',
+    refpulse='qubit drive pulse',
     refpoint='start')
 
 test_element1.add(
@@ -144,7 +147,6 @@ test_element1.add(
     name='buffer right',
     refpulse='readout switch marker',
     refpoint='end')
-
 
 
 
@@ -169,11 +171,8 @@ seq = sequence.Sequence(sequence_name)
 seq.append(name='first_element', wfname=sequence_name + '_element1', trigger_wait=True)#,
 #            # goto_target='first_element')#, jump_target='first special element')
 
-seq.append(name='second element', wfname=sequence_name + '_element1', trigger_wait=True)#,
-#            # goto_target='third element', jump_target='second special element')
 
-
-AWG.program_awg(seq,test_element1, test_element2, verbose = True)#, test_element2)
+AWG.program_awg(seq,test_element1, verbose = True)#, test_element2)
 
 AWG.AWGrun()
   
