@@ -20,7 +20,7 @@ class RS_FSV(basesa):
                  addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
-      
+
         super().__init__(addr, reset, verb)
         self.dev.timeout = None
 
@@ -146,11 +146,12 @@ class RS_FSV(basesa):
             output = pd.DataFrame()
             output['Frequency (Hz)'] = xvals
             output['Spectrum (' + yunit + ')'] = yvals
+            output['RBW (Hz)'] = self.GetResolutionBW()
             return output
         else:
             return KeyError('Instrument mode unknown!')
 
-    ############################## For IQ measurements
+    # For IQ measurements
 
     def SetDigitalIFBW(self, x):
         mystr = 'WAV:DIF:BAND {}'.format(x)
@@ -161,7 +162,7 @@ class RS_FSV(basesa):
         x = self.query(mystr)
         return float(x)
 
-    ############################## Functions below are old and deprecated
+    # Functions below are old and deprecated
     def prepare_CW(self, CWsource_addr):
         """
         Initializing FSV with SMB100A for a CW measurement: VNA mode;

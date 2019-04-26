@@ -1,18 +1,24 @@
-import visa
+"""Module for instance of a Keysight B2961A power source
+
+This module contains the functions necessary to control and read data from 
+a Keysight B2961A power source. It inherits from basesa class.
+"""
+
 import numpy as np
 from stlab.devices.instrument import instrument
 import time
+
 
 def numtostr(mystr):
     return '%12.8e' % mystr
 
 
-class keysightB2961A(instrument):
-    def __init__(self,addr='TCPIP::192.168.1.56::INSTR',reset=True,verb=True):
-        super(keysightB2961A, self).__init__(addr,reset,verb)
-        self.dev.timeout = None 
+class KeysightB2961A(instrument):
+    def __init__(self, addr='TCPIP::192.168.1.56::INSTR', reset=True, verb=True):
+        super(KeysightB2961A, self).__init__(addr, reset, verb)
+        self.dev.timeout = None
         self.id()
-    #OLD READ METHOD WITH OPC... NOT SURE IF NECESSARY. IF COMMENTED WILL USE INHERITED FROM instrument
+    # OLD READ METHOD WITH OPC... NOT SURE IF NECESSARY. IF COMMENTED WILL USE INHERITED FROM instrument
     '''
     def write(self,mystr):
         writestr = mystr+';*OPC?'
@@ -20,81 +26,99 @@ class keysightB2961A(instrument):
         if self.verb:
             print(writestr)
     '''
+
     def SetModeCurrent(self):
         self.write(':SOUR:FUNC:MODE CURR')
+
     def SetModeVoltage(self):
         self.write(':SOUR:FUNC:MODE VOLT')
+
     def GetMode(self):
         mode = self.query(':SOUR:FUNC:MODE?')
         mode = mode.strip()
         return mode
+
     def SetOutputOn(self):
         self.write(':OUTP ON')
+
     def SetOutputOff(self):
         self.write(':OUTP OFF')
-    def SetCurrent(self,curr):
+
+    def SetCurrent(self, curr):
         mystr = numtostr(curr)
         mystr = ':SOUR:CURR '+mystr
         self.write(mystr)
-    def SetVoltage(self,curr):
+
+    def SetVoltage(self, curr):
         mystr = numtostr(curr)
         mystr = ':SOUR:VOLT '+mystr
         self.write(mystr)
-    def SetComplianceVoltage(self,volt):
+
+    def SetComplianceVoltage(self, volt):
         mystr = numtostr(volt)
         mystr = ':SENS:VOLT:PROT ' + mystr
         self.write(mystr)
-    def SetComplianceCurrent(self,volt):
+
+    def SetComplianceCurrent(self, volt):
         mystr = numtostr(volt)
         mystr = ':SENS:CURR:PROT ' + mystr
         self.write(mystr)
+
     def GetCurrent(self):
         mystr = ':MEAS:CURR?'
         curr = self.query(mystr)
         curr = float(curr)
         return curr
+
     def GetVoltage(self):
         mystr = ':MEAS:VOLT?'
         volt = self.query(mystr)
         volt = float(volt)
         return volt
+
     def GetVoltCurr(self):
         mystr = 'FORM:ELEM:SENS VOLT,CURR'
         self.write(mystr)
         mystr = ':MEAS?'
         outstr = self.query(mystr)
         data = np.array(list(map(float, outstr.split(','))))
-        return (data[0],data[1])
-    def RampVoltage(self,mvoltage,tt=5.,steps=100): #To ramp voltage over 'tt' seconds from current DAC value.
+        return (data[0], data[1])
+
+    # To ramp voltage over 'tt' seconds from current DAC value.
+    def RampVoltage(self, mvoltage, tt=5., steps=100):
         v0 = self.GetVoltage()
         if np.abs(mvoltage-v0) < 1e-3:
             self.SetVoltage(mvoltage)
             return
-        voltages = np.linspace(v0,mvoltage,steps)
+        voltages = np.linspace(v0, mvoltage, steps)
         twait = tt/steps
         for vv in voltages:
             self.SetVoltage(vv)
             time.sleep(twait)
-    def SetSweep(self,type='SING'):
+
+    def SetSweep(self, type='SING'):
         mode = self.GetMode()
         self.write('{}:MODE SWE'.format(mode))
         self.write('SWE:DIR UP')
         self.write('SWE:STA {}'.format(type))
         self.write('TRIG:SOUR AINT')
         return
-    def SetStartStop(self,start,stop):
+
+    def SetStartStop(self, start, stop):
         mode = self.GetMode()
-        self.write('{}:STAR {}'.format(mode,start) )
-        self.write('{}:STOP {}'.format(mode,stop) )
+        self.write('{}:STAR {}'.format(mode, start))
+        self.write('{}:STOP {}'.format(mode, stop))
         self.write('SWE:RANG BEST')
-    def SetPoints(self,nn):
+
+    def SetPoints(self, nn):
         self.write('SWE:POIN {}'.format(nn))
         swetype = (self.query('SWE:STA?')).strip()
         if swetype == 'DOUB':
             self.write('TRIG:COUN {}'.format(2*nn))
-        else:    
+        else:
             self.write('TRIG:COUN {}'.format(nn))
         return
+
     def RunSweep(self):
         self.SetOutputOn()
         self.query('INIT; *OPC?')
@@ -103,14 +127,16 @@ class keysightB2961A(instrument):
         self.SetOutputOff()
         x = x.strip().split(',')
         y = y.strip().split(',')
-        x=[float(xx) for xx in x]
-        y=[float(xx) for xx in y]
-        return y,x #Return V,I regardless of sweep parameter
-    def SetNPLC(self,nn):
+        x = [float(xx) for xx in x]
+        y = [float(xx) for xx in y]
+        return y, x  # Return V,I regardless of sweep parameter
+
+    def SetNPLC(self, nn):
         mode = self.GetMode()
-        self.write('SENS:{}:NPLC {}'.format(mode,nn))
+        self.write('SENS:{}:NPLC {}'.format(mode, nn))
         return
-        
+
+
 '''    
 dev.write('SWE:RANG BEST')
 dev.write('SWE:DIR UP')
