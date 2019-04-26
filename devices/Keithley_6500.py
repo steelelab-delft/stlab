@@ -16,6 +16,8 @@ class Keithley_6500(basekeithley):
                  verb=True,
                  **kwargs):  # Remember read_termination = '\n'
         super().__init__(addr, reset, verb, **kwargs)
+        print('##############')
+        print("Remember read_termination='\n'")
 
     def FastMeasurementSetup(self):  # standard settings
         self.SetRangeAuto(False)
