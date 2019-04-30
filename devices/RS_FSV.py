@@ -226,12 +226,12 @@ class RS_FSV(basesa):
 
         self.write('SOUR:EXT1 OFF')
         # extract data
-        # TODO
+        # TODO:
 
     def frequency_power_sweep(self, fstart, fstop, fstep, pstart, pstop,
                               pstep):
         pass
-        # TODO Write code for powersweep
+        # TODO: Write code for powersweep
 
     def set_CWsource(self, adrr):
         self._CWsource = adrr

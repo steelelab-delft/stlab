@@ -13,13 +13,16 @@ def numtostr(mystr):
     return '%12.8e' % mystr
 
 
+# FIXME: instantiation via stlab.adi not working
+# FIXME: doesn't always respond immediately. Implement an option that tries over and over again until it works
+# TODO: set local control
 class Rigol_DG1022(instrument):
     def __init__(self,
                  addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb, query_delay=100e-3)
-        self.write('SYST:REM') # unlock local button
+        self.write('SYST:REM')  # unlock local button
         #self.id()
 
 
@@ -92,7 +95,7 @@ class Rigol_DG1022(instrument):
     # def SetReference(self, ref='INT'):
     #     # INT, EXT
     #     self.write('SYST:CLKSRC ' + ref)
-    # Note: SetReference disables the Rigol for some reason. 
+    # Note: SetReference disables the Rigol for some reason.
     # TODO: find out why
 
     def GetMetadataString(
