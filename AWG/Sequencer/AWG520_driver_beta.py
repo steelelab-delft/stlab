@@ -4,7 +4,8 @@
 # Vishal Ranjan, 2012
 # ron schutjens, 2012
 # Modified by: Sarwan Peiter
-# Modified by: Byoung-moo Ann
+# Modified by: Byoung-moo Ann, sequence file is saved correct location.
+
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or

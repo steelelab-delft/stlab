@@ -62,7 +62,7 @@ AWG.define_channels(
 
 AWG.define_channels(
     id='ch1_marker2',
-    name='readout_trigger',
+    name='trigger_other_AWG',
     type='marker',
     high=1,
     low=0,
@@ -103,7 +103,7 @@ marker = pulse.SquarePulse(
     channel='MW_pulsemod', name='A square pulse on MW pmod')
 
 trigger_pulse = pulse.SquarePulse(
-    channel='readout_trigger', name='A square pulse on MW pmod')
+    channel='trigger_other_AWG', name='A square pulse on MW pmod')
 
 
 test_element = element.Element(

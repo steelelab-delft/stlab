@@ -1,6 +1,6 @@
 # author: Wolfgang Pfaff
 # modified by: Sarwan Peiter
-# Modified by: Byoung-moo Ann
+# Modified by: Byoung-moo Ann, sequence file is saved correct location.
 """
 So I have already written the driver for the AWG.
 Now the next step is to write an interface to communicates with driver.
