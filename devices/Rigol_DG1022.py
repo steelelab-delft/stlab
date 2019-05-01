@@ -62,11 +62,11 @@ class Rigol_DG1022(instrument):
     def GetVpp(self, ch=1):
         if ch == 1:
             self.write('VOLT:UNIT VPP')  # {VPP|VRMS|DBM}
-            # time.sleep(0.1)
+            time.sleep(0.1)
             result = self.query('VOLT?')
         else:
             self.write('VOLT:CH{}:UNIT VPP'.format(ch))  # {VPP|VRMS|DBM}
-            # time.sleep(0.1)
+            time.sleep(0.1)
             result = self.query('VOLT:CH{}?'.format(ch))
         return float(result)
 
