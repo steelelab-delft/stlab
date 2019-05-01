@@ -12,9 +12,8 @@ class Keithley_6500(basekeithley):
     def __init__(self,
                  addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
-                 verb=True,
-                 **kwargs):
-        super().__init__(addr, reset, verb, read_termination='\n', **kwargs)
+                 verb=True):
+        super().__init__(addr, reset, verb, read_termination='\n')
 
     def FastMeasurementSetup(self):  # standard settings
         self.SetRangeAuto(False)
