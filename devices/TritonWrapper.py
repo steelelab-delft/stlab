@@ -24,7 +24,7 @@ class TritonWrapper(base_instrument):
 
     A new socket is created and discarded every read/write operation.
     """
-    def __init__(self,addr="192.168.1.178",port=8472,reset=True,verb=True,**kwargs):
+    def __init__(self,addr="131.180.82.112",port=8472,reset=False,verb=True,**kwargs):
         """init method
 
         Initialization of the device.
