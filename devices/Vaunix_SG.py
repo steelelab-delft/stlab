@@ -3,6 +3,8 @@
 This module contains the functions necessary to control and read data from 
 a Vaunix LabBrick Signal Generator. It inherits from base_instrument.
 We assume for now only one instrument connected.
+A lot of this code is based on the Raytheon BBN-Q Auspex driver located
+at https://github.com/BBN-Q/Auspex
 """
 
 # from stlab.devices.base_instrument import base_instrument
@@ -51,6 +53,9 @@ class Vaunix_SG():
         self.min_freq = self.lib.fnLMS_GetMinFreq(self.device_id) * self.ffreq
 
         return
+
+    def close(self):
+        self.lib.fnLMS_CloseDevice(self.device_id)
 
     def CheckLimits(self, value, quantity):
         if (quantity == 'frequency') or (quantity == 'freq'):
