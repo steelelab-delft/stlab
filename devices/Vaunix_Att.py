@@ -1,7 +1,7 @@
-"""Module for instance of a Vaunix LabBrick Signal Generator
+"""Module for instance of a Vaunix LabBrick attenuator
 
 This module contains the functions necessary to control and read data from 
-a Vaunix LabBrick Signal Generator. It inherits from base_instrument.
+a Vaunix LabBrick attenuator. It inherits from base_instrument.
 We assume for now only one instrument connected.
 A lot of this code is based on the Raytheon BBN-Q Auspex driver located
 at https://github.com/BBN-Q/Auspex
@@ -11,35 +11,35 @@ at https://github.com/BBN-Q/Auspex
 import cffi
 
 
-class Vaunix_SG():
+class Vaunix_Att():
     def __init__(self):
 
         # load API and DLL
         myffi = cffi.FFI()
         fid = open(
-            "C:/libs/Vaunix_Lab_Brick/generatorSDK/vnx_LMS_api_python.h")
+            "C:/libs/Vaunix_Lab_Brick/attenuatorSDK/vnx_LDA_api_python.h")
         myffi.cdef(fid.read())
         fid.close()
 
         # create device handle
         self.lib = myffi.dlopen(
-            "C:/libs/Vaunix_Lab_Brick/generatorSDK/vnx_fmsynth.dll")
+            "C:/libs/Vaunix_Lab_Brick/attenuatorSDK/VNX_atten64.dll")
 
         # open communication
-        num_devices = self.lib.fnLMS_GetNumDevices()
+        num_devices = self.lib.fnLDA_GetNumDevices()
         dev_ids = myffi.new("unsigned int[]", [0 for i in range(num_devices)])
-        self.lib.fnLMS_GetDevInfo(dev_ids)
+        self.lib.fnLDA_GetDevInfo(dev_ids)
         dev_from_serial_nums = {
-            self.lib.fnLMS_GetSerialNumber(d): d
+            self.lib.fnLDA_GetSerialNumber(d): d
             for d in dev_ids
         }
         dev_ids = [d for d in dev_ids]
 
         if num_devices == 1:
-            self.lib.fnLMS_SetTestMode(False)
+            self.lib.fnLDA_SetTestMode(False)
             self.device_id = dev_from_serial_nums[list(dev_from_serial_nums)
                                                   [0]]
-            status = self.lib.fnLMS_InitDevice(self.device_id)
+            status = self.lib.fnLDA_InitDevice(self.device_id)
             print('status:', status)
 
         # weird conversion factors
@@ -47,15 +47,15 @@ class Vaunix_SG():
         self.fpow = 1 / 4
 
         # limits
-        self.max_power = self.lib.fnLMS_GetMaxPwr(self.device_id) * self.fpow
-        self.min_power = self.lib.fnLMS_GetMinPwr(self.device_id) * self.fpow
-        self.max_freq = self.lib.fnLMS_GetMaxFreq(self.device_id) * self.ffreq
-        self.min_freq = self.lib.fnLMS_GetMinFreq(self.device_id) * self.ffreq
+        # self.max_power = self.lib.fnLDA_GetMaxPwr(self.device_id) * self.fpow
+        # self.min_power = self.lib.fnLDA_GetMinPwr(self.device_id) * self.fpow
+        # self.max_freq = self.lib.fnLDA_GetMaxFreq(self.device_id) * self.ffreq
+        # self.min_freq = self.lib.fnLDA_GetMinFreq(self.device_id) * self.ffreq
 
         return
 
     def close(self):
-        self.lib.fnLMS_CloseDevice(self.device_id)
+        self.lib.fnLDA_CloseDevice(self.device_id)
 
     def CheckLimits(self, value, quantity):
         if (quantity == 'frequency') or (quantity == 'freq'):
@@ -85,39 +85,39 @@ class Vaunix_SG():
         return self.device_id
 
     def SetRFOn(self):
-        self.lib.fnLMS_SetRFOn(self.device_id, 1)
+        self.lib.fnLDA_SetRFOn(self.device_id, 1)
 
     def SetRFOff(self):
-        self.lib.fnLMS_SetRFOn(self.device_id, 0)
+        self.lib.fnLDA_SetRFOn(self.device_id, 0)
 
     def SetFrequency(self, freq):
         self.CheckLimits(freq, 'freq')
         f0 = int(freq / self.ffreq)
-        self.lib.fnLMS_SetFrequency(self.device_id, f0)
+        self.lib.fnLDA_SetFrequency(self.device_id, f0)
 
     def GetFrequency(self):
-        f0 = float(self.lib.fnLMS_GetFrequency(self.device_id) * self.ffreq)
+        f0 = float(self.lib.fnLDA_GetFrequency(self.device_id) * self.ffreq)
         return f0
 
     def SetPower(self, pow):
         self.CheckLimits(pow, 'pow')
         p0 = int(pow / self.fpow)
-        self.lib.fnLMS_SetPowerLevel(self.device_id, p0)
+        self.lib.fnLDA_SetPowerLevel(self.device_id, p0)
 
     def GetPower(self):
-        p0 = float(self.lib.fnLMS_GetPowerLevel(self.device_id) * self.fpow)
+        p0 = float(self.lib.fnLDA_GetPowerLevel(self.device_id) * self.fpow)
         return p0
 
     def SetReference(self, ref):
         if ref == 'INT':
-            self.lib.fnLMS_SetUseInternalRef(self.device_id, 1)
+            self.lib.fnLDA_SetUseInternalRef(self.device_id, 1)
         elif ref == 'EXT':
-            self.lib.fnLMS_SetUseInternalRef(self.device_id, 0)
+            self.lib.fnLDA_SetUseInternalRef(self.device_id, 0)
         else:
             raise ValueError('Unknown reference')
 
     def GetReference(self):
-        msg = self.lib.fnLMS_GetUseInternalRef(self.device_id)
+        msg = self.lib.fnLDA_GetUseInternalRef(self.device_id)
         if msg == 0:
             return 'EXT'
         elif msg == 1:
