@@ -12,7 +12,7 @@ import cffi
 
 
 class Vaunix_Phase():
-    def __init__(self):
+    def __init__(self, reset=True):
 
         # load API and DLL
         myffi = cffi.FFI()
@@ -59,7 +59,15 @@ class Vaunix_Phase():
         # serial number
         self.serialnumber = self.lib.fnLPS_GetSerialNumber(self.device_id)
 
+        # reset
+        if reset:
+            self.reset()
+
         return
+
+    def reset(self):
+        self.SetFrequency(self.min_freq)
+        self.SetPhase(self.min_phase)
 
     def close(self):
         self.lib.fnLPS_CloseDevice(self.device_id)

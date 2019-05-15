@@ -12,7 +12,7 @@ import cffi
 
 
 class Vaunix_Att():
-    def __init__(self):
+    def __init__(self, reset=True):
 
         # load API and DLL
         myffi = cffi.FFI()
@@ -58,7 +58,14 @@ class Vaunix_Att():
         # serial number
         self.serialnumber = self.lib.fnLDA_GetSerialNumber(self.device_id)
 
+        # reset
+        if reset:
+            self.reset()
+
         return
+
+    def reset(self):
+        self.SetAttenuation(self.min_att)
 
     def close(self):
         self.lib.fnLDA_CloseDevice(self.device_id)
