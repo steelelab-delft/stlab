@@ -68,6 +68,7 @@ class Vaunix_SG():
     def reset(self):
         self.SetFrequency(self.min_freq)
         self.SetPower(self.min_power)
+        self.SetReference('INT')
 
     def close(self):
         self.lib.fnLMS_CloseDevice(self.device_id)
