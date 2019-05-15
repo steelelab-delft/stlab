@@ -41,6 +41,10 @@ class Vaunix_SG():
                                                   [0]]
             status = self.lib.fnLMS_InitDevice(self.device_id)
             print('status:', status)
+        elif num_devices == 0:
+            raise ValueError('No devices found!')
+        else:
+            print('Warning: more than 1 device found!')
 
         # weird conversion factors
         self.ffreq = 10
@@ -51,6 +55,9 @@ class Vaunix_SG():
         self.min_power = self.lib.fnLMS_GetMinPwr(self.device_id) * self.fpow
         self.max_freq = self.lib.fnLMS_GetMaxFreq(self.device_id) * self.ffreq
         self.min_freq = self.lib.fnLMS_GetMinFreq(self.device_id) * self.ffreq
+
+        # serial number
+        self.serialnumber = self.lib.fnLMS_GetSerialNumber(self.device_id)
 
         return
 

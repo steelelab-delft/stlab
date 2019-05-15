@@ -41,6 +41,10 @@ class Vaunix_Att():
                                                   [0]]
             status = self.lib.fnLDA_InitDevice(self.device_id)
             print('status:', status)
+        elif num_devices == 0:
+            raise ValueError('No devices found!')
+        else:
+            print('Warning: more than 1 device found!')
 
         # weird conversion factors
         self.fatt = 1 / 4
@@ -50,6 +54,9 @@ class Vaunix_Att():
             self.device_id) * self.fatt
         self.min_att = self.lib.fnLDA_GetMinAttenuation(
             self.device_id) * self.fatt
+
+        # serial number
+        self.serialnumber = self.lib.fnLDA_GetSerialNumber(self.device_id)
 
         return
 
@@ -62,7 +69,7 @@ class Vaunix_Att():
                 'Warning: Attenuation out of range. Set to min = {} dB'.format(
                     self.min_att))
             self.SetAttenuation(self.min_att)
-        elif value > self.mamax_attx_power:
+        elif value > self.max_att:
             print(
                 'Warning: Attenuation out of range. Set to max = {} dB'.format(
                     self.max_att))
@@ -72,7 +79,7 @@ class Vaunix_Att():
         return self.device_id
 
     def SetAttenuation(self, att):
-        self.CheckLimits(att')
+        self.CheckLimits(att)
         a0 = int(att / self.fatt)
         self.lib.fnLDA_SetAttenuation(self.device_id, a0)
 
