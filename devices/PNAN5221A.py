@@ -19,8 +19,9 @@ class PNAN5221A(basepna):
     def __init__(self,
                  addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
-                 verb=True):
-        super().__init__(addr, reset, verb)
+                 verb=True,
+                 **kwargs):
+        super().__init__(addr, reset, verb, **kwargs)
 
 # OBLIGATORY METHODS TO BE IMPLEMENTED FROM ABCLASS
 
@@ -151,7 +152,9 @@ class PNAN5221A(basepna):
         self.SetSegmPoints(npoints)
         self.SetSegmState('ON')
         self.SetSweepType('SEGM')
-        print("Warning: PNA sweeping from high to low frequency! Remember to PNA.StopReverseSweep() afterwards!")
+        print(
+            "Warning: PNA sweeping from high to low frequency! Remember to PNA.StopReverseSweep() afterwards!"
+        )
 
     def StopReverseSweep(self):
         self.SetSegmState('OFF')

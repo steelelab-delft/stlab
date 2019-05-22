@@ -7,7 +7,7 @@ from stlab.devices.instrument import instrument
 from stlabutils.utils.stlabdict import stlabdict as stlabdict
 import numpy as np
 import pandas as pd
-
+import time
 import abc
 
 
@@ -16,8 +16,8 @@ def numtostr(mystr):
 
 
 class basepna(instrument, abc.ABC):
-    def __init__(self, addr, reset, verb):
-        super().__init__(addr, reset, verb)
+    def __init__(self, addr, reset, verb, **kwargs):
+        super().__init__(addr, reset, verb, **kwargs)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None
         self.id()
@@ -240,6 +240,8 @@ class basepna(instrument, abc.ABC):
         pars, parnames = self.GetTraceNames()
         self.SetActiveTrace(pars[0])
         names = ['Frequency (Hz)']
+        print('hello')
+        time.sleep(1)
         alltrc = [self.GetFrequency()]
         for pp in parnames:
             names.append('%sre ()' % pp)
@@ -248,6 +250,8 @@ class basepna(instrument, abc.ABC):
             names.append('%sPh (rad)' % pp)
         for par in pars:
             self.SetActiveTrace(par)
+            print('hello')
+            time.sleep(1)
             yyre, yyim = self.GetTraceData()
             alltrc.append(yyre)
             alltrc.append(yyim)
