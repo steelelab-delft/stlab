@@ -26,7 +26,9 @@ class basepna(instrument, abc.ABC):
 
 ##### METHODS THAT CAN GENERALLY BE USED ON ALL PNAs.  REIMPLEMENT IF NECESSARY #######
 
-    def SetContinuous(self, var=True):
+    def SetContinuous(
+            self, var=True
+    ):  # note: this does NOT set the trigger state to "single", but changes the trigger source between Internal ("continuous") or Manual ("off")
         if var:
             self.write('INIT:CONT 1')  #Turn on continuous mode
         elif not var:
