@@ -50,15 +50,15 @@ AWG.define_channels(
     delay=0,
     active=True)
 
-# AWG.define_channels(
-#     id='ch1_marker1',
-#     name='MW_pulsemod',
-#     type='marker',
-#     high=1.0,
-#     low=0,
-#     offset=0.,
-#     delay=0,
-#     active=True)
+AWG.define_channels(
+    id='ch1_marker2',
+    name='trigger_awgb',
+    type='marker',
+    high=1.0,
+    low=0,
+    offset=0.,
+    delay=0,
+    active=True)
 
 AWG.define_channels(
     id='ch2_marker1',
@@ -72,15 +72,15 @@ AWG.define_channels(
 #-------------------------------------------------------
 
   
-sequence_name='flux_train'
-SSB_modulation_frequency=250e6   
+sequence_name='flux_train_master'
+SSB_modulation_frequency=125e6   
 # flux_pulse_length=200e-9  
 buffer_pulse_length = 1.e-5 
 readout_trigger_length = 500e-9
 flux_pulse_amp=0.5 
-pulse_measurement_delay=500.e-9
+pulse_measurement_delay=1000.e-9  
 
-left_reference_pulse_name = 'flux_train'
+left_reference_pulse_name = 'flux_train_master'
 
 #-------------------------------------------------------
 # define some bogus pulses.
@@ -99,9 +99,16 @@ sin_pulse_2 = pulse.CosPulse(channel='RF2', name='A sine pulse on RF')
 flux_pulse = pulse.Filtered(
     I_channel='RF1', Q_channel='RF2', name='SSB DRAG pulse')
 
+# flux_pulse = pulse.MW_IQmod_pulse(
+#     I_channel='RF1', Q_channel='RF2', name='SSB pulse')
+
+
 trigger_pulse = pulse.SquarePulse(
     channel='readout_trigger', name='A square pulse on MW pmod')
-     
+
+trigger_pulse2 = pulse.SquarePulse(
+    channel='trigger_awgb', name='A square pulse on MW pmod')     
+
 
 test_element = element.Element(
     (sequence_name + '_element'),
@@ -113,7 +120,15 @@ test_element.add(
         length=readout_trigger_length),
     start=0.1e-6,
     name='trigger',
-    refpoint='start')  
+    refpoint='start')
+
+test_element.add(
+    pulse.cp(
+        trigger_pulse2, amplitude=1.,
+        length=readout_trigger_length),
+    start=0.6e-6,
+    name='trigger2',
+    refpoint='start')        
 
 test_element.add(
     pulse.cp(
@@ -122,7 +137,7 @@ test_element.add(
         amplitude=flux_pulse_amp),
     start=pulse_measurement_delay,
     name='flux pulse',
-    refpulse='trigger',
+    refpulse='trigger2',
     refpoint='end')
 
 

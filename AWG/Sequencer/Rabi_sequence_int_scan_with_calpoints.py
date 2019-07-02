@@ -1,7 +1,7 @@
 import numpy as np
 import time
 import element
-import Pulse_lib as pulse
+import Pulse_lib_2 as pulse
 import AWG_station
 import sequence
 import pprint
@@ -68,25 +68,39 @@ AWG.define_channels(
     active=True)
 #-------------------------------------------------------
 
-sequence_name='T2_delay_scan'
+sequence_name='drive_chevron'
 measurement_trigger_delay=500e-9
 SSB_modulation_frequency=50e6
 measurement_pulse_length=500e-9
-pulse_sigma=15e-9
+pulse_sigma=5e-9
 pulse_measurement_delay=-450e-9
 buffer_pulse_length = 1.e-6
 readout_trigger_length = 500e-9  
-pulse_amp=0.25
-time_delay=np.arange(400e-9,12.8e-6,600e-9)
-
-
+pulse_amp=[  0.5,   0.5,   0.5,
+         0.5,   0.5,   0.5,
+         0.5,   0.5,   0.5,
+         0.5,   0.5,   0.5,
+         0.5,   0.5,   0.5,
+         0.5,   0.5,   0.5,
+         0.5,   0.5,   0.5, 0]
+# pulse_length=np.linspace(100e-9,100e-9,21)
+pulse_length=[  1.00000000e-08,   2.50000000e-08,   4.00000000e-08,
+         5.50000000e-08,   7.00000000e-08,   8.50000000e-08,
+         1.00000000e-07,   1.15000000e-07,   1.30000000e-07,
+         1.45000000e-07,   1.60000000e-07,   1.75000000e-07,
+         1.90000000e-07,   2.05000000e-07,   2.20000000e-07,
+         2.35000000e-07,   2.50000000e-07,   2.65000000e-07,
+         2.80000000e-07,   2.95000000e-07,   3.10000000e-07, 3.25000000e-07]
 # left_reference_pulse_name = 'pulsed spec'
 
-#--------------------------------------------------------
+#-------------------------------------------------- ------
 
 
 
-gaussian_SSB_pulse = pulse.SSB_DRAG_pulse(
+gaussian_SSB_pulse = pulse.Filtered(
+    I_channel='RF1', Q_channel='RF2', name='SSB DRAG pulse')
+
+gaussian_SSB_pulse_Cal = pulse.SSB_DRAG_pulse(
     I_channel='RF1', Q_channel='RF2', name='SSB DRAG pulse')
 
 readout_switch_marker = pulse.SquarePulse(
@@ -180,17 +194,26 @@ test_element21 = element.Element(
     (sequence_name + '_element21'),
     pulsar=AWG)  #, ignore_offset_correction=True)
 
+test_element22 = element.Element(
+    (sequence_name + '_element22'),
+    pulsar=AWG)  #, ignore_offset_correction=True)
+
+test_element23 = element.Element(
+    (sequence_name + '_element23'),
+    pulsar=AWG)  #, ignore_offset_correction=True)
+
+
 element_list=[test_element1,test_element2,test_element3,test_element4,test_element5,
 test_element6,test_element7,test_element8,test_element9,test_element10,test_element11,
 test_element12,test_element13,test_element14,test_element15,test_element16,test_element17,
-test_element18,test_element19,test_element20,test_element21]
+test_element18,test_element19,test_element20,test_element21,test_element22,test_element23]
 
-for i in range(len(time_delay)):
+for i in range(len(pulse_amp)):
     element_list[i].add(
         pulse.cp(
             ATS_trigger_pulse, amplitude=1.,
             length=readout_trigger_length),
-        start=0.1e-6, 
+        start=0.1e-6,
         name='readout trigger',
         refpoint='start')
 
@@ -206,27 +229,14 @@ for i in range(len(time_delay)):
         pulse.cp(
             gaussian_SSB_pulse,
             mod_frequency=SSB_modulation_frequency,
-            amplitude=pulse_amp,
+            amplitude=pulse_amp[i],
             sigma=pulse_sigma,
             nr_sigma=4,
             motzoi=0,
-            phase=0),
-        start=-pulse_measurement_delay - pulse_sigma*4,
+            length_2=pulse_length[i]),
+        start=-pulse_measurement_delay - pulse_sigma*4 - pulse_length[i],
         name='qubit drive pulse',
         refpulse='readout trigger',
-        refpoint='start')
-
-    element_list[i].add(
-        pulse.cp(
-            gaussian_SSB_pulse,
-            mod_frequency=SSB_modulation_frequency,
-            amplitude=pulse_amp,
-            sigma=pulse_sigma,
-            nr_sigma=4,
-            motzoi=0),
-        start=- time_delay[i],
-        name='qubit drive pulse 2',
-        refpulse='qubit drive pulse',
         refpoint='start')
 
 
@@ -235,7 +245,7 @@ for i in range(len(time_delay)):
             ATS_trigger_pulse, amplitude=0., length=buffer_pulse_length),
         start=-1 * buffer_pulse_length,
         name='buffer left',
-        refpulse='qubit drive pulse 2',
+        refpulse='qubit drive pulse',
         refpoint='start')
 
     element_list[i].add(
@@ -247,9 +257,55 @@ for i in range(len(time_delay)):
         refpoint='end')
 
 
+element_list[22].add(
+        pulse.cp(
+            ATS_trigger_pulse, amplitude=1.,
+            length=readout_trigger_length),
+        start=0.1e-6,
+        name='readout trigger',
+        refpoint='start')
+
+element_list[22].add(
+        pulse.cp(readout_switch_marker, amplitude=1., length=measurement_pulse_length),
+        start=measurement_trigger_delay,
+        name='readout switch marker',
+        refpulse='readout trigger',
+        refpoint='start')
+
+
+element_list[22].add(
+        pulse.cp(
+            gaussian_SSB_pulse_Cal,
+            mod_frequency=SSB_modulation_frequency,
+            amplitude=0.5,
+            sigma=15e-9,
+            nr_sigma=4,
+            motzoi=0),
+        start=-pulse_measurement_delay - 15e-9*4,
+        name='qubit drive pulse',
+        refpulse='readout trigger',
+        refpoint='start')
+
+
+element_list[22].add(
+        pulse.cp(
+            ATS_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+        start=-1 * buffer_pulse_length,
+        name='buffer left',
+        refpulse='qubit drive pulse',
+        refpoint='start')
+
+element_list[22].add(
+        pulse.cp(
+            ATS_trigger_pulse, amplitude=0., length=buffer_pulse_length),
+        start=0,
+        name='buffer right',
+        refpulse='readout switch marker',
+        refpoint='end')
+
 
 print('Channel definitions: ')
-for i in range(len(time_delay)):
+for i in range(len(pulse_amp)+1):
     element_list[i].print_overview()
 
 
@@ -257,7 +313,7 @@ for i in range(len(time_delay)):
 #-------------------------continue------------ -------------------
 # -------------------------------------------------------
 # # viewing of the sequence for second check of timing etc
-for i in range(len(time_delay)):
+for i in range(len(pulse_amp)+1):
     viewer.show_element_stlab(element_list[i], delay = False, channels = 'all', ax = None)
 
 #--------------------------------------------------------

@@ -338,7 +338,7 @@ class MW_IQmod_pulse(Pulse):
 
         self.mod_frequency = kw.pop('mod_frequency', 1e6)
         self.amplitude = kw.pop('amplitude', 0.1)
-        self.length = kw.pop('length', 1e-6)
+        self.length = kw.pop('length', 1e-7)
         self.phase = kw.pop('phase', 0.)
         self.phaselock = kw.pop('phaselock', True)
         self.alpha = kw.pop('alpha', 1)
@@ -525,11 +525,11 @@ class Filtered(Pulse):
         self.channels = [I_channel, Q_channel]
 
         self.amplitude = kw.pop('amplitude', 0.1)
-        self.sigma = kw.pop('sigma', 12.5e-9)
+        self.sigma = kw.pop('sigma', 5e-9)
         self.nr_sigma = kw.pop('nr_sigma', 4)
         self.motzoi = kw.pop('motzoi', 0)
 
-        self.mod_frequency = kw.pop('mod_frequency', 1e6)
+        self.mod_frequency = kw.pop('mod_fre  quency', 1e6)
         self.phase = kw.pop('phase', 0.)
         self.phaselock = kw.pop('phaselock', True)
 

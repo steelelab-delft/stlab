@@ -77,7 +77,7 @@ pulse_measurement_delay=-500e-9
 buffer_pulse_length = 1.e-6
 readout_trigger_length = 500e-9  
 pulse_amp=0.5
-time_delay=np.linspace(100e-9,2.1e-6,21)
+time_delay=np.arange(400e-9,8.6e-6,400e-9)
 
 
 # left_reference_pulse_name = 'pulsed spec'

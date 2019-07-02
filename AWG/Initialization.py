@@ -92,7 +92,6 @@ station.add_component(RFLO)
 
 # RFLO2 = ks2.Keysight_E8267D(name='RFLO2', address='TCPIP0::192.168.1.66::inst0::INSTR', server_name=None)  #
 
-
 SPEC = rs.RohdeSchwarz_SGS100A(name='SPEC', address='TCPIP0::192.168.1.37::inst0::INSTR', server_name=None)  #
 station.add_component(SPEC)
 
@@ -100,13 +99,13 @@ station.add_component(SPEC)
 # UHFQC_1 = ZI_UHFQC.UHFQC('UHFQC_1', device='dev2209', server_name=None)
 # station.add_component(UHFQC_1)
 
-initializing AWG
+# initializing AWG
 AWG = tk520.Tektronix_AWG520(name='AWG', timeout=1, terminator='\n',
-                            address='TCPIP0::192.168.1.28::4000::SOCKET', server_name=None)
+                            address='TCPIP0::192.168.1.27::1234::SOCKET', server_name=None)
 station.add_component(AWG)
 
-AWG_OLD = tk520.Tektronix_AWG520(name='AWGB', timeout=1, terminator='\n',
-                            address='TCPIP0::192.168.1.27::1234::SOCKET', server_name=None)
+AWGB = tk520.Tektronix_AWG520(name='AWGB', timeout=1, terminator='\n',
+                            address='TCPIP0::192.168.1.28::4000::SOCKET', server_name=None)
 station.add_component(AWGB)
 
 #Initializaing ATS,

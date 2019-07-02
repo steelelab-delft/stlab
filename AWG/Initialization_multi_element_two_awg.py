@@ -70,8 +70,8 @@ import pycqed.instrument_drivers.meta_instrument.CBox_LookuptableManager as lm
 # from pycqed.instrument_drivers.physical_instruments.ZurichInstruments import UHFQuantumController as ZI_UHFQC
 # import for ATS
 import qcodes.instrument.parameter as parameter
-import qcodes.instrument_drivers.AlazarTech.ATS9870_m as ATSdriver
-import qcodes.instrument_drivers.AlazarTech.ATS_acquisition_controllers_m as ats_contr
+import qcodes.instrument_drivers.AlazarTech.ATS9870_m_two_awg as ATSdriver
+import qcodes.instrument_drivers.AlazarTech.ATS_acquisition_controllers_m_two_awg as ats_contr
 
 
 

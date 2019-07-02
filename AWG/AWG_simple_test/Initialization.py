@@ -58,7 +58,7 @@ from qcodes.instrument_drivers.Keysight import Keysight_E8267D as ks2
 # import qcodes.instrument_drivers.QuTech.IVVI as iv
 # from qcodes.instrument_drivers.agilent.E8527D import Agilent_E8527D
 
-# from qcodes.instrument_drivers.tektronix import AWG520 as tk520
+from qcodes.instrument_drivers.tektronix import AWG520 as tk520
 
 
 import pycqed.instrument_drivers.meta_instrument.qubit_objects.Tektronix_driven_transmon as qbt
@@ -70,8 +70,8 @@ import pycqed.instrument_drivers.meta_instrument.CBox_LookuptableManager as lm
 # from pycqed.instrument_drivers.physical_instruments.ZurichInstruments import UHFQuantumController as ZI_UHFQC
 # import for ATS
 import qcodes.instrument.parameter as parameter
-import qcodes.instrument_drivers.AlazarTech.ATS9870_m as ATSdriver
-import qcodes.instrument_drivers.AlazarTech.ATS_acquisition_controllers_m as ats_contr
+import qcodes.instrument_drivers.AlazarTech.ATS9870 as ATSdriver
+import qcodes.instrument_drivers.AlazarTech.ATS_acquisition_controllers as ats_contr
 
 
 
@@ -93,17 +93,17 @@ station.add_component(RFLO)
 # RFLO2 = ks2.Keysight_E8267D(name='RFLO2', address='TCPIP0::192.168.1.66::inst0::INSTR', server_name=None)  #
 
 
-SPEC = rs.RohdeSchwarz_SGS100A(name='SPEC', address='TCPIP0::192.168.1.37::inst0::INSTR', server_name=None)  #
-station.add_component(SPEC)
+# SPEC = rs.RohdeSchwarz_SGS100A(name='SPEC', address='TCPIP0::192.168.1.37::inst0::INSTR', server_name=None)  #
+# station.add_component(SPEC)
 
 #Initializing UHFQC
 # UHFQC_1 = ZI_UHFQC.UHFQC('UHFQC_1', device='dev2209', server_name=None)
 # station.add_component(UHFQC_1)
 
 #initializing AWG
-# AWG = tk520.Tektronix_AWG520(name='AWG', timeout=1, terminator='\n',
-#                             address='TCPIP0::192.168.1.27::1234::SOCKET', server_name=None)
-# station.add_component(AWG)
+AWG = tk520.Tektronix_AWG520(name='AWG', timeout=1, terminator='\n',
+                            address='TCPIP0::192.168.1.27::1234::SOCKET', server_name=None)
+station.add_component(AWG)
 
 # AWGB = tk520.Tektronix_AWG520(name='AWGB', timeout=1, terminator='\n',
 #                             address='TCPIP0::192.168.1.28::4000::SOCKET', server_name=None)
