@@ -26,7 +26,19 @@ class RS_ZND(basepna):
         if reset:
             self.TwoPort()
 
+
+
 ### REIMPLEMENTATION OF GENERIC FUNCTIONS
+
+    def Reset(self):
+        self.write('*RST')
+
+    def SetContinuous(self,bool):
+        if bool:
+            self.write('INITIATE:CONTINUOUS ON')
+        else:
+            self.write('INITIATE:CONTINUOUS OFF')
+
 
     def SetIFBW(self, x):
         mystr = numtostr(x)
@@ -108,6 +120,8 @@ class RS_ZND(basepna):
         return final
     '''
 
+
+
     def LoadCal(self, calfile, channel=1):
         mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
         self.write(mystr)
@@ -170,3 +184,25 @@ class RS_ZND(basepna):
     def SetCWfrequency(self, xx):
         self.write('SENS:FREQ {}'.format(xx))
         return
+
+
+    def SetSweepfrequency(self, start_freq, stop_freq, sweep_points): 
+        self.write('SENS:FREQ:STAR {}GHZ'.format(start_freq))
+        self.write('SENS:FREQ:STOP {}GHZ'.format(stop_freq))
+        self.write('SWE:POIN {}'.format(sweep_points))
+         
+
+    def SetAverageSweeps(self, count): #Defines the number of consecutive sweeps to be combined for the sweep average ("Factor" ).
+        self.write('SENS:AVER:COUN {}; :AVER ON'.format(count))
+
+    def Initiate(self): #Starts a new single sweep sequence in all channels
+        self.write('INIT:ALL') 
+
+    def SetPower (self, x):
+        self.write('SOUR:POW {}'.format(x))
+
+    def SetSweepTime(self,x):
+        self.write('SENS:SWE:TIME {}'.format(x))
+         
+    
+    

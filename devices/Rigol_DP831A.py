@@ -52,3 +52,14 @@ class Rigol_DP831A(instrument):
         for vv in voltages:
             self.SetVoltage(vv, ii)
             time.sleep(twait)
+
+    def RampCurrent(self, c1, ii=1, tt=5, steps=100):
+        c0 = self.GetCurrent(ii)
+        if np.abs(c0 - c1) < 0.001:
+            self.SetCurrent(ii, c1)
+            return
+        currents = np.linspace(c0, c1, steps)
+        twait = tt / steps
+        for cc in currents:
+            self.SetCurrent(cc, ii)
+            time.sleep(twait)

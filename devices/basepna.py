@@ -14,7 +14,6 @@ import abc
 def numtostr(mystr):
     return '%20.15e' % mystr
 
-
 class basepna(instrument, abc.ABC):
     def __init__(self, addr, reset, verb):
         super().__init__(addr, reset, verb)
@@ -26,7 +25,7 @@ class basepna(instrument, abc.ABC):
 
 ##### METHODS THAT CAN GENERALLY BE USED ON ALL PNAs.  REIMPLEMENT IF NECESSARY #######
 
-    def SetContinuous(self, var=True):
+    def  bn(self, var=True):
         if var:
             self.write('INIT:CONT 1')  #Turn on continuous mode
         elif not var:
@@ -123,6 +122,18 @@ class basepna(instrument, abc.ABC):
 
     def SetPowerOn(self):
         self.write("SOUR1:POW1:MODE ON")
+        return
+
+    def SetAverageCounts(self,x):
+        self.write('SENS:AVER:COUN {}'.format(2000))
+        return
+
+    def SetAverageOn(self):
+        self.write('SENS:AVER ON')
+        return
+
+    def SetAverageOff(self):
+        self.write('SENS:AVER OFF')
         return
 
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################

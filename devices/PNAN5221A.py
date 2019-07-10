@@ -24,6 +24,19 @@ class PNAN5221A(basepna):
 
 # OBLIGATORY METHODS TO BE IMPLEMENTED FROM ABCLASS
 
+    def Preset (self):
+        self.write('SYST:PRES *RST')
+
+
+    def SetContinuous(self, mode):
+        if mode:
+            self.write('SENS:SWE:MOD CONT')
+        else: 
+            self.write('SENS:SWE:MOD SING')
+
+        return mode 
+
+
     def GetFrequency(self, ch=1):
         freq = self.query('CALC{}:X?'.format(ch))
         freq = np.asarray([float(xx) for xx in freq.split(',')])
