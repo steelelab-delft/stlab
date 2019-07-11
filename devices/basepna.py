@@ -25,7 +25,7 @@ class basepna(instrument, abc.ABC):
 
 ##### METHODS THAT CAN GENERALLY BE USED ON ALL PNAs.  REIMPLEMENT IF NECESSARY #######
 
-    def  bn(self, var=True):
+    def SetContinuous(self, var=True):
         if var:
             self.write('INIT:CONT 1')  #Turn on continuous mode
         elif not var:

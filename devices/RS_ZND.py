@@ -35,10 +35,9 @@ class RS_ZND(basepna):
 
     def SetContinuous(self,bool):
         if bool:
-            self.write('INITIATE:CONTINUOUS ON')
-        else:
-            self.write('INITIATE:CONTINUOUS OFF')
-
+            self.write('INIT:CONT ON')
+        elif not bool:
+            self.write('INIT:CONT OFF')
 
     def SetIFBW(self, x):
         mystr = numtostr(x)
