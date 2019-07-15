@@ -78,7 +78,7 @@ SSB_modulation_frequency=125e6
 buffer_pulse_length = 1.e-5 
 readout_trigger_length = 500e-9
 flux_pulse_amp=0.5 
-pulse_measurement_delay=1000.e-9  
+pulse_measurement_delay=1000.e-9 
 
 left_reference_pulse_name = 'flux_train_master'
 

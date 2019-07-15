@@ -31,7 +31,7 @@ AWG = AWG_station.AWG_Station(AWG=devAWG, ftpip='192.168.1.51')
 print(AWG.clock)
 
 AWG.define_channels(
-    id='ch1',
+    id='ch1', 
     name='RF1',
     type='analog',
     high=0.541,
