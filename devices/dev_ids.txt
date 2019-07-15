@@ -1,29 +1,30 @@
 #Device id tag (as seen in ID string), Driver name in stlab
-SMB100A, RS_SMB100A
-N5221A, PNAN5221A
-N5222A, PNAN5222A
-CS580, Stanford_CS580
+Model 18I, Cryocon_44C
+Model 44C, Cryocon_44C
+N9916A, FieldfoxPNA
+N9952A, FieldfoxPNA
+11713B, instrument
+DP831A, instrument
+MODEL 2100, Keithley_2100
+MODEL 2000, Keithley_2100
 E5080A, Keysight_E5080A
 N5183B, Keysight_N5183B
 N9010B, Keysight_N9010B
 N9020B, Keysight_N9010B
 B2961A, Keysight_B2901A
 B2901A, Keysight_B2901A
-DP831A, instrument
-MODEL 2100, Keithley_2100
-MODEL 2000, Keithley_2100
-AWG520, Tektronix_AWG520
-11713B, instrument
-MODEL370, Lakeshore_370
-Model 18I, Cryocon_44C
-Model 44C, Cryocon_44C
 N5183B, Keysight_N5183B
-ZND-2Port, RS_ZND
+E8257D, Keysight_E8257D
+MODEL370, Lakeshore_370
+FSW-0020, PhaseMatrix_FSW0020
+N5221A, PNAN5221A
+N5222A, PNAN5222A
 DG1022, Rigol_DG1022
 DS1054Z, Rigol_DS1054
-N9916A, FieldfoxPNA
-N9952A, FieldfoxPNA
-FSW-0020, PhaseMatrix_FSW0020
-E8257D, Keysight_E8257D
-FSV-13, RS_FSV
 DP831A, Rigol_DP831A
+FSV-13, RS_FSV
+SMB100A, RS_SMB100A
+SGS100A, RS_SGS100A
+ZND-2Port, RS_ZND
+CS580, Stanford_CS580
+AWG520, Tektronix_AWG520
