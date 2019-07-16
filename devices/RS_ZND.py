@@ -33,6 +33,9 @@ class RS_ZND(basepna):
     def Reset(self):
         self.write('*RST')
 
+    def Reset_test(self):
+        self.write('*RST')
+
     def SetContinuous(self,bool):
         if bool:
             self.write('INIT:CONT ON')
