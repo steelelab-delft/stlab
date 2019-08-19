@@ -366,4 +366,10 @@ class PNAN5222A(PNAN5221A):
     '''
 
 
-
+    def Measure(self):
+        self.write("SENS:SWE:MODE HOLD") #place channel 1 in HOLD mode
+        self.write("INIT:CONT ON")    #      'place PNA in internal trigger mode
+        self.write('SENS:SWE:MODE SING')
+        self.query("*OPC?") #'wait until the sweep is complete
+        self. AutoScaleAll()
+        return self.GetAllData_pd()

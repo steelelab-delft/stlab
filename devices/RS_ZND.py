@@ -185,6 +185,27 @@ class RS_ZND(basepna):
     def ClearAll(self):
         self.write('CALC:PAR:DEL:ALL')
 
+    
+## Required for power sweep mode
+
+    def SetPowStart(self, x):
+        mystr = numtostr(x)
+        mystr = 'SOUR:POW:STAR ' + mystr
+        self.write(mystr)
+
+    def SetPowStop(self, x):
+        mystr = numtostr(x)
+        mystr = 'SOUR:POW:STOP ' + mystr 
+
+        self.write(mystr)
+
+    def SetCWfreq(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:FREQ:CW ' + mystr+'GHz'
+        self.write(mystr)
+
+
+
         
 """ # Already implemented in basepna
 
@@ -205,6 +226,6 @@ class RS_ZND(basepna):
     
         def SetSweepTime(self,x):
             self.write('SENS:SWE:TIME {}'.format(x))
-             
-        
-"""    
+"""             
+  
+

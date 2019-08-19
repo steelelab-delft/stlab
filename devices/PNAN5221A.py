@@ -29,9 +29,9 @@ class PNAN5221A(basepna):
 
     def SetContinuous(self, mode):
         if mode:
-            self.write('SENS:SWE:MOD CONT')
+            self.write('SENS:SWE:MODE CONT')
         else: 
-            self.write('SENS:SWE:MOD SING')
+            self.write('SENS:SWE:MODE SING')
         return mode 
 
     def GetFrequency(self, ch=1):

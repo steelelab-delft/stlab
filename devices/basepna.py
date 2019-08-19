@@ -320,3 +320,13 @@ class basepna(instrument, abc.ABC):
         getters.remove('GetTraceData')
 
         return getters
+
+
+    def SetSweepfrequency(self, start_freq, stop_freq, sweep_points): 
+            self.write('SENS:FREQ:STAR {}GHZ'.format(start_freq))
+            self.write('SENS:FREQ:STOP {}GHZ'.format(stop_freq))
+            self.write('SWE:POIN {}'.format(sweep_points))
+
+
+    def SetSweepTime(self,x):
+            self.write('SENS:SWE:TIME {}'.format(x))
