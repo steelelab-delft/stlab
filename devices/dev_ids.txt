@@ -20,7 +20,7 @@ Model 18I, Cryocon_44C
 Model 44C, Cryocon_44C
 N5183B, Keysight_N5183B
 ZND-2Port, RS_ZND
-DG1022 , Rigol_DG1022
+DG1022, Rigol_DG1022
 DS1054Z, Rigol_DS1054
 N9916A, FieldfoxPNA
 N9952A, FieldfoxPNA

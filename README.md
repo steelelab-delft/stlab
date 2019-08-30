@@ -13,39 +13,10 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 
 ## Requirements
 
-see [`requirements.txt`](https://github.com/steelelab-delft/stlab/blob/master/requirements.txt)
-
-## Installation instructions
-
-Clone the repository to your computer using, for example, the GitHub desktop client or git bash.
-
-Then add the directory you cloned it to (or any upper folder in the folder tree it is stored in) to your PYTHONPATH, using one of the following methods.
-
-### Windows
-
-After anaconda installation, there should be a ```PYTHONPATH``` variable in ```My Computer > Properties > Advanced System Settings > Environment Variables > ```
-
-Add the directory in which the git repos are to this library, for example ```;C:\libs```
-
-Taken from [here](https://stackoverflow.com/questions/3701646/how-to-add-to-the-pythonpath-in-windows) and [here](https://stackoverflow.com/questions/7054424/python-not-recognized-as-a-command).
-
-### macOS
-
-On Gary's mac, my GitHub desktop client stores my local repositories in:
-
-`/Users/gsteele/Documents/GitHub`
-
-This means that we should add this directory to the PYTHONPATH environment variable. On my mac, I added the following to my `.profile` file:
-
-`export PYTHONPATH="$PYTHONPATH:/Users/gsteele/Documents/GitHub"`
-
-Restarting the jupter notebook server in a shell where this environment variable is defined, I can then directly import the `stlabutils` library (along with any other libraries stored in my GitHub folder).
-
-### Linux
-
-Same as for macOS (both are UNIX based).
-
-For detailed instructions on setting the python path variable on different platforms, see [this stack exchange post](https://stackoverflow.com/questions/3402168/permanently-add-a-directory-to-pythonpath).
+- [Python3](https://www.python.org/downloads/) or [Anaconda](https://www.anaconda.org/downloads)
+- [SciPy](https://www.scipy.org/)
+- [lmfit](https://pypi.org/project/lmfit/) (for fitting routines)
+- [pyVISA](https://pypi.org/project/PyVISA-py/) (for measurements)
 
 ## Changelog
 

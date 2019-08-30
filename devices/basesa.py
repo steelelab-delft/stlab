@@ -4,7 +4,7 @@ This module is the base class for most SAs
 """
 
 from stlab.devices.instrument import instrument
-from stlabutils.utils.stlabdict import stlabdict as stlabdict
+from stlab.utils.stlabdict import stlabdict as stlabdict
 import numpy as np
 import pandas as pd
 import time
@@ -19,11 +19,11 @@ def numtostr(mystr):
 class basesa(instrument, abc.ABC):
     def __init__(self, addr, reset, verb):
         super().__init__(addr, reset, verb)
-        # Remove timeout so long measurements do not produce -420 "Unterminated Query"
+        #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None
         self.id()
         if reset:
-            self.SetContinuous(False)  # Turn off continuous mode
+            self.SetContinuous(False)  #Turn off continuous mode
 
 ##### METHODS THAT CAN GENERALLY BE USED ON ALL SAs.  REIMPLEMENT IF NECESSARY #######
 
@@ -101,7 +101,7 @@ class basesa(instrument, abc.ABC):
         return float(npts)
 
     def SetAverages(self, navg):
-        # self.write('AVER:TYPE RMS')   # Power averaging
+        #self.write('AVER:TYPE RMS')   # Power averaging
         self.write('AVER:COUNT {}'.format(navg))
         if navg > 1:
             self.write(':TRAC:TYPE AVER')
@@ -131,7 +131,7 @@ class basesa(instrument, abc.ABC):
         # Should return a string of metadata adequate to write to a file
         pass
 
-##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER SA BASIS #####################
+##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
     @abc.abstractmethod
     def GetAverages(self):
@@ -162,7 +162,6 @@ class basesa(instrument, abc.ABC):
             output = pd.DataFrame()
             output['Frequency (Hz)'] = xvals
             output['Spectrum (' + yunit + ')'] = yvals
-            output['RBW (Hz)'] = self.GetResolutionBW()
             return output
         else:
             return KeyError('Instrument mode unknown!')
@@ -263,7 +262,6 @@ class basesa(instrument, abc.ABC):
 
 
 ##### FULLY IMPLEMENTED METHODS THAT DO NOT NEED TO BE REIMPLEMENTED (BUT CAN BE IF NECESSARY) #####################
-
 
     def MetaGetters(self):
         getters = [

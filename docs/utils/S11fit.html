@@ -78,8 +78,289 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="s11fit-resonance-fitting-routines-and-utilities">
-<h1>S11fit – Resonance fitting routines and utilities<a class="headerlink" href="#s11fit-resonance-fitting-routines-and-utilities" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-stlab.utils.S11fit">
+<span id="s11fit-resonance-fitting-routines-and-utilities"></span><h1>S11fit – Resonance fitting routines and utilities<a class="headerlink" href="#module-stlab.utils.S11fit" title="Permalink to this headline">¶</a></h1>
+<p>Module for fitting resonance line shapes to different circuit models</p>
+<p>This module contains the functions necessary to fit some general Lorentzian to
+simulations or measurements.  The main function is “fit” and is imported with
+stlab as “stlab.S11fit”.  All other functions in this module are there to
+supplement this fitting function or are not generally used.</p>
+<dl class="function">
+<dt id="stlab.utils.S11fit.S11full">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">S11full</code><span class="sig-paren">(</span><em>frec</em>, <em>params</em>, <em>ftype='A'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#S11full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.S11full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for total response from background model and resonator response</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.S11theo">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">S11theo</code><span class="sig-paren">(</span><em>frec</em>, <em>params</em>, <em>ftype='A'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#S11theo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.S11theo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Theoretical response functions of cavities with no background</p>
+<p>Returns the theory values of cavity response functions for a given set of
+parameters for different cavity models.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>frec</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of float</em>) – Frequency values to calculate the response function at</li>
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameter values for calculation</li>
+<li><strong>ftype</strong> (<em>{'A'</em><em>,</em><em>'-A'</em><em>,</em><em>'B'</em><em>,</em><em>'-B'</em><em>,</em><em>'X'}</em><em>, </em><em>optional</em>) – <p>Model for response function selection.  These are described in Daniel’s
+response function document.  The desired model should be found there and
+selected with this parameter.</p>
+<p>The possible models are (CHECK DANIEL’S RESPONSE FUNCTION DOCUMENT):</p>
+<ul>
+<li>’A’: Reflection cavity with short circuit boundary condition at input port (default selection)</li>
+<li>’-A’: Reflection cavity with open circuit boundary condition at input port (= model A with a minus sign)</li>
+<li>’B’: Transmission through a side coupled geometry</li>
+<li>’-B’: Same as model B but with a minux sign</li>
+<li>’X’: Non-standard model (used in a magnetic field sweep)</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Values of theoretical response function at frequencies given in frec</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.complex128 or numpy.ndarray of numpy.complex128</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.backmodel">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">backmodel</code><span class="sig-paren">(</span><em>x</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#backmodel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.backmodel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for background model.</p>
+<p>Returns the background model values for a given set of parameters and
+frequency values.  Uses parameter object from lmfit.  The background model
+is given by</p>
+<div class="math">
+<p><span class="math">f_b(\omega)=(a+b\omega+c\omega^2)
+\exp(j(a'+b'\omega)),</span></p>
+</div><p>where <span class="math">a,b,c,a',b'</span> are real parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array_like of float</em>) – Frequency values to evaluate the model at</li>
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters set with which to generate the background</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Background values at frequencies x with model parameters params</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.complex128 or numpy.ndarray of numpy.complex128</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.fit">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">fit</code><span class="sig-paren">(</span><em>frec</em>, <em>S11</em>, <em>ftype='A'</em>, <em>fitbackground=True</em>, <em>trimwidth=5.0</em>, <em>doplots=False</em>, <em>margin=51</em>, <em>oldpars=None</em>, <em>refitback=True</em>, <em>reusefitpars=False</em>, <em>fitwidth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>MAIN FIT ROUTINE</strong></p>
+<p>Fits complex data S11 vs frecuency to one of 4 models adjusting for a multiplicative complex background
+It fits the data in three steps.  Firstly it fits the background signal removing a certain window around the detected peak position.
+Then it fits the model times the background to the full data set keeping the background parameters fixed at the fitted values.  Finally it refits all background and
+model parameters once more starting from the previously fitted values.  The fit model is:</p>
+<div class="math">
+<p><span class="math">\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
+\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),</span></p>
+</div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>frec</strong> (<em>array_like</em>) – Array of X values (typically frequency)</li>
+<li><strong>S11</strong> (<em>array_like</em>) – Complex array of Z values (typically S11 data)</li>
+<li><strong>ftype</strong> (<em>{'A'</em><em>,</em><em>'B'</em><em>,</em><em>'-A'</em><em>,</em><em>'-B'</em><em>, </em><em>'X'}</em><em>, </em><em>optional</em>) – Fit model function (A,B,-A,-B, see S11theo for formulas)</li>
+<li><strong>fitbackground</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If “True” will attempt to fit and remove background.  If “False”, will use a constant background equal to 1 and fit only model function to data.</li>
+<li><strong>trimwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Number of linewidths around resonance (estimated pre-fit) to remove for background only fit.</li>
+<li><strong>doplots</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If “True”, shows debugging and intermediate plots</li>
+<li><strong>margin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Smoothing window to apply to signal for initial guess procedures (the fit uses unsmoothed data)</li>
+<li><strong>oldpars</strong> (<em>lmfit.Parameters</em><em>, </em><em>optional</em>) – Parameter data from previous fit (expects lmfit Parameter object). Used when “refitback” is “False” or “reusefitpars” is “True”.</li>
+<li><strong>refitback</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to False, does not fit the background but uses parameters provided in “oldpars”.  If set to “True”, fits background normally</li>
+<li><strong>reusefitpars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to True, uses parameters provided in “oldpars” as initial guess for fit parameters in main model fit (ignored by background fit)</li>
+<li><strong>fitwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – If set to a numerical value, will trim the signal to a certain number of widths around the resonance for all the fit</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Fitted parameter values</li>
+<li><strong>freq</strong> (<em>numpy.ndarray</em>) – Array of frequency values within the fitted range</li>
+<li><strong>S11</strong> (<em>numpy.ndarray</em>) – Array of complex signal values within the fitted range</li>
+<li><strong>finalresult</strong> (<em>lmfit.MinimizerResult</em>) – The full minimizer result object (see lmfit documentation for details)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.getwidth_phase">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">getwidth_phase</code><span class="sig-paren">(</span><em>i0</em>, <em>vec</em>, <em>margin</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#getwidth_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.getwidth_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds indices for peak width around given maximum position</p>
+<p>Auxiliary function for fit.  Given the complex array “vec” assuming “i0”
+is the resonance index, this function finds resonance peak width from the
+phase derivative of the signal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>i0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Array index of resonance</li>
+<li><strong>vec</strong> (<em>array_like of complex</em>) – Complex array with resonance data</li>
+<li><strong>margin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Smoothing margin used on data.  Needed to remove spureous increases in
+the phase array that occur at the head and tail of vec after smoothing.
+Should be an odd number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Indices of the lower and upper estimated edges of the resonance peak</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)">int</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.newparams">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">newparams</code><span class="sig-paren">(</span><em>f0=1</em>, <em>Qint=100</em>, <em>Qext=200</em>, <em>theta=0</em>, <em>a=1</em>, <em>b=0</em>, <em>c=0</em>, <em>ap=0</em>, <em>bp=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#newparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.newparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes new Parameters object compatible with fitting routine</p>
+<p>A new lmfit.Parameters object is created using the given values.  Default
+values are filled in for ommited parameters.  The fit model is:</p>
+<div class="math">
+<p><span class="math">\Gamma'(\omega)=(a+b\omega+c\omega^2)\exp(j(a'+b'\omega))\cdot
+\Gamma(\omega,Q_\textrm{int},Q_\textrm{ext},\theta),</span></p>
+</div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Resonance frequency</li>
+<li><strong>Qint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Internal quality factor</li>
+<li><strong>Qext</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – External quality factor</li>
+<li><strong>theta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Rotation angle to compensate additive background effects.  Should be
+close to 0 for good fits.</li>
+<li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background magnitude offset</li>
+<li><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background magnitude linear slope</li>
+<li><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background magnitude quadratic term</li>
+<li><strong>ap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background phase offset</li>
+<li><strong>bp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Background phase slope</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>params</strong> – lmfit fit object containing the provided parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">lmfit.Parameters</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.phaseunwrap">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">phaseunwrap</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#phaseunwrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.phaseunwrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a global phase slope from a complex array</p>
+<p>Unwraps the phase of a sequence of complex numbers and subtracts the average
+slope of the phase (desloped phase).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of complex</em>) – 1-D array of complex numbers</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Same array as original but with phase slope removed (0 average phase
+slope)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray of numpy.complex128</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.realimag">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">realimag</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#realimag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.realimag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes alternating real and imaginary part array from complex array</p>
+<p>Takes an array-like object of complex number elements and generates a
+1-D array aleternating the real and imaginary part of each element of the
+original array.  If array = (z1,z2,…,zn), then this function returns
+(x1,y1,x2,y2,…,xn,yn) where xi = np.real(zi) and yi=np.imag(zi).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of complex</em>) – 1-D array of complex numbers</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">New array of alternating real and imag parts of each element of
+original array</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.trim">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">trim</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>imin</em>, <em>imax</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#trim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.trim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes range from imin to imax from vectors x,y</p>
+<p>Given two (possibly complex) arrays and indices corresponding to a lower and upper edge,
+this function removes the index range between these edges from both input
+arrays</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> (<em>x</em><em>,</em>) – Arrays to be trimmed</li>
+<li><strong>imax</strong> (<em>imin</em><em>,</em>) – Lower and upper edge of range to be removed (trimmed) from x,y</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Trimmed arrays</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(numpy.ndarray, numpy.ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.S11fit.un_realimag">
+<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">un_realimag</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#un_realimag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.un_realimag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes complex array from alternating real and imaginary part array</p>
+<p>Performs the reverse operation to realimag</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<em>array_like of float</em>) – 1-D array of real numbers.  Should have an even number of elements.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">1-D array of complex numbers built by taking every two elements of
+original array as the real and imaginary parts</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray of numpy.complex128</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 

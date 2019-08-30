@@ -78,8 +78,52 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="newfile-new-measurement-folder-creation">
-<h1>newfile – New measurement folder creation<a class="headerlink" href="#newfile-new-measurement-folder-creation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-stlab.utils.newfile">
+<span id="newfile-new-measurement-folder-creation"></span><h1>newfile – New measurement folder creation<a class="headerlink" href="#module-stlab.utils.newfile" title="Permalink to this headline">¶</a></h1>
+<p>Method for opening a new file for writing</p>
+<p>This module contains a single method used for creating a new datafile.  This method
+handles timestamping the measurement folder, keeping track of the index of the measurement
+(if desired) and makes backup copies of the previously run scripts for reference.</p>
+<dl class="function">
+<dt id="stlab.utils.newfile.newfile">
+<code class="descclassname">stlab.utils.newfile.</code><code class="descname">newfile</code><span class="sig-paren">(</span><em>prefix</em>, <em>idstring</em>, <em>colnames=None</em>, <em>mypath='./'</em>, <em>usedate=True</em>, <em>usefolder=True</em>, <em>autoindex=False</em>, <em>return_folder_name=False</em>, <em>git_id=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/newfile.html#newfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.newfile.newfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new file for storing data.</p>
+<p>By default will create a folder (at the location of the running script) with a new file open for writing
+and a copy of the script the function was called from.  The naming scheme for the folder is <code class="code docutils literal"><span class="pre">&lt;prefix&gt;_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;</span></code>.
+The file is named the same with a “.dat” extension.</p>
+<p>Generally, if using default options, overwriting an existing file should not happen (date and time will never be exactly equal).
+However, if the desired filename already exists, this method will overwrite the old file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A string to be placed in front of the timestamp in the filename.  Can be blank or None but must be specified</li>
+<li><strong>idstring</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – A string to be placed behind the timestamp.  Can also be blank or None but must be specified</li>
+<li><strong>colnames</strong> (<em>list of str</em><em>, </em><em>optional</em>) – Array-like containing column titles for data.  This will be written in the first line of the file delimited by ‘, ‘.
+As an example, if colnames = [‘abc’, ‘def’, ‘ghi’], the first line in the file will be <code class="code docutils literal"><span class="pre">&quot;#</span> <span class="pre">abc,</span> <span class="pre">def,</span> <span class="pre">ghi\n&quot;</span></code>.  By default is left blank</li>
+<li><strong>mypath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Path for folder (or file) creation if pwd is not the desired path.  By default it is pwd.</li>
+<li><strong>usedate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Boolean to include timestamp.  If False, the timestamp is excluded from the file/folder name.  True by default</li>
+<li><strong>usefolder</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to False the file will be opened at the specified location with the usual naming but with no
+subfolder and no copy will be made of the running script.  True by default</li>
+<li><strong>autoindex</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Specifies if indexing of successively opened files is desired.  Will add a running index to the prefix of the newly created file/folder.
+This will be incremented by 1 for each new file with the same prefix.  If no files are found with the same prefix, it creates the
+first file name &lt;prefix&gt;1_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;.  Successive files will be named &lt;prefix&gt;&lt;idx&gt;_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;.
+Is False by default.</li>
+<li><strong>git_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Boolean to query and save the git id of stlab</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>myfile</strong> – Open file handle for writing</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">_io.TextIOWrapper</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 

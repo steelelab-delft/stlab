@@ -47,6 +47,14 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">TLmodel – Model for transmission line resonator</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="S11fit.html"
                         title="previous chapter">S11fit – Resonance fitting routines and utilities</a></p>
@@ -78,8 +86,521 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="tlmodel-model-for-transmission-line-resonator">
-<h1>TLmodel – Model for transmission line resonator<a class="headerlink" href="#tlmodel-model-for-transmission-line-resonator" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-stlab.utils.TLmodel">
+<span id="tlmodel-model-for-transmission-line-resonator"></span><h1>TLmodel – Model for transmission line resonator<a class="headerlink" href="#module-stlab.utils.TLmodel" title="Permalink to this headline">¶</a></h1>
+<p>Module for the calculation of transmission line impedances</p>
+<p>Most functions require a dictionary with specific elements regarding circuit parameters in it.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Z0&#39;</span><span class="p">:</span> <span class="mf">64.611</span><span class="p">,</span> <span class="c1"># characteristic impedance of TL resonator (e.g. geometric and kinetic), in Ohm</span>
+    <span class="s1">&#39;Cj&#39;</span><span class="p">:</span> <span class="mf">1.77e-15</span><span class="p">,</span> <span class="c1"># Capacitance of the junction (RCSJ model) loading the TL resonator, in F</span>
+    <span class="s1">&#39;Z0p&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="c1"># reference impedance of the input line, in Ohm</span>
+    <span class="s1">&#39;Lg&#39;</span><span class="p">:</span> <span class="mf">1.0432952403781536e-10</span><span class="p">,</span> <span class="c1"># geometric inductance of the junction leads loading the TL resonator, in H</span>
+    <span class="s1">&#39;Rj&#39;</span><span class="p">:</span> <span class="mf">1027.6618763504205</span><span class="p">,</span> <span class="c1"># Resistance of the junction (RCSJ model) loading the TL resonator, in Ohm</span>
+    <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mf">2.876042565429968</span><span class="p">,</span> <span class="c1"># refraction index for the TL resonator (v_ph = c / n)</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;lambda/2&#39;</span><span class="p">,</span> <span class="c1"># expected type of TL resonator. Only used in Zincircuit_approx. Can be &#39;lambda/2&#39;, &#39;lambda/4&#39;</span>
+    <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.0060728306929787035</span><span class="p">,</span>  <span class="c1"># attenuation constant for the TL resonator. This mainly sets the internal losses, in 1/m</span>
+    <span class="s1">&#39;Lj&#39;</span><span class="p">:</span> <span class="mf">2.0916766016363636e-10</span><span class="p">,</span> <span class="c1"># Josephson inductance of the junction (RCSJ model) loading the TL resonator, in H</span>
+    <span class="s1">&#39;Pin&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">122</span><span class="p">,</span> <span class="c1"># input power at the coupler of the TL resonator, in dBm</span>
+    <span class="s1">&#39;Cs&#39;</span><span class="p">:</span> <span class="mf">2.657e-11</span><span class="p">,</span> <span class="c1"># shunt capacitance of the coupler, in F</span>
+    <span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="mf">0.006119</span> <span class="c1"># length of the TL resonator, in m</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>The model calculated here is valid for a transmission line resonator coupled to the input line via a shunt capacitance Cs.
+At the far end, the TL resonator can be loaded by a RCSJ-type junction with an extra series inductor Lg and parallel capacitance Cg.</p>
+<div class="figure align-center" id="id1">
+<img alt="../_images/TLmodel.jpg" src="../_images/TLmodel.jpg" />
+<p class="caption"><span class="caption-text">Circuit model used for <code class="code docutils literal"><span class="pre">TLmodel.py</span></code>.</span></p>
+</div>
+<p>For more details see <a class="reference external" href="https://www.nature.com/articles/s41467-018-06595-2/">A ballistic graphene superconducting microwave circuit</a></p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="stlab.utils.TLmodel.FindParFromRes">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">FindParFromRes</code><span class="sig-paren">(</span><em>params</em>, <em>w0</em>, <em>a</em>, <em>b</em>, <em>par='Lj'</em>, <em>wws=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#FindParFromRes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.FindParFromRes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to find value of a parameter to match a given resonance frequency</p>
+<p>Finds approximate value of par to have an angular resonance frequency of w0.
+a,b is the bracketing interval.
+In our processing, the objective is to extract the load parameters from given
+resonance features, like the resonance frequency.
+Given w0, this function provides an initial estimate of these parameters to then perform
+the final fit such that the resonance frequency will start close to this value
+(for fit convergence).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+<li><strong>w0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Desired angular resonance frequency</li>
+<li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Bottom of bracketing interval for the parameter</li>
+<li><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Top of bracketing interval for the parameter</li>
+<li><strong>par</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Key of the parameter in <code class="code docutils literal"><span class="pre">params</span></code> to be swept</li>
+<li><strong>wws</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a><em>, </em><em>optional</em>) – Angular frequency range to evaluate the circuit impedance at.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>par0</strong> – Parameter value that satisfies desired resonance frequency for the given parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Ij">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Ij</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Ij"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Ij" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total current going out the far end of the TL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Vl</strong> – Current phasor through the load</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Ix">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Ix</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Ix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Ix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current phasor at a given distance along the TL</p>
+<p>Distance x counts from the load (at 0) to l (at input)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Position along the TL to calculate the current at, counting from the load (at 0) to l (at input)</li>
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Current phasor at a given distance along the TL</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.PintoV0">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">PintoV0</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#PintoV0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.PintoV0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conversion from power to voltage</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Incoming voltage amplitude for a given power</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.S11">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">S11</code><span class="sig-paren">(</span><em>Zin</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#S11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.S11" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exact expression of S11 for a given input impedance and parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Zin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a><em> or </em><em>array of complex</em>) – Load impedance</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Values of S11 for the given input parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a> or array of complex</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.S11theo">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">S11theo</code><span class="sig-paren">(</span><em>f</em>, <em>f0</em>, <em>kint</em>, <em>kext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#S11theo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.S11theo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lorentzian absortion function</p>
+<p>Approximate formula for a Series RLC circuit capacitively
+coupled on one side to a transmission line. The frequencies can
+be either angular or ‘real’ ones, as long as all of them have the
+same type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Frequency parameter</li>
+<li><strong>f0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Resonance frequency</li>
+<li><strong>kint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Internal linewidth or loss rate</li>
+<li><strong>kext</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – External linewidth or loss rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Values of S11 for the given input parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a> or array of float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Vin">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Vin</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Vin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Voltage phasor at the input</p>
+<p>If Pin is in params, it is used to calculate the actual amplitudes.
+If not, we assume an amplitude of 1V for the incoming wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Voltage phasor at the input</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Vj">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Vj</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Vj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Voltage at the far end of the TL across a Josephson junction (RCSJ)</p>
+<p>If there is a Lj and Cg in params, returns the voltage accross the junction (complex).  Else, just the load voltage</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Vl</strong> – Voltage phasor at the far end of the TL</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Vx">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Vx</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Vx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Voltage phasor at a given distance along the TL</p>
+<p>Distance x counts from the load (at 0) to l (at input)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Position along the TL to calculate the voltage at, counting from the load (at 0) to l (at input)</li>
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Voltage phasor at a given distance along the TL</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.ZTL">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">ZTL</code><span class="sig-paren">(</span><em>Z0</em>, <em>Zl</em>, <em>gammal</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#ZTL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.ZTL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Impedance of a general terminated transmission line</p>
+<p>Calculates the input impedance of a termniated transmission line with a given load impedance</p>
+<div class="math">
+<p><span class="math">\gamma_l = \alpha + i\beta = \alpha+i\frac{\omega}{v_{\rm ph}}</span></p>
+</div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Z0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a>) – line impedance</li>
+<li><strong>Zl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a>) – load impedance</li>
+<li><strong>gammal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a>) – propagation constant including losses</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Impedance of the terminated TL</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Zcoup">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zcoup</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zcoup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zcoup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Impedance of a general capacitor</p>
+<p>Here used for the shunt capacitor (coupler) at the start of the TL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">shunt capacitor impedance</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Zincircuit">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zincircuit</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zincircuit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zincircuit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analytical dalculation of input impedance of a TL resonator with a shunt capacitor</p>
+<p>Is only valid for a shunt coupler and depends on the definition of <a class="reference internal" href="#stlab.utils.TLmodel.Zload" title="stlab.utils.TLmodel.Zload"><code class="xref py py-func docutils literal"><span class="pre">Zload()</span></code></a>.
+<a class="reference internal" href="#stlab.utils.TLmodel.Zload" title="stlab.utils.TLmodel.Zload"><code class="xref py py-func docutils literal"><span class="pre">Zload()</span></code></a> is the impedance of the load on the far end of the TL resonator (opposite the coupler).
+Examples can be an open/short/junction end of the transmission line resonator.
+This is an analytical calculation using transmission line formulas (from Pozar).
+There are no lumped element approximations or equivalents involved.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Zin</strong> – Impedance seen at the resonator input</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a> or array of complex</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Zincircuit_approx">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zincircuit_approx</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zincircuit_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zincircuit_approx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lumped equivalent calculation of input impedance of a TL resonator with a shunt capacitor</p>
+<p>Is only valid for a shunt coupler and assumes the load impedance is <code class="code docutils literal"><span class="pre">params['Lg']</span></code>.
+This is a lumped equivalent calculation of the TL resonator with either an open or a short end.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Zin</strong> – Impedance seen at the resonator input</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a> or array of complex</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Zload">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zload</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Impedance of a load at the far end of the TL resonator</p>
+<p>Currently includes the possiblitity for an RCSJ and a capacitor as load</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Z</strong> – load impedance</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Zparallel">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zparallel</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zparallel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zparallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parallel impedance of a collection of impedances</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*args</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><em>complex</em></a>) – Values of impedances to be put in parallel</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> – parallel impedance</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.Zx">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zx</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Impedance at a given distance along the TL</p>
+<p>Distance x counts from the load (at 0) to l (at input)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Position along the TL to calculate the impedance at, counting from the load (at 0) to l (at input)</li>
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Impedance at a given distance along the TL</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)">complex</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.alpha">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">alpha</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#alpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attenuation constant of a TL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>omega</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><em>array of float</em>) – Angular frequency</li>
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Attenuation constant given in the parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.f0">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">f0</code><span class="sig-paren">(</span><em>params</em>, <em>ffs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#f0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.f0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the approximate resonance frequency in Hz from a generic circuit impedance</p>
+<p>This is an approximation which can then be used to a fitting function as starting value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+<li><strong>ffs</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a><em>, </em><em>optional</em>) – Frequency range in Hz to evaluate the circuit impedance at. By default 2-10 GHz</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>wres</strong> – Approximate resonance frequency in Hz</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlab.utils.TLmodel.omega0">
+<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">omega0</code><span class="sig-paren">(</span><em>params</em>, <em>wws=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#omega0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.omega0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the approximate angular resonance frequency from a generic circuit impedance</p>
+<p>This is an approximation which can then be used to a fitting function as starting value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary containing model parameters</li>
+<li><strong>wws</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.7)"><em>array</em></a><em>, </em><em>optional</em>) – Angular frequency range to evaluate the circuit impedance at. By default 2-10 GHz * 2pi</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>wres</strong> – Approximate angular resonance frequency</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 
 

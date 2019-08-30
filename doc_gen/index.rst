@@ -31,8 +31,6 @@ automation.  For the most part it is built upon pyvisa and is inteded to avoid t
 of low level communication with measurement instruments without including an inconvenient level
 of additional complexity (see `KISS principle <https://en.wikipedia.org/wiki/KISS_principle>`_).
 
-STLab needs `stlabutils <https://github.com/steelelab-delft/stlabutils>`_ for saving measurements, but can be used alone for only communication.
-
 The instrument drivers should in general only contain basic commonly used commands and not
 sophisticated setup and measurement schemes.  While things like "Get power" or "Get Trace" are
 acceptable, methods like "Perform 2 tone measurement" should not be included in basic device drivers.
@@ -63,7 +61,7 @@ The basic structure of the package is as follows:
 | │   └── ...
 
 * The "devices" folder contains all the implemented drivers as well as the basic instrument class.
-* The "utils" folder contains modules for running in the background. All old modules that was not directly related to instrument communication has been moved to `stlabutils <https://github.com/steelelab-delft/stlabutils>`_.
+* The "utils" folder contains modules for reading and writing files, resonance fitting, data structure management (stlabmtx for example).  Basically, everything not directly related to instrument communication.
 * "examples" contains a collection of basic script examples suchs as VNA power sweeps or quick Q factor measurements and fits.
 * "docs" contains this documentation and "doc_gen" contains the sphynx scripts for generating it.
 * The __init__.py file contains the modules and names imported when running "import stlab".  Note that some modules and functions are renamed for (in?)convenience.
