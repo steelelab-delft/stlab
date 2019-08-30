@@ -121,11 +121,12 @@ class Keysight_N9010B(basesa):
             output = pd.DataFrame()
             output['Frequency (Hz)'] = xvals
             output['Spectrum (' + yunit + ')'] = yvals
+            output['RBW (Hz)'] = self.GetResolutionBW()
             return output
         else:
             return KeyError('Instrument mode unknown!')
 
-    ############################## For IQ measurements
+    # For IQ measurements
 
     def SetSampleRate(self, x):
         mystr = 'WAV:SRAT {}'.format(x)
@@ -150,9 +151,9 @@ class Keysight_N9010B(basesa):
         tend = self.GetIQSweepTime()
         t = np.linspace(0, tend, len(I) + 1)
         t = t[1:]
-        #print((t[1]-t[0]))
-        #print(1/(t[1]-t[0]))
-        #print(self.GetSampleRate())
+        # print((t[1]-t[0]))
+        # print(1/(t[1]-t[0]))
+        # print(self.GetSampleRate())
         output = pd.DataFrame()
         output['Time (s)'] = t
         output['I (V)'] = I
