@@ -35,10 +35,25 @@ class Keysight_MXA_N9020B(instrument):
         mystr = 'SENS:FREQ:STOP ' + mystr
         self.dev.write(mystr)
 
-    def average(self,n_aver):
-        self.dev.write('AVER:COUN '+str(int(n_aver)))
-        #sets the current count (k and K) to 1 and restarts the averaging process.
-        self.dev.write('AVER:CLE')
+    def set_points(self,n):
+        self.dev.write(':SWEep:POINts %d'%int(n))
+
+    def set_resBW(self,bw):
+        self.dev.write('BAND %d HZ'%int(bw))
+    def set_vidBW(self,bw):
+        self.dev.write('BAND:VID %d HZ'%int(bw))
+
+    def measure_screen(self,averages = 1):
+        self.dev.write('AVER:COUN %d'%int(averages)) # max is 10,000
+        self.dev.write('AVER:STATe ON')
+        self.dev.write(':INITiate:IMMediate')
+        data_string = self.dev.query(':READ:SANalyzer?')
+        data =  np.fromstring(data_string, dtype=float, sep=',')
+        freq = data[0::2]
+        power = data[1::2]
+        return {'Frequency (Hz)':freq,'PSD (dB)':power}
+
+
 
     def SA_mode(self):
         '''
