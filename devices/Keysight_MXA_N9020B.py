@@ -3,10 +3,13 @@ from stlab.devices.instrument import instrument
 import logging
 import numpy as np
 
+def numtostr(mystr):
+    return '%20.15e' % mystr
+
 
 class Keysight_MXA_N9020B(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.216::INSTR',
+                 addr='TCPIP::192.168.1.164::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
@@ -14,9 +17,34 @@ class Keysight_MXA_N9020B(instrument):
 
     def IQ_mode(self):
         '''
-        changes to IQ mode (I am not sure what are the other options)
+        changes to IQ mode
         '''
         return self.dev.write(':INSTrument:SELect BASIC')
+
+    def set_range(self,start, end):
+        self.set_start(start)
+        self.set_end(end)
+
+    def set_start(self, x):
+        mystr = numtostr(x)
+        mystr = 'SENS:FREQ:STAR ' + mystr
+        self.dev.write(mystr)
+
+    def set_end(self, x):
+        mystr = numtostr(x)
+        mystr = 'SENS:FREQ:STOP ' + mystr
+        self.dev.write(mystr)
+
+    def average(self,n_aver):
+        self.dev.write('AVER:COUN '+str(int(n_aver)))
+        #sets the current count (k and K) to 1 and restarts the averaging process.
+        self.dev.write('AVER:CLE')
+
+    def SA_mode(self):
+        '''
+        changes to SA mode
+        '''
+        return self.dev.write(':INSTrument:SELect SA')
 
     def set_demodulation_frequency(self, f_center):
         '''
