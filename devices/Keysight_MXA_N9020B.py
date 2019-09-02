@@ -21,6 +21,9 @@ class Keysight_MXA_N9020B(instrument):
         '''
         return self.dev.write(':INSTrument:SELect BASIC')
 
+    def INTref(self):
+        self.dev.write('ROSCillator:SOURce:TYPE INTernal')
+
     def set_range(self,start, end):
         self.set_start(start)
         self.set_end(end)
