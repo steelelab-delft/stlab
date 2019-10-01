@@ -1,3 +1,4 @@
+[![GitHub Issues](https://img.shields.io/github/issues/steelelab-delft/stlab.svg)](https://github.com/steelelab-delft/stlab/issues)
 [![DOCS](https://img.shields.io/badge/read%20-thedocs-ff66b4.svg)](https://steelelab-delft.github.io/stlab/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1299278.svg)](https://doi.org/10.5281/zenodo.1299278)
@@ -6,9 +7,9 @@
 
 Environment for measurement and analysis scripts developed in the [SteeleLab at TU Delft](http://steelelab.tudelft.nl/open-science/).
 
-The documentation can be found [here](http://nsweb.tn.tudelft.nl/~steelelab/stlab/) and on [github](https://steelelab-delft.github.io/stlab/).
+The documentation can be found [here](https://steelelab-delft.github.io/stlab/) and on [the TUDelft server](http://nsweb.tn.tudelft.nl/~steelelab/stlab/).
 
-Due to regular changes of the code (`stlab` is work in progress), it is recommended to `git clone` this repository to your local working directory (preferably `C:\libs\stlab` on windows) and add a link to the `PYTHONPATH` instead of directly placing it in `/site-packages`.
+Due to regular changes of the code (`stlab` is work in progress), it is recommended to `git clone` this repository to your local working directory (preferably `C:\libs\stlab` on windows) and add a link to the `PYTHONPATH` instead of directly placing it in `\site-packages`.
 
 ## Requirements
 
@@ -19,7 +20,7 @@ Due to regular changes of the code (`stlab` is work in progress), it is recommen
 
 ## Changelog
 
-All notable changes to this project will be documented below.
+All notable changes to the master branch of this project will be documented below.
 
 - [`74891f7`](https://github.com/steelelabgit/stlab/commit/74891f7e12057a18cd64b9e88492cf197438cc45) - 2019-04-09
   - pop-up windows when not resetting instrument
