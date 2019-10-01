@@ -19,13 +19,19 @@ a metafile, spyview searches for blank lines to figure out when each line of the
 
 """
 
-
 import os
 from . import readdata
 import numpy as np
 
 
-def fromarrays(myfile,xarray,yarray,zarray=[],xtitle='',ytitle='',ztitle='',colnames=None):
+def fromarrays(myfile,
+               xarray,
+               yarray,
+               zarray=[],
+               xtitle='',
+               ytitle='',
+               ztitle='',
+               colnames=None):
     """Generates a metafile for a given file using axes arrays as input
 
     Generates a metafile for the given file taking the endponts of given arrays and their length.
@@ -60,13 +66,17 @@ def fromarrays(myfile,xarray,yarray,zarray=[],xtitle='',ytitle='',ztitle='',coln
     xmax = xarray[-1]
     if xmin == xmax:
         xmax = xmin + 1
-        print('metagen.fromarrays: Warning, equal values for xmin and xmax. Correcting')
+        print(
+            'metagen.fromarrays: Warning, equal values for xmin and xmax. Correcting'
+        )
     Ny = len(yarray)
     ymax = yarray[-1]
     ymin = yarray[0]
     if ymin == ymax:
-        ymax = ymin +1
-        print('metagen.fromarrays: Warning, equal values for ymin and ymax. Correcting')
+        ymax = ymin + 1
+        print(
+            'metagen.fromarrays: Warning, equal values for ymin and ymax. Correcting'
+        )
     if len(zarray) == 0:
         Nz = None
         zmin = None
@@ -77,12 +87,29 @@ def fromarrays(myfile,xarray,yarray,zarray=[],xtitle='',ytitle='',ztitle='',coln
         zmin = zarray[0]
         zmax = zarray[-1]
         if zmin == zmax:
-            zmax = zmin +1
-            print('metagen.fromarrays: Warning, equal values for zmin and zmax. Correcting')
-    fromlimits(myfile,Nx,xmin,xmax,Ny,ymin,ymax,Nz,zmin,zmax,xtitle,ytitle,ztitle,colnames)
+            zmax = zmin + 1
+            print(
+                'metagen.fromarrays: Warning, equal values for zmin and zmax. Correcting'
+            )
+    fromlimits(myfile, Nx, xmin, xmax, Ny, ymin, ymax, Nz, zmin, zmax, xtitle,
+               ytitle, ztitle, colnames)
     return
 
-def fromlimits(myfile,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xtitle='',ytitle='',ztitle='',colnames=None):
+
+def fromlimits(myfile,
+               Nx,
+               xmin,
+               xmax,
+               Ny,
+               ymin,
+               ymax,
+               Nz=None,
+               zmin=None,
+               zmax=None,
+               xtitle='',
+               ytitle='',
+               ztitle='',
+               colnames=None):
     """Generates a metafile for the given axis limits and point number
 
     Generates a metafile for the given file taking the endponts of given arrays and their length.
@@ -118,51 +145,51 @@ def fromlimits(myfile,Nx,xmin,xmax,Ny,ymin,ymax,Nz=None,zmin=None,zmax=None,xtit
         filename = os.path.realpath(myfile.name)
     base, _ = os.path.splitext(filename)
     metaname = base + '.meta.txt'
-    f = open(metaname,'w')
+    f = open(metaname, 'w')
 
     f.write('#Inner loop, X\n')
-    f.write(str(Nx)+'\n')
-    f.write(str(xmin)+'\n')
-    f.write(str(xmax)+'\n')
-    f.write(str(xtitle)+'\n')
+    f.write(str(Nx) + '\n')
+    f.write(str(xmin) + '\n')
+    f.write(str(xmax) + '\n')
+    f.write(str(xtitle) + '\n')
     f.write('#Outer loop, Y\n')
-    f.write(str(Ny)+'\n')
-#    f.write(str(ymin)+'\n')
-#    f.write(str(ymax)+'\n')
-    f.write(str(ymax)+'\n')
-    f.write(str(ymin)+'\n')
-    f.write(str(ytitle)+'\n')
+    f.write(str(Ny) + '\n')
+    #    f.write(str(ymin)+'\n')
+    #    f.write(str(ymax)+'\n')
+    f.write(str(ymax) + '\n')
+    f.write(str(ymin) + '\n')
+    f.write(str(ytitle) + '\n')
     if Nz == None:
         f.write('#No loop, Z\n')
-        f.write(str(1)+'\n')
-        f.write(str(0)+'\n')
-        f.write(str(1)+'\n')
+        f.write(str(1) + '\n')
+        f.write(str(0) + '\n')
+        f.write(str(1) + '\n')
         f.write('Nothing\n')
     else:
         f.write('#Outer outer loop, Z\n')
-        f.write(str(Nz)+'\n')
-        f.write(str(zmin)+'\n')
-        f.write(str(zmax)+'\n')
-        f.write(str(ztitle)+'\n')
+        f.write(str(Nz) + '\n')
+        f.write(str(zmin) + '\n')
+        f.write(str(zmax) + '\n')
+        f.write(str(ztitle) + '\n')
     f.write('#Column labels\n')
-    if colnames!=None:
+    if colnames != None:
         if colnames == 'auto':
-            ff = open(filename,'r')
+            ff = open(filename, 'r')
             titleline = ff.readline()
             if titleline[0] == '#':
                 titleline = titleline[1:]
             colnames = titleline.split(', ')
         else:
             colnames = list(colnames)
-        for i,name in enumerate(colnames):
-            f.write(str(i+1)+'\n')
-            f.write(str(name)+'\n')
+        for i, name in enumerate(colnames):
+            f.write(str(i + 1) + '\n')
+            f.write(str(name) + '\n')
         f.close()
     return
 
 
 #Somewhat specific for datafiles from the solderroom, 2D "gnuplot" files only
-def fromdatafile(myfile,xcol=None,ycol=None,xtitle=None,ytitle=None):
+def fromdatafile(myfile, xcol=None, ycol=None, xtitle=None, ytitle=None):
     if isinstance(myfile, str):
         filename = myfile
     else:
@@ -170,23 +197,26 @@ def fromdatafile(myfile,xcol=None,ycol=None,xtitle=None,ytitle=None):
     mydata = readdata.readdat(filename)
     keylist = list(mydata[0].keys())
 
-    if (type(xcol) is not int) and (type(ycol) is not int) and (type(xtitle) is str) and (type(ytitle) is str):
+    if (type(xcol) is not int) and (type(ycol) is not int) and (
+            type(xtitle) is str) and (type(ytitle) is str):
         xcol = keylist.index(xtitle)
         ycol = keylist.index(ytitle)
-    elif (type(xcol) is not int) and (type(ycol) is int) and (type(xtitle) is str):
+    elif (type(xcol) is not int) and (type(ycol) is int) and (type(xtitle) is
+                                                              str):
         xcol = keylist.index(xtitle)
-        ycol = ycol-1
-    elif (type(ycol) is not int) and (type(xcol) is int) and (type(ytitle) is str):
-        xcol = xcol-1
+        ycol = ycol - 1
+    elif (type(ycol) is not int) and (type(xcol) is int) and (type(ytitle) is
+                                                              str):
+        xcol = xcol - 1
         ycol = keylist.index(ytitle)
     elif (type(xcol) is int) and (type(ycol) is int):
-        xcol=xcol-1
-        ycol=ycol-1
+        xcol = xcol - 1
+        ycol = ycol - 1
         pass
     else:
         raise Exception("metagen.fromdatafile: Bad column specification")
 
-    if (xcol<0 or ycol<0):
+    if (xcol < 0 or ycol < 0):
         raise Exception("metagen.fromdatafile: Bad column specification")
 
     xkey = keylist[xcol]
@@ -199,14 +229,17 @@ def fromdatafile(myfile,xcol=None,ycol=None,xtitle=None,ytitle=None):
     ymin = mydata[-1][ykey][0]
     ymax = mydata[0][ykey][0]
 
-    print(xkey,Nx,xmin,xmax)
-    print(ykey,Ny,ymin,ymax)
+    print(xkey, Nx, xmin, xmax)
+    print(ykey, Ny, ymin, ymax)
 
-    fromlimits(filename,Nx,xmin,xmax,Ny,ymin,ymax,xtitle=xkey,ytitle=ykey,colnames=keylist)
+    fromlimits(filename,
+               Nx,
+               xmin,
+               xmax,
+               Ny,
+               ymin,
+               ymax,
+               xtitle=xkey,
+               ytitle=ykey,
+               colnames=keylist)
     return
-
-
-
-
-
-
