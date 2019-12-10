@@ -64,6 +64,13 @@ class Keysight_MXA_N9020B(instrument):
         '''
         return self.dev.write(':INSTrument:SELect SA')
 
+    def set_IQ_mode(self):
+        '''
+        changes to IQ mode
+        '''
+
+        return self.dev.write("INST:NSEL BASIC")
+
     def set_demodulation_frequency(self, f_center):
         '''
         sets center frequency for the demodulation (in Hz)
