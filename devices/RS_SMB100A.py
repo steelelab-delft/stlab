@@ -56,3 +56,30 @@ class RS_SMB100A(instrument):
             self
     ):  # Should return a string of metadata adequate to write to a file
         pass
+
+        # requires external trigger
+    def set_RF_sweep(self,freqcenter,freqspan,freqstep):
+        #set sweeping mode
+
+        self.write('SOUR:SWE:FREQ:MODE STEP')
+
+        #setting centre freq
+        mystr_fcent = numtostr(freqcenter)
+        mystr_fcent = 'SOUR:FREQ:CENT ' + mystr_fcent + 'Hz'
+        self.write(mystr_fcent)
+        #setting frequency span
+        mystr_span = numtostr(freqspan)
+        mystr_span = 'SOUR:FREQ:SPAN ' + mystr_span + 'Hz'
+        self.write(mystr_span)
+        #setting frequency step
+        mystr_step = numtostr(freqstep)
+        mystr_step = 'SOUR:SWE:FREQ:STEP:LIN ' + mystr_step + 'Hz'
+        self.write('SOUR:SWE:FREQ:SPAC')
+        self.write(mystr_step)
+        
+        #set trigger
+        self.write('TRIG:FSW:SOUR EXT')
+        self.write('INP:TRIG:SLOP NEG')
+        self.write('SOUR:FREQ:MODE SWE')
+        self.write('SWE:RES')
+

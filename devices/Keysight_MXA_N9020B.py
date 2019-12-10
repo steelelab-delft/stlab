@@ -24,9 +24,14 @@ class Keysight_MXA_N9020B(instrument):
     def INTref(self):
         self.dev.write('ROSCillator:SOURce:TYPE INTernal')
 
+    def EXTref(self):
+        self.dev.write('ROSC:BAND WIDE')
+        self.dev.write(':ROSC:SOUR:TYPE EXT')
+
     def set_range(self,start, end):
         self.set_start(start)
         self.set_end(end)
+
 
     def set_start(self, x):
         mystr = numtostr(x)
@@ -58,8 +63,9 @@ class Keysight_MXA_N9020B(instrument):
 
 
 
+
     def SA_mode(self):
-        '''
+        '''SAN
         changes to SA mode
         '''
         return self.dev.write(':INSTrument:SELect SA')
@@ -263,3 +269,23 @@ class Keysight_MXA_N9020B(instrument):
             self
     ):  # Should return a string of metadata adequate to write to a file
         pass
+
+        # set filter type of RESBW
+    def set_FILTER_FLAT(self):
+        self.write('BAND:SHAP FLAT')
+
+        # Define mode: FFT or SWEEP
+    def set_swept_mode(self,mode):
+
+        if mode is "FFT":
+            self.write('SWE:TYPE FFT')
+
+        else:
+
+            self.write('SWE:TYPE SWE')
+
+        # This control selects the 
+        #type of output signal that will be output from the Trig1 Out connector
+    def trigger_out1(self):
+        self.write('TRIG:OUTP HSWP')
+        
