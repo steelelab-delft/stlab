@@ -72,7 +72,7 @@ class Vaunix_Att():
         return self.device_id
 
     def SetAttenuation(self, att):
-        self.CheckLimits(att')
+        self.CheckLimits(att)
         a0 = int(att / self.fatt)
         self.lib.fnLDA_SetAttenuation(self.device_id, a0)
 
