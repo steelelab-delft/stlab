@@ -1,4 +1,4 @@
-#Device id tag (as seen in ID string), Driver name in stlab
+# Device id tag (as seen in ID string), Driver name in stlab
 SMB100A, RS_SMB100A
 N5221A, PNAN5221A
 N5222A, PNAN5222A
