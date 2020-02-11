@@ -79,7 +79,7 @@ class Vaunix_SG():
                         self.max_power))
                 self.SetPower(self.max_power)
         else:
-            raise KeyError('quantity must be either freq[ency] or pow[er]')
+            raise KeyError('quantity must be either freq[uency] or pow[er]')
 
     def GetDeviceID(self):
         return self.device_id
