@@ -9,37 +9,29 @@ Environment for measurement and analysis scripts developed in the [SteeleLab at 
 
 The documentation can be found [here](https://steelelab-delft.github.io/stlab/) and on [the TUDelft server](http://nsweb.tn.tudelft.nl/~steelelab/stlab/).
 
-Due to regular changes of the code (`stlab` is work in progress), it is recommended to `git clone` this repository to your local working directory (preferably `C:\libs\stlab` on windows) and add a link to the `PYTHONPATH` instead of directly placing it in `\site-packages`.
+Due to regular changes of the code (`stlab` is work in progress), we recommend to `git clone` this repository to your local working directory (preferably `C:\libs\stlab` on windows) and add a link to the `PYTHONPATH` instead of directly placing it in `\site-packages`.
+For more on this, see [the installation instructions](#installation-instructions).
 
 ## Requirements
 
-see [`requirements.txt`](https://github.com/steelelab-delft/stlab/blob/master/requirements.txt)
+See [`requirements.txt`](https://github.com/steelelab-delft/stlab/blob/master/requirements.txt)
 
 ## Installation instructions
 
-Clone the repository to your computer using, for example, the GitHub desktop client or git bash.
-
-Then add the directory you cloned it to (or any upper folder in the folder tree it is stored in) to your PYTHONPATH, using one of the following methods.
+1. Clone the repository to your computer using, for example, the GitHub desktop client or git bash.
+1. Then add the directory you cloned it to (or any upper folder in the folder tree it is stored in) to your ```PYTHONPATH```, using one of the following methods.
 
 ### Windows
 
-After anaconda installation, there should be a ```PYTHONPATH``` variable in ```My Computer > Properties > Advanced System Settings > Environment Variables > ```
+1. After anaconda installation, there should be a ```PYTHONPATH``` variable in ```My Computer > Properties > Advanced System Settings > Environment Variables > ```
+1. Add the directory in which the git repos are to this library, for example ```;C:\libs```
 
-Add the directory in which the git repos are to this library, for example ```;C:\libs```
-
-Taken from [here](https://stackoverflow.com/questions/3701646/how-to-add-to-the-pythonpath-in-windows) and [here](https://stackoverflow.com/questions/7054424/python-not-recognized-as-a-command).
+_Taken from [here](https://stackoverflow.com/questions/3701646/how-to-add-to-the-pythonpath-in-windows) and [here](https://stackoverflow.com/questions/7054424/python-not-recognized-as-a-command)._
 
 ### macOS
 
-On Gary's mac, my GitHub desktop client stores my local repositories in:
-
-`/Users/gsteele/Documents/GitHub`
-
-This means that we should add this directory to the PYTHONPATH environment variable. On my mac, I added the following to my `.profile` file:
-
-`export PYTHONPATH="$PYTHONPATH:/Users/gsteele/Documents/GitHub"`
-
-Restarting the jupter notebook server in a shell where this environment variable is defined, I can then directly import the `stlabutils` library (along with any other libraries stored in my GitHub folder).
+1. On a mac, the GitHub desktop client stores local repositories in `/Users/<user>/Documents/GitHub`
+1. This means that one should add this directory to the ```PYTHONPATH ``` environment variable. You might for example add the following to your `.profile` file: `export PYTHONPATH="$PYTHONPATH:/Users/<user>/Documents/GitHub"`
 
 ### Linux
 
