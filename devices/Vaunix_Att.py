@@ -62,7 +62,7 @@ class Vaunix_Att():
                 'Warning: Attenuation out of range. Set to min = {} dB'.format(
                     self.min_att))
             self.SetAttenuation(self.min_att)
-        elif value > self.mamax_attx_power:
+        elif value > self.max_att:
             print(
                 'Warning: Attenuation out of range. Set to max = {} dB'.format(
                     self.max_att))
