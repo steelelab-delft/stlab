@@ -83,3 +83,30 @@ class RS_SMB100A(instrument):
         self.write('SOUR:FREQ:MODE SWE')
         self.write('SWE:RES')
 
+
+    def set_level_sweep(self,currentlev, powstart,powstop,powstep):
+        #set sweeping mode
+        self.SetPowerOff()
+        self.write('SOUR:SWE:POW:MODE STEP')
+
+        #setting powerstart
+        mystr_powstart = numtostr(powstart)
+        mystr_powstart = 'SOUR:POW:START ' + mystr_powstart 
+        self.write(mystr_powstart)
+        #setting powerstop
+        mystr_powstop = numtostr(powstop)
+        mystr_powstop  = 'SOUR:POW:STOP ' + mystr_powstop
+        self.write(mystr_powstop)
+        #setting power step
+        mystr_step = 'SOUR:SWE:POW:STEP ' + str(powstep)
+        self.write('SOUR:SWE:POW:SPAC')
+        self.write(mystr_step)
+
+        mystr_step2 = numtostr(currentlev)
+        self.write('SOUR:POW:MAN ' + mystr_step2)
+        #set trigger
+        self.write('TRIG:PSW:SOUR EXT')
+        self.write('INP:TRIG:SLOP NEG')
+        self.write('SOUR:POW:MODE SWE')
+        self.write('SWE:RES')
+        self.SetPowerOn()
