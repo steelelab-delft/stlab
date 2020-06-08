@@ -135,7 +135,12 @@ def newfile(prefix,
         varline = '#' + ', '.join(colnames) + '\n'
         myfile.write(varline)
     if git_id:
-        getgitid.get_gitid(myfile)
+        try:
+            getgitid.get_gitid(myfile)
+        except subprocess.CalledProcessError, e:
+            print("##################\nget_gitid failed:\n", e.output)
+        except FileNotFoundError:
+            print("##################\nget_gitid failed:\nYour stlab(utils) is most likely not a git repo but was downloaded")
     if return_folder_name:
         return myfile, fullfoldername
     else:
