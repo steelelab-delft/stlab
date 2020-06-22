@@ -1,6 +1,6 @@
 """Module for instance of a R&S SMB100A signal generator
 
-This module contains the functions necessary to control and read data from 
+This module contains the functions necessary to control and read data from
 a R&S SMB100A signal generator. It inherits from instrument class.
 
 """
@@ -76,10 +76,22 @@ class RS_SMB100A(instrument):
         mystr_step = 'SOUR:SWE:FREQ:STEP:LIN ' + mystr_step + 'Hz'
         self.write('SOUR:SWE:FREQ:SPAC')
         self.write(mystr_step)
-        
+
         #set trigger
         self.write('TRIG:FSW:SOUR EXT')
         self.write('INP:TRIG:SLOP NEG')
         self.write('SOUR:FREQ:MODE SWE')
         self.write('SWE:RES')
+
+    def set_AMPmod_on(self,source='EXT'):
+
+        if source=="EXT":
+           self.dev.write('AM:SOUR EXT')
+
+        else:
+           self.dev.write('AM:SOUR INT')
+
+        self.dev.write('AM:DEPT 100')
+        self.dev.write('AM:EXT:COUP DC')
+        self.dev.write('AM:STAT ON')
 
