@@ -353,6 +353,16 @@ class PNAN5222A(PNAN5221A):
         self.write('DISP:WIND:TRAC2:MOVE 2')
         self.write('DISP:WIND:TRAC3:MOVE 2')
 
+    def Average(self,N_averages=5):
+        self.write('SENS:AVER:COUN %d'%N_averages)
+        self.write('SENS:AVER ON')
+        self.write('SENS:AVER:CLEAR')
+        naver = int(self.query('SENS:AVER:COUN?'))
+        for j in range(naver-1):
+            self.Trigger()
+        self.write('SENS:AVER OFF')
+
+
     #Not currently working for segments
     '''
     def SetSegmIFBW(self,x):
