@@ -157,7 +157,7 @@ class TritonWrapper(base_instrument):
             Desired heater power
 
         """
-        mystr = 'SET:DEV:H1:HTR:SIG:POWR:%f' % xx
+        mystr = 'SET:DEV:H1:HTR:SIG:POWR:{}'.format(xx)
         reply = self.query(mystr)
         print(reply[reply.rfind(":"):])
         return
