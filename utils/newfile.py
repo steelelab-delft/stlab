@@ -137,7 +137,7 @@ def newfile(prefix,
     if git_id:
         try:
             getgitid.get_gitid(myfile)
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             print("##################\nget_gitid failed:\n", e.output)
         except FileNotFoundError:
             print("##################\nget_gitid failed:\nYour stlab(utils) is most likely not a git repo but was downloaded")
