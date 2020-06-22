@@ -20,37 +20,69 @@ class RS_SMB100A(instrument):
         super().__init__(addr, reset, verb)
         self.id()
 
-    def SetFrequency(self, frec):
-        mystr = numtostr(frec)
+    def SetFrequency(self, freq):
+        # Legacy
+        self.setCWfrequency(freq)
+
+    def setCWfrequency(self, freq):
+        mystr = numtostr(freq)
         mystr = 'FREQ:CW ' + mystr
         self.write(mystr)
 
     def GetFrequency(self):
+        # Legacy
+        return self.getCWfrequency()
+
+    def getCWfrequency(self):
         mystr = 'FREQ:CW?'
         pp = self.query(mystr)
         pp = float(pp)
-        return pp
+        return pp        
 
     def SetPower(self, x):
+        # Legacy
+        self.setCWpower(x)
+
+    def setCWpower(self, x):
         mystr = numtostr(x)
         mystr = 'SOUR:POW:POW ' + mystr
         self.write(mystr)
 
     def GetPower(self):
+        #Lecacy
+        return self.getCWpower()
+
+    def getCWpower(self):
         mystr = 'SOUR:POW:POW?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
 
     def SetPowerOn(self):
+        #Lecacy
+        self.RFon()
+
+    def RFon(self):
         self.write('OUTP ON')
 
     def SetPowerOff(self):
+        #Lecacy
+        self.RFoff()
+
+    def RFoff(self):
         self.write('OUTP OFF')
 
     def SetReference(self, ref='INT'):
         # INT, EXT, ELO
         self.write('ROSC:SOUR ' + ref)
+
+    def EXTref(self):
+        self.write('ROSC:SOUR EXT')
+
+    def INTref(self):
+        self.write('ROSC:SOUR INT')
+
+
 
     def GetMetadataString(
             self
