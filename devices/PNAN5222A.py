@@ -3,7 +3,7 @@ import numpy as np
 import time
 from stlab.devices.instrument import instrument
 from stlab.devices.PNAN5221A import PNAN5221A
-from stlab.utils.stlabdict import stlabdict
+from stlabutils.stlabdict import stlabdict
 import pandas as pd
 
 def numtostr(mystr):

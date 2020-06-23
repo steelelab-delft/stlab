@@ -13,7 +13,7 @@ that allow you to already do basic functions.
 """
 import pyvisa as visa
 from stlab.devices.base_instrument import base_instrument
-from stlab.utils.reset_popup_warning import popup_warning
+from ..misc.reset_popup_warning import popup_warning
 
 
 #Try to use NI-VISA

@@ -86,8 +86,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-stlab.utils.TLmodel">
-<span id="tlmodel-model-for-transmission-line-resonator"></span><h1>TLmodel – Model for transmission line resonator<a class="headerlink" href="#module-stlab.utils.TLmodel" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-stlabutils.TLmodel">
+<span id="tlmodel-model-for-transmission-line-resonator"></span><h1>TLmodel – Model for transmission line resonator<a class="headerlink" href="#module-stlabutils.TLmodel" title="Permalink to this headline">¶</a></h1>
 <p>Module for the calculation of transmission line impedances</p>
 <p>Most functions require a dictionary with specific elements regarding circuit parameters in it.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
@@ -116,8 +116,8 @@ At the far end, the TL resonator can be loaded by a RCSJ-type junction with an e
 <div class="section" id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="stlab.utils.TLmodel.FindParFromRes">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">FindParFromRes</code><span class="sig-paren">(</span><em>params</em>, <em>w0</em>, <em>a</em>, <em>b</em>, <em>par='Lj'</em>, <em>wws=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#FindParFromRes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.FindParFromRes" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.FindParFromRes">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">FindParFromRes</code><span class="sig-paren">(</span><em>params</em>, <em>w0</em>, <em>a</em>, <em>b</em>, <em>par='Lj'</em>, <em>wws=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#FindParFromRes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.FindParFromRes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to find value of a parameter to match a given resonance frequency</p>
 <p>Finds approximate value of par to have an angular resonance frequency of w0.
 a,b is the bracketing interval.
@@ -151,8 +151,8 @@ the final fit such that the resonance frequency will start close to this value
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Ij">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Ij</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Ij"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Ij" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Ij">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Ij</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Ij"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Ij" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total current going out the far end of the TL</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -175,8 +175,8 @@ the final fit such that the resonance frequency will start close to this value
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Ix">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Ix</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Ix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Ix" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Ix">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Ix</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Ix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Ix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Current phasor at a given distance along the TL</p>
 <p>Distance x counts from the load (at 0) to l (at input)</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -201,8 +201,8 @@ the final fit such that the resonance frequency will start close to this value
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.PintoV0">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">PintoV0</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#PintoV0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.PintoV0" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.PintoV0">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">PintoV0</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#PintoV0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.PintoV0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Conversion from power to voltage</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -219,8 +219,8 @@ the final fit such that the resonance frequency will start close to this value
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.S11">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">S11</code><span class="sig-paren">(</span><em>Zin</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#S11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.S11" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.S11">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">S11</code><span class="sig-paren">(</span><em>Zin</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#S11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.S11" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exact expression of S11 for a given input impedance and parameters</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -243,8 +243,8 @@ the final fit such that the resonance frequency will start close to this value
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.S11theo">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">S11theo</code><span class="sig-paren">(</span><em>f</em>, <em>f0</em>, <em>kint</em>, <em>kext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#S11theo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.S11theo" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.S11theo">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">S11theo</code><span class="sig-paren">(</span><em>f</em>, <em>f0</em>, <em>kint</em>, <em>kext</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#S11theo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.S11theo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lorentzian absortion function</p>
 <p>Approximate formula for a Series RLC circuit capacitively
 coupled on one side to a transmission line. The frequencies can
@@ -273,8 +273,8 @@ same type.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Vin">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Vin</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Vin" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Vin">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Vin</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Vin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Voltage phasor at the input</p>
 <p>If Pin is in params, it is used to calculate the actual amplitudes.
 If not, we assume an amplitude of 1V for the incoming wave.</p>
@@ -299,8 +299,8 @@ If not, we assume an amplitude of 1V for the incoming wave.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Vj">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Vj</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Vj" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Vj">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Vj</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Vj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Voltage at the far end of the TL across a Josephson junction (RCSJ)</p>
 <p>If there is a Lj and Cg in params, returns the voltage accross the junction (complex).  Else, just the load voltage</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -324,8 +324,8 @@ If not, we assume an amplitude of 1V for the incoming wave.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Vx">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Vx</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Vx" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Vx">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Vx</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Vx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Vx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Voltage phasor at a given distance along the TL</p>
 <p>Distance x counts from the load (at 0) to l (at input)</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -350,8 +350,8 @@ If not, we assume an amplitude of 1V for the incoming wave.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.ZTL">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">ZTL</code><span class="sig-paren">(</span><em>Z0</em>, <em>Zl</em>, <em>gammal</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#ZTL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.ZTL" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.ZTL">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">ZTL</code><span class="sig-paren">(</span><em>Z0</em>, <em>Zl</em>, <em>gammal</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#ZTL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.ZTL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Impedance of a general terminated transmission line</p>
 <p>Calculates the input impedance of a termniated transmission line with a given load impedance</p>
 <div class="math">
@@ -378,8 +378,8 @@ If not, we assume an amplitude of 1V for the incoming wave.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Zcoup">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zcoup</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zcoup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zcoup" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Zcoup">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Zcoup</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zcoup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Zcoup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Impedance of a general capacitor</p>
 <p>Here used for the shunt capacitor (coupler) at the start of the TL</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -403,11 +403,11 @@ If not, we assume an amplitude of 1V for the incoming wave.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Zincircuit">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zincircuit</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zincircuit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zincircuit" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Zincircuit">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Zincircuit</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zincircuit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Zincircuit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Analytical dalculation of input impedance of a TL resonator with a shunt capacitor</p>
-<p>Is only valid for a shunt coupler and depends on the definition of <a class="reference internal" href="#stlab.utils.TLmodel.Zload" title="stlab.utils.TLmodel.Zload"><code class="xref py py-func docutils literal"><span class="pre">Zload()</span></code></a>.
-<a class="reference internal" href="#stlab.utils.TLmodel.Zload" title="stlab.utils.TLmodel.Zload"><code class="xref py py-func docutils literal"><span class="pre">Zload()</span></code></a> is the impedance of the load on the far end of the TL resonator (opposite the coupler).
+<p>Is only valid for a shunt coupler and depends on the definition of <a class="reference internal" href="#stlabutils.TLmodel.Zload" title="stlabutils.TLmodel.Zload"><code class="xref py py-func docutils literal"><span class="pre">Zload()</span></code></a>.
+<a class="reference internal" href="#stlabutils.TLmodel.Zload" title="stlabutils.TLmodel.Zload"><code class="xref py py-func docutils literal"><span class="pre">Zload()</span></code></a> is the impedance of the load on the far end of the TL resonator (opposite the coupler).
 Examples can be an open/short/junction end of the transmission line resonator.
 This is an analytical calculation using transmission line formulas (from Pozar).
 There are no lumped element approximations or equivalents involved.</p>
@@ -432,8 +432,8 @@ There are no lumped element approximations or equivalents involved.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Zincircuit_approx">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zincircuit_approx</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zincircuit_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zincircuit_approx" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Zincircuit_approx">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Zincircuit_approx</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zincircuit_approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Zincircuit_approx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lumped equivalent calculation of input impedance of a TL resonator with a shunt capacitor</p>
 <p>Is only valid for a shunt coupler and assumes the load impedance is <code class="code docutils literal"><span class="pre">params['Lg']</span></code>.
 This is a lumped equivalent calculation of the TL resonator with either an open or a short end.</p>
@@ -458,8 +458,8 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Zload">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zload</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zload" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Zload">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Zload</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Zload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Impedance of a load at the far end of the TL resonator</p>
 <p>Currently includes the possiblitity for an RCSJ and a capacitor as load</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -483,8 +483,8 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Zparallel">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zparallel</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zparallel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zparallel" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Zparallel">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Zparallel</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zparallel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Zparallel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parallel impedance of a collection of impedances</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -501,8 +501,8 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.Zx">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">Zx</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.Zx" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.Zx">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">Zx</code><span class="sig-paren">(</span><em>x</em>, <em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#Zx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.Zx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Impedance at a given distance along the TL</p>
 <p>Distance x counts from the load (at 0) to l (at input)</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -527,8 +527,8 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.alpha">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">alpha</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#alpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.alpha" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.alpha">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">alpha</code><span class="sig-paren">(</span><em>omega</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#alpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.alpha" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attenuation constant of a TL</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -551,8 +551,8 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.f0">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">f0</code><span class="sig-paren">(</span><em>params</em>, <em>ffs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#f0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.f0" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.f0">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">f0</code><span class="sig-paren">(</span><em>params</em>, <em>ffs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#f0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.f0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the approximate resonance frequency in Hz from a generic circuit impedance</p>
 <p>This is an approximation which can then be used to a fitting function as starting value</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -576,8 +576,8 @@ This is a lumped equivalent calculation of the TL resonator with either an open 
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.TLmodel.omega0">
-<code class="descclassname">stlab.utils.TLmodel.</code><code class="descname">omega0</code><span class="sig-paren">(</span><em>params</em>, <em>wws=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#omega0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.TLmodel.omega0" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.TLmodel.omega0">
+<code class="descclassname">stlabutils.TLmodel.</code><code class="descname">omega0</code><span class="sig-paren">(</span><em>params</em>, <em>wws=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/TLmodel.html#omega0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.TLmodel.omega0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the approximate angular resonance frequency from a generic circuit impedance</p>
 <p>This is an approximation which can then be used to a fitting function as starting value</p>
 <table class="docutils field-list" frame="void" rules="none">

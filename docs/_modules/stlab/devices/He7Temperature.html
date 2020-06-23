@@ -62,7 +62,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;He7Temperature - Driver to communicate with the custom He7 Temperature server</span>
 
 <span class="sd">This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the</span>
-<span class="sd">standard socket package.  The socket implementation is in stlab.utils.MySocket.</span>
+<span class="sd">standard socket package.  The socket implementation is in stlabutils.MySocket.</span>
 <span class="sd">The idea is that the server script is run on the He7 control computer </span>
 <span class="sd">while this driver is imported in the measurement script.  The server will, upon request, </span>
 <span class="sd">provide the last He3 head temperature from the running log to this driver.  This is because,</span>
@@ -77,7 +77,7 @@
 
 <span class="c1"># Basic interface to retrieve temperature measurement form BF computer</span>
 <span class="c1"># Server must be running on BF computer (The server just checks temperature log and returns last logged value)</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
+<span class="kn">from</span> <span class="nn">stlabutils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
 <span class="kn">from</span> <span class="nn">stlab.devices.base_instrument</span> <span class="k">import</span> <span class="n">base_instrument</span>
 
 

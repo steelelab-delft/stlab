@@ -1,6 +1,6 @@
 Metagen -- Spyview metafile generation
 ======================================
 
-.. automodule:: stlab.utils.metagen
+.. automodule:: stlabutils.metagen
   :members:
 

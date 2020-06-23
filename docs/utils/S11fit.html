@@ -78,22 +78,22 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-stlab.utils.S11fit">
-<span id="s11fit-resonance-fitting-routines-and-utilities"></span><h1>S11fit – Resonance fitting routines and utilities<a class="headerlink" href="#module-stlab.utils.S11fit" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-stlabutils.S11fit">
+<span id="s11fit-resonance-fitting-routines-and-utilities"></span><h1>S11fit – Resonance fitting routines and utilities<a class="headerlink" href="#module-stlabutils.S11fit" title="Permalink to this headline">¶</a></h1>
 <p>Module for fitting resonance line shapes to different circuit models</p>
 <p>This module contains the functions necessary to fit some general Lorentzian to
 simulations or measurements.  The main function is “fit” and is imported with
 stlab as “stlab.S11fit”.  All other functions in this module are there to
 supplement this fitting function or are not generally used.</p>
 <dl class="function">
-<dt id="stlab.utils.S11fit.S11full">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">S11full</code><span class="sig-paren">(</span><em>frec</em>, <em>params</em>, <em>ftype='A'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#S11full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.S11full" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.S11full">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">S11full</code><span class="sig-paren">(</span><em>frec</em>, <em>params</em>, <em>ftype='A'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#S11full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.S11full" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for total response from background model and resonator response</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.S11theo">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">S11theo</code><span class="sig-paren">(</span><em>frec</em>, <em>params</em>, <em>ftype='A'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#S11theo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.S11theo" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.S11theo">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">S11theo</code><span class="sig-paren">(</span><em>frec</em>, <em>params</em>, <em>ftype='A'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#S11theo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.S11theo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Theoretical response functions of cavities with no background</p>
 <p>Returns the theory values of cavity response functions for a given set of
 parameters for different cavity models.</p>
@@ -130,8 +130,8 @@ selected with this parameter.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.backmodel">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">backmodel</code><span class="sig-paren">(</span><em>x</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#backmodel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.backmodel" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.backmodel">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">backmodel</code><span class="sig-paren">(</span><em>x</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#backmodel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.backmodel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for background model.</p>
 <p>Returns the background model values for a given set of parameters and
 frequency values.  Uses parameter object from lmfit.  The background model
@@ -161,8 +161,8 @@ is given by</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.fit">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">fit</code><span class="sig-paren">(</span><em>frec</em>, <em>S11</em>, <em>ftype='A'</em>, <em>fitbackground=True</em>, <em>trimwidth=5.0</em>, <em>doplots=False</em>, <em>margin=51</em>, <em>oldpars=None</em>, <em>refitback=True</em>, <em>reusefitpars=False</em>, <em>fitwidth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.fit" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.fit">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">fit</code><span class="sig-paren">(</span><em>frec</em>, <em>S11</em>, <em>ftype='A'</em>, <em>fitbackground=True</em>, <em>trimwidth=5.0</em>, <em>doplots=False</em>, <em>margin=51</em>, <em>oldpars=None</em>, <em>refitback=True</em>, <em>reusefitpars=False</em>, <em>fitwidth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>MAIN FIT ROUTINE</strong></p>
 <p>Fits complex data S11 vs frecuency to one of 4 models adjusting for a multiplicative complex background
 It fits the data in three steps.  Firstly it fits the background signal removing a certain window around the detected peak position.
@@ -204,8 +204,8 @@ model parameters once more starting from the previously fitted values.  The fit 
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.getwidth_phase">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">getwidth_phase</code><span class="sig-paren">(</span><em>i0</em>, <em>vec</em>, <em>margin</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#getwidth_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.getwidth_phase" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.getwidth_phase">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">getwidth_phase</code><span class="sig-paren">(</span><em>i0</em>, <em>vec</em>, <em>margin</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#getwidth_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.getwidth_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds indices for peak width around given maximum position</p>
 <p>Auxiliary function for fit.  Given the complex array “vec” assuming “i0”
 is the resonance index, this function finds resonance peak width from the
@@ -234,8 +234,8 @@ Should be an odd number</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.newparams">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">newparams</code><span class="sig-paren">(</span><em>f0=1</em>, <em>Qint=100</em>, <em>Qext=200</em>, <em>theta=0</em>, <em>a=1</em>, <em>b=0</em>, <em>c=0</em>, <em>ap=0</em>, <em>bp=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#newparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.newparams" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.newparams">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">newparams</code><span class="sig-paren">(</span><em>f0=1</em>, <em>Qint=100</em>, <em>Qext=200</em>, <em>theta=0</em>, <em>a=1</em>, <em>b=0</em>, <em>c=0</em>, <em>ap=0</em>, <em>bp=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#newparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.newparams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes new Parameters object compatible with fitting routine</p>
 <p>A new lmfit.Parameters object is created using the given values.  Default
 values are filled in for ommited parameters.  The fit model is:</p>
@@ -271,8 +271,8 @@ close to 0 for good fits.</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.phaseunwrap">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">phaseunwrap</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#phaseunwrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.phaseunwrap" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.phaseunwrap">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">phaseunwrap</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#phaseunwrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.phaseunwrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes a global phase slope from a complex array</p>
 <p>Unwraps the phase of a sequence of complex numbers and subtracts the average
 slope of the phase (desloped phase).</p>
@@ -292,8 +292,8 @@ slope)</td>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.realimag">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">realimag</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#realimag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.realimag" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.realimag">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">realimag</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#realimag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.realimag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes alternating real and imaginary part array from complex array</p>
 <p>Takes an array-like object of complex number elements and generates a
 1-D array aleternating the real and imaginary part of each element of the
@@ -315,8 +315,8 @@ original array</td>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.trim">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">trim</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>imin</em>, <em>imax</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#trim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.trim" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.trim">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">trim</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>imin</em>, <em>imax</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#trim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.trim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes range from imin to imax from vectors x,y</p>
 <p>Given two (possibly complex) arrays and indices corresponding to a lower and upper edge,
 this function removes the index range between these edges from both input
@@ -342,8 +342,8 @@ arrays</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.S11fit.un_realimag">
-<code class="descclassname">stlab.utils.S11fit.</code><code class="descname">un_realimag</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#un_realimag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.S11fit.un_realimag" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.S11fit.un_realimag">
+<code class="descclassname">stlabutils.S11fit.</code><code class="descname">un_realimag</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/S11fit.html#un_realimag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.S11fit.un_realimag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes complex array from alternating real and imaginary part array</p>
 <p>Performs the reverse operation to realimag</p>
 <table class="docutils field-list" frame="void" rules="none">

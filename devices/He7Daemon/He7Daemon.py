@@ -18,7 +18,7 @@ automatically switch to the latest log file.  The default log folder can be adju
 """
 
 import socket
-from stlab.utils.MySocket import MySocket
+from stlabutils.MySocket import MySocket
 import datetime
 import os.path
 import os

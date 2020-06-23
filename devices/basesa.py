@@ -4,7 +4,7 @@ This module is the base class for most SAs
 """
 
 from stlab.devices.instrument import instrument
-from stlab.utils.stlabdict import stlabdict as stlabdict
+from stlabutils.stlabdict import stlabdict as stlabdict
 import numpy as np
 import pandas as pd
 import time

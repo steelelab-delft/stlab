@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>stlab.utils.newfile &#8212; STLab  documentation</title>
+    <title>stlabutils.newfile &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -58,7 +58,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for stlab.utils.newfile</h1><div class="highlight"><pre>
+  <h1>Source code for stlabutils.newfile</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Method for opening a new file for writing</span>
 
 <span class="sd">This module contains a single method used for creating a new datafile.  This method</span>
@@ -70,14 +70,14 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">stlab.utils</span> <span class="k">import</span> <span class="n">getgitid</span>
+<span class="kn">from</span> <span class="nn">stlabutils</span> <span class="k">import</span> <span class="n">getgitid</span>
 
 <span class="c1"># Creates new measurement folder using prefix + datetime + idstring.</span>
 <span class="c1"># If colnames (array of column names) is included, the title line is written</span>
 <span class="c1"># Also copies main script file to measurement folder</span>
 
 
-<div class="viewcode-block" id="newfile"><a class="viewcode-back" href="../../../utils/newfile.html#stlab.utils.newfile.newfile">[docs]</a><span class="k">def</span> <span class="nf">newfile</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span>
+<div class="viewcode-block" id="newfile"><a class="viewcode-back" href="../../../utils/newfile.html#stlabutils.newfile.newfile">[docs]</a><span class="k">def</span> <span class="nf">newfile</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span>
             <span class="n">idstring</span><span class="p">,</span>
             <span class="n">colnames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">mypath</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span>

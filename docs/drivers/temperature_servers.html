@@ -105,20 +105,20 @@ still being able to access the temperatures.  However, no temperature control is
 <div class="section" id="mysocket-py-basic-tcp-socket">
 <h2>MySocket.py – Basic TCP socket<a class="headerlink" href="#mysocket-py-basic-tcp-socket" title="Permalink to this headline">¶</a></h2>
 <p>This is the basic TCP socket used for the implementation of the temperature servers</p>
-<span class="target" id="module-stlab.utils.MySocket"></span><p>Basic socket implementation to communicate with temperature servers</p>
+<span class="target" id="module-stlabutils.MySocket"></span><p>Basic socket implementation to communicate with temperature servers</p>
 <p>Simple implementation of a python TCP socket.  Basically copied from some
 example online and elaborated on.  Implements both the receiving and sending
 so both the server and client use the same class.  Is used by all temperature
 servers (Triton, BF, He7)</p>
 <dl class="class">
-<dt id="stlab.utils.MySocket.MySocket">
-<em class="property">class </em><code class="descclassname">stlab.utils.MySocket.</code><code class="descname">MySocket</code><span class="sig-paren">(</span><em>sock=None</em>, <em>verb=False</em>, <em>timeout=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.MySocket.MySocket">
+<em class="property">class </em><code class="descclassname">stlabutils.MySocket.</code><code class="descname">MySocket</code><span class="sig-paren">(</span><em>sock=None</em>, <em>verb=False</em>, <em>timeout=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.MySocket.MySocket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Socket class</p>
 <p>The original comment on the example this is base on was:
 <code class="docutils literal"><span class="pre">demonstration</span> <span class="pre">class</span> <span class="pre">only</span> <span class="pre">-</span> <span class="pre">coded</span> <span class="pre">for</span> <span class="pre">clarity,</span> <span class="pre">not</span> <span class="pre">efficiency</span></code></p>
 <dl class="method">
-<dt id="stlab.utils.MySocket.MySocket.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>sock=None</em>, <em>verb=False</em>, <em>timeout=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.MySocket.MySocket.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>sock=None</em>, <em>verb=False</em>, <em>timeout=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.MySocket.MySocket.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Init method for socket</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -138,8 +138,8 @@ indefinitely waiting for a response.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="stlab.utils.MySocket.MySocket.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><em>host</em>, <em>port</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.connect" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.MySocket.MySocket.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>host</em>, <em>port</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.MySocket.MySocket.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect to given host with given port</p>
 <p>Connects the tcp socket to host ip address using given TCP port number</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -157,8 +157,8 @@ indefinitely waiting for a response.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="stlab.utils.MySocket.MySocket.myreceive">
-<code class="descname">myreceive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.myreceive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.myreceive" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.MySocket.MySocket.myreceive">
+<code class="descname">myreceive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.myreceive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.MySocket.MySocket.myreceive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receive a message from connected port</p>
 <p>Receives a message from a previously connected port.  Will stop when timeout happens,</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -174,8 +174,8 @@ indefinitely waiting for a response.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="stlab.utils.MySocket.MySocket.mysend">
-<code class="descname">mysend</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.mysend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.MySocket.MySocket.mysend" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.MySocket.MySocket.mysend">
+<code class="descname">mysend</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/MySocket.html#MySocket.mysend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.MySocket.MySocket.mysend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a message to the connected port</p>
 <p>Sends given message to the connected port.  Sends ‘#EOT’ to end transmission</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -220,7 +220,7 @@ folder if desired.</p>
 </div>
 <span class="target" id="module-stlab.devices.BFWrapper"></span><p>BFWrapper - Driver to communicate with the custom BFDaemon Temperature server</p>
 <p>This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the
-standard socket package.  The socket implementation is in <a class="reference internal" href="#module-stlab.utils.MySocket" title="stlab.utils.MySocket"><code class="xref any py py-mod docutils literal"><span class="pre">stlab.utils.MySocket</span></code></a>.
+standard socket package.  The socket implementation is in <a class="reference internal" href="#module-stlabutils.MySocket" title="stlabutils.MySocket"><code class="xref any py py-mod docutils literal"><span class="pre">stlabutils.MySocket</span></code></a>.
 The idea is that the server script is run on the fridge control computer
 while this driver is imported in the measurement script.  The server will forward any
 requests from this object to the Lakeshore temperature controller and return any
@@ -549,7 +549,7 @@ automatically switch to the latest log file.  The default log folder can be adju
 </div>
 <span class="target" id="module-stlab.devices.He7Temperature"></span><p>He7Temperature - Driver to communicate with the custom He7 Temperature server</p>
 <p>This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the
-standard socket package.  The socket implementation is in stlab.utils.MySocket.
+standard socket package.  The socket implementation is in stlabutils.MySocket.
 The idea is that the server script is run on the He7 control computer
 while this driver is imported in the measurement script.  The server will, upon request,
 provide the last He3 head temperature from the running log to this driver.  This is because,
@@ -634,7 +634,7 @@ should be saved.  The defaults can be adjusted in the variables <code class="cod
 </div>
 <span class="target" id="module-stlab.devices.TritonWrapper"></span><p>TritonWrapper - Driver to communicate with the custom Triton server</p>
 <p>This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the
-standard socket package.  The socket implementation is in <a class="reference internal" href="#module-stlab.utils.MySocket" title="stlab.utils.MySocket"><code class="xref any py py-mod docutils literal"><span class="pre">stlab.utils.MySocket</span></code></a>.
+standard socket package.  The socket implementation is in <a class="reference internal" href="#module-stlabutils.MySocket" title="stlabutils.MySocket"><code class="xref any py py-mod docutils literal"><span class="pre">stlabutils.MySocket</span></code></a>.
 The the server script is run on the fridge control computer
 while this driver is imported in the measurement script.  The server will forward any
 requests from this object to the Triton fridge software and return any
