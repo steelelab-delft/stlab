@@ -58,7 +58,8 @@ class Keysight_MXA_N9020B(instrument):
         self.dev.write(':SWEep:POINts %d'%int(n))
 
     def set_resBW(self,bw):
-        self.dev.write('BAND %d HZ'%int(bw))
+        self.dev.write(':SPEC:BAND RES {}'.format(bw))
+        print('a')
     def set_vidBW(self,bw):
         self.dev.write('BAND:VID %d HZ'%int(bw))
 

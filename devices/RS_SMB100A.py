@@ -14,43 +14,75 @@ def numtostr(mystr):
 
 class RS_SMB100A(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.216::INSTR',
+                 addr='TCPIP::192.168.1.103::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
         self.id()
 
-    def SetFrequency(self, frec):
-        mystr = numtostr(frec)
+    def SetFrequency(self, freq):
+        # Legacy
+        self.setCWfrequency(freq)
+
+    def setCWfrequency(self, freq):
+        mystr = numtostr(freq)
         mystr = 'FREQ:CW ' + mystr
         self.write(mystr)
 
     def GetFrequency(self):
+        # Legacy
+        return self.getCWfrequency()
+
+    def getCWfrequency(self):
         mystr = 'FREQ:CW?'
         pp = self.query(mystr)
         pp = float(pp)
-        return pp
+        return pp        
 
     def SetPower(self, x):
+        # Legacy
+        self.setCWpower(x)
+
+    def setCWpower(self, x):
         mystr = numtostr(x)
         mystr = 'SOUR:POW:POW ' + mystr
         self.write(mystr)
 
     def GetPower(self):
+        #Lecacy
+        return self.getCWpower()
+
+    def getCWpower(self):
         mystr = 'SOUR:POW:POW?'
         pp = self.query(mystr)
         pp = float(pp)
         return pp
 
     def SetPowerOn(self):
+        #Lecacy
+        self.RFon()
+
+    def RFon(self):
         self.write('OUTP ON')
 
     def SetPowerOff(self):
+        #Lecacy
+        self.RFoff()
+
+    def RFoff(self):
         self.write('OUTP OFF')
 
     def SetReference(self, ref='INT'):
         # INT, EXT, ELO
         self.write('ROSC:SOUR ' + ref)
+
+    def EXTref(self):
+        self.write('ROSC:SOUR EXT')
+
+    def INTref(self):
+        self.write('ROSC:SOUR INT')
+
+
 
     def GetMetadataString(
             self
@@ -94,4 +126,31 @@ class RS_SMB100A(instrument):
         self.dev.write('AM:DEPT 100')
         self.dev.write('AM:EXT:COUP DC')
         self.dev.write('AM:STAT ON')
+
+    def set_level_sweep(self,currentlev, powstart,powstop,powstep):
+        #set sweeping mode
+        self.SetPowerOff()
+        self.write('SOUR:SWE:POW:MODE STEP')
+
+        #setting powerstart
+        mystr_powstart = numtostr(powstart)
+        mystr_powstart = 'SOUR:POW:START ' + mystr_powstart 
+        self.write(mystr_powstart)
+        #setting powerstop
+        mystr_powstop = numtostr(powstop)
+        mystr_powstop  = 'SOUR:POW:STOP ' + mystr_powstop
+        self.write(mystr_powstop)
+        #setting power step
+        mystr_step = 'SOUR:SWE:POW:STEP ' + str(powstep)
+        self.write('SOUR:SWE:POW:SPAC')
+        self.write(mystr_step)
+
+        mystr_step2 = numtostr(currentlev)
+        self.write('SOUR:POW:MAN ' + mystr_step2)
+        #set trigger
+        self.write('TRIG:PSW:SOUR EXT')
+        self.write('INP:TRIG:SLOP NEG')
+        self.write('SOUR:POW:MODE SWE')
+        self.write('SWE:RES')
+        self.SetPowerOn()
 
