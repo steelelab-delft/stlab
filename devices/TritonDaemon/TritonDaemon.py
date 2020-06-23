@@ -22,7 +22,7 @@ from threading import Thread
 import time
 from stlab.devices.TritonDaemon.TritonLogger import TritonLogger as logger
 import socket
-from stlab.utils.MySocket import MySocket
+from stlabutils.MySocket import MySocket
 import sys
 import datetime
 

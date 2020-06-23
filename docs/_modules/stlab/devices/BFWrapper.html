@@ -62,7 +62,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;BFWrapper - Driver to communicate with the custom BFDaemon Temperature server</span>
 
 <span class="sd">This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the</span>
-<span class="sd">standard socket package.  The socket implementation is in :any:`stlab.utils.MySocket`.</span>
+<span class="sd">standard socket package.  The socket implementation is in :any:`stlabutils.MySocket`.</span>
 <span class="sd">The idea is that the server script is run on the fridge control computer </span>
 <span class="sd">while this driver is imported in the measurement script.  The server will forward any</span>
 <span class="sd">requests from this object to the Lakeshore temperature controller and return any </span>
@@ -76,7 +76,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">stlab.devices.base_instrument</span> <span class="k">import</span> <span class="n">base_instrument</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
+<span class="kn">from</span> <span class="nn">stlabutils.MySocket</span> <span class="k">import</span> <span class="n">MySocket</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
 

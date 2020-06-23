@@ -1,6 +1,6 @@
 writematrix -- Data file writing methods
 ========================================
 
-.. automodule:: stlab.utils.writematrix
+.. automodule:: stlabutils.writematrix
   :members:
 

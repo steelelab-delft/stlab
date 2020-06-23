@@ -41,3 +41,6 @@ All notable changes to the master branch of this project will be documented belo
   - Reformatting for better readability
   - Docstrings for every device
   - Major updates for Keithley DMM6500 to handle loops and capture traces
+
+
+[![Build Status](https://travis-ci.com/steelelab-delft/stlab.svg?branch=master)](https://travis-ci.com/steelelab-delft/stlab)

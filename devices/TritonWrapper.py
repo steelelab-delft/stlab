@@ -1,7 +1,7 @@
 """TritonWrapper - Driver to communicate with the custom Triton server
 
 This driver is NOT based on a VISA instrument.  It only implements a TCP socket via the
-standard socket package.  The socket implementation is in :any:`stlab.utils.MySocket`.
+standard socket package.  The socket implementation is in :any:`stlabutils.MySocket`.
 The the server script is run on the fridge control computer 
 while this driver is imported in the measurement script.  The server will forward any
 requests from this object to the Triton fridge software and return any 
@@ -16,7 +16,7 @@ only the query method is used.
 
 # Basic interface to retrieve temperature measurement form Triton computer
 from stlab.devices.base_instrument import base_instrument
-from stlab.utils.MySocket import MySocket
+from stlabutils.MySocket import MySocket
 
 
 class TritonWrapper(base_instrument):

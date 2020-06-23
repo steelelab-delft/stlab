@@ -23,7 +23,7 @@ from threading import Thread
 import time
 from stlab.devices.BFDaemon.BFlogger import BFlogger
 import socket
-from stlab.utils.MySocket import MySocket
+from stlabutils.MySocket import MySocket
 import sys
 import datetime
 

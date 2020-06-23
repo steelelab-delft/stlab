@@ -158,26 +158,26 @@ to be very specific and would only clutter the driver for others.</p>
 </ul>
 <p>The imports done when doing <code class="code docutils literal"><span class="pre">import</span> <span class="pre">stlab</span></code> are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Loads utils with shorter names</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.newfile</span> <span class="kn">import</span> <span class="n">newfile</span> <span class="c1">#Callable as stlab.newfile(...)</span>
-<span class="kn">import</span> <span class="nn">stlab.utils.metagen</span> <span class="kn">as</span> <span class="nn">metagen</span> <span class="c1">#Callable as stlab.metagen.fromlimits(...)</span>
-<span class="kn">import</span> <span class="nn">stlab.utils.readdata</span> <span class="kn">as</span> <span class="nn">readdata</span> <span class="c1">#Callable as stlab.readdata.readQUCS(...)</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writematrix</span> <span class="k">as</span> <span class="n">savetxt</span> <span class="c1">#Callable as stlab.savetxt(...)</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writedict</span> <span class="k">as</span> <span class="n">savedict</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writedictarray</span> <span class="k">as</span> <span class="n">savedictarray</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeparams</span> <span class="k">as</span> <span class="n">writeparams</span> <span class="c1">#Callable as stlab.savetxt(...)</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeparnames</span> <span class="k">as</span> <span class="n">writeparnames</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">params_to_str</span> <span class="k">as</span> <span class="n">params_to_str</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeline</span> <span class="k">as</span> <span class="n">writeline</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeframe</span> <span class="k">as</span> <span class="n">saveframe</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.writematrix</span> <span class="kn">import</span> <span class="n">writeframearray</span> <span class="k">as</span> <span class="n">saveframearray</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">stlabdict</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">stlabmtx</span>
-<span class="kn">from</span> <span class="nn">stlab.utils.stlabdict</span> <span class="kn">import</span> <span class="n">framearr_to_mtx</span>
+<span class="kn">from</span> <span class="nn">stlabutils.newfile</span> <span class="kn">import</span> <span class="n">newfile</span> <span class="c1">#Callable as stlab.newfile(...)</span>
+<span class="kn">import</span> <span class="nn">stlabutils.metagen</span> <span class="kn">as</span> <span class="nn">metagen</span> <span class="c1">#Callable as stlab.metagen.fromlimits(...)</span>
+<span class="kn">import</span> <span class="nn">stlabutils.readdata</span> <span class="kn">as</span> <span class="nn">readdata</span> <span class="c1">#Callable as stlab.readdata.readQUCS(...)</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">writematrix</span> <span class="k">as</span> <span class="n">savetxt</span> <span class="c1">#Callable as stlab.savetxt(...)</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">writedict</span> <span class="k">as</span> <span class="n">savedict</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">writedictarray</span> <span class="k">as</span> <span class="n">savedictarray</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">writeparams</span> <span class="k">as</span> <span class="n">writeparams</span> <span class="c1">#Callable as stlab.savetxt(...)</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">writeparnames</span> <span class="k">as</span> <span class="n">writeparnames</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">params_to_str</span> <span class="k">as</span> <span class="n">params_to_str</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">writeline</span> <span class="k">as</span> <span class="n">writeline</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">writeframe</span> <span class="k">as</span> <span class="n">saveframe</span>
+<span class="kn">from</span> <span class="nn">stlabutils.writematrix</span> <span class="kn">import</span> <span class="n">writeframearray</span> <span class="k">as</span> <span class="n">saveframearray</span>
+<span class="kn">from</span> <span class="nn">stlabutils.stlabdict</span> <span class="kn">import</span> <span class="n">stlabdict</span>
+<span class="kn">from</span> <span class="nn">stlabutils.stlabdict</span> <span class="kn">import</span> <span class="n">stlabmtx</span>
+<span class="kn">from</span> <span class="nn">stlabutils.stlabdict</span> <span class="kn">import</span> <span class="n">framearr_to_mtx</span>
 <span class="k">try</span><span class="p">:</span> <span class="c1"># some users might not need S11fit</span>
-    <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">fit</span> <span class="k">as</span> <span class="n">S11fit</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
-    <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">S11full</span> <span class="k">as</span> <span class="n">S11func</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
-    <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">backmodel</span> <span class="k">as</span> <span class="n">S11back</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
-    <span class="kn">from</span> <span class="nn">stlab.utils.S11fit</span> <span class="kn">import</span> <span class="n">S11theo</span> <span class="k">as</span> <span class="n">S11theo</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
+    <span class="kn">from</span> <span class="nn">stlabutils.S11fit</span> <span class="kn">import</span> <span class="n">fit</span> <span class="k">as</span> <span class="n">S11fit</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
+    <span class="kn">from</span> <span class="nn">stlabutils.S11fit</span> <span class="kn">import</span> <span class="n">S11full</span> <span class="k">as</span> <span class="n">S11func</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
+    <span class="kn">from</span> <span class="nn">stlabutils.S11fit</span> <span class="kn">import</span> <span class="n">backmodel</span> <span class="k">as</span> <span class="n">S11back</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
+    <span class="kn">from</span> <span class="nn">stlabutils.S11fit</span> <span class="kn">import</span> <span class="n">S11theo</span> <span class="k">as</span> <span class="n">S11theo</span> <span class="c1">#Callable as stlab.S11fit(...)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Warning: Missing dependencies for S11fit! Fitting routines not imported.&#39;</span><span class="p">)</span>
 <span class="k">try</span><span class="p">:</span> <span class="c1"># some users might not need to do measurements</span>
@@ -186,7 +186,7 @@ to be very specific and would only clutter the driver for others.</p>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Warning: Missing dependencies for autodetect_instrument! Autodetect routines not imported.&#39;</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">stlab.utils.autoplotter</span> <span class="kn">import</span> <span class="n">autoplot</span> <span class="c1">#Call as stlab.autoplot(...)</span>
+<span class="kn">from</span> <span class="nn">stlabutils.autoplotter</span> <span class="kn">import</span> <span class="n">autoplot</span> <span class="c1">#Call as stlab.autoplot(...)</span>
 </pre></div>
 </div>
 </div>

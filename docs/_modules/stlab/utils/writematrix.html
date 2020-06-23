@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>stlab.utils.writematrix &#8212; STLab  documentation</title>
+    <title>stlabutils.writematrix &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -58,7 +58,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for stlab.utils.writematrix</h1><div class="highlight"><pre>
+  <h1>Source code for stlabutils.writematrix</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module with data writing function definitions</span>
 
 <span class="sd">This module includes several functions used in writing data to files in a </span>
@@ -72,7 +72,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<div class="viewcode-block" id="writematrix"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writematrix">[docs]</a><span class="k">def</span> <span class="nf">writematrix</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">mat</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writematrix"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writematrix">[docs]</a><span class="k">def</span> <span class="nf">writematrix</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">mat</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Write a matrix to a given file</span>
 
 <span class="sd">    Writes a matrix to a file with a given format specifier and a delimiter.  Adds a block</span>
@@ -102,7 +102,7 @@
         <span class="n">myfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="n">myfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">blocksep</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="writedict"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writedict">[docs]</a><span class="k">def</span> <span class="nf">writedict</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">mydict</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writedict"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writedict">[docs]</a><span class="k">def</span> <span class="nf">writedict</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">mydict</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Write a data dictionary to a file as a matrix block</span>
 
 <span class="sd">    Writes a given dictionary where each element is a list of numbers, i.e., each element in</span>
@@ -110,7 +110,7 @@
 <span class="sd">    Also, if the file is empty (no writes have been yet performed on it), it will use the </span>
 <span class="sd">    dictionary keys to write the title line.</span>
 
-<span class="sd">    Internally this function converts the dict to a matrix and uses :py:func:`stlab.utils.writematrix.writematrix` to save</span>
+<span class="sd">    Internally this function converts the dict to a matrix and uses :py:func:`stlabutils.writematrix.writematrix` to save</span>
 <span class="sd">    to the file.</span>
 
 <span class="sd">    The main stlab import renames this function to :code:`stlab.savedict`</span>
@@ -139,7 +139,7 @@
     <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">T</span>
     <span class="n">writematrix</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">mat</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">delim</span><span class="p">,</span><span class="n">blocksep</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="writeparnames"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writeparnames">[docs]</a><span class="k">def</span> <span class="nf">writeparnames</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writeparnames"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writeparnames">[docs]</a><span class="k">def</span> <span class="nf">writeparnames</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Writes fit parameter names to file</span>
 
 <span class="sd">    Intended for writing fit parameter names given a lmfit.Parameters object to a file.</span>
@@ -157,7 +157,7 @@
     <span class="n">myfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="n">delim</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">return</span></div>
 
-<div class="viewcode-block" id="writeparams"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writeparams">[docs]</a><span class="k">def</span> <span class="nf">writeparams</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writeparams"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writeparams">[docs]</a><span class="k">def</span> <span class="nf">writeparams</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">params</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Writes fit parameter values to file</span>
 
 <span class="sd">    Intended for writing fit parameter values given a lmfit.Parameters object to a file.</span>
@@ -175,7 +175,7 @@
     <span class="n">myfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">params_to_str</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">delim</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">return</span></div>
 
-<div class="viewcode-block" id="params_to_str"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.params_to_str">[docs]</a><span class="k">def</span> <span class="nf">params_to_str</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="params_to_str"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.params_to_str">[docs]</a><span class="k">def</span> <span class="nf">params_to_str</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Converts fit parameter values to a single line string</span>
 
 <span class="sd">    Takes a lmfit.Parameters object and converts its parameter values to a single line string.</span>
@@ -198,7 +198,7 @@
     <span class="n">line</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="p">]</span>
     <span class="k">return</span> <span class="n">delim</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="writedictarray"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writedictarray">[docs]</a><span class="k">def</span> <span class="nf">writedictarray</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">mydictarray</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writedictarray"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writedictarray">[docs]</a><span class="k">def</span> <span class="nf">writedictarray</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">mydictarray</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Writes an array of data dictionaries to a file</span>
 
 <span class="sd">    Intended for writing a list of dictionaries containing the data columns as elements to a file.</span>
@@ -227,7 +227,7 @@
     <span class="k">return</span></div>
 
 <span class="c1">#???</span>
-<div class="viewcode-block" id="writeline"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writeline">[docs]</a><span class="k">def</span> <span class="nf">writeline</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">line</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;.10e&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writeline"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writeline">[docs]</a><span class="k">def</span> <span class="nf">writeline</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">line</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;.10e&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Writes a list of numbers as a single line to a file</span>
 
 <span class="sd">    Parameters</span>
@@ -249,14 +249,14 @@
     <span class="k">return</span></div>
 <span class="c1">#???</span>
 
-<div class="viewcode-block" id="writeframe"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writeframe">[docs]</a><span class="k">def</span> <span class="nf">writeframe</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">myframe</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writeframe"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writeframe">[docs]</a><span class="k">def</span> <span class="nf">writeframe</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">myframe</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Write a pandas Dataframe to a file as a matrix block</span>
 
 <span class="sd">    Writes a given pandas.DataFrame to a file.  Is analogous to :any:`writedict`</span>
 <span class="sd">    Also, if the file is empty (no writes have been yet performed on it), it will use the </span>
 <span class="sd">    dataframe column indexes to write the title line.</span>
 
-<span class="sd">    Internally this function converts just writes the matrix using :py:func:`stlab.utils.writematrix.writematrix`</span>
+<span class="sd">    Internally this function converts just writes the matrix using :py:func:`stlabutils.writematrix.writematrix`</span>
 
 <span class="sd">    The main stlab import renames this function to :code:`stlab.saveframe`</span>
 
@@ -280,7 +280,7 @@
     <span class="n">mat</span> <span class="o">=</span> <span class="n">myframe</span><span class="o">.</span><span class="n">values</span>
     <span class="n">writematrix</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">mat</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">delim</span><span class="p">,</span><span class="n">blocksep</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="writeframearray"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writeframearray">[docs]</a><span class="k">def</span> <span class="nf">writeframearray</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">myframearray</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writeframearray"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writeframearray">[docs]</a><span class="k">def</span> <span class="nf">writeframearray</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">myframearray</span><span class="p">,</span><span class="n">f</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.10e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delim</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span><span class="n">blocksep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Writes an array of pandas DataFrame to a file</span>
 
 <span class="sd">    Analogous to :any:`writedictarray` but using pd.Dataframe instead of dicts.  Expects a list of</span>
@@ -308,7 +308,7 @@
         <span class="n">writeframe</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">delim</span><span class="p">,</span><span class="n">blocksep</span><span class="p">)</span>
     <span class="k">return</span></div>
 
-<div class="viewcode-block" id="writetitle"><a class="viewcode-back" href="../../../utils/writematrix.html#stlab.utils.writematrix.writetitle">[docs]</a><span class="k">def</span> <span class="nf">writetitle</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">vv</span><span class="p">,</span><span class="n">delim</span><span class="p">):</span>
+<div class="viewcode-block" id="writetitle"><a class="viewcode-back" href="../../../utils/writematrix.html#stlabutils.writematrix.writetitle">[docs]</a><span class="k">def</span> <span class="nf">writetitle</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span><span class="n">vv</span><span class="p">,</span><span class="n">delim</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Given a list of strings writes the file title line</span>
 
 <span class="sd">    Does not do anything if the file already has contents.  Includes a &#39;#&#39; as first character for</span>

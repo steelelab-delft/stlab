@@ -24,7 +24,7 @@ MySocket.py -- Basic TCP socket
 
 This is the basic TCP socket used for the implementation of the temperature servers
 
-.. automodule:: stlab.utils.MySocket
+.. automodule:: stlabutils.MySocket
   :members:
   :special-members:
   :exclude-members: __weakref__

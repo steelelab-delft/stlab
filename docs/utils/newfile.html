@@ -78,15 +78,15 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-stlab.utils.newfile">
-<span id="newfile-new-measurement-folder-creation"></span><h1>newfile – New measurement folder creation<a class="headerlink" href="#module-stlab.utils.newfile" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-stlabutils.newfile">
+<span id="newfile-new-measurement-folder-creation"></span><h1>newfile – New measurement folder creation<a class="headerlink" href="#module-stlabutils.newfile" title="Permalink to this headline">¶</a></h1>
 <p>Method for opening a new file for writing</p>
 <p>This module contains a single method used for creating a new datafile.  This method
 handles timestamping the measurement folder, keeping track of the index of the measurement
 (if desired) and makes backup copies of the previously run scripts for reference.</p>
 <dl class="function">
-<dt id="stlab.utils.newfile.newfile">
-<code class="descclassname">stlab.utils.newfile.</code><code class="descname">newfile</code><span class="sig-paren">(</span><em>prefix</em>, <em>idstring</em>, <em>colnames=None</em>, <em>mypath='./'</em>, <em>usedate=True</em>, <em>usefolder=True</em>, <em>autoindex=False</em>, <em>return_folder_name=False</em>, <em>git_id=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/newfile.html#newfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.newfile.newfile" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.newfile.newfile">
+<code class="descclassname">stlabutils.newfile.</code><code class="descname">newfile</code><span class="sig-paren">(</span><em>prefix</em>, <em>idstring</em>, <em>colnames=None</em>, <em>mypath='./'</em>, <em>usedate=True</em>, <em>usefolder=True</em>, <em>autoindex=False</em>, <em>return_folder_name=False</em>, <em>git_id=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/newfile.html#newfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.newfile.newfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new file for storing data.</p>
 <p>By default will create a folder (at the location of the running script) with a new file open for writing
 and a copy of the script the function was called from.  The naming scheme for the folder is <code class="code docutils literal"><span class="pre">&lt;prefix&gt;_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;</span></code>.

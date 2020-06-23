@@ -1,5 +1,5 @@
 import socket
-from stlab.utils.MySocket import MySocket
+from stlabutils.MySocket import MySocket
 from stlab.devices.base_instrument import base_instrument
 
 class montana(base_instrument):
