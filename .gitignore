@@ -2,6 +2,8 @@
 *~
 *.wfm
 *.seq
+*.vscode
+*.ipynb_checkpoints
 
 utils/MySocket.py.orig
 devices/BFDaemon/BFDaemon_REMOTE_9904.py

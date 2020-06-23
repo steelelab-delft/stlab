@@ -1,7 +1,9 @@
-# Driver for R&S SMB100A signal generator.  Inherits from instrument class.
+"""Module for instance of a Keysight E8257D signal generator
 
-import visa
-import numpy as np
+This module contains the functions necessary to control and read data from 
+a Keysight E8257D signal generator. It inherits from instrument class.
+
+"""
 from stlab.devices.instrument import instrument
 
 
@@ -45,7 +47,6 @@ class Keysight_E8257D(instrument):
     def RFoff(self):
         self.write('OUTP OFF')
 
-
     def get_reference(self):
         '''
         gets the 10 MHz reference source
@@ -53,7 +54,9 @@ class Keysight_E8257D(instrument):
         bla = self.query(':SOURce:ROSCillator:SOURce?')
         print(bla)
 
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+    def GetMetadataString(
+            self
+    ):  #Should return a string of metadata adequate to write to a file
         pass
 
     def EXTref(self):

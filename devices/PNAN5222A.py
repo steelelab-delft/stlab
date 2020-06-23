@@ -33,7 +33,10 @@ class PNA_rfsource(object):
 
 
 class PNAN5222A(PNAN5221A):
-    def __init__(self,addr='TCPIP::192.168.1.42::INSTR',reset=True,verb=True):
+    def __init__(self,
+                 addr='TCPIP::192.168.1.216::INSTR',
+                 reset=True,
+                 verb=True):
         super().__init__(addr,reset,verb)
 
 
@@ -349,6 +352,19 @@ class PNAN5222A(PNAN5221A):
             self.write("DISP:WIND:TRAC%d:FEED '%s'" % (i+1,trc))
         self.write('DISP:WIND:TRAC2:MOVE 2')
         self.write('DISP:WIND:TRAC3:MOVE 2')
+
+    def Average(self,N_averages=5):
+        self.write('SENS:AVER:COUN %d'%N_averages)
+        self.write('SENS:AVER ON')
+        self.write('SENS:AVER:CLEAR')
+        naver = int(self.query('SENS:AVER:COUN?'))
+        for j in range(naver-1):
+            self.Trigger()
+        self.write('SENS:AVER OFF')
+
+    def SetSweepDelay(self,tt):
+        self.write('SENS:SWE:DWEL:SDEL {}'.format(tt))
+        return
 
     #Not currently working for segments
     '''

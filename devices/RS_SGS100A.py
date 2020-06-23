@@ -1,7 +1,10 @@
-# Driver for R&S SMB100A signal generator.  Inherits from instrument class.
+"""Module for instance of a R&S SGS100A RF source
 
-import visa
-import numpy as np
+This module contains the functions necessary to control and read data from 
+a R&S SGS100A RF source. It inherits from instrument class.
+
+"""
+
 from stlab.devices.instrument import instrument
 
 
@@ -71,5 +74,7 @@ class RS_SGS100A(instrument):
     def INTref(self):
         self.write('SOUR:ROSC:SOUR INT')
 
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+    def GetMetadataString(
+            self
+    ):  #Should return a string of metadata adequate to write to a file
         pass

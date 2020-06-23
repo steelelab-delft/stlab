@@ -1,7 +1,10 @@
-# Driver for R&S SMB100A signal generator.  Inherits from instrument class.
+"""Module for instance of a Keysight N5183B signal generator
 
-import visa
-import numpy as np
+This module contains the functions necessary to control and read data from 
+a Keysight N5183B signal generator. It inherits from instrument class.
+
+"""
+
 from stlab.devices.instrument import instrument
 
 
@@ -11,7 +14,7 @@ def numtostr(mystr):
 
 class Keysight_N5183B(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.237::INSTR',
+                 addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
@@ -45,7 +48,9 @@ class Keysight_N5183B(instrument):
     def RFoff(self):
         self.write('OUTP OFF')
 
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
+    def GetMetadataString(
+            self
+    ):  #Should return a string of metadata adequate to write to a file
         pass
 
     def EXTref(self):
@@ -56,3 +61,5 @@ class Keysight_N5183B(instrument):
 
     def getReferenceOscillator(self):
         return rf_source.query('ROSC:SOUR?')
+        
+    

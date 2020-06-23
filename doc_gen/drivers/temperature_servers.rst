@@ -44,7 +44,7 @@ BFWrapper.py
 
 File location: :code:`stlab/devices/BFWrapper.py`.
 
-Imported similar to an intrument::
+Imported similar to an instrument::
 
   from stlab.devices.BFWrapper import BFWrapper
   dev = BFWrapper(addr)
@@ -68,7 +68,7 @@ He7Temperature.py
 
 File location: :code:`stlab/devices/He7Temperature.py`
 
-Imported similar to an intrument::
+Imported similar to an instrument::
 
   from stlab.devices.He7Temperature import He7Temperature
   dev = He7Temperature(addr)
@@ -90,9 +90,9 @@ File location: :code:`stlab/devices/TritonDaemon/TritonDaemon.py`
 TritonWrapper.py
 ----------------
 
-File location: :code:`stlab/devices/TrtionWrapper.py`.
+File location: :code:`stlab/devices/TritonWrapper.py`.
 
-Imported similar to an intrument::
+Imported similar to an instrument::
 
   from stlab.devices.TritonWrapper import TritonWrapper
   dev = TritonWrapper(addr)

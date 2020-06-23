@@ -96,6 +96,17 @@ class RS_ZND(basepna):
         mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
         self.write(mystr)
 
+    def SinglePortS21(self):
+        self.SetContinuous(False) #Turn off continuous mode
+        self.write('CALC:PAR:DEL:ALL') #Delete default trace
+        tracenames = ['\'TrS21\'']
+        tracevars = ['\'S21\'']
+        for name,var in zip(tracenames,tracevars):
+            self.write('CALC:PAR:SDEF ' + name + ', ' + var) #Set 2 traces and measurements
+            self.write('DISP:WIND1:TRAC:EFE ' + name)
+        self.twoportmode = False
+        self.oneportmode = True
+
     def SinglePort(self):
         self.SetContinuous(False) #Turn off continuous mode
         self.write('CALC:PAR:DEL:ALL') #Delete default trace
@@ -106,6 +117,7 @@ class RS_ZND(basepna):
             self.write('DISP:WIND1:TRAC:EFE ' + name)
         self.twoportmode = False
         self.oneportmode = True
+
     def TwoPort(self):
         self.SetContinuous(False) #Turn off continuous mode
         self.write('CALC:PAR:DEL:ALL') #Delete default trace

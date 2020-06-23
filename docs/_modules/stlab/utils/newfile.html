@@ -4,18 +4,27 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>stlab.utils.newfile &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head><body>
+  </head>
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -33,14 +42,12 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -63,12 +70,22 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">stlab.utils</span> <span class="k">import</span> <span class="n">getgitid</span>
 
 <span class="c1"># Creates new measurement folder using prefix + datetime + idstring.</span>
 <span class="c1"># If colnames (array of column names) is included, the title line is written</span>
 <span class="c1"># Also copies main script file to measurement folder</span>
 
-<div class="viewcode-block" id="newfile"><a class="viewcode-back" href="../../../utils/newfile.html#stlab.utils.newfile.newfile">[docs]</a><span class="k">def</span> <span class="nf">newfile</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span><span class="n">idstring</span><span class="p">,</span><span class="n">colnames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mypath</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">,</span><span class="n">usedate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">usefolder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoindex</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span><span class="n">return_folder_name</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="newfile"><a class="viewcode-back" href="../../../utils/newfile.html#stlab.utils.newfile.newfile">[docs]</a><span class="k">def</span> <span class="nf">newfile</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span>
+            <span class="n">idstring</span><span class="p">,</span>
+            <span class="n">colnames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">mypath</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span>
+            <span class="n">usedate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">usefolder</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">autoindex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">return_folder_name</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">git_id</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a new file for storing data.</span>
 
 <span class="sd">    By default will create a folder (at the location of the running script) with a new file open for writing</span>
@@ -99,6 +116,8 @@
 <span class="sd">        This will be incremented by 1 for each new file with the same prefix.  If no files are found with the same prefix, it creates the</span>
 <span class="sd">        first file name &lt;prefix&gt;1_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;.  Successive files will be named &lt;prefix&gt;&lt;idx&gt;_yy_mm_dd_HH.MM.SS_&lt;idstring&gt;.</span>
 <span class="sd">        Is False by default.</span>
+<span class="sd">    git_id : bool, optional</span>
+<span class="sd">        Boolean to query and save the git id of stlab</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -113,8 +132,10 @@
         <span class="n">mainfile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">mainfile</span><span class="p">)</span>
     <span class="n">mytime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-    <span class="n">datecode</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">day</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">timecode</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">second</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">datecode</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="p">(</span>
+        <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">day</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">timecode</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span>
+        <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">mytime</span><span class="o">.</span><span class="n">second</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># Autoindexing...  Prefix is followed by an incremental index.</span>
     <span class="c1"># Looks for already present files/folders with the same prefix and indexes and creates the next index.</span>
@@ -134,29 +155,30 @@
                 <span class="n">nn</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):])</span>
                 <span class="n">idxs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">idxs</span><span class="p">:</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;1&#39;</span>
 
     <span class="k">if</span> <span class="n">usedate</span><span class="p">:</span>
-        <span class="n">foldername</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">datecode</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">timecode</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">idstring</span>
+        <span class="n">foldername</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">datecode</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">timecode</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">idstring</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">foldername</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span><span class="n">idstring</span>
+        <span class="n">foldername</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">idstring</span>
 
     <span class="c1">#Check if prefix or idstring are blank and remove unnecessary underscores</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">idstring</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">idstring</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">foldername</span> <span class="o">=</span> <span class="n">foldername</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">prefix</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">foldername</span> <span class="o">=</span> <span class="n">foldername</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">foldername</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No name given... Add at least a prefix or idstring or date&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">foldername</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;No name given... Add at least a prefix or idstring or date&#39;</span><span class="p">)</span>
 
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">foldername</span><span class="o">+</span><span class="s1">&#39;.dat&#39;</span>
-
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">foldername</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span>
 
     <span class="k">if</span> <span class="n">usefolder</span><span class="p">:</span>
         <span class="n">fullfoldername</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">foldername</span><span class="p">)</span>
-        <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">foldername</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">foldername</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span>
+                                        <span class="n">filename</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">fullfoldername</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="n">fullfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mypath</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
@@ -165,19 +187,20 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fullfoldername</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">fullfoldername</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Measurement Name: &#39;</span><span class="p">,</span> <span class="n">foldername</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">mainfile</span> <span class="o">!=</span><span class="kc">None</span> <span class="ow">and</span> <span class="n">usefolder</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mainfile</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">usefolder</span><span class="p">:</span>
         <span class="n">scriptname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">mainfile</span><span class="p">)</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">mainfile</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">fullfoldername</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">scriptname</span><span class="p">))</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">mainfile</span><span class="p">,</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">fullfoldername</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">scriptname</span><span class="p">))</span>
     <span class="n">myfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fullfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">colnames</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">varline</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colnames</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="n">myfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">varline</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">git_id</span><span class="p">:</span>
+        <span class="n">getgitid</span><span class="o">.</span><span class="n">get_gitid</span><span class="p">(</span><span class="n">myfile</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">return_folder_name</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">myfile</span><span class="p">,</span><span class="n">fullfoldername</span>
+        <span class="k">return</span> <span class="n">myfile</span><span class="p">,</span> <span class="n">fullfoldername</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">myfile</span></div>
-
-
 </pre></div>
 
           </div>
@@ -199,8 +222,8 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Mark Jenkins.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

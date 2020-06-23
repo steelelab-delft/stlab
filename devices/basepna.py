@@ -1,3 +1,8 @@
+"""Module implementing basic Vector Network Analyzer
+
+This module is the base class for most VNAs and PNAs
+"""
+
 from stlab.devices.instrument import instrument
 from stlab.utils.stlabdict import stlabdict as stlabdict
 import numpy as np
@@ -10,8 +15,8 @@ def numtostr(mystr):
     return '%20.15e' % mystr
 
 
-class basepna(instrument,abc.ABC):
-    def __init__(self, addr, reset=True, verb=True):
+class basepna(instrument, abc.ABC):
+    def __init__(self, addr, reset, verb):
         super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
         self.dev.timeout = None
@@ -105,17 +110,17 @@ class basepna(instrument,abc.ABC):
         pp = int(pp)
         return pp
 
-    def Trigger(self,block=True):
+    def Trigger(self, block=True):
         if block:
             print((self.query('INIT;*OPC?')))
         else:
             self.write('INIT')
         return
-        
+
     def SetPowerOff(self):
         self.write("SOUR1:POW1:MODE OFF")
         return
-        
+
     def SetPowerOn(self):
         self.write("SOUR1:POW1:MODE ON")
         return
@@ -163,7 +168,7 @@ class basepna(instrument,abc.ABC):
         return bool(int(self.query('SENS:CORR?')))
 
 
-##### FULLY IMPLEMENTED METHODS THAN DO NOT NEED TO BE REIMPLEMENTED (BUT CAN BE IF NECESSARY) #####################
+##### FULLY IMPLEMENTED METHODS THAT DO NOT NEED TO BE REIMPLEMENTED (BUT CAN BE IF NECESSARY) #####################
 
     def SetRange(self, start, end):
         self.SetStart(start)
@@ -216,21 +221,22 @@ class basepna(instrument,abc.ABC):
         final.addparcolumn('Power (dBm)', self.GetPower())
         return final
 
-    def MeasureScreen(self, keep_uncal=True, N_averages = 1):
+    def MeasureScreen(self, keep_uncal=True, N_averages=1):
         self.SetContinuous(False)
-        if N_averages==1:
+        if N_averages == 1:
             self.Trigger()  #Trigger single sweep and wait for response
-        elif N_averages>1:
-            self.write('SENS:AVER:COUN %d'%N_averages)
+        elif N_averages > 1:
+            self.write('SENS:AVER:COUN %d' % N_averages)
             self.write('SENS:AVER ON')
             self.write('SENS:AVER:CLEAR')
             naver = int(self.query('SENS:AVER:COUN?'))
-            for j in range(naver):
+            for _ in range(naver):
                 self.Trigger()
+            # Dat = self.GetAllData(keep_uncal)
                 self.AutoScaleAll()
             self.write('SENS:AVER OFF')
         return self.GetAllData(keep_uncal)
-
+        # return Dat
 
     def GetAllData_pd(self, keep_uncal=True):
         pars, parnames = self.GetTraceNames()
@@ -276,11 +282,11 @@ class basepna(instrument,abc.ABC):
         final['Power (dBm)'] = self.GetPower()
         return final
 
-
     def MeasureScreen_pd(self, keep_uncal=True):
         self.SetContinuous(False)
         print(self.Trigger())  #Trigger single sweep and wait for response
         return self.GetAllData_pd(keep_uncal)
+
     '''
     def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
         result = self.id().strip() + '\n'
@@ -293,14 +299,15 @@ class basepna(instrument,abc.ABC):
     '''
 
     def MetaGetters(self):
-        getters = [method_name for method_name in dir(self)
-                    if callable(getattr(self, method_name))
-                    if method_name.startswith('Get') ]
+        getters = [
+            method_name for method_name in dir(self)
+            if callable(getattr(self, method_name))
+            if method_name.startswith('Get')
+        ]
         getters.remove('GetAllData')
         getters.remove('GetAllData_pd')
         getters.remove('GetMetadataString')
         getters.remove('GetFrequency')
         getters.remove('GetTraceData')
-            
-        return getters
 
+        return getters
