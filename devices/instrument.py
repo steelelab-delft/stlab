@@ -11,7 +11,7 @@ you will be forced to explicitly write the VISA commands directly.  Most drivers
 already include a collection of commands and specific quality of life methods
 that allow you to already do basic functions.
 """
-import visa
+import pyvisa as visa
 from stlab.devices.base_instrument import base_instrument
 from stlab.utils.reset_popup_warning import popup_warning
 

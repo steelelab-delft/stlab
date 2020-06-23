@@ -1,4 +1,3 @@
-import visa
 import numpy as np
 from stlab.devices.instrument import instrument
 import time
@@ -8,12 +7,12 @@ def numtostr(mystr):
     return '%12.8e' % mystr
 
 
-class keysightB2961A(instrument):
+class Keysight_B2961A(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.56::INSTR',
+                 addr='TCPIP::192.168.1.50::INSTR',
                  reset=True,
                  verb=True):
-        super(keysightB2961A, self).__init__(addr, reset, verb)
+        super().__init__(addr, reset, verb)
         self.dev.timeout = None
         self.id()
 
@@ -58,8 +57,8 @@ class keysightB2961A(instrument):
         mystr = ':SENS:VOLT:PROT ' + mystr
         self.write(mystr)
 
-    def SetComplianceCurrent(self, volt):
-        mystr = numtostr(volt)
+    def SetComplianceCurrent(self, curr):
+        mystr = numtostr(curr)
         mystr = ':SENS:CURR:PROT ' + mystr
         self.write(mystr)
 
@@ -81,13 +80,11 @@ class keysightB2961A(instrument):
         mystr = ':MEAS?'
         outstr = self.query(mystr)
         data = np.array(list(map(float, outstr.split(','))))
-
         return (data[0], data[1])
 
     def RampVoltage(
             self, mvoltage, tt=5., steps=100
     ):  #To ramp voltage over 'tt' seconds from current DAC value.
-
         v0 = self.GetVoltage()
         if np.abs(mvoltage - v0) < 1e-3:
             self.SetVoltage(mvoltage)
@@ -112,7 +109,6 @@ class keysightB2961A(instrument):
             time.sleep(twait)
 
     def SetSweep(self, type='SING'):
-
         mode = self.GetMode()
         self.write('{}:MODE SWE'.format(mode))
         self.write('SWE:DIR UP')
@@ -152,17 +148,18 @@ class keysightB2961A(instrument):
         self.write('SENS:{}:NPLC {}'.format(mode, nn))
         return
 
-    def CurrRangeAuto(self,bool):
-        if bool:
-            self.write('SOUR:CURR:RANG:AUTO ON')
+    def Set4Wire(self, ss=True):
+        if ss:
+            self.write('SENS:REM ON')
         else:
-            self.write('SOUR:CURR:RANG:AUTO OFF')
+            self.write('SENS:REM OFF')
+        return
 
-    def VoltRangeAuto(self,bool):
-        if bool:
-            self.write('SOUR:VOLT:RANG:AUTO ON')
-        else:
-            self.write('SOUR:VOLT:RANG:AUTO OFF')
+    def GetMetadataString(
+            self
+    ):  #Should return a string of metadata adequate to write to a file
+        pass
+
 
 '''    
 dev.write('SWE:RANG BEST')

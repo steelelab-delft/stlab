@@ -243,9 +243,11 @@ class basepna(instrument, abc.ABC):
             naver = int(self.query('SENS:AVER:COUN?'))
             for _ in range(naver):
                 self.Trigger()
-                # self.AutoScaleAll()
+            # Dat = self.GetAllData(keep_uncal)
+                self.AutoScaleAll()
             self.write('SENS:AVER OFF')
         return self.GetAllData(keep_uncal)
+        # return Dat
 
     def GetAllData_pd(self, keep_uncal=True):
         pars, parnames = self.GetTraceNames()
