@@ -1,3 +1,4 @@
+require-python-3
 git+git://github.com/steelelab-delft/stlabutils.git#egg=stlabutils
 scipy>=1.2.1
 lmfit>=0.9.13

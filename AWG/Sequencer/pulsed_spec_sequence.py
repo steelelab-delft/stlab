@@ -10,6 +10,8 @@ import viewer
 from AWG520_driver_beta import Tektronix_AWG520
 from matplotlib import pyplot as plt
 
+print(AWG_station.__file__)
+
 imp.reload(pulse)
 imp.reload(element)
 imp.reload(AWG_station)
@@ -21,10 +23,10 @@ plt.close('all')
 # Define all the channels on AWG through AWG_station.
 # This then again uses the low level AWG driver to communicate with the AWG instrument
 # So one never uses the low level AWG driver directly but instead through an interface 
-devAWG = Tektronix_AWG520(name='AWG')
+devAWG = Tektronix_AWG520(name='AWG', addr='TCPIP0::192.168.1.28::4000::SOCKET')
 print(devAWG.get_clock())
 
-AWG = AWG_station.AWG_Station(AWG=devAWG)
+AWG = AWG_station.AWG_Station(AWG=devAWG, ftpip='192.168.1.28')
 
 print(AWG.clock)
 
@@ -66,22 +68,22 @@ AWG.define_channels(
     low=0,
     offset=0.,
     delay=0,
-    active=True)
+    active=True)  
 #-------------------------------------------------------
 
-
+  
 sequence_name='pulsed_spec_sequence'
-measurement_trigger_delay=500e-9
-SSB_modulation_frequency=-50e6
-measurement_pulse_length=1e-6
+measurement_trigger_delay=500e-9   
+SSB_modulation_frequency=50e6
+measurement_pulse_length=1000e-9
 spec_pulse_length=20e-6
-spec_pulse_measurement_delay=100e-9
+spec_pulse_measurement_delay=31e-9
 buffer_pulse_length = 1.e-6
-readout_trigger_length = 500e-9
+readout_trigger_length = 500e-9  
 spec_pulse_amp=0.3
 
 left_reference_pulse_name = 'pulsed spec'
-
+ 
 #-------------------------------------------------------
 # define some bogus pulses.
 # We use an element to configure and store the pulse
@@ -98,7 +100,7 @@ readout_switch_marker = pulse.SquarePulse(
 
 ATS_trigger_pulse = pulse.SquarePulse(
     channel='readout_trigger', name='A square pulse on MW pmod')
-
+   
 
 test_element1 = element.Element(
     (sequence_name + '_element1'),
@@ -222,8 +224,7 @@ viewer.show_element_stlab(test_element2, delay = False, channels = 'all', ax = N
 seq = sequence.Sequence(sequence_name)
 seq.append(name='first_element', wfname=sequence_name + '_element1', trigger_wait=True)#,
 #            # goto_target='first_element')#, jump_target='first special element')
-
-seq.append(name='second element', wfname=sequence_name + '_element1', trigger_wait=True)#,
+seq.append(name='second element', wfname=sequence_name + '_element2', trigger_wait=True)#,
 #            # goto_target='third element', jump_target='second special element')
 
 

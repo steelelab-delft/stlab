@@ -1,13 +1,10 @@
 """Module for instance of a Rhode&Schwarz FSV Signal and Spectrum Analyzer
 
 This module contains the functions necessary to control and read data from 
-a Rhode&Schwarz FSV Signal and Spectrum Analyzer. It inherits from instrument class.
-Note: This file is very rudimentary and needs enhancements for proper measurements, 
-especially for compatibility with other stlab devices.
+a Rhode&Schwarz FSV Signal and Spectrum Analyzer. It inherits from basesa class.
 """
 
-from stlab.devices.instrument import instrument
-from stlab.utils.stlabdict import stlabdict as stlabdict
+from stlab.devices.basesa import basesa
 import numpy as np
 import pandas as pd
 import time
@@ -18,23 +15,14 @@ def num2str(num):
 
 
 # Potential issues: some of the frequency commands require units, so 'Hz' might need to be added in some places
-class RS_FSV(instrument):
+class RS_FSV(basesa):
     def __init__(self,
                  addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
                  verb=True):
-        super(RS_FSV, self).__init__(addr, reset, verb)
-
-    """
-    def SetDigitalIFBW(self, x):
-        mystr = 'WAV:DIF:BAND {}'.format(x)
-        self.write(mystr)
-
-    def GetDigitalIFBW(self):
-        mystr = 'WAV:DIF:BAND?'
-        x = self.query(mystr)
-        return float(x)
-    """
+      
+        super().__init__(addr, reset, verb)
+        self.dev.timeout = None
 
     def SetInputAtt(self, att=10):
         self.write('INP:ATT {} dB'.format(att))
@@ -43,17 +31,17 @@ class RS_FSV(instrument):
         inputatt = self.query('INP:ATT?')
         return float(inputatt)
 
-    def SetTraceAverageOn(self, ch=1):
-        self.write('DISP:TRAC{}:MODE AVER'.format(ch))
-
-    def SetTraceAverageOff(self, ch=1):
-        self.write('DISP:TRAC{}:MODE WRIT'.format(ch))
-
     def SetTraceOn(self, ch=1):
         self.write('DISP:TRAC{} ON'.format(ch))
 
     def SetTraceOff(self, ch=1):
         self.write('DISP:TRAC{} OFF'.format(ch))
+
+    def SetTraceAverageOn(self, ch=1):
+        self.write('DISP:TRAC{}:MODE AVER'.format(ch))
+
+    def SetTraceAverageOff(self, ch=1):
+        self.write('DISP:TRAC{}:MODE WRIT'.format(ch))
 
     def SetAveragesType(self, avgtype):
         # VIDeo, LINear, POWer
@@ -92,26 +80,11 @@ class RS_FSV(instrument):
         aw = aw.strip('\n')
         return self.units[aw]
 
-    def MeasureScreen(self, ch=1):
-        measmode = self.GetMode()
-        yunit = self.GetUnit()
-        if measmode == 'SAN':
-            self.SetContinuous(False)
-            self.write('INIT')
-            # sleep for averaging time, otherwise timeout
-            navg = self.GetAverages()
-            tt = self.GetSweepTime()
-            time.sleep(navg * tt)
-            xvals = self.query('TRAC:DATA:X? TRACE{}'.format(ch))
-            yvals = self.query('TRAC? TRACE{}'.format(ch))
-            xvals = np.array([float(x) for x in xvals.split(',')])
-            yvals = np.array([float(x) for x in yvals.split(',')])
-            output = pd.DataFrame()
-            output['Frequency (Hz)'] = xvals
-            output['Spectrum (' + yunit + ')'] = yvals
-            return output
+    def SetUnit(self, unit):
+        if unit.isupper():
+            self.write('CALC:UNIT:POW ' + unit)
         else:
-            return KeyError('Instrument mode unknown!')
+            raise KeyError('Unknown unit!')
 
     def MarkerOff(self, mk='all'):
         if mk == 'all':
@@ -149,6 +122,44 @@ class RS_FSV(instrument):
 
     def DisplayOff(self):
         self.write('SYST:DISP:UPD OFF')
+
+    def GetAverages(self):
+        count = float(self.query(':SWE:COUN?'))
+        return count
+
+    def MeasureScreen(self, ch=1):
+        measmode = self.GetMode()
+        yunit = self.GetUnit()
+        if measmode == 'SAN':
+            self.SetContinuous(False)
+            self.write('INIT')
+            # sleep for averaging time, otherwise timeout
+            navg = self.GetAverages()
+            tt = self.GetSweepTime()
+            sleeptime = navg * tt
+            print('Measurement in progress. Waiting for {}s'.format(sleeptime))
+            time.sleep(sleeptime)
+            xvals = self.query('TRAC:DATA:X? TRACE{}'.format(ch))
+            yvals = self.query('TRAC? TRACE{}'.format(ch))
+            xvals = np.array([float(x) for x in xvals.split(',')])
+            yvals = np.array([float(x) for x in yvals.split(',')])
+            output = pd.DataFrame()
+            output['Frequency (Hz)'] = xvals
+            output['Spectrum (' + yunit + ')'] = yvals
+            return output
+        else:
+            return KeyError('Instrument mode unknown!')
+
+    ############################## For IQ measurements
+
+    def SetDigitalIFBW(self, x):
+        mystr = 'WAV:DIF:BAND {}'.format(x)
+        self.write(mystr)
+
+    def GetDigitalIFBW(self):
+        mystr = 'WAV:DIF:BAND?'
+        x = self.query(mystr)
+        return float(x)
 
     ############################## Functions below are old and deprecated
     def prepare_CW(self, CWsource_addr):

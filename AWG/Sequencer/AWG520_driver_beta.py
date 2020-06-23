@@ -4,6 +4,7 @@
 # Vishal Ranjan, 2012
 # ron schutjens, 2012
 # Modified by: Sarwan Peiter
+# Modified by: Byoung-moo Ann
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from stlab.devices.instrument import instrument
+from stlab.AWG.Sequencer.instrument import instrument
 import types
 import time
 from datetime import datetime
@@ -26,7 +27,6 @@ import logging
 import numpy as np
 import struct
 import os
-
 
 class Tektronix_AWG520(instrument):
     '''
@@ -43,13 +43,8 @@ class Tektronix_AWG520(instrument):
     3) Add docstrings
     '''
 
-    def __init__(self,
-                 name,
-                 addr='TCPIP::192.168.1.27::1234::SOCKET',
-                 reset=False,
-                 numpoints=1000,
-                 awg_file_dir="D:\\AWG_sequences\\",
-                 **kw):
+    def __init__(self, name, addr, reset=False, numpoints=1000,
+                 awg_file_dir = "D:\\AWG_sequences\\", **kw):
         '''
         Initializes the AWG520.
         Input:
@@ -61,26 +56,27 @@ class Tektronix_AWG520(instrument):
             None
         '''
         logging.debug(__name__ + ' : Initializing instrument')
-        super().__init__(
-            addr=addr, reset=False, verb=False, read_termination='\n\r')
+        super(Tektronix_AWG520, self).__init__(addr = addr,reset= False,verb = False, read_termination = '\n')
+
 
         self._address = addr
-
+        
         self._values = {}
         self._values['files'] = {}
-
+        
         self.awg_file_dir = awg_file_dir
-
+        
         self._numpoints = numpoints
-        self.filename = ''
+        self._fname = ''
 
-        # self.init_dir()
+        self.init_dir()
 
         if reset:
             self.reset()
         else:
             self.get_all()
 
+ 
     def sync_awg(self):
         """
         Assert if the AWG is ready.
@@ -89,9 +85,10 @@ class Tektronix_AWG520(instrument):
         """
         self.dev.write('*WAI')
 
+        
     #get state AWG
     def get_state(self):
-        state = int(self.dev.query('AWGC:RSTATE?'))
+        state=int(self.dev.query('AWGC:RSTATE?'))
         if state == 0:
             return 'Idle'
         elif state == 1:
@@ -100,8 +97,9 @@ class Tektronix_AWG520(instrument):
             return 'Running'
 
         else:
-            logging.error(__name__ + ' : AWG in undefined state')
+            logging.error(__name__  + ' : AWG in undefined state')
             return 'error'
+       
 
     def start(self):
         self.dev.write('AWGC:RUN')
@@ -110,31 +108,36 @@ class Tektronix_AWG520(instrument):
     def stop(self):
         self.dev.write('AWGC:STOP')
 
+
+
     def get_folder_contents(self):
         return self.dev.query('mmem:cat?')
 
     def get_current_folder_name(self):
         return self.dev.query('mmem:cdir?')
 
-    def set_current_folder_name(self, file_path):
-        self.dev.write('mmem:cdir "%s"' % file_path)
+    def set_current_folder_name(self,file_path):
+        self.dev.write('mmem:cdir "%s"'%file_path)
 
-    def change_folder(self, dir):
-        self.dev.write('mmem:cdir "%s"' % dir)
+    def change_folder(self,dir):
+        self.dev.write('mmem:cdir "%s"' %dir)
 
     def goto_root(self):
         self.dev.write('mmem:cdir')
 
-    def make_directory(self, dir, root):
+    def make_directory(self,dir,root):
         '''
         makes a directory
         if root = True, new dir in main folder
         '''
         if root == True:
             self.goto_root()
-            self.dev.write('MMEMory:MDIRectory "%s"' % dir)
+            self.dev.write('MMEMory:MDIRectory "%s"' %dir)
         else:
-            self.dev.write('MMEMory:MDIRectory "%s"' % dir)
+            self.dev.write('MMEMory:MDIRectory "%s"' %dir)
+
+
+
 
     def get_all(self):
         '''
@@ -145,29 +148,29 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-
+        
         logging.info(__name__ + ' : Reading all data from instrument')
 
-        print('Instrument State: ', self.get_state())
-        print('Mode:', self.get_trigger_mode())
-        print('Trigger impedance (Ohm):', self.get_trigger_impedance())
-        print('Trigger level (V): ', self.get_trigger_level())
-        print('Number of points: ', self.get_numpoints())
-        print('Sample rate (Hz): ', self.get_clock())
-        print('Reference Oscillator: ', self.get_refclock())
+        print ('Instrument State: ',self.get_state())
+        print ('Mode:', self.get_trigger_mode())
+        print ('Trigger impedance (Ohm):', self.get_trigger_impedance())
+        print ('Trigger level (V): ' , self.get_trigger_level())
+        print ('Number of points: ' , self.get_numpoints())
+        print ('Sample rate (Hz): ', self.get_clock())
+        print ('Reference Oscillator: ', self.get_refclock())
 
-        for i in range(1, 3):
-            print('Amplitude Channel{} (V): '.format(i), self.get_amplitude(i))
-            print('Offset Channel{} (V):'.format(i), self.get_offset(i))
-            print('Channel{} Marker1_low (V)'.format(i),
-                  self.get_marker1_low(i))
-            print('Channel{} Marker1_high (V)'.format(i),
-                  self.get_marker1_high(i))
-            print('Channel{} Marker2_low (V)'.format(i),
-                  self.get_marker2_low(i))
-            print('Channel{} Marker2_high (V)'.format(i),
-                  self.get_marker2_high(i))
-            print('Channel{} state: '.format(i), self.get_status(i))
+
+
+        for i in range(1,3):
+            print ('Amplitude Channel{} (V): '.format(i), self.get_amplitude(i))
+            print ('Offset Channel{} (V):'.format(i), self.get_offset(i))
+            print ('Channel{} Marker1_low (V)'.format(i), self.get_marker1_low(i))
+            print ('Channel{} Marker1_high (V)'.format(i), self.get_marker1_high(i))
+            print ('Channel{} Marker2_low (V)'.format(i), self.get_marker2_low(i))
+            print ('Channel{} Marker2_high (V)'.format(i), self.get_marker2_high(i))
+            print ('Channel{} state: '.format(i), self.get_status(i))
+        
+
 
     def clear_waveforms(self):
         '''
@@ -189,7 +192,7 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Set trigger mode tot TRIG')
+        logging.debug(__name__  +' : Set trigger mode tot TRIG')
         self.dev.write('AWGC:RMOD TRIG')
 
     def set_trigger_mode_off(self):
@@ -200,7 +203,7 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Set trigger mode to CONT')
+        logging.debug(__name__  +' : Set trigger mode to CONT')
         self.dev.write('AWGC:RMOD CONT')
 
     def set_trigger_impedance_1e3(self):
@@ -211,7 +214,7 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Set trigger impedance to 1e3 Ohm')
+        logging.debug(__name__  + ' : Set trigger impedance to 1e3 Ohm')
         self.dev.write('TRIG:IMP 1e3')
 
     def set_trigger_impedance_50(self):
@@ -222,7 +225,7 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Set trigger impedance to 50 Ohm')
+        logging.debug(__name__  + ' : Set trigger impedance to 50 Ohm')
         self.dev.write('TRIG:IMP 50')
 
     # Parameters
@@ -234,7 +237,7 @@ class Tektronix_AWG520(instrument):
         Output:
             mode (string) : 'Trig' or 'Cont' depending on the mode
         '''
-        logging.debug(__name__ + ' : Get trigger mode from instrument')
+        logging.debug(__name__  + ' : Get trigger mode from instrument')
         return self.dev.query('AWGC:RMOD?')
 
     def set_trigger_mode(self, mod):
@@ -245,15 +248,12 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        if (mod.upper() == 'TRIG'):
+        if (mod.upper()=='TRIG'):
             self.set_trigger_mode_on()
-        elif (mod.upper() == 'CONT'):
+        elif (mod.upper()=='CONT'):
             self.set_trigger_mode_off()
         else:
-            logging.error(
-                __name__ +
-                ' : Unable to set trigger mode to %s, expected "TRIG" or "CONT"'
-                % mod)
+            logging.error(__name__ + ' : Unable to set trigger mode to %s, expected "TRIG" or "CONT"' %mod)
 
     def get_trigger_impedance(self):
         '''
@@ -263,7 +263,7 @@ class Tektronix_AWG520(instrument):
         Output:
             impedance (??) : 1e3 or 50 depending on the mode
         '''
-        logging.debug(__name__ + ' : Get trigger impedance from instrument')
+        logging.debug(__name__  + ' : Get trigger impedance from instrument')
         return self.dev.query('TRIG:IMP?')
 
     def set_trigger_impedance(self, mod):
@@ -274,15 +274,12 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        if (mod == 1e3):
+        if (mod==1e3):
             self.set_trigger_impedance_1e3()
-        elif (mod == 50):
+        elif (mod==50):
             self.set_trigger_impedance_50()
         else:
-            logging.error(
-                __name__ +
-                ' : Unable to set trigger impedance to %s, expected "1e3" or "50"'
-                % mod)
+            logging.error(__name__ + ' : Unable to set trigger impedance to %s, expected "1e3" or "50"' %mod)
 
     def get_trigger_level(self):
         '''
@@ -292,7 +289,7 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Get trigger level from instrument')
+        logging.debug(__name__  + ' : Get trigger level from instrument')
         return float(self.dev.query('TRIG:LEV?'))
 
     def set_trigger_level(self, level):
@@ -301,30 +298,8 @@ class Tektronix_AWG520(instrument):
         Input:
             level (float) : trigger level in volts
         '''
-        logging.debug(__name__ + ' : Trigger level set to %.3f' % level)
-        self.dev.write('TRIG:LEV %.3f' % level)
-
-    def get_trigger_interval(self):
-        '''
-        the internal trigger interval in seconds.
-        '''
-        logging.debug(__name__ + ' : Get trigger interval from instrument')
-        return float(self.dev.query('TRIG:TIM?'))
-
-    def set_trigger_interval(self, interval):
-        '''
-        sets the internal trigger interval - effectively the repetition
-        rate of the experiment.
-
-        Input:
-            interval (float)
-        '''
-        if 1.e-6>interval or interval>10.:
-            print("out of range!")
-            return
-
-        logging.debug(__name__ + ' : Trigger interval set to %.3f' % interval)
-        self.dev.write('TRIG:TIM %.6fs' % interval)
+        logging.debug(__name__  + ' : Trigger level set to %.3f' %level)
+        self.dev.write('TRIG:LEV %.3f' %level)
 
     def force_trigger(self):
         '''
@@ -342,13 +317,13 @@ class Tektronix_AWG520(instrument):
         '''
         return self.dev.write('AWGC:EVEN:SEQ:IMM')
 
-    def set_run_mode(self, mode):
+    def set_run_mode(self,mode):
         '''
         sets the run mode of the AWG.
         mode can be: CONTinuous,TRIGgered,GATed,ENHanced
         Ron
         '''
-        return self.dev.write('AWGC:RMOD %s' % mode)
+        return self.dev.write('AWGC:RMOD %s' %mode)
 
     def get_run_mode(self):
         '''
@@ -357,7 +332,7 @@ class Tektronix_AWG520(instrument):
         '''
         return self.dev.query('AWGC:RMOD?')
 
-    def set_jumpmode(self, mode):
+    def set_jumpmode(self,mode):
         '''
         sets the jump mode for jump logic events, possibilities:
         LOGic,TABle,SOFTware
@@ -365,14 +340,15 @@ class Tektronix_AWG520(instrument):
         note: jump_logic events&mode have to be set properly!
         Ron
         '''
-        return self.dev.write('AWGC:ENH:SEQ:JMOD %s' % mode)
+        return self.dev.write('AWGC:ENH:SEQ:JMOD %s' %mode)
 
-    def get_jumpmode(self, mode):
+    def get_jumpmode(self,mode):
         '''
         get the jump mode for jump logic events
         Ron
         '''
         return self.dev.query('AWGC:ENH:SEQ:JMOD?')
+
 
     def get_numpoints(self):
         '''
@@ -393,19 +369,17 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Trying to set numpoints to %s' % numpts)
+        logging.debug(__name__ + ' : Trying to set numpoints to %s' %numpts)
         if numpts != self._numpoints:
-            logging.warning(
-                __name__ +
-                ' : changing numpoints. This will clear all waveforms!')
+            logging.warning(__name__ + ' : changing numpoints. This will clear all waveforms!')
 
-        response = 'yes'  #raw_input('type "yes" to continue')
+        response = 'yes'#raw_input('type "yes" to continue')
         if response is 'yes':
-            logging.debug(__name__ + ' : Setting numpoints to %s' % numpts)
+            logging.debug(__name__ + ' : Setting numpoints to %s' %numpts)
             self._numpoints = numpts
             self.clear_waveforms()
         else:
-            print('aborted')
+            print ('aborted')
 
     def get_clock(self):
         '''
@@ -426,10 +400,7 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.warning(
-            __name__ +
-            ' : Clock set to %s. This is not fully functional yet. To avoid problems, it is better not to change the clock during operation'
-            % clock)
+        logging.warning(__name__ + ' : Clock set to %s. This is not fully functional yet. To avoid problems, it is better not to change the clock during operation' % clock)
         self._clock = clock
         self.dev.write('SOUR:FREQ %f' % clock)
 
@@ -456,6 +427,7 @@ class Tektronix_AWG520(instrument):
         '''
         self.dev.write('SOUR1:ROSC:SOUR INT')
 
+
     def get_amplitude(self, channel):
         '''
         Reads the amplitude of the designated channel from the instrument
@@ -464,9 +436,8 @@ class Tektronix_AWG520(instrument):
         Output:
             amplitude (float) : the amplitude of the signal in Volts
         '''
-        logging.debug(
-            __name__ +
-            ' : Get amplitude of channel %s from instrument' % channel)
+        logging.debug(__name__ + ' : Get amplitude of channel %s from instrument'
+            %channel)
         return float(self.dev.query('SOUR%s:VOLT:LEV:IMM:AMPL?' % channel))
 
     def set_amplitude(self, amp, channel):
@@ -478,8 +449,8 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Set amplitude of channel %s to %.6f' %
-                      (channel, amp))
+        logging.debug(__name__ + ' : Set amplitude of channel %s to %.6f'
+            %(channel, amp))
         self.dev.write('SOUR%s:VOLT:LEV:IMM:AMPL %.6f' % (channel, amp))
 
     def get_offset(self, channel):
@@ -490,7 +461,7 @@ class Tektronix_AWG520(instrument):
         Output:
             offset (float) : offset of designated channel in Volts
         '''
-        logging.debug(__name__ + ' : Get offset of channel %s' % channel)
+        logging.debug(__name__ + ' : Get offset of channel %s' %channel)
         return float(self.dev.query('SOUR%s:VOLT:LEV:IMM:OFFS?' % channel))
 
     def set_offset(self, offset, channel):
@@ -502,8 +473,7 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Set offset of channel %s to %.6f' %
-                      (channel, offset))
+        logging.debug(__name__ + ' : Set offset of channel %s to %.6f' %(channel, offset))
         self.dev.write('SOUR%s:VOLT:LEV:IMM:OFFS %.6f' % (channel, offset))
 
     def get_marker1_low(self, channel):
@@ -514,10 +484,8 @@ class Tektronix_AWG520(instrument):
         Output:
             low (float) : low level in Volts
         '''
-        logging.debug(
-            __name__ + ' : Get lower bound of marker1 of channel %s' % channel)
-        return float(
-            self.dev.query('SOUR%s:MARK1:VOLT:LEV:IMM:LOW?' % channel))
+        logging.debug(__name__ + ' : Get lower bound of marker1 of channel %s' %channel)
+        return float(self.dev.query('SOUR%s:MARK1:VOLT:LEV:IMM:LOW?' % channel))
 
     def set_marker1_low(self, low, channel):
         '''
@@ -528,9 +496,8 @@ class Tektronix_AWG520(instrument):
         Output:
             None
          '''
-        logging.debug(
-            __name__ + ' : Set lower bound of marker1 of channel %s to %.3f' %
-            (channel, low))
+        logging.debug(__name__ + ' : Set lower bound of marker1 of channel %s to %.3f'
+            %(channel, low))
         self.dev.write('SOUR%s:MARK1:VOLT:LEV:IMM:LOW %.3f' % (channel, low))
 
     def get_marker1_high(self, channel):
@@ -541,10 +508,8 @@ class Tektronix_AWG520(instrument):
         Output:
             high (float) : high level in Volts
         '''
-        logging.debug(
-            __name__ + ' : Get upper bound of marker1 of channel %s' % channel)
-        return float(
-            self.dev.query('SOUR%s:MARK1:VOLT:LEV:IMM:HIGH?' % channel))
+        logging.debug(__name__ + ' : Get upper bound of marker1 of channel %s' %channel)
+        return float(self.dev.query('SOUR%s:MARK1:VOLT:LEV:IMM:HIGH?' % channel))
 
     def set_marker1_high(self, high, channel):
         '''
@@ -555,9 +520,8 @@ class Tektronix_AWG520(instrument):
         Output:
             None
          '''
-        logging.debug(
-            __name__ + ' : Set upper bound of marker1 of channel %s to %.3f' %
-            (channel, high))
+        logging.debug(__name__ + ' : Set upper bound of marker1 of channel %s to %.3f'
+            %(channel,high))
         self.dev.write('SOUR%s:MARK1:VOLT:LEV:IMM:HIGH %.3f' % (channel, high))
 
     def get_marker2_low(self, channel):
@@ -568,10 +532,8 @@ class Tektronix_AWG520(instrument):
         Output:
             low (float) : low level in Volts
         '''
-        logging.debug(
-            __name__ + ' : Get lower bound of marker2 of channel %s' % channel)
-        return float(
-            self.dev.query('SOUR%s:MARK2:VOLT:LEV:IMM:LOW?' % channel))
+        logging.debug(__name__ + ' : Get lower bound of marker2 of channel %s' %channel)
+        return float(self.dev.query('SOUR%s:MARK2:VOLT:LEV:IMM:LOW?' % channel))
 
     def set_marker2_low(self, low, channel):
         '''
@@ -582,9 +544,8 @@ class Tektronix_AWG520(instrument):
         Output:
             None
          '''
-        logging.debug(
-            __name__ + ' : Set lower bound of marker2 of channel %s to %.3f' %
-            (channel, low))
+        logging.debug(__name__ + ' : Set lower bound of marker2 of channel %s to %.3f'
+            %(channel, low))
         self.dev.write('SOUR%s:MARK2:VOLT:LEV:IMM:LOW %.3f' % (channel, low))
 
     def get_marker2_high(self, channel):
@@ -595,10 +556,8 @@ class Tektronix_AWG520(instrument):
         Output:
             high (float) : high level in Volts
         '''
-        logging.debug(
-            __name__ + ' : Get upper bound of marker2 of channel %s' % channel)
-        return float(
-            self.dev.query('SOUR%s:MARK2:VOLT:LEV:IMM:HIGH?' % channel))
+        logging.debug(__name__ + ' : Get upper bound of marker2 of channel %s' %channel)
+        return float(self.dev.query('SOUR%s:MARK2:VOLT:LEV:IMM:HIGH?' % channel))
 
     def set_marker2_high(self, high, channel):
         '''
@@ -609,9 +568,8 @@ class Tektronix_AWG520(instrument):
         Output:
             None
          '''
-        logging.debug(
-            __name__ + ' : Set upper bound of marker2 of channel %s to %.3f' %
-            (channel, high))
+        logging.debug(__name__ + ' : Set upper bound of marker2 of channel %s to %.3f'
+            %(channel,high))
         self.dev.write('SOUR%s:MARK2:VOLT:LEV:IMM:HIGH %.3f' % (channel, high))
 
     def get_status(self, channel):
@@ -622,15 +580,14 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Get status of channel %s' % channel)
-        outp = int(self.dev.query('OUTP%s?' % channel))
-        if (outp == 0):
+        logging.debug(__name__ + ' : Get status of channel %s' %channel)
+        outp = int(self.dev.query('OUTP%s?' %channel))
+        if (outp==0):
             return 'off'
-        elif (outp == 1):
+        elif (outp==1):
             return 'on'
         else:
-            logging.debug(
-                __name__ + ' : Read invalid status from instrument %s' % outp)
+            logging.debug(__name__ + ' : Read invalid status from instrument %s' %outp)
             return 'an error occurred while reading status from instrument'
 
     def set_status(self, status, channel):
@@ -642,28 +599,27 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(__name__ + ' : Set status of channel %s to %s' %
-                      (channel, status))
-        if (status.upper() == 'ON'):
-            self.dev.write('OUTP%s ON' % channel)
-        elif (status.upper() == 'OFF'):
-            self.dev.write('OUTP%s OFF' % channel)
+        logging.debug(__name__ + ' : Set status of channel %s to %s'
+            %(channel, status))
+        if (status.upper()=='ON'):
+            self.dev.write('OUTP%s ON' %channel)
+        elif (status.upper()=='OFF'):
+            self.dev.write('OUTP%s OFF' %channel)
         else:
-            logging.debug(
-                __name__ + ' : Try to set status to invalid value %s' % status)
-            print('Tried to set status to invalid value %s' % status)
+            logging.debug(__name__ + ' : Try to set status to invalid value %s' % status)
+            print ('Tried to set status to invalid value %s' %status)
 
     #  query for string with filenames
     def get_filenames(self):
         logging.debug(__name__ + ' : Read filenames from instrument')
         return self.dev.query('MMEM:CAT? "MAIN"')
 
+
     def init_dir(self):
 
-        print('Initializing directory for AWG file transfering......')
-        self.dir = os.path.join(
-            self.awg_file_dir,
-            'AwgFiles' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+        print ( 'Initializing directory for AWG file transfering......' )
+        self.dir = os.path.join(self.awg_file_dir, 
+            'AwgFiles'+datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 
         try:
             os.makedirs(self.dir)
@@ -671,7 +627,9 @@ class Tektronix_AWG520(instrument):
             if e.errno != errno.EEXIST:
                 raise  # This was not a "directory exist" error..
 
-    def set_sequence(self, filename):
+
+
+    def set_sequence(self,filename):
         '''
         loads a sequence file on all channels.
         Waveforms/patterns to be executed on respective channel
@@ -680,8 +638,12 @@ class Tektronix_AWG520(instrument):
         '''
         self.dev.write('FUNC:USER "%s","MAIN"' % (filename))
 
+
+
+
+
     # Send waveform to the device
-    def gen_waveform_files(self, w, m1, m2, filename, clock):
+    def gen_waveform_files(self,w,m1,m2,filename,clock):
         """
         Sends a complete waveform. All parameters need to be specified.
         choose a file extension 'wfm' (must end with .pat)
@@ -695,19 +657,18 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         """
-        logging.debug(
-            __name__ + ' : Generating wfm files %s for instrument' % filename)
+        logging.debug(__name__ + ' : Generating wfm files %s for instrument' % filename)
 
-        self.filename = filename
         # Check for errors
         dim = len(w)
 
-        if (not ((len(w) == len(m1)) and ((len(m1) == len(m2))))):
+        if (not((len(w)==len(m1)) and ((len(m1)==len(m2))))):
             return 'error'
+        
 
-        m = m1 + np.multiply(m2, 2)
+        m = m1 + np.multiply(m2,2)
         ws = b''
-        for i in range(0, len(w)):
+        for i in range(0,len(w)):
             ws = ws + struct.pack('<fB', w[i], int(m[i]))
 
         s1 = 'MAGIC 1000\r\n'
@@ -715,15 +676,19 @@ class Tektronix_AWG520(instrument):
         s4 = 'CLOCK %.10e\r\n' % clock
 
         s2 = '#' + str(len(str(len(s3)))) + str(len(s3))
+        
+    
 
-        mes = s1.encode('ASCII') + s2.encode('ASCII') + s3 + s4.encode('ASCII')
+        mes =  s1.encode('ASCII')  + s2.encode('ASCII') + s3 + s4.encode('ASCII')
 
-        with open(os.path.join(self.dir, self.filename), 'wb') as d:
+        # with open(os.path.join(self.awg_file_dir, filename), 'wb') as d:
+        with open(os.path.join(self.dir, filename), 'wb') as d:
             d.write(mes)
             d.close()
 
-    def gen_sequence_file(self, wfs1, wfs2, rep, wait, goto, logic_jump,
-                          filename):
+
+
+    def gen_sequence_file(self,wfs1,wfs2,rep,wait,goto,logic_jump,filename):
         '''
         Sends a sequence file
         Inputs (mandatory):
@@ -737,28 +702,28 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(
-            __name__ + ' : Generating sequence %s for instrument' % filename)
+        logging.debug(__name__ + ' : Generating sequence %s for instrument' % filename)
 
-        self.filename = filename
 
         N = str(len(rep))
-
+    
         s1 = 'MAGIC 3002\r\n'
-        s3 = 'LINES %s\n' % N
+        s3 = 'LINES %s\n'%N
         s4 = ''
 
-        for k in range(len(rep)):
-            s4 = s4 + '"%s","%s",%s,%s,%s,%s\r\n' % (
-                wfs1[k], wfs2[k], rep[k], wait[k], goto[k], logic_jump[k])
 
-        mes = s1.encode("ASCII") + s3.encode("ASCII") + s4.encode("ASCII")
-        with open(os.path.join(self.dir, self.filename), 'wb') as d:
+        for k in range(len(rep)):
+            s4 = s4+ '"%s","%s",%s,%s,%s,%s\r\n'%(wfs1[k],wfs2[k],rep[k],wait[k],goto[k],logic_jump[k])
+
+
+
+        mes = s1.encode("ASCII")  + s3.encode("ASCII")+ s4.encode("ASCII")
+        with open(os.path.join(self.dir, filename), 'wb') as d:
+        # with open(os.path.join(self.awg_file_dir, filename), 'wb') as d:
             d.write(mes)
             d.close()
 
+ 
+
     def do_get_AWG_model(self):
         return 'AWG520'
-
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
-        pass

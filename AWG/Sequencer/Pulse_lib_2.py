@@ -3,8 +3,10 @@
 #
 # author: Wolfgang Pfaff
 # Modified by: Sarwan Peiter
+# Modified by: Byoung-moo Ann (Feb.2019)
 
 import numpy as np
+from scipy import signal
 from copy import deepcopy
 
 
@@ -472,6 +474,137 @@ class SSB_DRAG_pulse(Pulse):
             I_mod, Q_mod = apply_modulation(
                 gauss_env,
                 deriv_gauss_env,
+                tvals[idx0:idx1],
+                mod_frequency=self.mod_frequency,
+                phase=self.phase,
+                phi_skew=self.phi_skew,
+                alpha=self.alpha)
+            wf[idx0:idx1] += Q_mod
+
+        return wf
+
+
+class Filtered(Pulse):
+    '''
+    Gauss pulse on the I channel, derivative of Gauss on the Q channel.
+    modulated with Single Sideband (SSB)  modulation.
+    Required arguments:
+        name (str) : base name of the pulse
+        I_channel (str) : name of the channel on which to act (as defined in pular)
+        Q_channel (str) : " "
+    kwargs:
+        amplitude (V)
+        sigma (s)
+        nr_sigma (int) (default=4)
+        motzoi ( ) (default=0)
+        mod_frequency (Hz)
+        phase (deg)
+        phaselock (bool)
+        alpha (arb. units): QI amplitude
+        phi_skew (deg) :    phase skewness
+    I_env is a gaussian
+    Q_env is the derivative of a gaussian
+    The envelope is transformation:
+    Signal = predistortion * modulation * envelope
+    See Leo's notes on mixer predistortion in the docs for details
+    [I_mod] = [1        tan(phi-skew)] [cos(wt+phi)   sin(wt+phi)] [I_env]
+    [Q_mod]   [0  sec(phi-skew)/alpha] [-sin(wt+phi)  cos(wt+phi)] [Q_env]
+    The predistortion * modulation matrix is implemented in a single step using
+    the following matrix
+    M*mod = [cos(x)-tan(phi-skew)sin(x)      sin(x)+tan(phi-skew)cos(x) ]
+            [-sin(x)sec(phi-skew)/alpha  cos(x)sec(phi-skew)/alpha]
+    where: x = wt+phi
+    Reduces to a Gaussian pulse if motzoi == 0
+    Reduces to an unmodulated pulse if mod_frequency == 0
+    '''
+
+    def __init__(self, name, I_channel, Q_channel, **kw):
+        super().__init__(name)
+        self.I_channel = I_channel
+        self.Q_channel = Q_channel
+        self.channels = [I_channel, Q_channel]
+
+        self.amplitude = kw.pop('amplitude', 0.1)
+        self.sigma = kw.pop('sigma', 12.5e-9)
+        self.nr_sigma = kw.pop('nr_sigma', 4)
+        self.motzoi = kw.pop('motzoi', 0)
+
+        self.mod_frequency = kw.pop('mod_frequency', 1e6)
+        self.phase = kw.pop('phase', 0.)
+        self.phaselock = kw.pop('phaselock', True)
+
+        self.alpha = kw.pop('alpha', 1)  # QI amp ratio
+        self.phi_skew = kw.pop('phi_skew', 0)  # IQ phase skewness
+
+        self.length_1 = self.sigma * self.nr_sigma
+        self.length_2 = kw.pop('length_2', 100e-9)
+        self.length = self.length_1 + self.length_2
+
+    def __call__(self, **kw):
+        self.amplitude = kw.pop('amplitude', self.amplitude)
+        self.sigma = kw.pop('sigma', self.sigma)
+        self.nr_sigma = kw.pop('nr_sigma', self.nr_sigma)
+        self.motzoi = kw.pop('motzoi', self.motzoi)
+        self.mod_frequency = kw.pop('mod_frequency', self.mod_frequency)
+        self.phase = kw.pop('phase', self.phase)
+        self.phaselock = kw.pop('phaselock', self.phaselock)
+
+        self.length_1 = kw.pop('length_1', self.length_1)
+        self.length_2 = kw.pop('length_2', self.length_2)
+        self.length = self.length_1 + self.length_2
+        return self
+
+    def chan_wf(self, chan, tvals):
+        idx0 = np.where(tvals >= tvals[0])[0][0]
+        idx1 = np.where(tvals <= tvals[0] + self.length)[0][-1] + 1
+
+        wf = np.zeros(len(tvals))
+        t = tvals - tvals[0]  # Gauss envelope should not be displaced
+        mu = self.length_1 / 2.0
+        if not self.phaselock:
+            tvals = tvals.copy() - tvals[idx0]
+
+
+        gauss_env = self.amplitude * np.exp(-(0.5 * (
+            (t[0:int(self.length_1*1e+9)] - mu)**2) / self.sigma**2))
+        gauss_env_up = self.amplitude * np.exp(-(0.5 * (
+            (t[0:int(self.length_1*1e+9*0.5)] - mu)**2) / self.sigma**2))
+        gauss_env_fall = self.amplitude * np.exp(-(0.5 * (
+            (t[0:int(self.length_1*1e+9*0.5)])**2) / self.sigma**2))
+        # deriv_gauss_env = self.motzoi * -1 * (t - mu) / (
+        #     self.sigma**1) * gauss_env
+
+        block = self.amplitude * np.ones(int(self.length_2*1e+9))
+
+
+        # substract offsets
+        gauss_env_up -= (gauss_env[0] + gauss_env[-1]) / 2.
+        gauss_env_fall -= (gauss_env[0] + gauss_env[-1]) / 2.
+        block -= (gauss_env[0] + gauss_env[-1]) / 2.
+        # deriv_gauss_env -= (deriv_gauss_env[0] + deriv_gauss_env[-1]) / 2.
+
+        filtered = np.array(list(gauss_env_up)+list(block)+list(gauss_env_fall))
+
+        # convolve
+        # filtered = signal.convolve(square, gauss_env, mode='same') / sum(gauss_env)
+
+
+        # Note prefactor is multiplied by self.sigma to normalize
+        if chan == self.I_channel:
+            I_mod, Q_mod = apply_modulation(
+                filtered,
+                filtered,
+                tvals[idx0:idx1],
+                mod_frequency=self.mod_frequency,
+                phase=self.phase,
+                phi_skew=self.phi_skew,
+                alpha=self.alpha)
+            wf[idx0:idx1] += I_mod
+
+        if chan == self.Q_channel:
+            I_mod, Q_mod = apply_modulation(
+                filtered,
+                filtered,
                 tvals[idx0:idx1],
                 mod_frequency=self.mod_frequency,
                 phase=self.phase,
