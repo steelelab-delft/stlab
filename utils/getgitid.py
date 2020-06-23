@@ -38,9 +38,9 @@ def get_gitid(measfile):
 
     gitid = subprocess.check_output(cmd.split(' ')).decode("utf-8").strip('\n')
 
-    dirname = os.path.dirname(measfile.name)
-    dirname = dirname + '\\' + dirname
-    with open(dirname + '.stlab_id.txt', 'a') as myfile:
+    filename = os.path.realpath(measfile.name)
+    # dirname = dirname + '\\' + dirname
+    with open(filename + '.stlab_id.txt', 'a') as myfile:
         myfile.write('# Current stlab gitid\n')
         myfile.write(gitid)
     print('Stlab git id:', gitid)

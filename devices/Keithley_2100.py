@@ -1,107 +1,24 @@
 """Module for instance of a Keithley 2100
 
 This module contains the functions necessary to control and read data from 
-a Keithley 2100 multimeter. It uses instrument_ni (NI backend) instead of normal instrument class.
+a Keithley 2100 multimeter. It inherits from basekeithley.
 
 """
-from stlab.devices.instrument import instrument
+from stlab.devices.basekeithley import basekeithley
 
 
-class Keithley_2100(instrument):
+class Keithley_2100(basekeithley):
     def __init__(self,
-                 addr='TCPIP::192.168.1.216::INSTR',
+                 addr='USB0::0x05E6::0x2100::1310646::INSTR',
                  reset=True,
                  verb=True,
                  **kwargs):
         super().__init__(addr, reset, verb, **kwargs)
-        self.id()
-
-    def GetVoltage(
-            self, range='DEF', res='DEF'
-    ):  # (manual entry) Preset and make a DC voltage measurement with the specified range and resolution. The reading is sent to the output buffer.
-        # range and res can be numbers or MAX, MIN, DEF
-        # Lower resolution means more digits of precision (and slower measurement).  The number given is the voltage precision desired.  If value is too low, the query will timeout
-        mystr = 'MEAS:VOLT:DC? %s,%s' % (range, res)
-        volt = self.query(mystr)
-        return float(volt)
-
-    def GetCurrent(
-            self, range='DEF', res='DEF'
-    ):  # (manual entry) Preset and make a DC current measurement with the specified range and resolution. The reading is sent to the output buffer.
-        # range and res can be numbers or MAX, MIN, DEF
-        # Lower resolution means more digits of precision (and slower measurement).  The number given is the voltage precision desired.  If value is too low, the query will timeout
-        mystr = 'MEAS:CURR:DC? %s,%s' % (range, res)
-        num = self.query(mystr)
-        return float(num)
-
-
-# If using GetVoltage(), the following settings are ignored
-
-    def SetRangeAuto(self, set=True):
-        mystr = "SENS:" + self.GetFunction() + ":RANGE:AUTO %d" % int(set)
-        self.write(mystr)
-
-    def SetRange(self, range):
-        self.SetRangeAuto(False)
-        func = self.GetFunction()
-        if isinstance(range, str):
-            mystr = 'SENS:' + func + ':RANGE %s' % range
-        else:
-            mystr = 'SENS:' + func + ':RANGE %f' % range
-        self.write(mystr)
-        return
-
-    def SetDisplay(self, state=True):
-        if state:
-            self.write('DISP ON')
-        else:
-            self.write('DISP OFF')
-        return
-
-    def SetFunction(self, mystr):
-        self.write('FUNC ' + mystr)
-        return
-
-    def GetFunction(self):
-        mystr = self.query('FUNC?')
-        mystr = mystr.strip("'").strip('"').strip("'")
-        if mystr == 'VOLT':
-            mystr = 'VOLT:DC'
-        return mystr
-
-    def Trigger(self):
-        self.write('INIT')
-
-    def SetContinuous(self, state=True):
-        if state:
-            self.write('TRIG:COUN INF')
-        else:
-            self.write('TRIG:COUN 1')
-        return
-
-    def ReadValue(self):
-        #self.SetContinuous(False)
-        return self.query('READ?')
-
-    def GetVoltageFast(self):
-        x = self.GetMeasurement()
-        return x
-
-    def GetMeasurement(self):
-        self.Trigger()
-        x = float(self.ReadValue())
-        return x
 
     def FastMeasurementSetup(self):
         self.SetRangeAuto(False)
         self.SetRange(10)
-        self.write('VOLT:NPLC 1')
+        self.SetNPLC(1)
         self.write('TRIG:SOUR IMM')
-        self.write('SENS:ZERO:AUTO ONCE')
-        self.write('SENS:GAIN:AUTO ONCE')
-        return
-
-    def GetMetadataString(
-            self
-    ):  #Should return a string of metadata adequate to write to a file
-        pass
+        self.write('SENS:GAIN:AUTO OFF')
+        self.write('SENS:ZERO:AUTO OFF')

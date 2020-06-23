@@ -14,7 +14,6 @@ import abc
 def numtostr(mystr):
     return '%20.15e' % mystr
 
-
 class basepna(instrument, abc.ABC):
     def __init__(self, addr, reset, verb):
         super().__init__(addr, reset, verb)
@@ -125,6 +124,18 @@ class basepna(instrument, abc.ABC):
         self.write("SOUR1:POW1:MODE ON")
         return
 
+    def SetAverageCounts(self,x):
+        self.write('SENS:AVER:COUN {}'.format(2000))
+        return
+
+    def SetAverageOn(self):
+        self.write('SENS:AVER ON')
+        return
+
+    def SetAverageOff(self):
+        self.write('SENS:AVER OFF')
+        return
+
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
     @abc.abstractmethod
@@ -232,9 +243,11 @@ class basepna(instrument, abc.ABC):
             naver = int(self.query('SENS:AVER:COUN?'))
             for _ in range(naver):
                 self.Trigger()
-                # self.AutoScaleAll()
+            # Dat = self.GetAllData(keep_uncal)
+                self.AutoScaleAll()
             self.write('SENS:AVER OFF')
         return self.GetAllData(keep_uncal)
+        # return Dat
 
     def GetAllData_pd(self, keep_uncal=True):
         pars, parnames = self.GetTraceNames()
