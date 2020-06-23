@@ -135,6 +135,7 @@ def TwoToneSetup(pna,
     pna.write("SENS2:FOM:RANG3:COUP 0")     #decouple Receivers
     pna.write("SENS2:FOM:RANG2:COUP 0")     #decouple Source
     ##
+    
     pna.write("SENS2:FOM:RANG3:SWE:TYPE CW")    #set Receivers in CW mode
     pna.write("SENS2:FOM:RANG2:SWE:TYPE CW")    #set Source in CW mode
     ##

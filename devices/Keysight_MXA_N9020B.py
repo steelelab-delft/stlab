@@ -3,10 +3,13 @@ from stlab.devices.instrument import instrument
 import logging
 import numpy as np
 
+def numtostr(mystr):
+    return '%20.15e' % mystr
+
 
 class Keysight_MXA_N9020B(instrument):
     def __init__(self,
-                 addr='TCPIP::192.168.1.216::INSTR',
+                 addr='TCPIP::192.168.1.164::INSTR',
                  reset=True,
                  verb=True):
         super().__init__(addr, reset, verb)
@@ -14,9 +17,59 @@ class Keysight_MXA_N9020B(instrument):
 
     def IQ_mode(self):
         '''
-        changes to IQ mode (I am not sure what are the other options)
+        changes to IQ mode
         '''
         return self.dev.write(':INSTrument:SELect BASIC')
+
+    def INTref(self):
+        self.dev.write('ROSCillator:SOURce:TYPE INTernal')
+
+    def EXTref(self):
+        self.dev.write('ROSC:BAND WIDE')
+        self.dev.write(':ROSC:SOUR:TYPE EXT')
+
+    def set_range(self,start, end):
+        self.set_start(start)
+        self.set_end(end)
+
+
+    def set_start(self, x):
+        mystr = numtostr(x)
+        mystr = 'SENS:FREQ:STAR ' + mystr
+        self.dev.write(mystr)
+
+    def set_end(self, x):
+        mystr = numtostr(x)
+        mystr = 'SENS:FREQ:STOP ' + mystr
+        self.dev.write(mystr)
+
+    def set_points(self,n):
+        self.dev.write(':SWEep:POINts %d'%int(n))
+
+    def set_resBW(self,bw):
+        self.dev.write(':SPEC:BAND RES {}'.format(bw))
+        print('a')
+    def set_vidBW(self,bw):
+        self.dev.write('BAND:VID %d HZ'%int(bw))
+
+    def measure_screen(self,averages = 1):
+        self.dev.write('AVER:COUN %d'%int(averages)) # max is 10,000
+        self.dev.write('AVER:STATe ON')
+        self.dev.write(':INITiate:IMMediate')
+        data_string = self.dev.query(':READ:SANalyzer?')
+        data =  np.fromstring(data_string, dtype=float, sep=',')
+        freq = data[0::2]
+        power = data[1::2]
+        return {'Frequency (Hz)':freq,'PSD (dB)':power}
+
+
+
+
+    def SA_mode(self):
+        '''SAN
+        changes to SA mode
+        '''
+        return self.dev.write(':INSTrument:SELect SA')
 
     def set_demodulation_frequency(self, f_center):
         '''
@@ -210,3 +263,23 @@ class Keysight_MXA_N9020B(instrument):
             self
     ):  # Should return a string of metadata adequate to write to a file
         pass
+
+        # set filter type of RESBW
+    def set_FILTER_FLAT(self):
+        self.write('BAND:SHAP FLAT')
+
+        # Define mode: FFT or SWEEP
+    def set_swept_mode(self,mode):
+
+        if mode is "FFT":
+            self.write('SWE:TYPE FFT')
+
+        else:
+
+            self.write('SWE:TYPE SWE')
+
+        # This control selects the 
+        #type of output signal that will be output from the Trig1 Out connector
+    def trigger_out1(self):
+        self.write('TRIG:OUTP HSWP')
+        
