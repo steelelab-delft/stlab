@@ -2,7 +2,6 @@
 
 This module contains the functions necessary to control and read data from 
 a Keithley DMM6500. It inherits from basekeithley.
-Remember read_termination = '\n'
 
 """
 
@@ -13,9 +12,8 @@ class Keithley_6500(basekeithley):
     def __init__(self,
                  addr='TCPIP::192.168.1.216::INSTR',
                  reset=True,
-                 verb=True,
-                 **kwargs):  # Remember read_termination = '\n'
-        super().__init__(addr, reset, verb, **kwargs)
+                 verb=True):
+        super().__init__(addr, reset, verb, read_termination='\n')
 
     def FastMeasurementSetup(self):  # standard settings
         self.SetRangeAuto(False)

@@ -362,6 +362,9 @@ class PNAN5222A(PNAN5221A):
             self.Trigger()
         self.write('SENS:AVER OFF')
 
+    def SetSweepDelay(self,tt):
+        self.write('SENS:SWE:DWEL:SDEL {}'.format(tt))
+        return
 
     #Not currently working for segments
     '''

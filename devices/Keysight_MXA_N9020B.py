@@ -19,7 +19,13 @@ class Keysight_MXA_N9020B(instrument):
         '''
         changes to IQ mode
         '''
-        return self.dev.write(':INSTrument:SELect BASIC')
+        self.dev.write('INST:SEL BASIC')
+
+    def set_centfreq(self,f0):
+        mystr = numtostr(f0)
+        mystr = 'FREQ:RF:CENT ' + mystr + ' HZ'
+
+        self.dev.write(mystr)
 
     def INTref(self):
         self.dev.write('ROSCillator:SOURce:TYPE INTernal')
@@ -43,11 +49,17 @@ class Keysight_MXA_N9020B(instrument):
         mystr = 'SENS:FREQ:STOP ' + mystr
         self.dev.write(mystr)
 
+    def set_span(self,x):
+        mystr = numtostr(x)
+        mystr = 'SENS:FREQ:SPAN ' + mystr
+        self.dev.write(mystr)
+
     def set_points(self,n):
         self.dev.write(':SWEep:POINts %d'%int(n))
 
     def set_resBW(self,bw):
-        self.dev.write('BAND %d HZ'%int(bw))
+        self.dev.write(':SPEC:BAND RES {}'.format(bw))
+        print('a')
     def set_vidBW(self,bw):
         self.dev.write('BAND:VID %d HZ'%int(bw))
 
@@ -69,6 +81,8 @@ class Keysight_MXA_N9020B(instrument):
         changes to SA mode
         '''
         return self.dev.write(':INSTrument:SELect SA')
+
+
 
     def set_demodulation_frequency(self, f_center):
         '''
@@ -177,7 +191,9 @@ class Keysight_MXA_N9020B(instrument):
         Sets the sweep time
         '''
         logging.debug(__name__ + ' : sweep time set to %.9f s' % t_sweep)
-        return self.dev.write(':WAVeform:SWE:TIME %.9f' % t_sweep)
+        # Marios version: return self.dev.write(':WAVeform:SWE:TIME %.9f' % t_sweep)
+        #Sarwan version:
+        self.dev.write(':SWE:TIME %.9f' % t_sweep)
 
     def set_attenuation(self, att=0):
         '''
@@ -277,8 +293,7 @@ class Keysight_MXA_N9020B(instrument):
 
             self.write('SWE:TYPE SWE')
 
-        # This control selects the 
-        #type of output signal that will be output from the Trig1 Out connector
+        # This control selects the
+        #type of output signal that will be output from the Trig1 Out connector: need to add more trigger options
     def trigger_out1(self):
         self.write('TRIG:OUTP HSWP')
-        
