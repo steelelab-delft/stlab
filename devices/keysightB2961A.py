@@ -81,11 +81,13 @@ class keysightB2961A(instrument):
         mystr = ':MEAS?'
         outstr = self.query(mystr)
         data = np.array(list(map(float, outstr.split(','))))
+
         return (data[0], data[1])
 
     def RampVoltage(
             self, mvoltage, tt=5., steps=100
     ):  #To ramp voltage over 'tt' seconds from current DAC value.
+
         v0 = self.GetVoltage()
         if np.abs(mvoltage - v0) < 1e-3:
             self.SetVoltage(mvoltage)
@@ -110,6 +112,7 @@ class keysightB2961A(instrument):
             time.sleep(twait)
 
     def SetSweep(self, type='SING'):
+
         mode = self.GetMode()
         self.write('{}:MODE SWE'.format(mode))
         self.write('SWE:DIR UP')
@@ -149,6 +152,17 @@ class keysightB2961A(instrument):
         self.write('SENS:{}:NPLC {}'.format(mode, nn))
         return
 
+    def CurrRangeAuto(self,bool):
+        if bool:
+            self.write('SOUR:CURR:RANG:AUTO ON')
+        else:
+            self.write('SOUR:CURR:RANG:AUTO OFF')
+
+    def VoltRangeAuto(self,bool):
+        if bool:
+            self.write('SOUR:VOLT:RANG:AUTO ON')
+        else:
+            self.write('SOUR:VOLT:RANG:AUTO OFF')
 
 '''    
 dev.write('SWE:RANG BEST')

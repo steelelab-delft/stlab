@@ -13,9 +13,24 @@ class RS_ZND(basepna):
         if reset:
             self.TwoPort()
 
+
+
 ### REIMPLEMENTATION OF GENERIC FUNCTIONS
 
-    def SetIFBW(self,x):
+    def Reset(self):
+        self.write('*RST')
+
+    def Reset_test(self):
+        self.write('*RST')
+
+    def SetContinuous(self,bool):
+        if bool:
+            self.write('INIT:CONT ON')
+        elif not bool:
+            self.write('INIT:CONT OFF')
+
+    def SetIFBW(self, x):
+
         mystr = numtostr(x)
         mystr = 'BAND '+mystr
         self.write(mystr)
@@ -96,6 +111,16 @@ class RS_ZND(basepna):
         mystr = "MMEM:LOAD:CORR " + str(channel) + ",'" + calfile + "'"
         self.write(mystr)
 
+
+    def SinglePort(self,tr='S11'):
+        self.SetContinuous(False)  #Turn off continuous mode
+        self.write('CALC:PAR:DEL:ALL')  #Delete default trace
+        tracenames = ['\'Tr'+tr+'\'']
+        tracevars = ['\''+tr+'\'']
+        for name, var in zip(tracenames, tracevars):
+            self.write('CALC:PAR:SDEF ' + name + ', ' +
+                       var)  #Set 2 traces and measurements
+
     def SinglePortS21(self):
         self.SetContinuous(False) #Turn off continuous mode
         self.write('CALC:PAR:DEL:ALL') #Delete default trace
@@ -155,3 +180,30 @@ class RS_ZND(basepna):
     def SetCWfrequency(self,xx):
         self.write('SENS:FREQ {}'.format(xx))
         return
+
+    def ClearAll(self):
+        self.write('CALC:PAR:DEL:ALL')
+
+        
+""" # Already implemented in basepna
+
+        def SetSweepfrequency(self, start_freq, stop_freq, sweep_points): 
+            self.write('SENS:FREQ:STAR {}GHZ'.format(start_freq))
+            self.write('SENS:FREQ:STOP {}GHZ'.format(stop_freq))
+            self.write('SWE:POIN {}'.format(sweep_points))
+             
+    
+        def SetAverageSweeps(self, count): #Defines the number of consecutive sweeps to be combined for the sweep average ("Factor" ).
+            self.write('SENS:AVER:COUN {}; :AVER ON'.format(count))
+    
+        def Initiate(self): #Starts a new single sweep sequence in all channels
+            self.write('INIT:ALL') 
+    
+        def SetPower (self, x):
+            self.write('SOUR:POW {}'.format(x))
+    
+        def SetSweepTime(self,x):
+            self.write('SENS:SWE:TIME {}'.format(x))
+             
+        
+"""    
