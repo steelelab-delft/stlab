@@ -29,9 +29,9 @@ class PNAN5221A(basepna):
 
     def SetContinuous(self, mode):
         if mode:
-            self.write('SENS:SWE:MODE CONT')
+            self.write('INITiate:CONTinuous ON')
         else:
-            self.write('SENS:SWE:MODE SING')
+            self.write('INITiate:CONTinuous OFF')
         return mode
 
     def GetFrequency(self, ch=1):
@@ -161,7 +161,9 @@ class PNAN5221A(basepna):
         self.SetSegmPoints(npoints)
         self.SetSegmState('ON')
         self.SetSweepType('SEGM')
-        print("Warning: PNA sweeping from high to low frequency! Remember to PNA.StopReverseSweep() afterwards!")
+        print(
+            "Warning: PNA sweeping from high to low frequency! Remember to PNA.StopReverseSweep() afterwards!"
+        )
 
     def StopReverseSweep(self):
         self.SetSegmState('OFF')
