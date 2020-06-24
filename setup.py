@@ -11,11 +11,11 @@ def package_files(directory):
         for filename in filenames:
             paths.append(os.path.join('..', path, filename))
     return paths
-package_data = package_files('src')
+package_data = package_files(os.path.dirname(__file__))
 
 setuptools.setup(
     name="stlab",
-    package_dir={'stlab': 'src'},
+    package_dir={'stlab': ''},
     packages= ['stlab'],
     install_requires = reqs,
     include_package_data=True,
