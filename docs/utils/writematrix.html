@@ -1,32 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>writematrix – Data file writing methods &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Overview of all electronic devices" href="../drivers/devices.html" />
     <link rel="prev" title="stlabdict – Data structures and matrices" href="stlabdict.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -61,13 +51,13 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -78,8 +68,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-stlab.utils.writematrix">
-<span id="writematrix-data-file-writing-methods"></span><h1>writematrix – Data file writing methods<a class="headerlink" href="#module-stlab.utils.writematrix" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-stlabutils.writematrix">
+<span id="writematrix-data-file-writing-methods"></span><h1>writematrix – Data file writing methods<a class="headerlink" href="#module-stlabutils.writematrix" title="Permalink to this headline">¶</a></h1>
 <p>Module with data writing function definitions</p>
 <p>This module includes several functions used in writing data to files in a
 well defined way.  While you are free to write data to a file in any way you want,
@@ -87,242 +77,202 @@ it is preferable to try to keep a lab wide standard by using these methods.</p>
 <p>The module was written early on and could probably do with some cleanup…  Specifically
 old style format strings as well as redundant methods no longer required.</p>
 <dl class="function">
-<dt id="stlab.utils.writematrix.params_to_str">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">params_to_str</code><span class="sig-paren">(</span><em>params</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#params_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.params_to_str" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.params_to_str">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">params_to_str</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">f='%.10e'</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#params_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.params_to_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts fit parameter values to a single line string</p>
 <p>Takes a lmfit.Parameters object and converts its parameter values to a single line string.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Joined string will all parameters</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Joined string will all parameters</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.writematrix.writedict">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writedict</code><span class="sig-paren">(</span><em>myfile</em>, <em>mydict</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em>, <em>blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writedict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writedict" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.savedict">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">savedict</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">mydict</em>, <em class="sig-param">f='%.10e'</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em>, <em class="sig-param">blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#savedict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.savedict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a data dictionary to a file as a matrix block</p>
 <p>Writes a given dictionary where each element is a list of numbers, i.e., each element in
 the dict is though of as a column.  Expects all columns to be the same length.
 Also, if the file is empty (no writes have been yet performed on it), it will use the
 dictionary keys to write the title line.</p>
-<p>Internally this function converts the dict to a matrix and uses <a class="reference internal" href="#stlab.utils.writematrix.writematrix" title="stlab.utils.writematrix.writematrix"><code class="xref py py-func docutils literal"><span class="pre">stlab.utils.writematrix.writematrix()</span></code></a> to save
+<p>Internally this function converts the dict to a matrix and uses <code class="xref py py-func docutils literal notranslate"><span class="pre">stlab.utils.writematrix.savetxt()</span></code> to save
 to the file.</p>
-<p>The main stlab import renames this function to <code class="code docutils literal"><span class="pre">stlab.savedict</span></code></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>mydict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dict containing the data.  Each element should be a data column.</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
-separate blocks of data.</li>
+<p>The main stlab import renames this function to <code class="code docutils literal notranslate"><span class="pre">stlab.savedict</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>mydict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Dict containing the data.  Each element should be a data column.</p></li>
+<li><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
+<li><p><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
+separate blocks of data.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.writematrix.writedictarray">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writedictarray</code><span class="sig-paren">(</span><em>myfile</em>, <em>mydictarray</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em>, <em>blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writedictarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writedictarray" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.savedictarray">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">savedictarray</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">mydictarray</em>, <em class="sig-param">f='%.10e'</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em>, <em class="sig-param">blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#savedictarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.savedictarray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes an array of data dictionaries to a file</p>
 <p>Intended for writing a list of dictionaries containing the data columns as elements to a file.
-Essentially just repeats <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a> on every element of the list making sure to include the
+Essentially just repeats <a class="reference internal" href="#stlabutils.writematrix.savedict" title="stlabutils.writematrix.savedict"><code class="xref any py py-func docutils literal notranslate"><span class="pre">savedict</span></code></a> on every element of the list making sure to include the
 title line (derived from the first dictionarly key values) if the file is new.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>mydictarray</strong> (<em>list of dict</em>) – List containing the Dicts to be written.</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
-separate blocks of data.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>mydictarray</strong> (<em>list of dict</em>) – List containing the Dicts to be written.</p></li>
+<li><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
+<li><p><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
+separate blocks of data.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.writematrix.writeframe">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writeframe</code><span class="sig-paren">(</span><em>myfile</em>, <em>myframe</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em>, <em>blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writeframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writeframe" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.saveframe">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">saveframe</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">myframe</em>, <em class="sig-param">f='%.10e'</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em>, <em class="sig-param">blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#saveframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.saveframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a pandas Dataframe to a file as a matrix block</p>
-<p>Writes a given pandas.DataFrame to a file.  Is analogous to <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a>
+<p>Writes a given pandas.DataFrame to a file.  Is analogous to <a class="reference internal" href="#stlabutils.writematrix.savedict" title="stlabutils.writematrix.savedict"><code class="xref any py py-func docutils literal notranslate"><span class="pre">savedict</span></code></a>
 Also, if the file is empty (no writes have been yet performed on it), it will use the
 dataframe column indexes to write the title line.</p>
-<p>Internally this function converts just writes the matrix using <a class="reference internal" href="#stlab.utils.writematrix.writematrix" title="stlab.utils.writematrix.writematrix"><code class="xref py py-func docutils literal"><span class="pre">stlab.utils.writematrix.writematrix()</span></code></a></p>
-<p>The main stlab import renames this function to <code class="code docutils literal"><span class="pre">stlab.saveframe</span></code></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>mydict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dict containing the data.  Each element should be a data column.</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
-separate blocks of data.</li>
+<p>Internally this function converts just writes the matrix using <code class="xref py py-func docutils literal notranslate"><span class="pre">stlab.utils.writematrix.savetxt()</span></code></p>
+<p>The main stlab import renames this function to <code class="code docutils literal notranslate"><span class="pre">stlab.saveframe</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>mydict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Dict containing the data.  Each element should be a data column.</p></li>
+<li><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
+<li><p><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
+separate blocks of data.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.writematrix.writeframearray">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writeframearray</code><span class="sig-paren">(</span><em>myfile</em>, <em>myframearray</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em>, <em>blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writeframearray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writeframearray" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.saveframearray">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">saveframearray</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">myframearray</em>, <em class="sig-param">f='%.10e'</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em>, <em class="sig-param">blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#saveframearray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.saveframearray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes an array of pandas DataFrame to a file</p>
-<p>Analogous to <a class="reference internal" href="#stlab.utils.writematrix.writedictarray" title="stlab.utils.writematrix.writedictarray"><code class="xref any py py-func docutils literal"><span class="pre">writedictarray</span></code></a> but using pd.Dataframe instead of dicts.  Expects a list of
+<p>Analogous to <a class="reference internal" href="#stlabutils.writematrix.savedictarray" title="stlabutils.writematrix.savedictarray"><code class="xref any py py-func docutils literal notranslate"><span class="pre">savedictarray</span></code></a> but using pd.Dataframe instead of dicts.  Expects a list of
 pd.DataFrames to be written to the file.  Also handles writing the title line if the file is
 new.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>mydictarray</strong> (<em>list of dict</em>) – List containing the Dicts to be written.</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
-separate blocks of data.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>mydictarray</strong> (<em>list of dict</em>) – List containing the Dicts to be written.</p></li>
+<li><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
+<li><p><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
+separate blocks of data.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.writematrix.writeline">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writeline</code><span class="sig-paren">(</span><em>myfile</em>, <em>line</em>, <em>f='.10e'</em>, <em>delim='</em>, <em>'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes a list of numbers as a single line to a file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>line</strong> (<em>list of float</em>) – List containing the numbers to be written</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (new style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="stlab.utils.writematrix.writematrix">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writematrix</code><span class="sig-paren">(</span><em>myfile</em>, <em>mat</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em>, <em>blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writematrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writematrix" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.savetxt">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">savetxt</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">mat</em>, <em class="sig-param">f='%.10e'</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em>, <em class="sig-param">blocksep='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#savetxt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.savetxt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a matrix to a given file</p>
 <p>Writes a matrix to a file with a given format specifier and a delimiter.  Adds a block
 separator at the end.  This is very similar to np.savetxt.  However, since python3
 np.savetxt requires the file to be open in binary write mode.</p>
-<p>This function is used internally by both <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a> and <a class="reference internal" href="#stlab.utils.writematrix.writeframe" title="stlab.utils.writematrix.writeframe"><code class="xref any py py-func docutils literal"><span class="pre">writeframe</span></code></a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>mat</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><em>np.array</em>) – List containing the lines of data to be written as lists (a matrix or list of lists).</li>
-<li><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
-<li><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
-separate blocks of data.</li>
+<p>This function is used internally by both <a class="reference internal" href="#stlabutils.writematrix.savedict" title="stlabutils.writematrix.savedict"><code class="xref any py py-func docutils literal notranslate"><span class="pre">savedict</span></code></a> and <a class="reference internal" href="#stlabutils.writematrix.saveframe" title="stlabutils.writematrix.saveframe"><code class="xref any py py-func docutils literal notranslate"><span class="pre">saveframe</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>mat</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><em>np.array</em>) – List containing the lines of data to be written as lists (a matrix or list of lists).</p></li>
+<li><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (old style).</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
+<li><p><strong>blocksep</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Characters to write at the end of the matrix.  This is generally a single newline to
+separate blocks of data.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.writematrix.writeparams">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writeparams</code><span class="sig-paren">(</span><em>myfile</em>, <em>params</em>, <em>f='%.10e'</em>, <em>delim='</em>, <em>'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writeparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writeparams" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.writeline">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">writeline</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">line</em>, <em class="sig-param">f='.10e'</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#writeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.writeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a list of numbers as a single line to a file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>line</strong> (<em>list of float</em>) – List containing the numbers to be written</p></li>
+<li><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Format specifier for the data (new style).</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="stlabutils.writematrix.writeparams">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">writeparams</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">params</em>, <em class="sig-param">f='%.10e'</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#writeparams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.writeparams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes fit parameter values to file</p>
 <p>Intended for writing fit parameter values given a lmfit.Parameters object to a file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.writematrix.writeparnames">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writeparnames</code><span class="sig-paren">(</span><em>myfile</em>, <em>params</em>, <em>delim='</em>, <em>'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writeparnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writeparnames" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.writeparnames">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">writeparnames</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">params</em>, <em class="sig-param">delim='</em>, <em class="sig-param">'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#writeparnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.writeparnames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes fit parameter names to file</p>
 <p>Intended for writing fit parameter names given a lmfit.Parameters object to a file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>params</strong> (<em>lmfit.Parameters</em>) – Parameters object input from fit</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="stlab.utils.writematrix.writetitle">
-<code class="descclassname">stlab.utils.writematrix.</code><code class="descname">writetitle</code><span class="sig-paren">(</span><em>myfile</em>, <em>vv</em>, <em>delim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlab/utils/writematrix.html#writetitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlab.utils.writematrix.writetitle" title="Permalink to this definition">¶</a></dt>
+<dt id="stlabutils.writematrix.writetitle">
+<code class="sig-prename descclassname">stlabutils.writematrix.</code><code class="sig-name descname">writetitle</code><span class="sig-paren">(</span><em class="sig-param">myfile</em>, <em class="sig-param">vv</em>, <em class="sig-param">delim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/stlabutils/writematrix.html#writetitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#stlabutils.writematrix.writetitle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of strings writes the file title line</p>
 <p>Does not do anything if the file already has contents.  Includes a ‘#’ as first character for
-gnuplot.  Is used by <a class="reference internal" href="#stlab.utils.writematrix.writedict" title="stlab.utils.writematrix.writedict"><code class="xref any py py-func docutils literal"><span class="pre">writedict</span></code></a> and <a class="reference internal" href="#stlab.utils.writematrix.writeframe" title="stlab.utils.writematrix.writeframe"><code class="xref any py py-func docutils literal"><span class="pre">writeframe</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</li>
-<li><strong>vv</strong> (<em>list of str</em>) – List of column titles</li>
-<li><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</li>
+gnuplot.  Is used by <a class="reference internal" href="#stlabutils.writematrix.savedict" title="stlabutils.writematrix.savedict"><code class="xref any py py-func docutils literal notranslate"><span class="pre">savedict</span></code></a> and <a class="reference internal" href="#stlabutils.writematrix.saveframe" title="stlabutils.writematrix.saveframe"><code class="xref any py py-func docutils literal notranslate"><span class="pre">saveframe</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>myfile</strong> (<em>_io.TextIOWrapper</em>) – Open file handle for writing</p></li>
+<li><p><strong>vv</strong> (<em>list of str</em>) – List of column titles</p></li>
+<li><p><strong>delim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – Field delimiter (separation character)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -353,7 +303,7 @@ gnuplot.  Is used by <a class="reference internal" href="#stlab.utils.writematri
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, GPL3.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

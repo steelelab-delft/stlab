@@ -1,0 +1,133 @@
+"""Module for instance of a Lakeshore 370 resistance bridge
+
+This module contains the functions necessary to control and read data from 
+a Lakeshore 370 resistance bridge. It inherits from instrument class.
+Daemon should be used as this driver only implements basic query/write
+
+"""
+
+import visa
+import numpy as np
+import time
+from .instrument import instrument
+
+
+class Lakeshore_370(instrument):
+    def __init__(self,
+                 addr='ASRLCOM1::INSTR',
+                 reset=True,
+                 verb=True,
+                 baud_rate=9600):
+        #Custom reset function... There is a short dead time after reset
+        # values for He7: baud_rate=57600, addr='ASRLCOM7::INSTR'
+        super().__init__(
+            addr,
+            reset=False,
+            verb=verb,
+            read_termination='\r\n',
+            parity=visa.constants.Parity.odd,
+            baud_rate=baud_rate,
+            data_bits=7)
+        if reset:
+            self.reset()
+        self.id()
+
+    def reset(
+            self
+    ):  #I need a short pause after reset.  Otherwise the system may hang.  Not even '*OPC?' works
+        out = self.write('*RST')
+        time.sleep(0.1)
+
+    def GetTemperature(self, i):
+        result = float(self.query('RDGK? {}'.format(i)))
+        return result
+
+    def GetResistance(self, i):
+        result = float(self.query('RDGR? {}'.format(i)))
+        return result
+
+    def GetMetadataString(
+            self
+    ):  #Should return a string of metadata adequate to write to a file
+        pass
+
+    '''
+    def write(self,mystr): #REQUIRES SPECIAL WRITE WITH OPC CHECK...
+        self.query(mystr + ';*OPC?')
+    def GetTemperature(self,channel='C'):
+        mystr = 'INP? ' + channel
+        curr = self.query(mystr)
+        try:
+            curr = float(curr)
+        except ValueError:
+            print('Channel ',channel,' out of range')
+            curr = -20.
+        return curr
+    def GetTemperatureAll(self):
+        result = []
+        for chan in self.channellist:
+            result.append(self.GetTemperature(chan))
+        return result
+    def SetSetPoint(self,setp,loop=2):
+        mystr = 'LOOP ' + str(loop) + ':SETP ' + str(setp)
+        self.write(mystr)
+    def GetSetPoint(self,loop=2):
+        mystr = 'LOOP ' + str(loop) + ':SETP?'
+        setp = self.query(mystr)
+        return float(setp)
+    def SetSetPoint(self,setp,loop=2):
+        mystr = 'LOOP ' + str(loop) + ':SETP ' + str(setp)
+        self.write(mystr)
+    def GetSetPoint(self,loop=2):
+        mystr = 'LOOP ' + str(loop) + ':SETP?'
+        setp = self.query(mystr)
+        channel = self.query('LOOP '+ str(loop) +':SOUR?')
+        unit = self.query('INP ' + str(channel) + ':UNIT?')
+        print(setp)
+        return float(setp.strip(unit))
+    def SetPman(self,setp,loop=2):
+        mystr = 'LOOP ' + str(loop) + ':PMAN ' + str(setp)
+        self.write(mystr)
+    def GetPman(self,loop=2):
+        mystr = 'LOOP ' + str(loop) + ':PMAN?'
+        setp = self.query(mystr)
+        return float(setp)
+    def ControlOn(self):
+        self.write('CONT')
+        return
+    def ControlOff(self):
+        self.write('STOP')
+        return
+    def SetLoopMode(self,loop,mode):  #OFF, PID, MAN, TABLE, RAMPP
+        self.write('LOOP ' + str(loop) + ':TYPE ' + str(mode))
+        return
+    def WaitForTStable(self,loop=2,tol=0.05,timeout=300.,tsettle=40.):
+        channel = self.query('LOOP ' + str(loop) + ':SOUR?') #Get channel on chosen loop
+        channel = channel.strip('CH')
+        Tset = self.GetSetPoint(loop)
+        t0 = time.time()
+        tnow = time.time()
+        tstablestart = None
+        success = False
+        while tnow-t0 < timeout:
+            tnow = time.time()
+            TT = self.GetTemperature(channel) #Get current temperature
+            if abs(TT-Tset)<tol:
+                if tstablestart == None:
+                    tstablestart = tnow
+                    print('T in tolerance.  Settling...')
+            elif abs(TT-Tset)>=tol:
+                if tstablestart != None:
+                    print('T left tolerance')
+                tstablestart = None
+                continue
+            if tnow-tstablestart > tsettle:
+                success = True
+                break
+            time.sleep(0.2)
+        if success:
+            print("Channel " + channel + " STABLE at " + str(Tset) + ' K')
+        else:
+            print("Channel " + channel + " UNSTABLE for " + str(Tset) + ' K')
+        return success
+'''

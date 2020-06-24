@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>stlabutils.metagen &#8212; STLab  documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for stlabutils.metagen</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for generation of spyview metafiles</span>
+
+<span class="sd">Spyview typically requires an additional metafile to correctly label the axes and labels</span>
+<span class="sd">of a dataset.  The meta file structure is detailed at </span>
+<span class="sd">`Spyview &lt;http://nsweb.tn.tudelft.nl/~gsteele/spyview/&gt;`_.</span>
+
+<span class="sd">Given a dataset, the metafile contains the x,y axis start, end and number of points as well</span>
+<span class="sd">as column titles.  This means that spyview can only handle uniformly spaced axes.</span>
+<span class="sd">It can also contain z axis start, stop and number of points for data cubes</span>
+<span class="sd">but this is rarely used so it is generally left with 1 point (single 2d plot).</span>
+<span class="sd">This z axis is NOT the data axis.</span>
+
+<span class="sd">The module provides a few different functions for generating the axes limits and metafile from your data.</span>
+<span class="sd">It is important to keep in mind that in general spyview does not treat any of the columns in the</span>
+<span class="sd">file as special in any way.  It only reads the requested column and tries to reshape it into a matrix</span>
+<span class="sd">to display in the final color plot.  The metafile tells spyview how this reshaping should be done, i.e,</span>
+<span class="sd">how many points are on x and y and how it should label the axis values and titles.  When importing without</span>
+<span class="sd">a metafile, spyview searches for blank lines to figure out when each line of the matrix ends.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">readdata</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="fromarrays"><a class="viewcode-back" href="../../utils/metagen.html#stlabutils.metagen.fromarrays">[docs]</a><span class="k">def</span> <span class="nf">fromarrays</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span>
+               <span class="n">xarray</span><span class="p">,</span>
+               <span class="n">yarray</span><span class="p">,</span>
+               <span class="n">zarray</span><span class="o">=</span><span class="p">[],</span>
+               <span class="n">xtitle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+               <span class="n">ytitle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+               <span class="n">ztitle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+               <span class="n">colnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a metafile for a given file using axes arrays as input</span>
+
+<span class="sd">    Generates a metafile for the given file taking the endponts of given arrays and their length.</span>
+<span class="sd">    Column titles are added manually providing a list of titles or by autogenerating from the</span>
+<span class="sd">    file title line.</span>
+
+<span class="sd">    Internally, this function calls :any:`fromlimits`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    myfile : file or string</span>
+<span class="sd">        Base file for metafile</span>
+<span class="sd">    xarray : array of floats</span>
+<span class="sd">        Array for x axis limits and number of points</span>
+<span class="sd">    yarray : array of floats</span>
+<span class="sd">        Array for y axis limits and number of points</span>
+<span class="sd">    zarray : array of floats or empty list, optional</span>
+<span class="sd">        Array for z axis limits and number of points (for data cubes)</span>
+<span class="sd">    xtitle, ytitle, ztitle : str, optional</span>
+<span class="sd">        Title for x, y, z axis axis</span>
+<span class="sd">    colnames : list of str, &#39;auto&#39; or None, optional</span>
+<span class="sd">        List of column titles for the given file.  If None, no titles are written in metafile.  If auto</span>
+<span class="sd">        function reads the first line of the file and uses the obtained titles in the metafile</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">xarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xarray</span><span class="p">)</span>
+    <span class="n">yarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">yarray</span><span class="p">)</span>
+    <span class="n">zarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zarray</span><span class="p">)</span>
+    <span class="n">Nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xarray</span><span class="p">)</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="n">xarray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="n">xarray</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">xmin</span> <span class="o">==</span> <span class="n">xmax</span><span class="p">:</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="n">xmin</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s1">&#39;metagen.fromarrays: Warning, equal values for xmin and xmax. Correcting&#39;</span>
+        <span class="p">)</span>
+    <span class="n">Ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">yarray</span><span class="p">)</span>
+    <span class="n">ymax</span> <span class="o">=</span> <span class="n">yarray</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">yarray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ymin</span> <span class="o">==</span> <span class="n">ymax</span><span class="p">:</span>
+        <span class="n">ymax</span> <span class="o">=</span> <span class="n">ymin</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s1">&#39;metagen.fromarrays: Warning, equal values for ymin and ymax. Correcting&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">zarray</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">Nz</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">zmin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">zmax</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zarray</span><span class="p">)</span>
+        <span class="n">Nz</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">zarray</span><span class="p">)</span>
+        <span class="n">zmin</span> <span class="o">=</span> <span class="n">zarray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">zmax</span> <span class="o">=</span> <span class="n">zarray</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">zmin</span> <span class="o">==</span> <span class="n">zmax</span><span class="p">:</span>
+            <span class="n">zmax</span> <span class="o">=</span> <span class="n">zmin</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s1">&#39;metagen.fromarrays: Warning, equal values for zmin and zmax. Correcting&#39;</span>
+            <span class="p">)</span>
+    <span class="n">fromlimits</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span> <span class="n">Nx</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">Nz</span><span class="p">,</span> <span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">xtitle</span><span class="p">,</span>
+               <span class="n">ytitle</span><span class="p">,</span> <span class="n">ztitle</span><span class="p">,</span> <span class="n">colnames</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="fromlimits"><a class="viewcode-back" href="../../utils/metagen.html#stlabutils.metagen.fromlimits">[docs]</a><span class="k">def</span> <span class="nf">fromlimits</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span>
+               <span class="n">Nx</span><span class="p">,</span>
+               <span class="n">xmin</span><span class="p">,</span>
+               <span class="n">xmax</span><span class="p">,</span>
+               <span class="n">Ny</span><span class="p">,</span>
+               <span class="n">ymin</span><span class="p">,</span>
+               <span class="n">ymax</span><span class="p">,</span>
+               <span class="n">Nz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">zmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">zmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">xtitle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+               <span class="n">ytitle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+               <span class="n">ztitle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+               <span class="n">colnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a metafile for the given axis limits and point number</span>
+
+<span class="sd">    Generates a metafile for the given file taking the endponts of given arrays and their length.</span>
+<span class="sd">    Column titles are added manually providing a list of titles or by autogenerating from the</span>
+<span class="sd">    file title line.</span>
+
+<span class="sd">    Internally, this function is called by :any:`fromarrays`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    myfile : file or string</span>
+<span class="sd">        Base file for metafile</span>
+<span class="sd">    Nx, Ny : int</span>
+<span class="sd">        Number of points in x, y axis</span>
+<span class="sd">    Nz : int or None, optional</span>
+<span class="sd">        Number of points in z axis</span>
+<span class="sd">    xmin, ymin : float</span>
+<span class="sd">        Minimum value for x and y axis</span>
+<span class="sd">    xmax, ymax : float</span>
+<span class="sd">        Maximum value for x and y axis</span>
+<span class="sd">    zmin, zmax : float or None, optional</span>
+<span class="sd">        Maximum and minimum value for the z axis (for data cubes)</span>
+<span class="sd">    xtitle, ytitle, ztitle : str, optional</span>
+<span class="sd">        Title for x, y, z axis axis</span>
+<span class="sd">    colnames : list of str, &#39;auto&#39; or None, optional</span>
+<span class="sd">        List of column titles for the given file.  If None, no titles are written in metafile.  If auto</span>
+<span class="sd">        function reads the first line of the file and uses the obtained titles in the metafile</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">myfile</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">myfile</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">base</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">metaname</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="s1">&#39;.meta.txt&#39;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">metaname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#Inner loop, X</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Nx</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">xmin</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">xtitle</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#Outer loop, Y</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Ny</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1">#    f.write(str(ymin)+&#39;\n&#39;)</span>
+    <span class="c1">#    f.write(str(ymax)+&#39;\n&#39;)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ymax</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ymin</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ytitle</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Nz</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#No loop, Z</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Nothing</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#Outer outer loop, Z</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Nz</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">zmin</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">zmax</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ztitle</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#Column labels</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">colnames</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">colnames</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+            <span class="n">ff</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">titleline</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">titleline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+                <span class="n">titleline</span> <span class="o">=</span> <span class="n">titleline</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">colnames</span> <span class="o">=</span> <span class="n">titleline</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">colnames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">colnames</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">colnames</span><span class="p">):</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span></div>
+
+
+<span class="c1"># Somewhat specific for datafiles from the solderroom, 2D &quot;gnuplot&quot; files only</span>
+<span class="k">def</span> <span class="nf">fromdatafile</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">myfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">myfile</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">myfile</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">mydata</span> <span class="o">=</span> <span class="n">readdata</span><span class="o">.</span><span class="n">readdat</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">keylist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mydata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ycol</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">xtitle</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ytitle</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">xcol</span> <span class="o">=</span> <span class="n">keylist</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">xtitle</span><span class="p">)</span>
+        <span class="n">ycol</span> <span class="o">=</span> <span class="n">keylist</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ytitle</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ycol</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">xtitle</span><span class="p">)</span> <span class="ow">is</span>
+                                                              <span class="nb">str</span><span class="p">):</span>
+        <span class="n">xcol</span> <span class="o">=</span> <span class="n">keylist</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">xtitle</span><span class="p">)</span>
+        <span class="n">ycol</span> <span class="o">=</span> <span class="n">ycol</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ycol</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ytitle</span><span class="p">)</span> <span class="ow">is</span>
+                                                              <span class="nb">str</span><span class="p">):</span>
+        <span class="n">xcol</span> <span class="o">=</span> <span class="n">xcol</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">ycol</span> <span class="o">=</span> <span class="n">keylist</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ytitle</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ycol</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">xcol</span> <span class="o">=</span> <span class="n">xcol</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">ycol</span> <span class="o">=</span> <span class="n">ycol</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;metagen.fromdatafile: Bad column specification&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">xcol</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">ycol</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;metagen.fromdatafile: Bad column specification&quot;</span><span class="p">)</span>
+
+    <span class="n">xkey</span> <span class="o">=</span> <span class="n">keylist</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span>
+    <span class="n">ykey</span> <span class="o">=</span> <span class="n">keylist</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span>
+
+    <span class="n">Nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mydata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">xkey</span><span class="p">])</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">xkey</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">xkey</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">Ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mydata</span><span class="p">)</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">ykey</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ymax</span> <span class="o">=</span> <span class="n">mydata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">ykey</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">xkey</span><span class="p">,</span> <span class="n">Nx</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ykey</span><span class="p">,</span> <span class="n">Ny</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+
+    <span class="n">fromlimits</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span>
+               <span class="n">Nx</span><span class="p">,</span>
+               <span class="n">xmin</span><span class="p">,</span>
+               <span class="n">xmax</span><span class="p">,</span>
+               <span class="n">Ny</span><span class="p">,</span>
+               <span class="n">ymin</span><span class="p">,</span>
+               <span class="n">ymax</span><span class="p">,</span>
+               <span class="n">xtitle</span><span class="o">=</span><span class="n">xkey</span><span class="p">,</span>
+               <span class="n">ytitle</span><span class="o">=</span><span class="n">ykey</span><span class="p">,</span>
+               <span class="n">colnames</span><span class="o">=</span><span class="n">keylist</span><span class="p">)</span>
+    <span class="k">return</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">STLab  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, GPL3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

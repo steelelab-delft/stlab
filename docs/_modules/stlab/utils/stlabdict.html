@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>stlab.utils.stlabdict &#8212; STLab  documentation</title>
+    <title>stlabutils.stlabdict &#8212; STLab  documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -58,7 +58,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for stlab.utils.stlabdict</h1><div class="highlight"><pre>
+  <h1>Source code for stlabutils.stlabdict</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module providing data structures for data collection and analysis</span>
 
 <span class="sd">The main features provided in this module are the stlabmtx class and the stlabdict class as</span>
@@ -78,7 +78,7 @@
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
 
 
-<div class="viewcode-block" id="stlabdict"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabdict">[docs]</a><span class="k">class</span> <span class="nc">stlabdict</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabdict"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabdict">[docs]</a><span class="k">class</span> <span class="nc">stlabdict</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to hold a data table with multiple lines and columns</span>
 
 <span class="sd">    This class is DEPRECATED in favor of pandas DataFrame.  They serve the same</span>
@@ -93,14 +93,14 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="stlabdict.__init__"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabdict.__init__"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabdict.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init method for stlabdict</span>
 
 <span class="sd">        Simply calls the ordered_dict constructor</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">stlabdict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabdict.addparcolumn"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.addparcolumn">[docs]</a>    <span class="k">def</span> <span class="nf">addparcolumn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colname</span><span class="p">,</span><span class="n">colval</span><span class="p">):</span> <span class="c1">#adds a column to </span>
+<div class="viewcode-block" id="stlabdict.addparcolumn"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabdict.addparcolumn">[docs]</a>    <span class="k">def</span> <span class="nf">addparcolumn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colname</span><span class="p">,</span><span class="n">colval</span><span class="p">):</span> <span class="c1">#adds a column to </span>
         <span class="sd">&quot;&quot;&quot;Adds a parameter column</span>
 
 <span class="sd">        A parameter column is typically a column with a constant value for all lines (i.e. power in a vna trace).</span>
@@ -120,7 +120,7 @@
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">colval</span><span class="p">)</span>
         <span class="k">return</span></div>
-<div class="viewcode-block" id="stlabdict.line"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.line">[docs]</a>    <span class="k">def</span> <span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">nn</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabdict.line"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabdict.line">[docs]</a>    <span class="k">def</span> <span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">nn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets a line from the table</span>
 
 <span class="sd">        Takes a line from the stlabdict given by index.  While getting a column can be done by </span>
@@ -143,7 +143,7 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">ret</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">nn</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">ret</span></div>
-<div class="viewcode-block" id="stlabdict.__getitem__"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.__getitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabdict.__getitem__"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabdict.__getitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overloaded indexing of the dict</span>
 
 <span class="sd">        Reimplements the getting of items from the dict to allow for indexing by column position as well</span>
@@ -162,7 +162,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">key</span><span class="p">]]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span></div>
-<div class="viewcode-block" id="stlabdict.ncol"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.ncol">[docs]</a>    <span class="k">def</span> <span class="nf">ncol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabdict.ncol"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabdict.ncol">[docs]</a>    <span class="k">def</span> <span class="nf">ncol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the number of columns</span>
 <span class="sd">    </span>
 <span class="sd">        Returns</span>
@@ -173,7 +173,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
-<div class="viewcode-block" id="stlabdict.nline"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.nline">[docs]</a>    <span class="k">def</span> <span class="nf">nline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabdict.nline"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabdict.nline">[docs]</a>    <span class="k">def</span> <span class="nf">nline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the number of lines in dict</span>
 
 <span class="sd">        Checks that all columns have the same number of lines</span>
@@ -189,7 +189,7 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Columns with different length!!?&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">a</span></div>
-<div class="viewcode-block" id="stlabdict.matrix"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabdict.matrix">[docs]</a>    <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabdict.matrix"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabdict.matrix">[docs]</a>    <span class="k">def</span> <span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Converts entire table into a numpy matrix.</span>
 
 <span class="sd">        Returns</span>
@@ -211,7 +211,7 @@
 
 <span class="c1">#Auxiliary processing functions for stlabmtx</span>
 
-<div class="viewcode-block" id="checkEqual1"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.checkEqual1">[docs]</a><span class="k">def</span> <span class="nf">checkEqual1</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
+<div class="viewcode-block" id="checkEqual1"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.checkEqual1">[docs]</a><span class="k">def</span> <span class="nf">checkEqual1</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check if all elements in iterator are equal or is empty</span>
 
 <span class="sd">    Returns</span>
@@ -226,7 +226,7 @@
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">rest</span> <span class="k">for</span> <span class="n">rest</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="dictarr_to_mtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.dictarr_to_mtx">[docs]</a><span class="k">def</span> <span class="nf">dictarr_to_mtx</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rangex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rangey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ykey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ztitle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="dictarr_to_mtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.dictarr_to_mtx">[docs]</a><span class="k">def</span> <span class="nf">dictarr_to_mtx</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rangex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rangey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ykey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ztitle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Converts an array of dicts (or stlabdicts) to an stlabmtx object</span>
 
 <span class="sd">    Takes an array of dict-like (dict, OrderedDict, stlabdict), typically from a measurement file, and selects the appropriate columns for</span>
@@ -362,7 +362,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">new_mtx</span><span class="p">))</span>
 
 <span class="c1">#Main stlabmtx_pd class</span>
-<div class="viewcode-block" id="stlabmtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx">[docs]</a><span class="k">class</span> <span class="nc">stlabmtx</span><span class="p">():</span>
+<div class="viewcode-block" id="stlabmtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx">[docs]</a><span class="k">class</span> <span class="nc">stlabmtx</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;stlabmtx class for spyview-like operations</span>
 
 <span class="sd">    This class implements a matrix in the form of a pandas DataFrame and contains</span>
@@ -383,7 +383,7 @@
 <span class="sd">        Initial Titles for the x,y and z (data) axes (so, in case they are changed, reset can recover them)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="stlabmtx.__init__"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mtx</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="s1">&#39;xtitle&#39;</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="s1">&#39;ytitle&#39;</span><span class="p">,</span> <span class="n">ztitle</span> <span class="o">=</span> <span class="s1">&#39;ztitle&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.__init__"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mtx</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="s1">&#39;xtitle&#39;</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="s1">&#39;ytitle&#39;</span><span class="p">,</span> <span class="n">ztitle</span> <span class="o">=</span> <span class="s1">&#39;ztitle&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;stlab mtx initialization</span>
 
 <span class="sd">        Takes an input DataFrame and sets up the object</span>
@@ -408,7 +408,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">xtitle0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xtitle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ytitle0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ytitle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ztitle0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ztitle</span></div>
-<div class="viewcode-block" id="stlabmtx.getextents"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.getextents">[docs]</a>    <span class="k">def</span> <span class="nf">getextents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.getextents"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.getextents">[docs]</a>    <span class="k">def</span> <span class="nf">getextents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the extents of the matrix</span>
 
 <span class="sd">        Returns a tuple containing (xmin, xmax, ymin, ymax) from the axis ranges,</span>
@@ -424,7 +424,7 @@
         <span class="n">ys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">xs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">ys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">ys</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
     <span class="c1"># Functions from spyview</span>
-<div class="viewcode-block" id="stlabmtx.absolute"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.absolute">[docs]</a>    <span class="k">def</span> <span class="nf">absolute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.absolute"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.absolute">[docs]</a>    <span class="k">def</span> <span class="nf">absolute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Absolute value filter</span>
 
 <span class="sd">        Applies np.abs to all elements of the matrix.  Process string :code:`abs`.</span>
@@ -432,7 +432,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;abs&#39;</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabmtx.crop"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.crop">[docs]</a>    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">low</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.crop"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.crop">[docs]</a>    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">low</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Crop filter</span>
 
 <span class="sd">        Crops data matrix to the given extents.  Process string :code:`crop left,right,up,low`</span>
@@ -463,7 +463,7 @@
             <span class="k">if</span> <span class="n">val</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
                 <span class="n">valdict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">data</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;crop </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">valdict</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">],</span><span class="n">valdict</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">],</span><span class="n">valdict</span><span class="p">[</span><span class="s1">&#39;up&#39;</span><span class="p">],</span><span class="n">valdict</span><span class="p">[</span><span class="s1">&#39;low&#39;</span><span class="p">]))</span></div>
-<div class="viewcode-block" id="stlabmtx.flip"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.flip">[docs]</a>    <span class="k">def</span> <span class="nf">flip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.flip"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.flip">[docs]</a>    <span class="k">def</span> <span class="nf">flip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Flip filter</span>
 
 <span class="sd">        Reverses x and/or y axis.  Process string :code:`flip x,y` (0 is false, 1 is true).</span>
@@ -482,7 +482,7 @@
         <span class="k">if</span> <span class="n">y</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">iloc</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;flip </span><span class="si">{:d}</span><span class="s1">,</span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.log10"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.log10">[docs]</a>    <span class="k">def</span> <span class="nf">log10</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.log10"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.log10">[docs]</a>    <span class="k">def</span> <span class="nf">log10</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Log10 filter</span>
 
 <span class="sd">        Applies np.log10 to all elements in the matrix.  Process string :code:`log10`</span>
@@ -490,7 +490,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;log10&#39;</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabmtx.lowpass"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.lowpass">[docs]</a>    <span class="k">def</span> <span class="nf">lowpass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.lowpass"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.lowpass">[docs]</a>    <span class="k">def</span> <span class="nf">lowpass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Low Pass filter</span>
 
 <span class="sd">        Applies a gaussian filter to the data with given pixel widths.  Other filters are yet to be implemented.</span>
@@ -505,7 +505,7 @@
         <span class="c1"># TODO implement different filter types</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;lowpass </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.neg"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.neg">[docs]</a>    <span class="k">def</span> <span class="nf">neg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.neg"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.neg">[docs]</a>    <span class="k">def</span> <span class="nf">neg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Negative filter</span>
 
 <span class="sd">        Multiplies matrix by -1.  Process string :code:`neg`</span>
@@ -513,7 +513,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;neg&#39;</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabmtx.offset"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.offset">[docs]</a>    <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.offset"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.offset">[docs]</a>    <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Offset filter</span>
 
 <span class="sd">        Offsets data values by adding given value.  Process string :code:`offset x`</span>
@@ -526,7 +526,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">+</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;offset </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.offset_axes"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.offset_axes">[docs]</a>    <span class="k">def</span> <span class="nf">offset_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.offset_axes"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.offset_axes">[docs]</a>    <span class="k">def</span> <span class="nf">offset_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Axes offset filter</span>
 
 <span class="sd">        Offset axis values.  Process string :code:`offset_axes x,y`</span>
@@ -540,7 +540,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">columns</span> <span class="o">+</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;offset_axes </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.outlier"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.outlier">[docs]</a>    <span class="k">def</span> <span class="nf">outlier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">line</span><span class="p">,</span><span class="n">vertical</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.outlier"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.outlier">[docs]</a>    <span class="k">def</span> <span class="nf">outlier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">line</span><span class="p">,</span><span class="n">vertical</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Outlier filter</span>
 <span class="sd">        </span>
 <span class="sd">        Drop a line or column from the data.  Process string :code:`outlier line,vertical`</span>
@@ -556,7 +556,7 @@
         <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="n">vertical</span> <span class="c1">#swap 1 and 0 since vertical axis is 0 and horizontal is 1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;outlier </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="n">vertical</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.pixel_avg"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.pixel_avg">[docs]</a>    <span class="k">def</span> <span class="nf">pixel_avg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">nx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">ny</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.pixel_avg"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.pixel_avg">[docs]</a>    <span class="k">def</span> <span class="nf">pixel_avg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">nx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">ny</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">center</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Pixel average filter</span>
 <span class="sd">        </span>
 <span class="sd">        Performs pixel averaging on matrix.  Process string :code:`pixel_avg nx,ny,center`</span>
@@ -578,7 +578,7 @@
             <span class="n">mask</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">nx</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ny</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">generic_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">,</span> <span class="n">footprint</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;pixel_avg </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">center</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.rotate_ccw"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.rotate_ccw">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_ccw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.rotate_ccw"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.rotate_ccw">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_ccw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Rotate counter-clockwise filter</span>
 
 <span class="sd">        Rotates matrix and axes counter-clockwise.  Process string :code:`rotate_ccw`</span>
@@ -588,7 +588,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">iloc</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;rotate_ccw&#39;</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabmtx.rotate_cw"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.rotate_cw">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_cw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.rotate_cw"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.rotate_cw">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_cw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Rotate clockwise filter</span>
 
 <span class="sd">        Rotates matrix and axes clockwise.  Process string :code:`rotate_cw`</span>
@@ -598,7 +598,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;rotate_cw&#39;</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabmtx.scale_data"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.scale_data">[docs]</a>    <span class="k">def</span> <span class="nf">scale_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.scale_data"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.scale_data">[docs]</a>    <span class="k">def</span> <span class="nf">scale_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Scale filter</span>
 
 <span class="sd">        Scales all data by given factor.  Process string :code:`scale x`</span>
@@ -611,7 +611,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="n">factor</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;scale </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">factor</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.sub_lbl"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.sub_lbl">[docs]</a>    <span class="k">def</span> <span class="nf">sub_lbl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lowp</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">highp</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">low_limit</span><span class="o">=-</span><span class="mf">1e99</span><span class="p">,</span> <span class="n">high_limit</span><span class="o">=</span><span class="mf">1e99</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.sub_lbl"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.sub_lbl">[docs]</a>    <span class="k">def</span> <span class="nf">sub_lbl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lowp</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">highp</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">low_limit</span><span class="o">=-</span><span class="mf">1e99</span><span class="p">,</span> <span class="n">high_limit</span><span class="o">=</span><span class="mf">1e99</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Substract line by line filter</span>
 
 <span class="sd">        The average value of each line is substracted from the data.  Parts of each line cut can be</span>
@@ -633,7 +633,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">sub_lbl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">lowp</span><span class="p">,</span><span class="n">highp</span><span class="p">,</span><span class="n">low_limit</span><span class="p">,</span><span class="n">high_limit</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;sub_lbl </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lowp</span><span class="p">,</span><span class="n">highp</span><span class="p">,</span><span class="n">low_limit</span><span class="p">,</span><span class="n">high_limit</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.sub_cbc"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.sub_cbc">[docs]</a>    <span class="k">def</span> <span class="nf">sub_cbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lowp</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">highp</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">low_limit</span><span class="o">=-</span><span class="mf">1e99</span><span class="p">,</span> <span class="n">high_limit</span><span class="o">=</span><span class="mf">1e99</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.sub_cbc"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.sub_cbc">[docs]</a>    <span class="k">def</span> <span class="nf">sub_cbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lowp</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">highp</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">low_limit</span><span class="o">=-</span><span class="mf">1e99</span><span class="p">,</span> <span class="n">high_limit</span><span class="o">=</span><span class="mf">1e99</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Subtract column by column filter</span>
 <span class="sd">    </span>
 <span class="sd">        Same as :any:`sub_lbl` but done on a column by column basis.  Process string :code:`sub_cbc lowp,highp,low_limit,high_limit`</span>
@@ -641,7 +641,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">sub_lbl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">lowp</span><span class="p">,</span><span class="n">highp</span><span class="p">,</span><span class="n">low_limit</span><span class="p">,</span><span class="n">high_limit</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;sub_cbc </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lowp</span><span class="p">,</span><span class="n">highp</span><span class="p">,</span><span class="n">low_limit</span><span class="p">,</span><span class="n">high_limit</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.sub_linecut"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.sub_linecut">[docs]</a>    <span class="k">def</span> <span class="nf">sub_linecut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">horizontal</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.sub_linecut"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.sub_linecut">[docs]</a>    <span class="k">def</span> <span class="nf">sub_linecut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">horizontal</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Subtract lincut filter</span>
 
 <span class="sd">        Selects a line or column and subtracts it from all othe lines or columns in the matrix.</span>
@@ -663,7 +663,7 @@
             <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">pos</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;sub_linecut </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="n">horizontal</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.vi_to_iv"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.vi_to_iv">[docs]</a>    <span class="k">def</span> <span class="nf">vi_to_iv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vmin</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">nbins</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.vi_to_iv"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.vi_to_iv">[docs]</a>    <span class="k">def</span> <span class="nf">vi_to_iv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vmin</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">nbins</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;vi to iv filter</span>
 
 <span class="sd">        Reverses the data axis with the y axis of the matrix.  For example, if the data contains the voltage and the axis the current</span>
@@ -690,7 +690,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pmtx</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">vinterpol</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ztitle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xtitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ztitle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ztitle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;vi_to_iv </span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">,</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">nbins</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.xderiv"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.xderiv">[docs]</a>    <span class="k">def</span> <span class="nf">xderiv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.xderiv"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.xderiv">[docs]</a>    <span class="k">def</span> <span class="nf">xderiv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;X derivative filter</span>
 
 <span class="sd">        Apply a derivative along the lines of the matrix.  Process string :code:`xderiv direction`</span>
@@ -703,7 +703,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="n">xderiv_pd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="p">,</span><span class="n">direction</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;xderiv </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">direction</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.yderiv"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.yderiv">[docs]</a>    <span class="k">def</span> <span class="nf">yderiv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.yderiv"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.yderiv">[docs]</a>    <span class="k">def</span> <span class="nf">yderiv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">direction</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Y derivative filter</span>
 
 <span class="sd">        Apply a derivative along the columns of the matrix.  Process string :code:`yderiv direction`</span>
@@ -716,7 +716,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="n">yderiv_pd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span><span class="p">,</span><span class="n">direction</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;yderiv </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">direction</span><span class="p">))</span></div>
-<div class="viewcode-block" id="stlabmtx.transpose"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.transpose"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Transpose filter</span>
 
 <span class="sd">        Transposes the data matrix (and axes).  Process string :code:`transpose`</span>
@@ -726,7 +726,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;transpose&#39;</span><span class="p">)</span></div>
 
     <span class="c1"># Processlist</span>
-<div class="viewcode-block" id="stlabmtx.saveprocesslist"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.saveprocesslist">[docs]</a>    <span class="k">def</span> <span class="nf">saveprocesslist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;./process.pl&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.saveprocesslist"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.saveprocesslist">[docs]</a>    <span class="k">def</span> <span class="nf">saveprocesslist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;./process.pl&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save applied filter list</span>
 
 <span class="sd">        Saves the applied filters and parameters to a text file (process.pl in the current folder by default)</span>
@@ -741,7 +741,7 @@
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="p">:</span>
             <span class="n">myfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">myfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
-<div class="viewcode-block" id="stlabmtx.applystep"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.applystep">[docs]</a>    <span class="k">def</span> <span class="nf">applystep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">line</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.applystep"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.applystep">[docs]</a>    <span class="k">def</span> <span class="nf">applystep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply step from a process list string</span>
 
 <span class="sd">        Takes in input string descibing one filter application and applies it to the data</span>
@@ -767,7 +767,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">pars</span><span class="p">)</span>
         <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">pars</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span></div>
-<div class="viewcode-block" id="stlabmtx.applyprocesslist"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.applyprocesslist">[docs]</a>    <span class="k">def</span> <span class="nf">applyprocesslist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pl</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.applyprocesslist"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.applyprocesslist">[docs]</a>    <span class="k">def</span> <span class="nf">applyprocesslist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pl</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply all steps in array of process strings</span>
 
 <span class="sd">        Takes in input list of strings descibing filters to be applied to the data and runs them.</span>
@@ -780,7 +780,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">applystep</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabmtx.applyprocessfile"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.applyprocessfile">[docs]</a>    <span class="k">def</span> <span class="nf">applyprocessfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.applyprocessfile"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.applyprocessfile">[docs]</a>    <span class="k">def</span> <span class="nf">applyprocessfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply all steps in a process list file</span>
 
 <span class="sd">        Takes in input file containing a process list and applies them to the data.</span>
@@ -796,7 +796,7 @@
                 <span class="k">if</span> <span class="s1">&#39;#&#39;</span> <span class="o">==</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                     <span class="k">continue</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">applystep</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabmtx.reset"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.reset"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset filters</span>
 
 <span class="sd">        Resets all filters and returns matrix to its initial state</span>
@@ -806,7 +806,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">xtitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xtitle0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ytitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ytitle0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pmtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mtx</span></div>
-<div class="viewcode-block" id="stlabmtx.delstep"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.delstep">[docs]</a>    <span class="k">def</span> <span class="nf">delstep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ii</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.delstep"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.delstep">[docs]</a>    <span class="k">def</span> <span class="nf">delstep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ii</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Removes a filter from the current process list by index</span>
 
 <span class="sd">        Parameters</span>
@@ -819,7 +819,7 @@
         <span class="k">del</span> <span class="n">newpl</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">applyprocesslist</span><span class="p">(</span><span class="n">newpl</span><span class="p">)</span></div>
-<div class="viewcode-block" id="stlabmtx.insertstep"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.insertstep">[docs]</a>    <span class="k">def</span> <span class="nf">insertstep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">line</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.insertstep"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.insertstep">[docs]</a>    <span class="k">def</span> <span class="nf">insertstep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inserts new filter into process list</span>
 
 <span class="sd">        Adds a new filter at a specific position in the process list</span>
@@ -838,7 +838,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">applyprocesslist</span><span class="p">(</span><span class="n">newpl</span><span class="p">)</span></div>
 
     <span class="c1">#Uses pickle to save to file</span>
-<div class="viewcode-block" id="stlabmtx.save"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;output&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.save"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;output&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save matrix to file</span>
 
 <span class="sd">        Pickels the object and saves it to given file.</span>
@@ -857,7 +857,7 @@
     <span class="c1">#with open(filename, &#39;rb&#39;) as input:</span>
     <span class="c1">#   mtx1 = pickle.load(input)</span>
 
-<div class="viewcode-block" id="stlabmtx.savemtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.savemtx">[docs]</a>    <span class="k">def</span> <span class="nf">savemtx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;./output&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.savemtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.savemtx">[docs]</a>    <span class="k">def</span> <span class="nf">savemtx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;./output&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save to Spyview mtx format</span>
 
 <span class="sd">        Saves current processed matrix to a spyview mtx file</span>
@@ -895,7 +895,7 @@
             <span class="c1">#dB, S21dB, Frequency (Hz), 6.000000e+09, 8.300000e+09, Vgate (V), 3.000000e+01, -3.000000e+01, Nothing, 0, 1</span>
             <span class="c1">#2001 601 1 8</span>
 
-<div class="viewcode-block" id="stlabmtx.loadmtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.stlabmtx.loadmtx">[docs]</a>    <span class="k">def</span> <span class="nf">loadmtx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="stlabmtx.loadmtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.stlabmtx.loadmtx">[docs]</a>    <span class="k">def</span> <span class="nf">loadmtx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load matrix from an existing Spyview mtx file</span>
 
 <span class="sd">        Parameters</span>
@@ -963,7 +963,7 @@
 
 
 
-<div class="viewcode-block" id="framearr_to_mtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlab.utils.stlabdict.framearr_to_mtx">[docs]</a><span class="k">def</span> <span class="nf">framearr_to_mtx</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rangex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rangey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ykey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ztitle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="framearr_to_mtx"><a class="viewcode-back" href="../../../utils/stlabdict.html#stlabutils.stlabdict.framearr_to_mtx">[docs]</a><span class="k">def</span> <span class="nf">framearr_to_mtx</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rangex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rangey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ykey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xtitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ytitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ztitle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Converts an array of pandas DataFrame to an stlabmtx object</span>
 
 <span class="sd">    Takes an array of pandas.DataFrame, typically from a measurement file, and selects the appropriate columns for</span>
