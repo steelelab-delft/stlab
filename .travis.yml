@@ -5,7 +5,9 @@ services:
   - xvfb
 
 install: 
- - pip install -r requirements.txt
+ # install requirements through pip install .
+#  - pip install -r requirements.txt
+ - pip install .
  # This is for running the tests
  - pip install pytest #pytest-cov codecov
 
@@ -14,6 +16,5 @@ script:
   - pytest tests #--cov=src
   # - codecov
 
-  # # test pip installation
-  # - pip install .
-  # - python -c "import stlab"
+  # test pip installation
+  - python -c "import stlab"
