@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import os
 
 
 class popup_warning():
@@ -8,8 +9,8 @@ class popup_warning():
         self.root = tk.Tk()  # create window
 
         self.canvas1 = tk.Canvas(self.root, width=500, height=350)
-        self.background_image = tk.PhotoImage(
-            file='C:\\libs\\stlab\\utils\\Gary-Steele-web.gif')
+        self.background_image = tk.PhotoImage(file=os.path.join(
+            os.path.dirname(__file__), 'Gary-Steele-web.gif'))
         self.canvas1.create_image(400, 300, image=self.background_image)
         self.canvas1.create_text(
             300,
@@ -29,10 +30,9 @@ class popup_warning():
 
     def run(self):
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-        button1 = tk.Button(
-            self.root,
-            text='Continue with caution',
-            command=self.ExitApplication)
+        button1 = tk.Button(self.root,
+                            text='Continue with caution',
+                            command=self.ExitApplication)
         self.canvas1.create_window(97, 270, window=button1)
         self.root.mainloop()
         return self.reset
