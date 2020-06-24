@@ -5,7 +5,7 @@ a R&S SGS100A RF source. It inherits from instrument class.
 
 """
 
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 def numtostr(mystr):

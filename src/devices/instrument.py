@@ -12,7 +12,7 @@ already include a collection of commands and specific quality of life methods
 that allow you to already do basic functions.
 """
 import pyvisa as visa
-from stlab.devices.base_instrument import base_instrument
+from .base_instrument import base_instrument
 from ..misc.reset_popup_warning import popup_warning
 
 
@@ -77,7 +77,7 @@ class instrument(base_instrument):
         reset : bool, optional
             Will call :any:`reset` on instantiation to reset instrument to default settings.
             If set to False, the user will have to manually confirm three times that the reset is not wanted.
-            This will happen once more if the device was instantiated using :code:`stlab.adi`
+            This will happen once more if the device was instantiated using :code:`.adi`
         verb : bool, optional
             Print strings written to the device on screen
         **kwargs

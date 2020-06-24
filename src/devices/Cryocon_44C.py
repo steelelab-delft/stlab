@@ -1,5 +1,5 @@
 import time
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 class Cryocon_44C(instrument):

@@ -1,5 +1,5 @@
 import numpy as np
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 import time
 
 

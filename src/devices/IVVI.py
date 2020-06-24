@@ -9,7 +9,7 @@ It does NOT inherit from the "instrument" class.
 import serial
 import numpy as np
 import time
-from stlab.devices.base_instrument import base_instrument
+from .base_instrument import base_instrument
 
 from enum import Enum
 

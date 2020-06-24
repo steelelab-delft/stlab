@@ -3,10 +3,10 @@ import sys
 
 sys.path.append("C:\\libs\\stlab\\AWG_testing\\")
 
-from stlab.devices.RS_SGS100A import RS_SGS100A
+from .devices.RS_SGS100A import RS_SGS100A
 from AWG520_driver_beta import Tektronix_AWG520
-from stlab.devices.rigol_DS1054 import Rigol_DS1054
-from stlab.devices.RS_FSV import RS_FSV
+from .devices.rigol_DS1054 import Rigol_DS1054
+from .devices.RS_FSV import RS_FSV
 
 import AWG_station
 

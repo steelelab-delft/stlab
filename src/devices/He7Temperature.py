@@ -17,7 +17,7 @@ driver/script which works for the old and new BF as well as the He7.
 # Basic interface to retrieve temperature measurement form BF computer
 # Server must be running on BF computer (The server just checks temperature log and returns last logged value)
 from stlabutils.MySocket import MySocket
-from stlab.devices.base_instrument import base_instrument
+from .base_instrument import base_instrument
 
 
 class He7Temperature(base_instrument):

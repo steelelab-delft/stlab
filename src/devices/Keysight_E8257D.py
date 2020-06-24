@@ -4,7 +4,7 @@ This module contains the functions necessary to control and read data from
 a Keysight E8257D signal generator. It inherits from instrument class.
 
 """
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 def numtostr(mystr):

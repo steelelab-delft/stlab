@@ -3,7 +3,7 @@
 This module is the base class for most VNAs and PNAs
 """
 
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 from stlabutils.stlabdict import stlabdict as stlabdict
 import numpy as np
 import pandas as pd

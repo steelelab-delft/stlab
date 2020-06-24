@@ -2,7 +2,7 @@
 
 """
 
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 from pydoc import locate
 import os.path
 
@@ -67,7 +67,7 @@ def autodetect_instrument(addr, reset=True, verb=True, **kwargs):
                 ',' + idtag + ' ,' in idstr):
             found = True
             devstr = devdict[idtag]
-            devclass = 'stlab.devices.' + devstr + '.' + devstr
+            devclass = '.' + devstr + '.' + devstr
             print('Device found at address {}: {}'.format(addr, devstr))
             break
     if found is False:

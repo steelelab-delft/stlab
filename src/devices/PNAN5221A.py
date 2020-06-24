@@ -5,7 +5,7 @@ a Keysight N5221A PNA. It inherits from basepna class.
 
 """
 import numpy as np
-from stlab.devices.basepna import basepna
+from .basepna import basepna
 
 
 def numtostr(mystr):

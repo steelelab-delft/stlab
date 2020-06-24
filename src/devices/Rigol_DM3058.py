@@ -6,7 +6,7 @@ a Rigol DM3058 digital multimeter. It inherits from instrument class.
 """
 
 import numpy as np
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 def numtostr(mystr):

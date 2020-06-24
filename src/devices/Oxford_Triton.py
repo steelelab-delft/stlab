@@ -7,7 +7,7 @@ It inherits from instrument class.
 
 """
 
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 class Oxford_Triton(instrument):

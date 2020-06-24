@@ -1,4 +1,4 @@
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 class Agilent_11713B(instrument):

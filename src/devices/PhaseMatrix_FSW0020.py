@@ -6,7 +6,7 @@ a FSW0020 phase matrix. It inherits from instrument class.
 """
 
 import time
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 class PhaseMatrix_FSW0020(instrument):

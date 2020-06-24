@@ -4,7 +4,7 @@ This module contains the functions necessary to control and read data from
 a Keysight N9010B EXA signal analyzer. It inherits from basesa class.
 """
 
-from stlab.devices.basesa import basesa
+from .basesa import basesa
 import numpy as np
 import pandas as pd
 import time

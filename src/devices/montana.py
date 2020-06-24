@@ -1,6 +1,6 @@
 import socket
 from stlabutils.MySocket import MySocket
-from stlab.devices.base_instrument import base_instrument
+from .base_instrument import base_instrument
 
 class montana(base_instrument):
     def __init__(self,addr='192.168.1.8',port=7773,reset=True,verb=True,**kwargs):

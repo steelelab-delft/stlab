@@ -1,4 +1,4 @@
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 # from stlabutils.stlabdict import stlabdict
 import logging
 import numpy as np

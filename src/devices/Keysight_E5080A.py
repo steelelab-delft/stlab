@@ -1,4 +1,4 @@
-from stlab.devices.PNAN5221A import PNAN5221A
+from .PNAN5221A import PNAN5221A
 
 
 def numtostr(mystr):

@@ -5,7 +5,7 @@ a R&S ZVB vector network analyzer. It inherits from basepna class.
 
 """
 import numpy as np
-from stlab.devices.basepna import basepna
+from .basepna import basepna
 from stlabutils.stlabdict import stlabdict
 
 

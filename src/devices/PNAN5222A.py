@@ -1,8 +1,8 @@
 import visa
 import numpy as np
 import time
-from stlab.devices.instrument import instrument
-from stlab.devices.PNAN5221A import PNAN5221A
+from .instrument import instrument
+from .PNAN5221A import PNAN5221A
 from stlabutils.stlabdict import stlabdict
 import pandas as pd
 

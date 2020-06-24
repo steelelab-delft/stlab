@@ -3,7 +3,7 @@
 
 import time 
 import logging
-from stlab.AWG_testing.RS_FSV_beta import RS_FSV
+from .AWG_testing.RS_FSV_beta import RS_FSV
 
 
 class FSV_station(RS_FSV):

@@ -1,6 +1,6 @@
 # Written by: Sarwan Peiter
 
-from stlab.AWG_testing.instrument import instrument
+from .AWG_testing.instrument import instrument
 import numpy as np
 
 class RS_FSV(instrument): 

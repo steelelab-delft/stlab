@@ -17,4 +17,4 @@ script:
   # - codecov
 
   # test pip installation
-  - python -c "import stlab"
+  - python tests/test_importing.py

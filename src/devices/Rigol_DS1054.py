@@ -9,7 +9,7 @@ MSO1000Z/DS1000Z series.
 """
 
 import numpy as np
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 import math
 import time
 

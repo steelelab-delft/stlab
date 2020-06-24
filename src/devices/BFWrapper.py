@@ -14,7 +14,7 @@ only the query method is used.
 
 """
 
-from stlab.devices.base_instrument import base_instrument
+from .base_instrument import base_instrument
 from stlabutils.MySocket import MySocket
 import time
 

@@ -1,4 +1,4 @@
-from stlab.devices.instrument import instrument
+from .instrument import instrument
  
 class Keithley6430(instrument):
     def __init__(self,

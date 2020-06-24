@@ -9,7 +9,7 @@ Daemon should be used as this driver only implements basic query/write
 import visa
 import numpy as np
 import time
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 class Lakeshore_370(instrument):

@@ -15,7 +15,7 @@ only the query method is used.
 """
 
 # Basic interface to retrieve temperature measurement form Triton computer
-from stlab.devices.base_instrument import base_instrument
+from .base_instrument import base_instrument
 from stlabutils.MySocket import MySocket
 
 

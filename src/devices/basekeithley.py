@@ -3,7 +3,7 @@
 This module is the base class for Keithley DMMs 2000, 2100 and 6500
 """
 
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 from stlabutils.utils.stlabdict import stlabdict as stlabdict
 
 

@@ -1,5 +1,5 @@
 import numpy as np
-from stlab.devices.basepna import basepna
+from .basepna import basepna
 
 
 def numtostr(mystr):

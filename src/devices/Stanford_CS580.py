@@ -5,7 +5,7 @@ a Stanford CS580 current source. It inherits from instrument class.
 
 """
 import numpy as np
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 import time
 
 

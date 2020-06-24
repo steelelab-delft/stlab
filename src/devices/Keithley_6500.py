@@ -5,7 +5,7 @@ a Keithley DMM6500. It inherits from basekeithley.
 
 """
 
-from stlab.devices.basekeithley import basekeithley
+from .basekeithley import basekeithley
 
 
 class Keithley_6500(basekeithley):

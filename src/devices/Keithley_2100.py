@@ -4,7 +4,7 @@ This module contains the functions necessary to control and read data from
 a Keithley 2100 multimeter. It inherits from basekeithley.
 
 """
-from stlab.devices.basekeithley import basekeithley
+from .basekeithley import basekeithley
 
 
 class Keithley_2100(basekeithley):

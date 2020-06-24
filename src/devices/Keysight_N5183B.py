@@ -5,7 +5,7 @@ a Keysight N5183B signal generator. It inherits from instrument class.
 
 """
 
-from stlab.devices.instrument import instrument
+from .instrument import instrument
 
 
 def numtostr(mystr):
