@@ -1,0 +1,1 @@
+sphinx-build -b html ./doc_gen ./docs
