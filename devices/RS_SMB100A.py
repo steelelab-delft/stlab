@@ -20,6 +20,13 @@ class RS_SMB100A(instrument):
         super().__init__(addr, reset, verb)
         self.id()
 
+    def ALCmode(self, state):
+        '''
+        Sets the level control mode which monitors and adapts the power output of the 
+        source. Available states (given as strings) are ON, OFF, AUTO
+        '''
+        self.write('POW:ALC ' + state)
+
     def SetFrequency(self, freq):
         # Legacy
         self.setCWfrequency(freq)
@@ -37,7 +44,7 @@ class RS_SMB100A(instrument):
         mystr = 'FREQ:CW?'
         pp = self.query(mystr)
         pp = float(pp)
-        return pp        
+        return pp
 
     def SetPower(self, x):
         # Legacy
@@ -82,15 +89,13 @@ class RS_SMB100A(instrument):
     def INTref(self):
         self.write('ROSC:SOUR INT')
 
-
-
     def GetMetadataString(
             self
     ):  # Should return a string of metadata adequate to write to a file
         pass
 
         # requires external trigger
-    def set_RF_sweep(self,freqcenter,freqspan,freqstep):
+    def set_RF_sweep(self, freqcenter, freqspan, freqstep):
         #set sweeping mode
 
         self.write('SOUR:SWE:FREQ:MODE STEP')
@@ -115,30 +120,30 @@ class RS_SMB100A(instrument):
         self.write('SOUR:FREQ:MODE SWE')
         self.write('SWE:RES')
 
-    def set_AMPmod_on(self,source='EXT'):
+    def set_AMPmod_on(self, source='EXT'):
 
-        if source=="EXT":
-           self.dev.write('AM:SOUR EXT')
+        if source == "EXT":
+            self.dev.write('AM:SOUR EXT')
 
         else:
-           self.dev.write('AM:SOUR INT')
+            self.dev.write('AM:SOUR INT')
 
         self.dev.write('AM:DEPT 100')
         self.dev.write('AM:EXT:COUP DC')
         self.dev.write('AM:STAT ON')
 
-    def set_level_sweep(self,currentlev, powstart,powstop,powstep):
+    def set_level_sweep(self, currentlev, powstart, powstop, powstep):
         #set sweeping mode
         self.SetPowerOff()
         self.write('SOUR:SWE:POW:MODE STEP')
 
         #setting powerstart
         mystr_powstart = numtostr(powstart)
-        mystr_powstart = 'SOUR:POW:START ' + mystr_powstart 
+        mystr_powstart = 'SOUR:POW:START ' + mystr_powstart
         self.write(mystr_powstart)
         #setting powerstop
         mystr_powstop = numtostr(powstop)
-        mystr_powstop  = 'SOUR:POW:STOP ' + mystr_powstop
+        mystr_powstop = 'SOUR:POW:STOP ' + mystr_powstop
         self.write(mystr_powstop)
         #setting power step
         mystr_step = 'SOUR:SWE:POW:STEP ' + str(powstep)
@@ -153,4 +158,3 @@ class RS_SMB100A(instrument):
         self.write('SOUR:POW:MODE SWE')
         self.write('SWE:RES')
         self.SetPowerOn()
-
