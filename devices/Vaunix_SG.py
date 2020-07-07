@@ -9,9 +9,25 @@ at https://github.com/BBN-Q/Auspex
 # from stlab.devices.base_instrument import base_instrument
 import cffi
 from os.path import dirname, join
+import time
+
+
+def wait(func):
+    '''If we don't wait after calling functions, 
+    the Vaunix dosnt do what it's told.
+    This wrapper will for the function to wait
+    50ms after doing what it does.
+    '''
+
+    def wrapper(*args, **kwargs):
+        func(*args, **kwargs)
+        time.sleep(0.05)
+
+    return wrapper
 
 
 class Vaunix_SG():
+    @wait
     def __init__(self):
 
         # load API and DLL
@@ -63,15 +79,18 @@ class Vaunix_SG():
 
         return
 
+    @wait
     def printLimits(self):
         print('Power min: %.2e dBm' % self.min_power)
         print('Power max: %.2e dBm' % self.max_power)
         print('Frequency min: %.2e' % self.min_freq)
         print('Frequency max: %.2e' % self.max_freq)
 
+    @wait
     def close(self):
         self.lib.fnLMS_CloseDevice(self.device_id)
 
+    @wait
     def CheckLimits(self, value, quantity):
         if (quantity == 'frequency') or (quantity == 'freq'):
             if value < self.min_freq:
@@ -96,35 +115,43 @@ class Vaunix_SG():
         else:
             raise KeyError('quantity must be either freq[ency] or pow[er]')
 
+    @wait
     def GetDeviceID(self):
         return self.device_id
 
+    @wait
     def RFon(self):
         self.lib.fnLMS_SetRFOn(self.device_id, 1)
 
+    @wait
     def RFoff(self):
         self.lib.fnLMS_SetRFOn(self.device_id, 0)
 
+    @wait
     def setCWfrequency(self, freq):
         self.CheckLimits(freq, 'freq')
         f0 = int(freq / self.ffreq)
         print('Rounding frequency to %f Hz' % (f0 * self.ffreq))
         return self.lib.fnLMS_SetFrequency(self.device_id, f0)
 
+    @wait
     def getCWfrequency(self):
         f0 = float(self.lib.fnLMS_GetFrequency(self.device_id) * self.ffreq)
         return f0
 
+    @wait
     def setCWpower(self, pow):
         self.CheckLimits(pow, 'pow')
         p0 = int(pow / self.fpow)
         print('Rounding power to %f dBm' % (p0 * self.fpow))
         return self.lib.fnLMS_SetPowerLevel(self.device_id, p0)
 
+    @wait
     def getCWpower(self):
         p0 = float(self.lib.fnLMS_GetPowerLevel(self.device_id) * self.fpow)
         return p0
 
+    @wait
     def SetReference(self, ref):
         if ref == 'INT':
             self.lib.fnLMS_SetUseInternalRef(self.device_id, 1)
@@ -133,6 +160,7 @@ class Vaunix_SG():
         else:
             raise ValueError('Unknown reference')
 
+    @wait
     def GetReference(self):
         msg = self.lib.fnLMS_GetUseInternalRef(self.device_id)
         if msg == 0:
@@ -142,12 +170,15 @@ class Vaunix_SG():
         else:
             raise ValueError('Unknown reference')
 
+    @wait
     def EXTref(self):
         self.SetReference('EXT')
 
+    @wait
     def INTref(self):
         self.SetReference('INT')
 
+    @wait
     def GetMetadataString(self):
         # Should return a string of metadata adequate to write to a file
         pass
