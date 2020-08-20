@@ -8,7 +8,7 @@ import numpy as np
 from os.path import join, dirname, basename
 import os
 import time
-from shutil import copyfile
+from shutil import copyfile, copytree, rmtree
 
 class StarkShifter():
     def __init__(self, pump, f0, f_target, P_initial,max_delta_P_per_hour, averages,
@@ -71,9 +71,9 @@ class StarkShifter():
             git_id=False)
 
         # Make folder which will host fits
-        folder = dirname(self.myfile.name)
-        os.mkdir(join(folder,'fits'))
-        copyfile(__file__, join(folder,basename(__file__)))
+        self.myfolder = dirname(self.myfile.name)
+        os.mkdir(join(self.myfolder,'fits'))
+        copyfile(__file__, join(self.myfolder,basename(__file__)))
 
     def get_frequency(self,data):
         # Fit calibration trace and extract frequency
@@ -103,24 +103,23 @@ class StarkShifter():
         return P_next
 
     def save(self,data):
-        folder = dirname(self.myfile.name)
         stlab.savedict(self.myfile, data)
         stlab.metagen.fromarrays(self.myfile,data['Frequency (Hz)'],list(range(len(self.f_list)+1)),xtitle='Frequency (Hz)',ytitle='Iterations',colnames=data.keys())
-        np.savetxt(join(folder,'f1_list.txt'),self.f_list)
-        np.savetxt(join(folder,'P_list.txt'),self.P_stark)
-        self.fig_latest_fit.savefig(fname=join(folder,join('fits','fit_%d' %self.i_fit)))
+        np.savetxt(join(self.myfolder,'f1_list.txt'),self.f_list)
+        np.savetxt(join(self.myfolder,'P_list.txt'),self.P_stark)
+        self.fig_latest_fit.savefig(fname=join(self.myfolder,join('fits','fit_%d' %self.i_fit)))
         self.i_fit += 1
 
         # Save a plot of all the changes made in power
         fig, ax = plt.subplots(figsize=(5,4))
         plt.plot(self.P_stark[1:])
-        fig.savefig(fname=join(folder,'P_stark'))
+        fig.savefig(fname=join(self.myfolder,'P_stark'))
         plt.close()
 
         # Save a plot of all the frequencies measured
         fig, ax = plt.subplots(figsize=(5,4))
         plt.plot(self.f_list)
-        fig.savefig(fname=join(folder,'f_stark'))
+        fig.savefig(fname=join(self.myfolder,'f_stark'))
         plt.close()
 
     def set_power(self):
@@ -146,3 +145,11 @@ class StarkShifter():
 
         # Save stuff
         self.save(data)
+
+    def copyfolder(self,measurementfile):
+        copytree(self.myfolder, join(dirname(measurementfile.name),'stark'))
+
+
+    def deletefolder(self):
+        self.myfolder.close()
+        rmtree(self.myfolder)
