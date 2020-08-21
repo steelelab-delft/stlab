@@ -4,6 +4,7 @@
 # Vishal Ranjan, 2012
 # ron schutjens, 2012
 # Modified by: Sarwan Peiter
+# Modified by: Byoung-moo Ann
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from .instrument import instrument
+from instrument import instrument
 import types
 import time
 from datetime import datetime
@@ -45,8 +46,8 @@ class Tektronix_AWG520(instrument):
 
     def __init__(self,
                  name,
-                 addr='TCPIP::192.168.1.27::1234::SOCKET',
-                 reset=True,
+                 addr,
+                 reset=False,
                  numpoints=1000,
                  awg_file_dir="D:\\AWG_sequences\\",
                  **kw):
@@ -61,8 +62,10 @@ class Tektronix_AWG520(instrument):
             None
         '''
         logging.debug(__name__ + ' : Initializing instrument')
-        super().__init__(
-            addr=addr, reset=False, verb=False, read_termination='\n\r')
+        super(Tektronix_AWG520, self).__init__(addr=addr,
+                                               reset=False,
+                                               verb=False,
+                                               read_termination='\n')
 
         self._address = addr
 
@@ -72,9 +75,9 @@ class Tektronix_AWG520(instrument):
         self.awg_file_dir = awg_file_dir
 
         self._numpoints = numpoints
-        self.filename = ''
+        self._fname = ''
 
-        # self.init_dir()
+        self.init_dir()
 
         if reset:
             self.reset()
@@ -304,28 +307,6 @@ class Tektronix_AWG520(instrument):
         logging.debug(__name__ + ' : Trigger level set to %.3f' % level)
         self.dev.write('TRIG:LEV %.3f' % level)
 
-    def get_trigger_interval(self):
-        '''
-        the internal trigger interval in seconds.
-        '''
-        logging.debug(__name__ + ' : Get trigger interval from instrument')
-        return float(self.dev.query('TRIG:TIM?'))
-
-    def set_trigger_interval(self, interval):
-        '''
-        sets the internal trigger interval - effectively the repetition
-        rate of the experiment.
-
-        Input:
-            interval (float)
-        '''
-        if 1.e-6>interval or interval>10.:
-            print("out of range!")
-            return
-
-        logging.debug(__name__ + ' : Trigger interval set to %.3f' % interval)
-        self.dev.write('TRIG:TIM %.6fs' % interval)
-
     def force_trigger(self):
         '''
         forces a trigger event (used for wait_trigger option in sequences)
@@ -464,9 +445,9 @@ class Tektronix_AWG520(instrument):
         Output:
             amplitude (float) : the amplitude of the signal in Volts
         '''
-        logging.debug(
-            __name__ +
-            ' : Get amplitude of channel %s from instrument' % channel)
+        logging.debug(__name__ +
+                      ' : Get amplitude of channel %s from instrument' %
+                      channel)
         return float(self.dev.query('SOUR%s:VOLT:LEV:IMM:AMPL?' % channel))
 
     def set_amplitude(self, amp, channel):
@@ -514,10 +495,10 @@ class Tektronix_AWG520(instrument):
         Output:
             low (float) : low level in Volts
         '''
-        logging.debug(
-            __name__ + ' : Get lower bound of marker1 of channel %s' % channel)
-        return float(
-            self.dev.query('SOUR%s:MARK1:VOLT:LEV:IMM:LOW?' % channel))
+        logging.debug(__name__ +
+                      ' : Get lower bound of marker1 of channel %s' % channel)
+        return float(self.dev.query('SOUR%s:MARK1:VOLT:LEV:IMM:LOW?' %
+                                    channel))
 
     def set_marker1_low(self, low, channel):
         '''
@@ -528,9 +509,9 @@ class Tektronix_AWG520(instrument):
         Output:
             None
          '''
-        logging.debug(
-            __name__ + ' : Set lower bound of marker1 of channel %s to %.3f' %
-            (channel, low))
+        logging.debug(__name__ +
+                      ' : Set lower bound of marker1 of channel %s to %.3f' %
+                      (channel, low))
         self.dev.write('SOUR%s:MARK1:VOLT:LEV:IMM:LOW %.3f' % (channel, low))
 
     def get_marker1_high(self, channel):
@@ -541,8 +522,8 @@ class Tektronix_AWG520(instrument):
         Output:
             high (float) : high level in Volts
         '''
-        logging.debug(
-            __name__ + ' : Get upper bound of marker1 of channel %s' % channel)
+        logging.debug(__name__ +
+                      ' : Get upper bound of marker1 of channel %s' % channel)
         return float(
             self.dev.query('SOUR%s:MARK1:VOLT:LEV:IMM:HIGH?' % channel))
 
@@ -555,9 +536,9 @@ class Tektronix_AWG520(instrument):
         Output:
             None
          '''
-        logging.debug(
-            __name__ + ' : Set upper bound of marker1 of channel %s to %.3f' %
-            (channel, high))
+        logging.debug(__name__ +
+                      ' : Set upper bound of marker1 of channel %s to %.3f' %
+                      (channel, high))
         self.dev.write('SOUR%s:MARK1:VOLT:LEV:IMM:HIGH %.3f' % (channel, high))
 
     def get_marker2_low(self, channel):
@@ -568,10 +549,10 @@ class Tektronix_AWG520(instrument):
         Output:
             low (float) : low level in Volts
         '''
-        logging.debug(
-            __name__ + ' : Get lower bound of marker2 of channel %s' % channel)
-        return float(
-            self.dev.query('SOUR%s:MARK2:VOLT:LEV:IMM:LOW?' % channel))
+        logging.debug(__name__ +
+                      ' : Get lower bound of marker2 of channel %s' % channel)
+        return float(self.dev.query('SOUR%s:MARK2:VOLT:LEV:IMM:LOW?' %
+                                    channel))
 
     def set_marker2_low(self, low, channel):
         '''
@@ -582,9 +563,9 @@ class Tektronix_AWG520(instrument):
         Output:
             None
          '''
-        logging.debug(
-            __name__ + ' : Set lower bound of marker2 of channel %s to %.3f' %
-            (channel, low))
+        logging.debug(__name__ +
+                      ' : Set lower bound of marker2 of channel %s to %.3f' %
+                      (channel, low))
         self.dev.write('SOUR%s:MARK2:VOLT:LEV:IMM:LOW %.3f' % (channel, low))
 
     def get_marker2_high(self, channel):
@@ -595,8 +576,8 @@ class Tektronix_AWG520(instrument):
         Output:
             high (float) : high level in Volts
         '''
-        logging.debug(
-            __name__ + ' : Get upper bound of marker2 of channel %s' % channel)
+        logging.debug(__name__ +
+                      ' : Get upper bound of marker2 of channel %s' % channel)
         return float(
             self.dev.query('SOUR%s:MARK2:VOLT:LEV:IMM:HIGH?' % channel))
 
@@ -609,9 +590,9 @@ class Tektronix_AWG520(instrument):
         Output:
             None
          '''
-        logging.debug(
-            __name__ + ' : Set upper bound of marker2 of channel %s to %.3f' %
-            (channel, high))
+        logging.debug(__name__ +
+                      ' : Set upper bound of marker2 of channel %s to %.3f' %
+                      (channel, high))
         self.dev.write('SOUR%s:MARK2:VOLT:LEV:IMM:HIGH %.3f' % (channel, high))
 
     def get_status(self, channel):
@@ -629,8 +610,8 @@ class Tektronix_AWG520(instrument):
         elif (outp == 1):
             return 'on'
         else:
-            logging.debug(
-                __name__ + ' : Read invalid status from instrument %s' % outp)
+            logging.debug(__name__ +
+                          ' : Read invalid status from instrument %s' % outp)
             return 'an error occurred while reading status from instrument'
 
     def set_status(self, status, channel):
@@ -649,8 +630,8 @@ class Tektronix_AWG520(instrument):
         elif (status.upper() == 'OFF'):
             self.dev.write('OUTP%s OFF' % channel)
         else:
-            logging.debug(
-                __name__ + ' : Try to set status to invalid value %s' % status)
+            logging.debug(__name__ +
+                          ' : Try to set status to invalid value %s' % status)
             print('Tried to set status to invalid value %s' % status)
 
     #  query for string with filenames
@@ -695,10 +676,9 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         """
-        logging.debug(
-            __name__ + ' : Generating wfm files %s for instrument' % filename)
+        logging.debug(__name__ +
+                      ' : Generating wfm files %s for instrument' % filename)
 
-        self.filename = filename
         # Check for errors
         dim = len(w)
 
@@ -718,9 +698,41 @@ class Tektronix_AWG520(instrument):
 
         mes = s1.encode('ASCII') + s2.encode('ASCII') + s3 + s4.encode('ASCII')
 
-        with open(os.path.join(self.dir, self.filename), 'wb') as d:
+        # with open(os.path.join(self.awg_file_dir, filename), 'wb') as d:
+        with open(os.path.join(self.dir, filename), 'wb') as d:
             d.write(mes)
             d.close()
+
+    def get_trigger_interval(self):
+        '''
+        the internal trigger interval in seconds.
+        '''
+        logging.debug(__name__ + ' : Get trigger interval from instrument')
+        return float(self.dev.query('TRIG:TIM?'))
+
+    def set_trigger_interval(self, interval):
+        '''
+        sets the internal trigger interval - effectively the repetition
+        rate of the experiment.
+
+        Input:
+            interval (float)
+        '''
+        if 1.e-6 > interval or interval > 10.:
+            print("out of range!")
+            return
+
+        logging.debug(__name__ + ' : Trigger interval set to %.3f' % interval)
+        self.dev.write('TRIG:TIM %.6fs' % interval)
+
+    def set_trigger_source(self,source):
+        '''
+        This command selects the trigger source.
+        'INT' selects the internal clock as the trigger source.
+        'EXT' selects the external trigger input as the trigger source.
+        '''
+        self.dev.write('TRIG:SOUR %s' % source)
+
 
     def gen_sequence_file(self, wfs1, wfs2, rep, wait, goto, logic_jump,
                           filename):
@@ -737,10 +749,8 @@ class Tektronix_AWG520(instrument):
         Output:
             None
         '''
-        logging.debug(
-            __name__ + ' : Generating sequence %s for instrument' % filename)
-
-        self.filename = filename
+        logging.debug(__name__ +
+                      ' : Generating sequence %s for instrument' % filename)
 
         N = str(len(rep))
 
@@ -753,12 +763,10 @@ class Tektronix_AWG520(instrument):
                 wfs1[k], wfs2[k], rep[k], wait[k], goto[k], logic_jump[k])
 
         mes = s1.encode("ASCII") + s3.encode("ASCII") + s4.encode("ASCII")
-        with open(os.path.join(self.dir, self.filename), 'wb') as d:
+        with open(os.path.join(self.dir, filename), 'wb') as d:
+            # with open(os.path.join(self.awg_file_dir, filename), 'wb') as d:
             d.write(mes)
             d.close()
 
     def do_get_AWG_model(self):
         return 'AWG520'
-
-    def GetMetadataString(self): #Should return a string of metadata adequate to write to a file
-        pass
