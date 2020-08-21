@@ -3,7 +3,7 @@
 //
 //	Include file for LabBrick attenuator API
 //
-// (c) 2008 - 2018 by Vaunix Corporation, all rights reserved
+// (c) 2008 - 2014 by Vaunix Corporation, all rights reserved
 //
 //	RD Version 2.0	2/2014
 //
@@ -14,7 +14,6 @@
 //
 //	RD	Merged into the 64 Bit DLL tree, version with ANSI-C style names (all x64 DLLs use a single calling convention)
 //
-//	RD	Added Quad LDA channel function
 
 
 #ifdef VNX_ATTEN64_EXPORTS
@@ -31,15 +30,11 @@ extern "C" {
 #define MAXDEVICES 64
 #define MAX_MODELNAME 32
 #define PROFILE_MAX 100
-#define HIRES_PROFILE_MAX 50
 
 // ----------- Data Types ----------------
-
 #define DEVID unsigned int
 
-
 // ----------- Mode Bit Masks ------------
-
 #define MODE_RFON	0x00000040			// bit is 1 for RF on, 0 if RF is off
 #define MODE_INTREF	0x00000020			// bit is 1 for internal osc., 0 for external reference
 #define MODE_SWEEP	0x0000001F			// bottom 5 bits are used to keep the ramp control bits				
@@ -61,7 +56,7 @@ extern "C" {
 #define DEVICE_NOT_READY		0x80030000		// device isn't open, no handle, etc.
 #define FEATURE_NOT_SUPPORTED	0x80040000		// the selected Lab Brick does not support this function
 												// Profiles and Bi-directional ramps are only supported in
-												// V2.0 LDA products.
+												// LDA models manufactured after
 
 // Status returns for DevStatus
 
@@ -87,7 +82,7 @@ extern "C" {
 #define HAS_PROFILES		0x00000002
 #define HAS_HIRES			0x00000004
 #define HAS_4CHANNELS		0x00000008
-
+#define HAS_8CHANNELS		0x00000010
 
 
 VNX_ATTEN_API void fnLDA_SetTraceLevel(int tracelevel, int IOtracelevel, bool verbose);		// changed 7-11-16
@@ -131,6 +126,7 @@ VNX_ATTEN_API LVSTATUS fnLDA_SetProfileCount(DEVID deviceID, int profilecount);
 VNX_ATTEN_API LVSTATUS fnLDA_SetProfileIdleTime(DEVID deviceID, int idletime);
 VNX_ATTEN_API LVSTATUS fnLDA_SetProfileDwellTime(DEVID deviceID, int dwelltime);
 VNX_ATTEN_API LVSTATUS fnLDA_StartProfile(DEVID deviceID, int mode);
+VNX_ATTEN_API LVSTATUS fnLDA_StartProfileMC(DEVID deviceID, int mode, int chmask, bool delayed);
 
 VNX_ATTEN_API LVSTATUS fnLDA_SetRFOn(DEVID deviceID, bool on);
 
@@ -138,6 +134,7 @@ VNX_ATTEN_API LVSTATUS fnLDA_SetRampDirection(DEVID deviceID, bool up);
 VNX_ATTEN_API LVSTATUS fnLDA_SetRampMode(DEVID deviceID, bool mode);
 VNX_ATTEN_API LVSTATUS fnLDA_SetRampBidirectional(DEVID deviceID, bool bidir_enable);
 VNX_ATTEN_API LVSTATUS fnLDA_StartRamp(DEVID deviceID, bool go);
+VNX_ATTEN_API LVSTATUS fnLDA_StartRampMC(DEVID deviceID, int mode, int chmask, bool deferred);
 
 VNX_ATTEN_API LVSTATUS fnLDA_SaveSettings(DEVID deviceID);
 
@@ -178,6 +175,8 @@ VNX_ATTEN_API int fnLDA_GetMinAttenStep(DEVID deviceID);
 VNX_ATTEN_API int fnLDA_GetMinAttenStepHR(DEVID deviceID);
 
 VNX_ATTEN_API int fnLDA_GetFeatures(DEVID deviceID);
+VNX_ATTEN_API int fnLDA_GetNumChannels(DEVID deviceID);
+VNX_ATTEN_API int fnLDA_GetProfileMaxLength(DEVID deviceID);
 
 #ifdef __cplusplus
 	}
