@@ -3,6 +3,7 @@ from .instrument import instrument
 import logging
 import numpy as np
 
+
 def numtostr(mystr):
     return '%20.15e' % mystr
 
@@ -21,7 +22,7 @@ class Keysight_MXA_N9020B(instrument):
         '''
         self.dev.write('INST:SEL BASIC')
 
-    def set_centfreq(self,f0):
+    def set_centfreq(self, f0):
         mystr = numtostr(f0)
         mystr = 'FREQ:RF:CENT ' + mystr + ' HZ'
 
@@ -34,10 +35,9 @@ class Keysight_MXA_N9020B(instrument):
         self.dev.write('ROSC:BAND WIDE')
         self.dev.write(':ROSC:SOUR:TYPE EXT')
 
-    def set_range(self,start, end):
+    def set_range(self, start, end):
         self.set_start(start)
         self.set_end(end)
-
 
     def set_start(self, x):
         mystr = numtostr(x)
@@ -49,40 +49,36 @@ class Keysight_MXA_N9020B(instrument):
         mystr = 'SENS:FREQ:STOP ' + mystr
         self.dev.write(mystr)
 
-    def set_span(self,x):
+    def set_span(self, x):
         mystr = numtostr(x)
         mystr = 'SENS:FREQ:SPAN ' + mystr
         self.dev.write(mystr)
 
-    def set_points(self,n):
-        self.dev.write(':SWEep:POINts %d'%int(n))
+    def set_points(self, n):
+        self.dev.write(':SWEep:POINts %d' % int(n))
 
-    def set_resBW(self,bw):
+    def set_resBW(self, bw):
         self.dev.write(':SPEC:BAND RES {}'.format(bw))
         print('a')
-    def set_vidBW(self,bw):
-        self.dev.write('BAND:VID %d HZ'%int(bw))
 
-    def measure_screen(self,averages = 1):
-        self.dev.write('AVER:COUN %d'%int(averages)) # max is 10,000
+    def set_vidBW(self, bw):
+        self.dev.write('BAND:VID %d HZ' % int(bw))
+
+    def measure_screen(self, averages=1):
+        self.dev.write('AVER:COUN %d' % int(averages))  # max is 10,000
         self.dev.write('AVER:STATe ON')
         self.dev.write(':INITiate:IMMediate')
         data_string = self.dev.query(':READ:SANalyzer?')
-        data =  np.fromstring(data_string, dtype=float, sep=',')
+        data = np.fromstring(data_string, dtype=float, sep=',')
         freq = data[0::2]
         power = data[1::2]
-        return {'Frequency (Hz)':freq,'PSD (dB)':power}
-
-
-
+        return {'Frequency (Hz)': freq, 'PSD (dB)': power}
 
     def SA_mode(self):
         '''SAN
         changes to SA mode
         '''
         return self.dev.write(':INSTrument:SELect SA')
-
-
 
     def set_demodulation_frequency(self, f_center):
         '''
@@ -105,8 +101,8 @@ class Keysight_MXA_N9020B(instrument):
         if IFBW <= 160e6:
             logging.debug(__name__ +
                           ' : Digital IF bandwidth set to %d Hz ' % IFBW)
-            return self.dev.write(
-                ':SENSe:WAVEform:BANDwidth:RESolution %d' % IFBW)
+            return self.dev.write(':SENSe:WAVEform:BANDwidth:RESolution %d' %
+                                  IFBW)
         else:
             return 'error: Maximum IF is 160 MHz'
 
@@ -191,9 +187,10 @@ class Keysight_MXA_N9020B(instrument):
         Sets the sweep time
         '''
         logging.debug(__name__ + ' : sweep time set to %.9f s' % t_sweep)
-        # Marios version: return self.dev.write(':WAVeform:SWE:TIME %.9f' % t_sweep)
+        # Marios version:
+        return self.dev.write(':WAVeform:SWE:TIME %.9f' % t_sweep)
         #Sarwan version:
-        self.dev.write(':SWE:TIME %.9f' % t_sweep)
+        # self.dev.write(':SWE:TIME %.9f' % t_sweep)
 
     def set_attenuation(self, att=0):
         '''
@@ -284,7 +281,7 @@ class Keysight_MXA_N9020B(instrument):
         self.write('BAND:SHAP FLAT')
 
         # Define mode: FFT or SWEEP
-    def set_swept_mode(self,mode):
+    def set_swept_mode(self, mode):
 
         if mode is "FFT":
             self.write('SWE:TYPE FFT')
