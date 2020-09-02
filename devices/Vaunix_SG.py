@@ -96,11 +96,11 @@ class Vaunix_SG():
             if value < self.min_freq:
                 print('Warning: Frequency out of range. Set to min = {} GHz'.
                       format(self.min_freq / 1e9))
-                self.SetFrequency(self.min_freq)
+                self.setCWfrequency(self.min_freq)
             elif value > self.max_freq:
                 print('Warning: Frequency out of range. Set to max = {} GHz'.
                       format(self.max_freq / 1e9))
-                self.SetFrequency(self.max_freq)
+                self.setCWfrequency(self.max_freq)
         elif (quantity == 'power') or (quantity == 'pow'):
             if value < self.min_power:
                 print(
