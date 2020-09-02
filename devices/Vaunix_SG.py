@@ -106,12 +106,12 @@ class Vaunix_SG():
                 print(
                     'Warning: Power out of range. Set to min = {} dBm'.format(
                         self.min_power))
-                self.SetPower(self.min_power)
+                self.setCWpower(self.min_power)
             elif value > self.max_power:
                 print(
                     'Warning: Power out of range. Set to max = {} dBm'.format(
                         self.max_power))
-                self.SetPower(self.max_power)
+                self.setCWpower(self.max_power)
         else:
             raise KeyError('quantity must be either freq[ency] or pow[er]')
 
