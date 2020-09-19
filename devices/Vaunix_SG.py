@@ -28,7 +28,12 @@ def wait(func):
 
 class Vaunix_SG():
     @wait
-    def __init__(self):
+    def __init__(self, serial_number = None):
+        '''Takes the serial number of the signal generator as an argument.
+        This is only necessary if there is more than one Vaunix signal 
+        generator connected. 
+        The serial number is written on a sticker under the device.
+        '''
 
         # load API and DLL
         myffi = cffi.FFI()
@@ -62,7 +67,27 @@ class Vaunix_SG():
         elif num_devices == 0:
             raise ValueError('No devices found!')
         else:
-            print('Warning: more than 1 device found!')
+            if serial_number is None: 
+                error_str = 'Specify serial number (written under physical device)'
+                error_str += ' since %d devices were detected.\n'%len(dev_ids)
+                error_str+= 'The detected devices have serial numbers: '
+                for num in list(dev_from_serial_nums):
+                    error_str+= '%d, '%num
+                raise ValueError(error_str)
+
+
+            self.lib.fnLDA_SetTestMode(False)
+            try:
+                self.device_id = dev_from_serial_nums[serial_number]
+            except KeyError:
+                error_str = 'Incorrect serial number (written under physical device).\n'
+                error_str+= 'The detected devices have serial numbers: '
+                for num in list(dev_from_serial_nums):
+                    error_str+= '%d, '%num
+                raise ValueError(error_str)
+
+            status = self.lib.fnLDA_InitDevice(self.device_id)
+            print('status:', status)
 
         # weird conversion factors
         self.ffreq = 10
