@@ -76,7 +76,7 @@ class Vaunix_SG():
                 raise ValueError(error_str)
 
 
-            self.lib.fnLDA_SetTestMode(False)
+            self.lib.fnLMS_SetTestMode(False)
             try:
                 self.device_id = dev_from_serial_nums[serial_number]
             except KeyError:
@@ -86,7 +86,7 @@ class Vaunix_SG():
                     error_str+= '%d, '%num
                 raise ValueError(error_str)
 
-            status = self.lib.fnLDA_InitDevice(self.device_id)
+            status = self.lib.fnLMS_InitDevice(self.device_id)
             print('status:', status)
 
         # weird conversion factors
