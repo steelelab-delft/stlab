@@ -8,6 +8,7 @@ at https://github.com/BBN-Q/Auspex
 
 # from stlab.devices.base_instrument import base_instrument
 import cffi
+from os.path import dirname, join
 
 
 class Vaunix_Phase():
