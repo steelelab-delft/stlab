@@ -57,7 +57,7 @@ class Vaunix_Phase():
                 raise ValueError(error_str)
 
 
-            self.lib.fnLDA_SetTestMode(False)
+            self.lib.fnLPS_SetTestMode(False)
             try:
                 self.device_id = dev_from_serial_nums[serial_number]
             except KeyError:
@@ -67,7 +67,7 @@ class Vaunix_Phase():
                     error_str+= '%d, '%num
                 raise ValueError(error_str)
 
-            status = self.lib.fnLDA_InitDevice(self.device_id)
+            status = self.lib.fnLPS_InitDevice(self.device_id)
             print('status:', status)
 
         # weird conversion factors
