@@ -106,10 +106,17 @@ class instrument(base_instrument):
 
         #I have found that all our socket TCPIP devices need a \r\n line termination to work...  Add to kwargs it if not overridden
         read_termination = None
+        write_termination = None
+
         if 'SOCKET' in addr:
-            read_termination = '\r\n'
+            read_termination = '\n'
+            write_termination = '\n'
+
         if 'read_termination' not in kwargs:
             kwargs['read_termination'] = read_termination
+
+        if 'write_termination' not in kwargs:
+            kwargs['write_termination'] = write_termination
         #Attempt to initialize instrument using current resource manager
         try:
             self.dev = self.global_rs.open_resource(addr, **kwargs)
@@ -180,7 +187,7 @@ class instrument(base_instrument):
             The string read from the instrument
 
         """
-        out = self.dev.read()
+        out = self.dev.read('\r')
         return out
 
     def id(self):
@@ -195,7 +202,6 @@ class instrument(base_instrument):
 
         """
         out = self.query('*IDN?')
-        print(out)
         return out
 
     def reset(self):
