@@ -27,7 +27,6 @@ def get_instr_definitions():
 
 devdict = get_instr_definitions()
 
-
 class test_instrument(
         instrument
 ):  #instrument is abstract and can't be instantiated... I use this placeholder instrument
@@ -58,12 +57,13 @@ def autodetect_instrument(addr, reset=True, verb=True, **kwargs):
 
     dev = test_instrument(addr, reset, verb, query_delay=100e-3, **kwargs)
     idstr = dev.id()
+    # print(idstr)
 
     dev.close()
 
     found = False
     for idtag in devdict:
-        if (',' + idtag + ',' in idstr) or (', ' + idtag + ',' in idstr) or (
+        if (idtag is idstr) or (',' + idtag + ',' in idstr) or (', ' + idtag + ',' in idstr) or (
                 ',' + idtag + ' ,' in idstr):
             found = True
             devstr = devdict[idtag]
