@@ -48,6 +48,7 @@ class TritonWrapper(base_instrument):
             self.reset()
         self.addr = addr
         self.port = port
+        
     def query(self,mystr):
         """Query function
 
@@ -70,7 +71,8 @@ class TritonWrapper(base_instrument):
             print(mystr)
         s.mysend(mystr.encode('utf_8'))
         word = s.myreceive()
-        word = word.decode('utf_8')
+        if word:
+            word = word.decode('utf_8')
         if self.verb:
             print(word)
         s.sock.close()

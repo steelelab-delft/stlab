@@ -11,7 +11,8 @@ you will be forced to explicitly write the VISA commands directly.  Most drivers
 already include a collection of commands and specific quality of life methods
 that allow you to already do basic functions.
 """
-import visa
+#import visa
+import pyvisa as visa
 from stlab.devices.base_instrument import base_instrument
 from stlab.utils.reset_popup_warning import popup_warning
 
@@ -20,9 +21,9 @@ from stlab.utils.reset_popup_warning import popup_warning
 #If this fails, revert to using pyvisa-py
 def makeRM():
     try:
-        global_rs = visa.ResourceManager('@ni')
+        global_rs = visa.ResourceManager('@ivi')
         print('Global NI ResourceManager created')
-        return global_rs, '@ni'
+        return global_rs, '@ivi' #'@ni'
     except OSError:
         return makeRMpy()
 

@@ -56,6 +56,7 @@ class MySocket:
 
         """
         self.sock.connect((host, port))
+        # self.sock.create_connection((host, port))
 
     def mysend(self, msg):
         """Send a message to the connected port
