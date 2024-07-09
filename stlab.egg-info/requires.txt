@@ -1,0 +1,5 @@
+require-python-3
+scipy>=1.2.1
+lmfit>=0.9.13
+PyVISA-py>=0.3.1
+stlabutils@ git+git://github.com/steelelab-delft/stlabutils.git#egg=stlabutils

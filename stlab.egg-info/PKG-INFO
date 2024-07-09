@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: stlab
+Version: 0.0.0
+License-File: LICENSE
+Requires-Dist: require-python-3
+Requires-Dist: scipy>=1.2.1
+Requires-Dist: lmfit>=0.9.13
+Requires-Dist: PyVISA-py>=0.3.1
+Requires-Dist: stlabutils@ git+git://github.com/steelelab-delft/stlabutils.git#egg=stlabutils
