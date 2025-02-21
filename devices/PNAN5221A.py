@@ -78,6 +78,12 @@ class PNAN5221A(basepna):
         '''
         self.write("CALC:CORR:EDEL:TIME %fNS" % (t * 1e9))
 
+    def SetPhaseOffset(self, phase_offset_deg):
+        '''
+        Phase offset set in degrees
+        '''
+        self.write("CALC:OFFS:PHASe %f" %phase_offset_deg)
+
     def TwoPortSetup(self):
         self.SetContinuous(False)
         trcnames = self.GetTraceNames()
