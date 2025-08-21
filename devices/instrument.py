@@ -13,7 +13,7 @@ that allow you to already do basic functions.
 """
 import pyvisa as visa
 from .base_instrument import base_instrument
-from ..misc.reset_popup_warning import popup_warning
+# from ..misc.reset_popup_warning import popup_warning
 
 
 #Try to use NI-VISA
@@ -123,14 +123,16 @@ class instrument(base_instrument):
                 addr = addr[:idx] + 'COM' + addr[idx:]
             self.dev = self.global_rs.open_resource(addr, **kwargs)
         self.verb = verb  #Whether to print commands on screen
-        if not reset:
-            popup = popup_warning(self.id())
-            result = popup.run()
-            if result:
-                reset = True
-                self.reset()
-        else:
-            self.reset()
+        # if not reset:
+        #     popup = popup_warning(self.id())
+        #     result = popup.run()
+        #     if result:
+        #         reset = True
+        #         self.reset()
+        # else:
+        #     self.reset()
+        if reset:
+            self.reset() 
         super().__init__()
 
     def write(self, mystr):
