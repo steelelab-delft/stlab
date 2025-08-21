@@ -1,4 +1,4 @@
-import visa
+# import visa
 import numpy as np
 import time
 from .instrument import instrument
