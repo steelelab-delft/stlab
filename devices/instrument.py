@@ -20,7 +20,7 @@ from ..misc.reset_popup_warning import popup_warning
 #If this fails, revert to using pyvisa-py
 def makeRM():
     try:
-        global_rs = visa.ResourceManager('')    
+        global_rs = visa.ResourceManager()   
         print('Global NI ResourceManager created')
         return global_rs, '@ni'
     except OSError:
