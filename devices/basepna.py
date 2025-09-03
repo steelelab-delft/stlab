@@ -251,7 +251,7 @@ class basepna(instrument, abc.ABC):
         final = stlabdict()
         for name, data in zip(names, alltrc):
             final[name] = data
-        final.addparcolumn('Power (dBm)', self.GetPower())
+        # final.addparcolumn('Power (dBm)', self.GetPower())
         return final
 
     def MeasureScreen(self, keep_uncal=True, N_averages=1):
