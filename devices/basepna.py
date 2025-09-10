@@ -147,7 +147,7 @@ class basepna(instrument, abc.ABC):
         return
 
     def SetAverageCounts(self, x):
-        self.write('SENS:AVER:COUN {}'.format(2000))
+        self.write('SENS:AVER:COUN {}'.format(x))
         return
 
     def SetAverageOn(self):
