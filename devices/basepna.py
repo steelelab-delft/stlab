@@ -132,8 +132,8 @@ class basepna(instrument, abc.ABC):
             done = 0
             while done != 1:
                 with suppress_stdout():
-                    done = int(self.query('*ESR?')[1])
-                time.sleep(0.01)
+                    done = int(self.query('*ESR?'))&1 ## bitwise check if the first bit (OPC bit) of the status registry == 1
+                time.sleep(0.1)
         else:
             self.write('INIT')
         return
