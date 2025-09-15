@@ -97,7 +97,7 @@ class Keysight_B2961A(instrument):
 
     def RampCurrent(
             self, curr, tt=5., steps=100, tol=1e-3
-    ):  #To ramp voltage over 'tt' seconds from current DAC value.
+    ):  #To ramp current over 'tt' seconds from current DAC value.
         I0 = self.GetCurrent()
         if np.abs(curr - I0) < tol:
             self.SetCurrent(curr)
@@ -107,6 +107,36 @@ class Keysight_B2961A(instrument):
         for ii in currents:
             self.SetCurrent(ii)
             time.sleep(twait)
+
+    def RampCurrent_step_speed(
+            self, curr, step, speed, verb=True
+    ):  # To ramp current at a given speed (A/s) from current DAC value.
+        # speed does not account for python overhead which depends on step
+        # in practice we find:
+        # - 0.01uA steps at 0.5uA/s - 30s to make 10uA - 1.5x overhead
+        # - ...
+        self.SetModeCurrent()
+        # TO DO: could add a check to see if output is on and set current to 0 if not
+        self.SetOutputOn() 
+        I0 = self.GetCurrent()
+        
+        Nsteps = int(np.ceil(np.abs(curr - I0) / step))
+        total_time = np.abs(curr - I0) / speed
+        twait = total_time / Nsteps
+        if verb is True:
+            print('RAMPING CURRENT from %.3f uA to %.3f uA in %d steps (ETA %.2f s) ' %
+                  (I0*1e6, curr*1e6, Nsteps, total_time), end='', flush=True)
+            
+        currents = np.linspace(curr, I0, Nsteps)[::-1]   # Reverse order to end at desired current
+        t0 = time.time()
+        for ii, current in enumerate(currents):
+            if verb is True and Nsteps >= 10 and ii > 1:   # Printing progress only if at least 10 steps
+                if not ii % int(Nsteps/10):
+                    print('.', end='', flush=True)
+            self.SetCurrent(current)
+            time.sleep(twait)
+        if verb is True:
+            print(' DONE in %.2f s.' % (time.time() - t0) )
 
     def SetSweep(self, type='SING'):
         mode = self.GetMode()
