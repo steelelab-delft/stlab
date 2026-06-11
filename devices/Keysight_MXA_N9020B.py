@@ -2,7 +2,7 @@ from .instrument import instrument
 # from stlabutils.stlabdict import stlabdict
 import logging
 import numpy as np
-
+import time
 
 def numtostr(mystr):
     return '%20.15e' % mystr
@@ -67,8 +67,33 @@ class Keysight_MXA_N9020B(instrument):
     def measure_screen(self, averages=1):
         self.dev.write('AVER:COUN %d' % int(averages))  # max is 10,000
         self.dev.write('AVER:STATe ON')
-        self.dev.write(':INITiate:IMMediate')
-        data_string = self.dev.query(':READ:SANalyzer?')
+        
+        # The old stlab used the following 2 lines: 
+
+        # self.dev.write(':INITiate:IMMediate')
+        # data_string = self.dev.query(':READ:SANalyzer?')
+
+        # This however lead to I/O errors making longer measurements time out :( so Sercan (with the help of Claude) rewrote it to this :)
+        # Now we manually check for completion using *ESR? like we did when we fixed IO erros on the VNA
+
+        # Trigger
+        self.dev.write("*CLS")
+        self.dev.write("*ESE 1")
+        self.dev.write("INIT:CONT OFF")
+        self.dev.write("INIT:IMM")
+        self.dev.write("*OPC")
+
+        # Poll until OPC bit (bit 0) is set
+        while True:
+            esr = int(self.dev.query("*ESR?"))
+            if esr & 1:          # Bit 0 = OPC done
+                print("Sweep complete!")
+                break
+            time.sleep(0.05)     # 50ms poll interval, adjust to your sweep time
+
+        # Now safe to fetch
+        data_string = self.dev.query("FETCH:SANalyzer?")
+        #### END
         data = np.fromstring(data_string, dtype=float, sep=',')
         freq = data[0::2]
         power = data[1::2]
