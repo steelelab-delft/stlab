@@ -183,6 +183,20 @@ class instrument(base_instrument):
         out = self.dev.read()
         return out
 
+    def read_raw(self):
+        """Read binary data from the instrument
+
+        Performs a read of raw bytes from the instrument, avoiding the ASCII encoding
+
+        Returns
+        -------
+        out : binary data
+            The binary data from the instrument
+
+        """
+        out = self.dev.read_raw()
+        return out
+
     def id(self):
         """Query the device id string
         

@@ -7,9 +7,22 @@ from .instrument import instrument
 from stlabutils.stlabdict import stlabdict as stlabdict
 import numpy as np
 import pandas as pd
+import time
 
 import abc
 
+from contextlib import contextmanager
+import sys, os
+
+@contextmanager
+def suppress_stdout():
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:  
+            yield
+        finally:
+            sys.stdout = old_stdout
 
 def numtostr(mystr):
     return '%20.15e' % mystr
@@ -111,7 +124,14 @@ class basepna(instrument, abc.ABC):
 
     def Trigger(self, block=True):
         if block:
-            print((self.query('INIT;*OPC?')))
+            self.write('*CLS')
+            self.write('INIT; *OPC')
+
+            done = 0 
+            while done != 1: 
+                with suppress_stdout():
+                    done = int(self.query('*ESR?')[1])
+                time.sleep(0.01)
         else:
             self.write('INIT')
         return
@@ -135,6 +155,19 @@ class basepna(instrument, abc.ABC):
     def SetAverageOff(self):
         self.write('SENS:AVER OFF')
         return
+    
+    def SetDwellTime(self, x):
+        mystr = numtostr(x)
+        mystr = 'SENS:SWE:DWEL ' + mystr
+        self.write(mystr)
+
+    def GetDwellTime(self):
+        mystr = 'SENS:SWE:DWEL?'
+        pp = self.query(mystr)
+        pp = float(pp)
+        return pp
+
+
 
 ##### ABSTRACT METHODS TO BE IMPLEMENTED ON A PER PNA BASIS #####################
 
@@ -142,6 +175,44 @@ class basepna(instrument, abc.ABC):
     def GetFrequency(self):
         freq = self.query('CALC:X?')
         freq = np.asarray([float(xx) for xx in freq.split(',')])
+        return freq
+
+    def GetFrequencyPrecise(self):
+        # Tell the pna to communicate in binary format
+        self.write('FORM:DATA Real,64')
+
+        # Read frequencies in raw binary format
+        self.write('CALC:X?')
+        raw = self.read_raw()
+
+
+        # Convert binary data to numpy array
+        if raw[0:1] != b'#':
+            raise ValueError("Not a SCPI binary block")
+
+        ndigits = int(raw[1:2].decode())
+
+        length_str = raw[2:2+ndigits].decode()
+        nbytes = int(length_str)
+
+        n_total = 2 + ndigits + nbytes + 1
+
+        while len(raw) < n_total:
+            raw += self.read_raw()
+
+
+        start = 2 + ndigits
+        end = start + nbytes
+        data = raw[start:end]
+
+        if len(data) % 8 != 0:
+            raise ValueError(f"Binary payload size {len(data)} is not divisible by 8")
+
+        # Put pna back in ASCII encoding
+        self.write('FORM:DATA ASC,0')
+
+        freq = np.frombuffer(data, dtype='>f8')  # big-endian float64
+
         return freq
 
     @abc.abstractmethod
@@ -193,7 +264,7 @@ class basepna(instrument, abc.ABC):
         pars, parnames = self.GetTraceNames()
         self.SetActiveTrace(pars[0])
         names = ['Frequency (Hz)']
-        alltrc = [self.GetFrequency()]
+        alltrc = [self.GetFrequencyPrecise()]
         for pp in parnames:
             names.append('%sre ()' % pp)
             names.append('%sim ()' % pp)

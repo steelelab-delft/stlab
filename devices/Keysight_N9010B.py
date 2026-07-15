@@ -105,17 +105,50 @@ class Keysight_N9010B(basesa):
         yunit = self.GetUnit()
         if measmode == 'SA':
             self.SetContinuous(False)
-            self.write('INIT')
+            # self.write('INIT')            
+
             # sleep for averaging time, otherwise timeout
             navg = self.GetAverages()
             tt = self.GetSweepTime()
+
+            self.write('FORM:DATA Real,64')
+            self.write('READ:SAN?')
+
             sleeptime = navg * tt
-            print('Measurement in progress. Waiting for {}s'.format(sleeptime))
+            print('Measurement in progress. Waiting for {:.1f}s'.format(sleeptime))
             time.sleep(sleeptime)
-            result = self.query('READ:SAN?')
-            result = result.split(',')
-            result = [float(x) for x in result]
-            result = np.asarray(result)
+            # result = self.query('READ:SAN?')
+            # result = result.split(',')
+            # result = [float(x) for x in result]
+            # result = np.asarray(result)
+
+            raw = self.read_raw()
+
+            # Convert binary data to numpy array
+            if raw[0:1] != b'#':
+                raise ValueError("Not a SCPI binary block")
+
+            ndigits = int(raw[1:2].decode())
+
+            length_str = raw[2:2+ndigits].decode()
+            nbytes = int(length_str)
+
+            n_total = 2 + ndigits + nbytes + 1
+
+            while len(raw) < n_total:
+                raw += self.read_raw()
+
+            start = 2 + ndigits
+            end = start + nbytes
+            data = raw[start:end]
+
+            if len(data) % 8 != 0:
+                raise ValueError(f"Binary payload size {len(data)} is not divisible by 8")
+
+            # Put pna back in ASCII encoding
+            self.write('FORM:DATA ASC,0')
+            result = np.frombuffer(data, dtype='>f8')
+
             xvals = result[::2]
             yvals = result[1::2]
             output = pd.DataFrame()

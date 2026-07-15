@@ -11,6 +11,20 @@ The intended workflow is:
 import numpy as np
 import pandas as pd
 from collections import OrderedDict
+import time
+
+from contextlib import contextmanager
+import sys, os
+
+@contextmanager
+def suppress_stdout():
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:
+            yield
+        finally:
+            sys.stdout = old_stdout
 
 class PNA_rfsource():
     """class that allows one to use the third port of the
@@ -166,7 +180,13 @@ def TwoToneProbeSet(pna,searchtype='MAX'):
 
     # Trigger top screen measurement
     pna.write("INIT1:IMM" )
-    pna.query('*OPC?')
+    pna.write('*OPC')
+
+    done = 0
+    while done != 1:
+        with suppress_stdout():
+            done = int(pna.query('*ESR?')[1])
+        time.sleep(0.01)
 
     # Autoscale and copy scale to lower screen
     pna.write('DISP:WIND1:Y:AUTO')
@@ -190,7 +210,14 @@ def TwoToneSetProbeFrequency(pna,frequency):
 def TwoToneMeasure(pna):
     # Trigger
     pna.write("INIT2:IMM")
-    pna.query('*OPC?')
+    pna.write('*OPC')
+
+    done = 0
+    while done != 1:
+        with suppress_stdout():
+            done = int(pna.query('*ESR?')[1])
+        time.sleep(0.01)
+
     pna.write('DISP:WIND2:Y:AUTO')
 
     # pars,parnames = pna.GetTraceNames()

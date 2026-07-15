@@ -9,7 +9,7 @@ from .instrument import instrument
 
 
 def numtostr(mystr):
-    return '%12.8e' % mystr
+    return '%14.12e' % mystr
 
 
 class Keysight_N5183B(instrument):
