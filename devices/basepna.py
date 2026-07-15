@@ -19,7 +19,7 @@ def suppress_stdout():
     with open(os.devnull, "w") as devnull:
         old_stdout = sys.stdout
         sys.stdout = devnull
-        try:  
+        try:
             yield
         finally:
             sys.stdout = old_stdout
@@ -27,7 +27,9 @@ def suppress_stdout():
 def numtostr(mystr):
     return '%20.15e' % mystr
 
+
 class basepna(instrument, abc.ABC):
+
     def __init__(self, addr, reset, verb):
         super().__init__(addr, reset, verb)
         #Remove timeout so long measurements do not produce -420 "Unterminated Query"
@@ -127,11 +129,11 @@ class basepna(instrument, abc.ABC):
             self.write('*CLS')
             self.write('INIT; *OPC')
 
-            done = 0 
-            while done != 1: 
+            done = 0
+            while done != 1:
                 with suppress_stdout():
-                    done = int(self.query('*ESR?')[1])
-                time.sleep(0.01)
+                    done = int(self.query('*ESR?'))&1 ## bitwise check if the first bit (OPC bit) of the status registry == 1
+                time.sleep(0.1)
         else:
             self.write('INIT')
         return
@@ -144,8 +146,8 @@ class basepna(instrument, abc.ABC):
         self.write("SOUR1:POW1:MODE ON")
         return
 
-    def SetAverageCounts(self,x):
-        self.write('SENS:AVER:COUN {}'.format(2000))
+    def SetAverageCounts(self, x):
+        self.write('SENS:AVER:COUN {}'.format(x))
         return
 
     def SetAverageOn(self):
@@ -314,7 +316,7 @@ class basepna(instrument, abc.ABC):
             naver = int(self.query('SENS:AVER:COUN?'))
             for _ in range(naver):
                 self.Trigger()
-            # Dat = self.GetAllData(keep_uncal)
+                # Dat = self.GetAllData(keep_uncal)
                 self.AutoScaleAll()
             self.write('SENS:AVER OFF')
         return self.GetAllData(keep_uncal)

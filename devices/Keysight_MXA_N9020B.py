@@ -4,7 +4,6 @@ import logging
 import numpy as np
 import time
 
-
 def numtostr(mystr):
     return '%20.15e' % mystr
 
@@ -68,13 +67,13 @@ class Keysight_MXA_N9020B(instrument):
     def measure_screen(self, averages=1):
         self.dev.write('AVER:COUN %d' % int(averages))  # max is 10,000
         self.dev.write('AVER:STATe ON')
-
         # The old stlab used the following 2 lines: 
 
         # self.dev.write(':INITiate:IMMediate')
         # data_string = self.dev.query(':READ:SANalyzer?')
 
-        # This however lead to I/O errors making longer measurements time out :( so Sercan rewrote it to this :)
+        # This however lead to I/O errors making longer measurements time out :( so Sercan (with the help of Claude) rewrote it to this :)
+        # Now we manually check for completion using *ESR? like we did when we fixed IO erros on the VNA
 
         # Trigger
         self.dev.write("*CLS")
@@ -94,7 +93,7 @@ class Keysight_MXA_N9020B(instrument):
         # Now safe to fetch
         data_string = self.dev.query("FETCH:SANalyzer?")
         #### END
-        data = np.fromstring(data_string, dtype=np.float64, sep=',')
+        data = np.fromstring(data_string, dtype=float, sep=',')
         freq = data[0::2]
         power = data[1::2]
 
